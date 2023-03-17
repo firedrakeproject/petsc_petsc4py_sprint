@@ -126,6 +126,9 @@ def _setup_numpy_typing():
         for attr in ['ArrayLike', 'DTypeLike']:
             setattr(npt, attr, typing.Any)
             npt.__all__.append(attr)
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
+html_theme = 'pydata_sphinx_theme'
 
 
 def _patch_domain_python():
