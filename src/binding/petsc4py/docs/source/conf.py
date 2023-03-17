@@ -51,9 +51,16 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'sphinx_copybutton',
+    'sphinx_design',
+    'sphinxcontrib.bibtex',
+    'sphinxcontrib.katex',
 ]
 
 templates_path = ['_templates']
+
+bibtex_bibfiles = ['petsc4py.bib']
+
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 needs_sphinx = '5.0.0'
