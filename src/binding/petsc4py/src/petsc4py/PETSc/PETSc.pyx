@@ -195,8 +195,8 @@ include "petscdmutils.pxi"
 
 # --------------------------------------------------------------------
 
-__doc__ = u"""
-Portable, Extensible Toolkit for Scientific Computation
+__doc__ = """
+Portable, Extensible Toolkit for Scientific Computation.
 """
 
 include "Const.pyx"

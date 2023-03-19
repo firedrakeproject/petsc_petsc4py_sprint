@@ -1001,5 +1001,6 @@ del PCFieldSplitSchurFactType
 del PCPatchConstructType
 del PCHPDDMCoarseCorrectionType
 del PCDeflationSpaceType
+del PCFailedReason
 
 # --------------------------------------------------------------------
