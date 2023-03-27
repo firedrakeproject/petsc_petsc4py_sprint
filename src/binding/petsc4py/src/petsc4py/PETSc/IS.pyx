@@ -8,6 +8,29 @@ class ISType(object):
 # --------------------------------------------------------------------
 
 cdef class IS(Object):
+    """PETSc object used for efficient indexing.
+
+    Attributes
+    ----------
+    permutation
+        TODO
+    identity
+        TODO
+    sorted
+        TODO
+    sizes
+        TODO
+    size
+        TODO
+    local_size
+        TODO
+    block_size
+        TODO
+    indices
+        TODO
+    array
+        TODO
+    """
 
     Type = ISType
 
@@ -43,15 +66,50 @@ cdef class IS(Object):
     #
 
     def view(self, Viewer viewer=None):
+        """Display the IS.
+
+        Parameters
+        ----------
+        viewer : Viewer, optional
+            Viewer used to display the IS.
+
+        See Also
+        --------
+        TODO
+        """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( ISView(self.iset, cviewer) )
 
     def destroy(self):
+        """Destroy the IS.
+
+        Returns
+        -------
+        self
+
+        See Also
+        --------
+        TODO https://petsc.org/release/docs/manualpages/IS/ISDestroy/
+        """
         CHKERR( ISDestroy(&self.iset) )
         return self
 
     def create(self, comm=None):
+        """Create an IS.
+
+        Parameters
+        ----------
+        comm : PetscComm?, optional
+
+        Returns
+        -------
+        self
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISCreate/
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscIS newiset = NULL
         CHKERR( ISCreate(ccomm, &newiset) )
@@ -59,6 +117,17 @@ cdef class IS(Object):
         return self
 
     def setType(self, is_type):
+        """Build an IS for a particular `ISType`.
+
+        Parameters
+        ----------
+        is_type : str
+            The name of the index set type.
+
+        See Also
+        --------
+        TODO https://petsc.org/release/docs/manualpages/IS/ISSetType/
+        """
         cdef PetscISType cval = NULL
         is_type = str2bytes(is_type, &cval)
         CHKERR( ISSetType(self.iset, cval) )
