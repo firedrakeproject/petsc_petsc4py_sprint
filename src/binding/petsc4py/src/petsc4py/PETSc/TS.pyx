@@ -119,12 +119,38 @@ cdef class TS(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer: Viewer = None):
+        """Print the `TS` data structure.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            the visualization context
+
+        Notes
+        -----
+        `-ts_view` calls TSView at the end of TSStep
+
+        See Also
+        --------
+        TSView
+        
+        """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( TSView(self.ts, cviewer) )
 
     def load(self, Viewer viewer):
+        """Load a `TS` that has been stored in binary with `TSView`.
+
+        Parameters
+        ----------
+        viewer
+            the visualization context
+
+        """
         CHKERR( TSLoad(self.ts, viewer.vwr) )
 
     def destroy(self):
