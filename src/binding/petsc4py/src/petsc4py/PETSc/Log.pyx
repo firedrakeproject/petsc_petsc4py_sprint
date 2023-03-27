@@ -99,8 +99,8 @@ cdef class Log:
         """Return the number of flops used on this 
             processor since the program began.
 
-        Returns
-        -------
+        Return
+        ------
         cflops : double
             Number of floating point operations
 
@@ -117,7 +117,7 @@ cdef class Log:
         """ Return the current time of day in seconds.
         
         Return
-        -------
+        ------
         wctime : double
             Current time.
         
@@ -307,7 +307,7 @@ cdef class LogStage:
 
         Return
         ------
-        toBool(flag) : Boolean
+        bool
 
         See Also
         --------
@@ -532,7 +532,7 @@ cdef class LogEvent:
 
         Parameter
         ---------
-        flag : Boolean
+        flag : bool
 
         petsc:PetscLogEventSetActiveAll
         """
