@@ -545,7 +545,7 @@ cdef class IS(Object):
         return toBool(flag)
 
     def sum(self, IS iset: IS):
-        """Compute the union of two index sets.
+        """Compute the union of two (sorted) index sets.
 
         Parameters
         ----------
@@ -557,10 +557,6 @@ cdef class IS(Object):
         IS
             The new combined index set.
 
-        Notes
-        -----
-        Both index sets need to be sorted on input.
-
         See Also
         --------
         petsc:ISSum
@@ -569,12 +565,46 @@ cdef class IS(Object):
         CHKERR( ISSum(self.iset, iset.iset, &out.iset) )
         return out
 
-    def expand(self, IS iset):
+    def expand(self, IS iset: IS) -> IS:
+        """Compute the union of two (possibly unsorted) index sets.
+
+        To compute the union, `expand` concatenates the two index sets
+        and removes any duplicates.
+
+        Parameters
+        ----------
+        iset
+            Index set to compute the union with.
+
+        Returns
+        -------
+        IS
+            The new, combined, index set.
+
+        See Also
+        --------
+        petsc:ISExpand
+        """
         cdef IS out = IS()
         CHKERR( ISExpand(self.iset, iset.iset, &out.iset) )
         return out
 
-    def union(self, IS iset): # XXX review this
+    def union(self, IS iset: IS) -> IS: # XXX review this
+        """Compute the union of two (possibly unsorted) index sets.
+
+        This function will call either `IS.sum` or `IS.sorted` depending
+        on whether or not the input sets are already sorted.
+
+        Parameters
+        ----------
+        iset
+            Index set to compute the union with.
+
+        Returns
+        -------
+        IS
+            The new, combined, index set.
+        """
         cdef PetscBool flag1=PETSC_FALSE, flag2=PETSC_FALSE
         CHKERR( ISSorted(self.iset, &flag1) )
         CHKERR( ISSorted(iset.iset, &flag2) )
@@ -585,25 +615,103 @@ cdef class IS(Object):
             CHKERR( ISExpand(self.iset, iset.iset, &out.iset) )
         return out
 
-    def difference(self, IS iset):
+    def difference(self, IS iset: IS) -> IS:
+        """Compute the difference between two index sets.
+
+        Parameters
+        ----------
+        iset
+            Index set to compute the difference with.
+
+        Returns
+        -------
+        IS
+            Index set representing the difference between `self` and `iset`.
+
+        See Also
+        --------
+        petsc:ISDifference
+        """
         cdef IS out = IS()
         CHKERR( ISDifference(self.iset, iset.iset, &out.iset) )
         return out
 
-    def complement(self, nmin, nmax):
+    def complement(self, nmin: int, nmax: int) -> IS:
+        """Create a complement index set.
+
+        The complement set of indices is all indices that are not
+        in the provided set (and within the provided bounds).
+
+        Parameters
+        ----------
+        nmin
+            Minimum index that can be found in the complement index set.
+        nmax
+            Maximum index that can be found in the complement index set.
+
+        Returns
+        -------
+        IS
+            Complement index set.
+
+        See Also
+        --------
+        petsc:ISComplement
+        """
         cdef PetscInt cnmin = asInt(nmin)
         cdef PetscInt cnmax = asInt(nmax)
         cdef IS out = IS()
         CHKERR( ISComplement(self.iset, cnmin, cnmax, &out.iset) )
         return out
 
-    def embed(self, IS iset, drop):
+    def embed(self, IS iset: IS, drop: bool) -> IS:
+        """Embed `self` into `iset`.
+
+        The embedding is performed by finding the locations in `iset` that
+        have the same indices as `self`.
+
+        Parameters
+        ----------
+        iset
+            The `IS` to embed into.
+        drop
+            Flag indicating whether to drop indices from `self` that are not
+            in `iset`.
+
+        Returns
+        -------
+        IS
+            The embedded index set.
+
+        See Also
+        --------
+        petsc:ISEmbed
+        """
         cdef PetscBool bval = drop
         cdef IS out = IS()
         CHKERR( ISEmbed(self.iset, iset.iset, bval, &out.iset) )
         return out
 
-    def renumber(self, IS mult=None):
+    def renumber(self, IS mult: Optional[IS]=None) -> Tuple[int, IS]:
+        """Renumber the non-negative entries of an index set, starting from 0.
+
+        Parameters
+        ----------
+        mult
+            The multiplicity of each entry in `self`. If ``None`` then will
+            default to 1.
+
+        Returns
+        -------
+        int
+            One past the largest entry of the new `IS`.
+        IS
+            The new index set.
+
+        See Also
+        --------
+        petsc:ISRenumber
+        """
         cdef PetscIS mlt = NULL
         if mult is not None: mlt = mult.iset
         cdef IS out = IS()
