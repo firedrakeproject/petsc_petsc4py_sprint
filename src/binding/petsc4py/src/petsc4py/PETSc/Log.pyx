@@ -6,6 +6,8 @@ cdef class Log:
 
     @classmethod
     def Stage(cls, name):
+        """
+        """
         if not name: raise ValueError("empty name")
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
@@ -62,6 +64,17 @@ cdef class Log:
 
     @classmethod
     def logFlops(cls, flops):
+        """Add floating point operations to global counter.
+
+        Parameters
+        ----------
+        flops : double
+            Flop counter.
+
+        See Also
+        --------
+        TODO
+        """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
 
