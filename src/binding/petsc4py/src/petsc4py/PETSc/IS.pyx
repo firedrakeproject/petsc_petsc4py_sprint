@@ -720,7 +720,13 @@ cdef class IS(Object):
         return (toInt(n), out)
     #
 
-    def setIndices(self, indices):
+    def setIndices(self, indices: Sequence[int]) -> None:
+        """Set the indices of an `ISType.GENERAL` index set.
+
+        See Also
+        --------
+        petsc:ISGeneralSetIndices
+        """
         cdef PetscInt nidx = 0, *idx = NULL
         cdef PetscCopyMode cm = PETSC_COPY_VALUES
         indices = iarray_i(indices, &nidx, &idx)
