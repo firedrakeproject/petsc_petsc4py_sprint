@@ -1,6 +1,7 @@
 # --------------------------------------------------------------------
 
 class ISType(object):
+    """TODO"""
     GENERAL = S_(ISGENERAL)
     BLOCK   = S_(ISBLOCK)
     STRIDE  = S_(ISSTRIDE)
@@ -108,7 +109,7 @@ cdef class IS(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISCreate/
+        manualpages/IS/ISCreate
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscIS newiset = NULL
@@ -117,7 +118,7 @@ cdef class IS(Object):
         return self
 
     def setType(self, is_type):
-        """Build an IS for a particular `ISType`.
+        """Build an IS for a particular :class:`ISType`.
 
         Parameters
         ----------
@@ -133,11 +134,40 @@ cdef class IS(Object):
         CHKERR( ISSetType(self.iset, cval) )
 
     def getType(self):
+        """Return the index set type name associated with the IS.
+
+        Returns
+        -------
+        str
+            Index set type name.
+
+        See Also
+        --------
+        petsc:ISGetType
+        """
         cdef PetscISType cval = NULL
         CHKERR( ISGetType(self.iset, &cval) )
         return bytes2str(cval)
 
     def createGeneral(self, indices, comm=None):
+        """Create an IS with indices.
+
+        Parameters
+        ----------
+        indices
+            Integer array.
+        comm : optional
+            MPI communicator. 
+
+        Returns
+        -------
+        IS
+            A new IS.
+
+        See Also
+        --------
+        petsc:ISCreateGeneral
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt nidx = 0, *idx = NULL
         cdef PetscCopyMode cm = PETSC_COPY_VALUES
@@ -148,6 +178,26 @@ cdef class IS(Object):
         return self
 
     def createBlock(self, bsize, indices, comm=None):
+        """Create an IS where each integer represents a fixed block of indices.
+
+        Parameters
+        ----------
+        bsize : int
+            The block size.
+        indices
+            Integer array of indices.
+        comm : optional
+            MPI communicator.
+
+        Returns
+        -------
+        IS
+            The new, blocked, IS.
+
+        See Also
+        --------
+        petsc:ISCreateBlock
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt bs = asInt(bsize)
         cdef PetscInt nidx = 0, *idx = NULL
@@ -159,6 +209,28 @@ cdef class IS(Object):
         return self
 
     def createStride(self, size, first=0, step=0, comm=None):
+        """Create an IS consisting of evenly spaced integers.
+
+        Parameters
+        ----------
+        size : int
+            The length of the locally owned portion of the index set.
+        first : int, default 0
+            The first element of the index set.
+        step : int, default 0
+            The difference between adjacent indices.
+        comm : optional
+            The MPI communicator.
+
+        Returns
+        -------
+        IS
+            The new IS.
+
+        See Also
+        --------
+        petsc:ISCreateStride
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt csize  = asInt(size)
         cdef PetscInt cfirst = asInt(first)
