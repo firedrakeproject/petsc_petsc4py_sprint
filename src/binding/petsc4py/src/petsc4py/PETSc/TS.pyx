@@ -101,7 +101,8 @@ class TSConvergedReason(object):
 # -----------------------------------------------------------------------------
 
 cdef class TS(Object):
-
+    """Abstract PETSc object that manages all time-steppers (ODE integrators).
+    """
     Type = TSType
     RKType = TSRKType
     ARKIMEXType = TSARKIMEXType
@@ -143,7 +144,7 @@ cdef class TS(Object):
         CHKERR( TSView(self.ts, cviewer) )
 
     def load(self, Viewer viewer):
-        """Load a `TS` that has been stored in binary with `TSView`.
+        """Load a `TS` that has been stored in binary with `view`.
 
         Parameters
         ----------
@@ -154,6 +155,7 @@ cdef class TS(Object):
         CHKERR( TSLoad(self.ts, viewer.vwr) )
 
     def destroy(self):
+        """Destroys the `TS` that was created with `create`."""
         CHKERR( TSDestroy(&self.ts) )
         return self
 
