@@ -441,42 +441,130 @@ cdef class IS(Object):
         return toInt(bs)
 
     def setBlockSize(self, bs):
+        """Set the block size of the index set.
+
+        Parameters
+        ----------
+        bs : int
+            Block size.
+
+        See Also
+        --------
+        petsc:ISSetBlockSize
+        """
         cdef PetscInt cbs = asInt(bs)
         CHKERR( ISSetBlockSize(self.iset, cbs) )
 
     def sort(self):
+        """Sort the indices of an index set.
+
+        Returns
+        -------
+        IS
+            self
+
+        See Also
+        --------
+        petsc:ISSort
+        """
         CHKERR( ISSort(self.iset) )
         return self
 
     def isSorted(self):
+        """Check that the indices have been sorted.
+
+        Returns
+        -------
+        bool
+            ``True`` if the index set is sorted, ``False`` otherwise.
+
+        See Also
+        --------
+        petsc:ISSorted
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISSorted(self.iset, &flag) )
         return toBool(flag)
 
-    def setPermutation(self):
+    def setPermutation(self) -> Self:
+        """Mark the index set as being a permutation.
+
+        See Also
+        --------
+        petsc:ISSetPermutation
+        """
         CHKERR( ISSetPermutation(self.iset) )
         return self
 
-    def isPermutation(self):
+    def isPermutation(self) -> bool:
+        """Return ``True`` if the index set has been declared a permutation.
+
+        See Also
+        --------
+        petsc:ISPermutation
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISPermutation(self.iset, &flag) )
         return toBool(flag)
 
-    def setIdentity(self):
+    def setIdentity(self) -> Self:
+        """Mark the index set as being an identity.
+
+        See Also
+        --------
+        petsc:ISSetIdentity
+        """
         CHKERR( ISSetIdentity(self.iset) )
         return self
 
-    def isIdentity(self):
+    def isIdentity(self) -> bool:
+        """Return ``True`` if the index set has been declared as an identity.
+
+        See Also
+        --------
+        petsc:ISIdentity
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISIdentity(self.iset, &flag) )
         return toBool(flag)
 
-    def equal(self, IS iset):
+    def equal(self, IS iset: IS) -> bool:
+        """Return ``True`` if the index sets have the same set of indices.
+
+        Parameters
+        ----------
+        iset
+            The `IS` to compare indices with.
+
+        See Also
+        --------
+        petsc:ISEqual
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISEqual(self.iset, iset.iset, &flag) )
         return toBool(flag)
 
-    def sum(self, IS iset):
+    def sum(self, IS iset: IS):
+        """Compute the union of two index sets.
+
+        Parameters
+        ----------
+        iset : IS
+            The `IS` to compute the union with.
+
+        Returns
+        -------
+        IS
+            The new combined index set.
+
+        Notes
+        -----
+        Both index sets need to be sorted on input.
+
+        See Also
+        --------
+        petsc:ISSum
+        """
         cdef IS out = IS()
         CHKERR( ISSum(self.iset, iset.iset, &out.iset) )
         return out
