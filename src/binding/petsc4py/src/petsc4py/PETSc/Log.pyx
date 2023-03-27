@@ -301,7 +301,7 @@ cdef class LogEvent:
     def __exit__(self, *exc):
         self.end()
 
-    #
+    
 
     def begin(self, *objs):
         cdef PetscObject o[4]
@@ -314,7 +314,6 @@ cdef class LogEvent:
         CHKERR( PetscLogEventEnd(self.id, o[0], o[1], o[2], o[3]) )
 
     #
-
     def getName(self):
         cdef const char *cval = NULL
         CHKERR( PetscLogEventFindName(self.id, &cval) )
