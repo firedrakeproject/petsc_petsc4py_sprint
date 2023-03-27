@@ -120,7 +120,7 @@ cdef class TS(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer: Viewer = None):
+    def view(self, Viewer viewer: Viewer = None) -> None:
         """Print the `TS` data structure.
 
         Collective.
@@ -137,13 +137,12 @@ cdef class TS(Object):
         See Also
         --------
         TSView
-        
         """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( TSView(self.ts, cviewer) )
 
-    def load(self, Viewer viewer):
+    def load(self, Viewer viewer: Viewer) -> None:
         """Load a `TS` that has been stored in binary with `view`.
 
         Parameters
@@ -151,22 +150,61 @@ cdef class TS(Object):
         viewer
             the visualization context
 
+        See Also
+        --------
+        TSLoad
         """
         CHKERR( TSLoad(self.ts, viewer.vwr) )
 
-    def destroy(self):
-        """Destroys the `TS` that was created with `create`."""
+    def destroy(self) -> Self:
+        """Destroy the `TS` that was created with `create`.
+
+        See Also
+        --------
+        TSDestroy
+        """
         CHKERR( TSDestroy(&self.ts) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm=None) -> TS:
+        """Create an empty timestepper. 
+        
+        The problem type can then be set with `setProblemType` and the type of solver can then be set with `setType`.
+
+        Parameters
+        ----------
+        comm
+            the communicator, defaults to `Sys.getDefaultComm`
+
+        Returns
+        -------
+        ts
+            the `TS`
+
+        See Also
+        --------
+        TSCreate
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscTS newts = NULL
         CHKERR( TSCreate(ccomm, &newts) )
         PetscCLEAR(self.obj); self.ts = newts
         return self
 
-    def clone(self):
+    def clone(self) -> TS:
+        """Clone a `TS` object.
+
+        Collective.
+
+        Returns
+        -------
+        ts
+            the cloned `TS` object
+
+        See Also
+        --------
+        TSClone
+        """
         cdef TS ts = TS()
         CHKERR( TSClone(self.ts, &ts.ts) )
         return ts
