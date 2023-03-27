@@ -184,7 +184,7 @@ cdef class IS(Object):
         ----------
         bsize : int
             The block size.
-        indices
+        indices : array_like
             Integer array of indices.
         comm : optional
             MPI communicator.
@@ -224,6 +224,7 @@ cdef class IS(Object):
 
         Returns
         -------
+        TODO or self?
         IS
             The new IS.
 
@@ -241,11 +242,38 @@ cdef class IS(Object):
         return self
 
     def duplicate(self):
+        """Create a copy of the index set.
+
+        Returns
+        -------
+        IS
+            The new IS.
+
+        See Also
+        --------
+        petsc:ISDuplicate
+        """
         cdef IS iset = type(self)()
         CHKERR( ISDuplicate(self.iset, &iset.iset) )
         return iset
 
     def copy(self, IS result=None):
+        """Copy the contents of the IS into another.
+
+        Parameters
+        ----------
+        result : IS, optional
+            The target IS. If ``None`` then `IS.duplicate` is called first.
+
+        Returns
+        -------
+        IS
+            The copied IS.
+
+        See Also
+        --------
+        petsc:ISCopy
+        """
         if result is None:
             result = type(self)()
         if result.iset == NULL:
@@ -254,6 +282,23 @@ cdef class IS(Object):
         return result
 
     def load(self, Viewer viewer):
+        """Load a stored index set.
+
+        Parameters
+        ----------
+        viewer : Viewer
+            Binary (``BINARY`` or ``HDF5``) file viewer.
+
+        Returns
+        -------
+        # TODO or self?
+        IS
+            The loaded index set.
+
+        See Also
+        --------
+        petsc:ISLoad
+        """
         cdef MPI_Comm comm = MPI_COMM_NULL
         cdef PetscObject obj = <PetscObject>(viewer.vwr)
         if self.iset == NULL:
@@ -263,15 +308,40 @@ cdef class IS(Object):
         return self
 
     def allGather(self):
+        """Concatenate index sets stored across processors.
+
+        Returns
+        -------
+        IS
+            The concatenated index set (same on different processes).
+
+        See Also
+        --------
+        petsc:ISAllGather
+        """
         cdef IS iset = IS()
         CHKERR( ISAllGather(self.iset, &iset.iset) )
         return iset
 
     def toGeneral(self):
+        """Convert the index set type to `ISType.GENERAL`.
+
+        Returns
+        -------
+        IS
+            self
+
+        See Also
+        --------
+        petsc:ISToGeneral
+        """
         CHKERR( ISToGeneral(self.iset) )
         return self
 
     def buildTwoSided(self, IS toindx=None):
+        """
+        TODO
+        """
         cdef PetscIS ctoindx = NULL
         if toindx is not None: ctoindx = toindx.iset
         cdef IS result = IS()
@@ -279,6 +349,23 @@ cdef class IS(Object):
         return result
 
     def invertPermutation(self, nlocal=None):
+        """Creates a new permutation that is the inverse of a given permutation.
+
+        Parameters
+        ----------
+        nlocal : int, optional
+            The number of indices on this processor in the result
+            (default ``PETSC_DECIDE``).
+
+        Returns
+        -------
+        IS
+            The inverted permutation.
+
+        See Also
+        --------
+        petsc:ISInvertPermutation
+        """
         cdef PetscInt cnlocal = PETSC_DECIDE
         if nlocal is not None: cnlocal = asInt(nlocal)
         cdef IS iset = IS()
@@ -286,22 +373,69 @@ cdef class IS(Object):
         return iset
 
     def getSize(self):
+        """Return the global length of an index set.
+
+        Returns
+        -------
+        int
+            The global size.
+
+        See Also
+        --------
+        petsc:ISGetSize
+        """
         cdef PetscInt N = 0
         CHKERR( ISGetSize(self.iset, &N) )
         return toInt(N)
 
     def getLocalSize(self):
+        """Return the process-local length of an index set.
+
+        Returns
+        -------
+        int
+            The local size.
+
+        See Also
+        --------
+        petsc:ISGetLocalSize
+        """
         cdef PetscInt n = 0
         CHKERR( ISGetLocalSize(self.iset, &n) )
         return toInt(n)
 
     def getSizes(self):
+        """Return the local and global sizes of an index set.
+
+        Returns
+        -------
+        local_size : int
+            The local size.
+        global_size : int
+            The global size.
+
+        See Also
+        --------
+        IS.getLocalSize
+        IS.getGlobalSize
+        """
         cdef PetscInt n = 0, N = 0
         CHKERR( ISGetLocalSize(self.iset, &n) )
         CHKERR( ISGetSize(self.iset, &N) )
         return (toInt(n), toInt(N))
 
     def getBlockSize(self):
+        """Return the number of elements in a block.
+
+        Returns
+        -------
+        int
+            The number of elements in a block.
+
+        See Also
+        --------
+        petsc:ISGetBlockSize
+        """
         cdef PetscInt bs = 1
         CHKERR( ISGetBlockSize(self.iset, &bs) )
         return toInt(bs)
