@@ -223,7 +223,10 @@ cdef class LogStage:
     #
 
     def getName(self):
-        """Do not have c documentation
+        """
+        Return
+        ------
+
         """
         cdef const char *cval = NULL
         CHKERR( PetscLogStageFindName(self.id, &cval) )
@@ -257,12 +260,13 @@ cdef class LogStage:
         CHKERR( PetscLogStageSetActive(self.id, PETSC_FALSE) )
 
     def getActive(self):
-        """ Check if a stage is used for PetscLogEventBegin() 
+        """Check if a stage is used for PetscLogEventBegin() 
             and PetscLogEventEnd()
         
         Return
         ------
-        toBool(flag) : Boolean
+        bool
+            The activity flag False for logging.
 
         See Also
         --------
@@ -278,7 +282,8 @@ cdef class LogStage:
 
         Parameter
         ----------
-        flag : 
+        flag : bool
+            Activate for looging if True, else looging is not activated.
 
 
         See Also
@@ -472,16 +477,41 @@ cdef class LogEvent:
     #
 
     def activate(self):
+        """Indicate that a particular event should be logged.
+
+        See also
+        --------
+        petsc:PetscLogEventActivate
+        """
         CHKERR( PetscLogEventActivate(self.id) )
 
     def deactivate(self):
+        """Indicate that a particular event should not be logged.
+        
+        See also
+        --------
+        petsc:PetscLogEventDeactivate
+        """
         CHKERR( PetscLogEventDeactivate(self.id) )
 
     def getActive(self):
         <void>self # unused
         raise NotImplementedError
 
-    def setActive(self, flag):
+    def setActive(self, flag: bool):
+        """Indicate if a particular event should be not be logged.
+
+        Parameter
+        ---------
+        flag
+            Instruction if will either activate ou deactivate
+            the event.
+
+        See also
+        --------
+        petsc:PetscLogEventDeactivate (to deactivate)
+        petsc:PetscLogEventActivate (to activate)
+        """
         if flag:
             CHKERR( PetscLogEventActivate(self.id) )
         else:
@@ -498,6 +528,14 @@ cdef class LogEvent:
         raise NotImplementedError
 
     def setActiveAll(self, flag):
+        """Turn on logging of all events.
+
+        Parameter
+        ---------
+        flag : Boolean
+
+        petsc:PetscLogEventSetActiveAll
+        """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
         CHKERR( PetscLogEventSetActiveAll(self.id, tval) )
