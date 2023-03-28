@@ -1,6 +1,13 @@
 # --------------------------------------------------------------------
 
 class KSPType(object):
+    """
+
+    See Also
+    --------
+    `:petsc:KSP`
+    resolves to https://petsc.org/release/docs/manualpages/KSP/KSPType/ ?
+    """
     RICHARDSON = S_(KSPRICHARDSON)
     CHEBYSHEV  = S_(KSPCHEBYSHEV)
     CG         = S_(KSPCG)
@@ -128,6 +135,34 @@ cdef class KSP(Object):
         return self
 
     def setType(self, ksp_type):
+        """Build the KSP datastructure for a particular KSPType
+
+        Parameters
+        ----------
+        ksp_type :
+            KSP Type object
+
+        Notes:
+        ------
+        See petsc/include/petscksp.h for available methods (for instance, `KSP.CG` or `KSP.GMRES`).
+
+        Normally, it is best to use the `KSP.SetFromOptions` command
+        and then set the KSP type from the options database rather than
+        by using this routine. Using the options database provides the
+        user with maximum flexibility in evaluating the many different
+        Krylov methods. The `KSP.SetType` routine is provided for those
+        situations where it is necessary to set the iterative solver
+        independently of the command line or options database. This
+        might be the case, for example, when the choice of iterative
+        solver changes during the execution of the program, and the
+        user’s application is taking responsibility for choosing the
+        appropriate method. In other words, this routine is not for
+        beginners.
+
+        See also:
+        ---------
+
+        """
         cdef PetscKSPType cval = NULL
         ksp_type = str2bytes(ksp_type, &cval)
         CHKERR( KSPSetType(self.ksp, cval) )
