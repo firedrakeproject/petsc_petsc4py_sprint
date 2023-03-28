@@ -81,6 +81,8 @@ cdef class DM(Object):
         return dm
 
     def setType(self, dm_type):
+        """
+        """
         cdef PetscDMType cval = NULL
         dm_type = str2bytes(dm_type, &cval)
         CHKERR( DMSetType(self.dm, cval) )
