@@ -101,7 +101,11 @@ class TSConvergedReason(object):
 # -----------------------------------------------------------------------------
 
 cdef class TS(Object):
-    """Abstract PETSc object that manages all time-steppers (ODE integrators).
+    """An abstract PETSc object that manages all time-steppers (ODE integrators).
+
+    See Also
+    --------
+    `TS`
     """
     Type = TSType
     RKType = TSRKType
@@ -120,15 +124,15 @@ cdef class TS(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer: Viewer = None) -> None:
+    def view(self, Viewer viewer: Viewer=None) -> None:
         """Print the `TS` object.
 
         Collective.
 
         Parameters
         ----------
-        viewer : Viewer
-            the visualization context
+        viewer
+            The visualization context.
 
         Notes
         -----
@@ -147,8 +151,8 @@ cdef class TS(Object):
 
         Parameters
         ----------
-        viewer : Viewer
-            the visualization context
+        viewer
+            The visualization context.
 
         See Also
         --------
@@ -166,20 +170,16 @@ cdef class TS(Object):
         CHKERR( TSDestroy(&self.ts) )
         return self
 
-    def create(self, comm: Comm=None) -> TS:
+    def create(self, comm: Comm | None = None) -> Self:
         """Create an empty `TS`. 
         
-        The problem type can then be set with `setProblemType` and the type of solver can then be set with `setType`.
+        The problem type can then be set with `setProblemType` and the type of
+        solver can then be set with `setType`.
 
         Parameters
         ----------
-        comm : Comm
-            the communicator, defaults to `Sys.getDefaultComm`
-
-        Returns
-        -------
-        ts : TS
-            the `TS`
+        comm
+            The communicator or None for `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -198,8 +198,8 @@ cdef class TS(Object):
 
         Returns
         -------
-        ts : TS
-            the cloned `TS` object
+        ts
+            The cloned `TS` object.
 
         See Also
         --------
@@ -209,13 +209,13 @@ cdef class TS(Object):
         CHKERR( TSClone(self.ts, &ts.ts) )
         return ts
 
-    def setType(self, ts_type: TS.Type) -> None:
+    def setType(self, ts_type: TS.Type | str) -> None:
         """Set the method to be used as the `TS` solver.
 
         Parameters
         ----------
         ts_type : TS.Type
-            the solver type
+            The solver type.
 
         Notes
         -----
@@ -229,17 +229,17 @@ cdef class TS(Object):
         ts_type = str2bytes(ts_type, &cval)
         CHKERR( TSSetType(self.ts, cval) )
 
-    def setRKType(self, ts_type: TS.RKType) -> None:
+    def setRKType(self, ts_type: TS.RKType | str) -> None:
         """Set the type of the `TSRK` scheme.
 
         Parameters
         ----------
-        ts_type : TS.RKType
-            the type of `TSRK` scheme
+        ts_type
+            the type of `TSRK` scheme.
 
         Notes
         -----
-            ``-ts_rk_type`` sets `TSRK` scheme type from the commandline
+            ``-ts_rk_type`` sets `TSRK` scheme type from the commandline.
 
         See Also
         --------
@@ -249,17 +249,17 @@ cdef class TS(Object):
         ts_type = str2bytes(ts_type, &cval)
         CHKERR( TSRKSetType(self.ts, cval) )
 
-    def setARKIMEXType(self, ts_type: TS.ARKIMEXType) -> None:
+    def setARKIMEXType(self, ts_type: TS.ARKIMEXType | str) -> None:
         """Set the type of `TSARKIMEX` scheme.
 
         Parameters
         ----------
-        ts_type : TS.ARKIMEXType
-            the type of `TSARKIMEX` scheme
+        ts_type
+            The type of `TSARKIMEX` scheme.
 
         Notes
         -----
-            ``-ts_arkimex_type`` sets TSARKIMEX scheme type from the commandline
+            ``-ts_arkimex_type`` sets TSARKIMEX scheme type from the commandline.
 
         See Also
         --------
@@ -275,7 +275,7 @@ cdef class TS(Object):
         Parameters
         ----------
         flag : bool
-            set to True for fully implicit
+            Set to True for fully implicit.
 
         See Also
         --------
@@ -285,13 +285,8 @@ cdef class TS(Object):
         CHKERR( TSARKIMEXSetFullyImplicit(self.ts, bval) )
 
     def getType(self) -> str:
-        """Get the `TS` type.
+        """Return the `TS` type.
         
-        Returns
-        -------
-        ts_type : str
-            the `TS` type
-
         See Also
         --------
         TSGetType
@@ -301,13 +296,8 @@ cdef class TS(Object):
         return bytes2str(cval)
 
     def getRKType(self) -> str:
-        """Get the `TSRK` scheme.
+        """Return the `TSRK` scheme.
         
-        Returns
-        -------
-        rk_type : str
-            the `TSRK` scheme
-
         See Also
         --------
         TSRKGetType
@@ -317,13 +307,8 @@ cdef class TS(Object):
         return bytes2str(cval)
 
     def getARKIMEXType(self) -> str:
-        """Get the `TSARKIMEX` scheme.
+        """Return the `TSARKIMEX` scheme.
         
-        Returns
-        -------
-        ark_type : str
-            the `TSARKIMEX` scheme
-
         See Also
         --------
         TSARKIMEXGetType
@@ -332,13 +317,13 @@ cdef class TS(Object):
         CHKERR( TSARKIMEXGetType(self.ts, &cval) )
         return bytes2str(cval)
 
-    def setProblemType(self, ptype : TS.ProblemType) -> None:
+    def setProblemType(self, ptype: TS.ProblemType) -> None:
         """Set the type of problem to be solved.
         
         Parameters
         ----------
-        ptype : TS.ProblemType
-            the type of problem of the forms
+        ptype
+            The type of problem of the forms.
 
         See Also
         --------
@@ -347,12 +332,7 @@ cdef class TS(Object):
         CHKERR( TSSetProblemType(self.ts, ptype) )
 
     def getProblemType(self) -> TS.ProblemType:
-        """Get the type of problem to be solved.
-
-        Returns
-        -------
-        ptype : TS.ProblemType
-            the type of problem of the forms
+        """Return the type of problem to be solved.
 
         See Also
         --------
@@ -365,12 +345,12 @@ cdef class TS(Object):
     def setEquationType(self, eqtype: TS.EquationType) -> None:
         """Set the type of the equation that `TS` is solving.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
-        eqtype : TS.EquationType
-            the type of equation
+        eqtype
+            The type of equation.
         
         See Also
         --------
@@ -380,11 +360,6 @@ cdef class TS(Object):
 
     def getEquationType(self) -> TS.EquationType:
         """Get the type of the equation that `TS` is solving.
-
-        Returns
-        -------
-        eqtype : TS.EquationType
-            the type of equation
 
         See Also
         --------
@@ -399,8 +374,8 @@ cdef class TS(Object):
 
         Parameters
         ----------
-        prefix : str
-            the prefix to prepend to all option names
+        prefix
+            The prefix to prepend to all option names.
 
         Notes
         -----
@@ -415,12 +390,7 @@ cdef class TS(Object):
         CHKERR( TSSetOptionsPrefix(self.ts, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Get the prefix used for all the `TS` options.
-
-        Returns
-        -------
-        prefix : str
-            the prefix being used
+        """Return the prefix used for all the `TS` options.
 
         See Also
         --------
@@ -435,8 +405,8 @@ cdef class TS(Object):
 
         Parameters
         ----------
-        prefix : str
-            the prefix to append to the current prefix
+        prefix
+            The prefix to append to the current prefix.
 
         Notes
         -----
@@ -453,64 +423,49 @@ cdef class TS(Object):
     def setFromOptions(self) -> None:
         """Set various `TS` parameters from user options.
 
-        Notes
-        -----
-        * ``-ts_type`` - set the TS type
-        * ``-ts_save_trajectory`` - checkpoint the solution at each time-step
-        * ``-ts_max_time`` - maximum time to compute to
-        * ``-ts_time_span <t0,…tf>`` - sets the time span, solutions are computed and stored for each indicated time
-        * ``-ts_max_steps`` - maximum number of time-steps to take
-        * ``-ts_init_time`` - initial time to start computation
-        * ``-ts_dt`` - initial time step
-        * ``-ts_exact_final_time <stepover,interpolate,matchstep>`` - whether to stop at the exact given final time and how to compute the solution at that time
-        * ``-ts_max_snes_failures`` - Maximum number of nonlinear solve failures allowed
-        * ``-ts_max_reject`` - Maximum number of step rejections before step fails
-        * ``-ts_error_if_step_fails`` <true,false> - Error if no step succeeds
-        * ``-ts_rtol`` - relative tolerance for local truncation error
-        * ``-ts_atol`` - Absolute tolerance for local truncation error
-        * ``-ts_rhs_jacobian_test_mult`` - mat_shell_test_mult_view - test the Jacobian at each iteration against finite difference with RHS function
-        * ``-ts_rhs_jacobian_test_mult_transpose`` - mat_shell_test_mult_transpose_view - test the Jacobian at each iteration against finite difference with RHS function
-        * ``-ts_adjoint_solve <yes,no>`` - After solving the ODE/DAE solve the adjoint problem (requires -ts_save_trajectory)
-        * ``-ts_fd_color`` - Use finite differences with coloring to compute IJacobian
-        * ``-ts_monitor`` - print information at each timestep
-        * ``-ts_monitor_cancel`` - Cancel all monitors
-        * ``-ts_monitor_lg_solution`` - Monitor solution graphically
-        * ``-ts_monitor_lg_error`` - Monitor error graphically
-        * ``-ts_monitor_error`` - Monitors norm of error
-        * ``-ts_monitor_lg_timestep`` - Monitor timestep size graphically
-        * ``-ts_monitor_lg_timestep_log`` - Monitor log timestep size graphically
-        * ``-ts_monitor_lg_snes_iterations`` - Monitor number nonlinear iterations for each timestep graphically
-        * ``-ts_monitor_lg_ksp_iterations`` - Monitor number nonlinear iterations for each timestep graphically
-        * ``-ts_monitor_sp_eig`` - Monitor eigenvalues of linearized operator graphically
-        * ``-ts_monitor_draw_solution`` - Monitor solution graphically
-        * ``-ts_monitor_draw_solution_phase <xleft,yleft,xright,yright>`` - Monitor solution graphically with phase diagram, requires problem with exactly 2 degrees of freedom
-        * ``-ts_monitor_draw_error`` - Monitor error graphically, requires use to have provided TSSetSolutionFunction()
-        * ``-ts_monitor_solution [ascii binary draw][:filename][:viewerformat]`` - monitors the solution at each timestep
-        * ``-ts_monitor_solution_vtk <filename.vts,filename.vtu>`` - Save each time step to a binary file, use filename-%%03” PetscInt_FMT “.vts (filename-%%03” PetscInt_FMT “.vtu)
-        * ``-ts_monitor_envelope`` - determine maximum and minimum value of each component of the solution over the solution time
-
         See Also
         --------
-        TSSetFromOptions
+        TSSetFromOptions, ``petsc_options``
         """
         CHKERR( TSSetFromOptions(self.ts) )
 
     # --- application context ---
 
-    def setAppCtx(self, appctx) -> None:
-        """
+    def setAppCtx(self, appctx: Any) -> None:
+        """Set the application context.
+
+        Parameters
+        ----------
+        appctx
+            The application context.
         """
         self.set_attr('__appctx__', appctx)
 
     def getAppCtx(self) -> Any:
-        """
-        """
+        """Return the application context."""
         return self.get_attr('__appctx__')
 
     # --- user RHS Function/Jacobian routines ---
 
-    def setRHSFunction(self, function, Vec f=None, args=None, kargs=None) -> None:
-        """
+    def setRHSFunction(
+        self, 
+        function: TSRHSFunction, 
+        Vec f=None,
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set the routine for evaluating the function ``G`` in ``U_t = G(t,u)``.
+
+        Parameters
+        ----------
+        function
+            The right-hand-side function.
+        f
+            The vector into which the right-hand-side is computed.
+        args
+            Additional posititional arguments for ``function``.
+        kargs
+            Additional keyword arguments for ``function``.
+
         See Also
         --------
         TSSetRHSFunction
@@ -526,8 +481,30 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetRHSFunction(self.ts, fvec, NULL, NULL) )
 
-    def setRHSJacobian(self, jacobian, Mat J=None, Mat P=None, args=None, kargs=None) -> None:
-        """
+    def setRHSJacobian(
+        self, 
+        jacobian: TSRHSJacobian,
+        Mat J=None,
+        Mat P=None,
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set the function to compute the Jacobian of ``G`` in ``U_t = G(U,t)``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        jacobian
+            The right-hand-side function.
+        J
+            The matrix into which the jacobian is computed.
+        P
+            The matrix into which the preconditioner is computed.
+        args
+            Additional posititional arguments for ``jacobian``.
+        kargs
+            Additional keyword arguments for ``jacobian``.
+
         See Also
         --------
         TSSetRHSJacobian
@@ -545,8 +522,18 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetRHSJacobian(self.ts, Jmat, Pmat, NULL, NULL) )
 
-    def computeRHSFunction(self, t, Vec x, Vec f) -> None:
-        """
+    def computeRHSFunction(self, t: float, Vec x, Vec f) -> None:
+        """Evaluate the right-hand-side function.
+
+        Parameters
+        ----------
+        t
+            The time at which to evaluate the RHS.
+        x
+            The state vector.
+        f
+            The Vec into which the RHS is computed.
+        
         See Also
         --------
         TSComputeRHSFunction
@@ -555,7 +542,17 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSFunction(self.ts, time, x.vec, f.vec) )
 
     def computeRHSFunctionLinear(self, t, Vec x, Vec f) -> None:
-        """
+        """Evaluate the right-hand-side via the user-provided Jacobian.
+
+        Parameters
+        ----------
+        t
+            The time at which to evaluate the RHS.
+        x
+            The state vector.
+        f
+            The Vec into which the RHS is computed.
+    
         See Also
         --------
         TSComputeRHSFunctionLinear
@@ -564,7 +561,21 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSFunctionLinear(self.ts, time, x.vec, f.vec, NULL) )
 
     def computeRHSJacobian(self, t, Vec x, Mat J, Mat P=None) -> None:
-        """
+        """Compute the Jacobian matrix that has been set with `setRHSJacobian`.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The time at which to evaluate the Jacobian.
+        x
+            The state vector.
+        J
+            The matrix into which the Jacobian is computed.
+        P
+            The optional matrix to use for building a preconditioner matrix.
+
         See Also
         --------
         TSComputeRHSJacobian
@@ -575,7 +586,21 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSJacobian(self.ts, time, x.vec, jmat, pmat) )
 
     def computeRHSJacobianConstant(self, t, Vec x, Mat J, Mat P=None) -> None:
-        """
+        """Reuse a Jacobian that is time-independent.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The time at which to evaluate the Jacobian.
+        x
+            The state vector.
+        J
+            A pointer to the stored Jacobian.
+        P
+            An optional pointer to the preconditioner matrix.
+
         See Also
         --------
         TSComputeRHSJacobianConstant
@@ -586,7 +611,11 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSJacobianConstant(self.ts, time, x.vec, jmat, pmat, NULL) )
 
     def getRHSFunction(self) -> tuple[Vec, TSRHSFunction]:
-        """
+        """Return the vector where the right hand side is stored and the
+        function used to compute it.
+
+        Not collective.
+
         See Also
         --------
         TSGetRHSFunction
@@ -598,7 +627,10 @@ cdef class TS(Object):
         return (f, function)
 
     def getRHSJacobian(self) -> tuple[Mat, Mat, TSRHSJacobian]:
-        """
+        """Return the Jacobian and the function used to compute them.
+
+        Not collective, but parallel objects are returned if `TS` is parallel.
+
         See Also
         --------
         TSGetRHSJacobian
@@ -611,8 +643,27 @@ cdef class TS(Object):
 
     # --- user Implicit Function/Jacobian routines ---
 
-    def setIFunction(self, function: TSIFunction, Vec f=None, args=None, kargs=None) -> None:
-        """
+    def setIFunction(
+        self, 
+        function: TSIFunction, 
+        Vec f=None, 
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set the function representing the DAE to be solved.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        function
+            The right-hand-side function.
+        f
+            The vector to store values or ``None`` to be created internally.
+        args
+            Additional posititional arguments for ``function``.
+        kargs
+            Additional keyword arguments for ``function``.
+
         See Also
         --------
         TSSetIFunction
@@ -628,8 +679,33 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetIFunction(self.ts, fvec, NULL, NULL) )
 
-    def setIJacobian(self, jacobian, Mat J=None, Mat P=None, args=None, kargs=None) -> None:
-        """
+    def setIJacobian(
+        self,
+        jacobian: TSIJacobian,
+        Mat J=None,
+        Mat P=None, 
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set the function to compute the Jacobian.
+        
+        Set the function to compute the matrix ``dF/dU + a*dF/dU_t`` where
+        ``F(t,U,U_t)`` is the function provided with `setIFunction`.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        jacobian
+            The function which computes the Jacobian.
+        J
+            The matrix into which the Jacobian is computed.
+        P
+            The optional matrix to use for building a preconditioner matrix.
+        args
+            Additional posititional arguments for ``jacobian``.
+        kargs
+            Additional keyword arguments for ``jacobian``.
+
         See Also
         --------
         TSSetIJacobian
@@ -647,8 +723,29 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetIJacobian(self.ts, Jmat, Pmat, NULL, NULL) )
 
-    def setIJacobianP(self, jacobian, Mat J=None, args=None, kargs=None) -> None:
-        """
+    def setIJacobianP(
+        self,
+        jacobian,
+        Mat J=None, 
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set the function that computes the Jacobian of ``F`` with respect to
+        the parameters ``P`` where ``F(Udot,U,t) = G(U,P,t)``, as well as the
+        location to store the matrix.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        jacobian
+            The function which computes the Jacobian.
+        J
+            The matrix into which the Jacobian is computed.
+        args
+            Additional posititional arguments for ``jacobian``.
+        kargs
+            Additional keyword arguments for ``jacobian``.
+        
         See Also
         --------
         TSSetIJacobianP
@@ -666,8 +763,24 @@ cdef class TS(Object):
 
     def computeIFunction(self,
                          t, Vec x, Vec xdot,
-                         Vec f, imex=False) -> None:
-        """
+                         Vec f, imex: bool=False) -> None:
+        """Evaluate the DAE residual written in implicit form.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The current time.
+        x
+            The state vector.
+        xdot
+            The time derivative of the state vector.
+        f
+            The vector into which the residual is stored.
+        imex
+            A flag which indicates if the RHS should be kept separate.
+
         See Also
         --------
         TSComputeIFunction
@@ -678,9 +791,30 @@ cdef class TS(Object):
                                    f.vec, bval) )
 
     def computeIJacobian(self,
-                         t, Vec x, Vec xdot, a,
+                         t, Vec x, Vec xdot, a: float,
                          Mat J, Mat P=None, imex=False) -> None:
-        """
+        """Evaluate the Jacobian of the DAE.
+
+        Collective. If ``F(t,U,Udot)=0`` is the DAE, the required Jacobian is
+        ``dF/dU + shift*dF/dUdot``
+
+        Parameters
+        ----------
+        t
+            The current time.
+        x
+            The state vector.
+        xdot
+            The time derivative of the state vector.
+        a
+            The shift to apply
+        J
+            The matrix into which the Jacobian is computed.
+        P
+            The optional matrix to use for building a preconditioner matrix.
+        imex
+            A flag which indicates if the RHS should be kept separate.
+
         See Also
         --------
         TSComputeIJacobian
@@ -696,7 +830,25 @@ cdef class TS(Object):
     def computeIJacobianP(self,
                          t, Vec x, Vec xdot, a,
                          Mat J, imex=False) -> None:
-        """
+        """Evaluate the Jacobian with respect to parameters.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The current time.
+        x
+            The state vector.
+        xdot
+            The time derivative of the state vector.
+        a
+            The shift to apply
+        J
+            The matrix into which the Jacobian is computed.
+        imex
+            A flag which indicates if the RHS should be kept separate.
+
         See Also
         --------
         TSComputeIJacobianP
@@ -709,7 +861,10 @@ cdef class TS(Object):
                                    jmat, bval) )
 
     def getIFunction(self) -> tuple[Vec, TSIFunction]:
-        """
+        """Return the vector and function which computes the implicit residual.
+
+        Not collective.
+
         See Also
         --------
         TSGetIFunction
@@ -721,7 +876,10 @@ cdef class TS(Object):
         return (f, function)
 
     def getIJacobian(self) -> tuple[Mat, Mat, TSIJacobian]:
-        """
+        """Return the matrices and function which computes the implicit Jacobian.
+
+        Not collective.
+
         See Also
         --------
         TSGetIJacobian
@@ -732,8 +890,28 @@ cdef class TS(Object):
         cdef object jacobian = self.get_attr('__ijacobian__')
         return (J, P, jacobian)
 
-    def setI2Function(self, function, Vec f=None, args=None, kargs=None) -> None:
-        """
+    def setI2Function(
+        self,
+        function: TSI2Function,
+        Vec f=None,
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set the function to compute the 2nd order DAE.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        function
+            The right-hand-side function.
+        f
+            The vector to store values or ``None`` to be created internally.
+        args
+            Additional posititional arguments for ``function``.
+        kargs
+            Additional keyword arguments for ``function``.
+
+
         See Also
         --------
         TSSetI2Function
@@ -749,8 +927,30 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetI2Function(self.ts, fvec, NULL, NULL) )
 
-    def setI2Jacobian(self, jacobian, Mat J=None, Mat P=None, args=None, kargs=None) -> None:
-        """
+    def setI2Jacobian(
+        self,
+        jacobian: TSI2Jacobian,
+        Mat J=None, 
+        Mat P=None, 
+        args=None,
+        kargs=None) -> None:
+        """Set the function to compute the Jacobian of the 2nd order DAE.
+        
+        Logically collective.
+
+        Parameters
+        ----------
+        jacobian
+            The function which computes the Jacobian.
+        J
+            The matrix into which the Jacobian is computed.
+        P
+            The optional matrix to use for building a preconditioner matrix.
+        args
+            Additional posititional arguments for ``jacobian``.
+        kargs
+            Additional keyword arguments for ``jacobian``.
+
         See Also
         --------
         TSSetI2Jacobian
@@ -768,8 +968,24 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetI2Jacobian(self.ts, Jmat, Pmat, NULL, NULL) )
 
-    def computeI2Function(self, t, Vec x, Vec xdot, Vec xdotdot, Vec f) -> None:
-        """
+    def computeI2Function(self, t: float, Vec x, Vec xdot, Vec xdotdot, Vec f) -> None:
+        """Evaluate the DAE residual in implicit form.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The current time.
+        x
+            The state vector.
+        xdot
+            The time derivative of the state vector.
+        xdotxdot
+            The second time derivative of the state vector.
+        f
+            The vector into which the residual is stored.
+
         See Also
         --------
         TSComputeI2Function
@@ -778,8 +994,41 @@ cdef class TS(Object):
         CHKERR( TSComputeI2Function(self.ts, rval, x.vec, xdot.vec, xdotdot.vec,
                                    f.vec) )
 
-    def computeI2Jacobian(self, t, Vec x, Vec xdot, Vec xdotdot, v, a, Mat J, Mat P=None) -> None:
-        """
+    def computeI2Jacobian(
+        self,
+        t: float,
+        Vec x, 
+        Vec xdot, 
+        Vec xdotdot, 
+        v: float, 
+        a: float, 
+        Mat J, 
+        Mat P=None) -> None:
+        """Evaluate the Jacobian of the DAE.
+
+        If ``F(t,U,V,A)=0`` is the DAE, the required Jacobian is ``dF/dU + v dF/dV + a dF/dA``.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The current time.
+        x
+            The state vector.
+        xdot
+            The time derivative of the state vector.
+        xdotxdot
+            The second time derivative of the state vector.
+        v
+            The shift to apply to the first derivative.
+        a
+            The shift to apply to the second derivative.
+        J
+            The matrix into which the Jacobian is computed.
+        P
+            The optional matrix to use for building a preconditioner matrix.
+
         See Also
         --------
         TSComputeI2Jacobian
@@ -793,7 +1042,10 @@ cdef class TS(Object):
                                    jmat, pmat) )
 
     def getI2Function(self) -> tuple[Vec, TSI2Function]:
-        """
+        """Return the vector and function which computes the residual.
+
+        Not collective.
+
         See Also
         --------
         TSGetI2Function
@@ -805,7 +1057,10 @@ cdef class TS(Object):
         return (f, function)
 
     def getI2Jacobian(self) -> tuple[Mat, Mat, TSI2Jacobian]:
-        """
+        """Return the matrices and function which computes the Jacobian.
+
+        Not collective.
+
         See Also
         --------
         TSGetI2Jacobian
@@ -819,7 +1074,15 @@ cdef class TS(Object):
     # --- solution vector ---
 
     def setSolution(self, Vec u) -> None:
-        """
+        """Set the initial solution vector.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        u
+            The solution vector.
+
         See Also
         --------
         TSSetSolution
@@ -827,7 +1090,13 @@ cdef class TS(Object):
         CHKERR( TSSetSolution(self.ts, u.vec) )
 
     def getSolution(self) -> Vec:
-        """
+        """Return the solution at the present timestep.
+        
+        Not collective, but the vector is parallel if the `TS` is parallel. It
+        is valid to call this routine inside the function that you are
+        evaluating in order to move to the new timestep. This vector is not
+        changed until the solution at the next timestep has been calculated.
+
         See Also
         --------
         TSGetSolution
@@ -838,7 +1107,17 @@ cdef class TS(Object):
         return u
 
     def setSolution2(self, Vec u, Vec v) -> None:
-        """
+        """Set the initial solution and its time derivative.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        u
+            the solution vector
+        v
+            the time derivative vector
+
         See Also
         --------
         TS2SetSolution
@@ -846,7 +1125,13 @@ cdef class TS(Object):
         CHKERR( TS2SetSolution(self.ts, u.vec, v.vec) )
 
     def getSolution2(self) -> tuple[Vec, Vec]:
-        """
+        """Return the solution and time derivative at the present timestep.
+        
+        Not collective, but vectors are parallel if `TS` is parallel. It is
+        valid to call this routine inside the function that you are evaluating
+        in order to move to the new timestep. These vectors are not changed
+        until the solution at the next timestep has been calculated.
+
         See Also
         --------
         TS2GetSolution
@@ -860,8 +1145,26 @@ cdef class TS(Object):
 
     # --- time span ---
 
-    def setTimeSpan(self, tspan) -> None:
-        """
+    def setTimeSpan(self, tspan: Sequence[float]) -> None:
+        """Set the time span. 
+        
+        Collective. The solution will be computed and stored for each time
+        requested in the span. The times must be all increasing and correspond
+        to the intermediate points for time integration.
+        `TS_EXACTFINALTIME_MATCHSTEP` must be used to make the last time step in
+        each sub-interval match the intermediate points specified. The
+        intermediate solutions are saved in a vector array that can be accessed
+        with `getTimeSpanSolutions`. 
+
+        Parameters
+        ----------
+        tspan
+            the sequence of time points
+        
+        Notes
+        -----
+        ``-ts_time_span <t0,...tf>`` sets the time span from the commandline
+        
         See Also
         --------
         TSSetTimeSpan
