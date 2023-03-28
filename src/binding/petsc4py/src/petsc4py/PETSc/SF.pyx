@@ -135,8 +135,8 @@ cdef class SF(Object):
         CHKERR( PetscSFSetUp(self.sf) )
 
     def reset(self):
-        """Reset a star forest so that different sizes or neighbors can be used
-        Collective
+        """Reset a star forest so that different sizes or neighbors can be used.
+        Collective.
 
         See also
         --------
@@ -155,11 +155,13 @@ cdef class SF(Object):
         Returns
         -------
         int
-            Number of root vertices on the current process (these are possible targets for other process to attach leaves)
+            Number of root vertices on the current process (these are possible 
+            targets for other process to attach leaves)
         ndarray
             Locations of leaves in leafdata buffers
         ndarray
-            Remote locations of root vertices for each leaf on the current process
+            Remote locations of root vertices for each leaf on the current 
+            process
 
         See also
         --------
@@ -178,22 +180,25 @@ cdef class SF(Object):
         remote = remote.reshape(nleaves, 2)
         return toInt(nroots), local, remote
 
-    def setGraph(self, nroots : int, local : ndarray, remote : ndarray):
+    def setGraph(self, nroots : int, local : Sequence[int], remote : Sequence[int]):
         """Set graph.
 
-        The *nleaves* argument is determined from the size of local and/or remote.
+        The *nleaves* argument is determined from the size of local and/or 
+        remote.
         
-
-        Collective
+        Collective.
 
         Parameters
         -------
         nroots
-            Number of root vertices on the current process (these are possible targets for other process to attach leaves)
+            Number of root vertices on the current process (these are possible 
+            targets for other process to attach leaves).
         local
-            Locations of leaves in leafdata buffers, pass `None` for contiguous storage
+            Locations of leaves in leafdata buffers, pass `None` for contiguous 
+            storage.
         remote
-            Remote locations of root vertices for each leaf on the current process. Should be ``2*nleaves`` long as (rank, index) pairs.
+            Remote locations of root vertices for each leaf on the current 
+            process. Should be ``2*nleaves`` long as (rank, index) pairs.
 
         See also
         --------
@@ -216,23 +221,59 @@ cdef class SF(Object):
         CHKERR( PetscSFSetGraph(self.sf, cnroots, nleaves, ilocal, PETSC_COPY_VALUES, iremote, PETSC_COPY_VALUES) )
 
     def setRankOrder(self, flag):
+        """Sort multi-points for gathers and scatters by rank order.
+        Logically collective.
+
+        Parameters
+        ----------
+        flag
+            `True` to sort, `False` to skip sorting
+
+        See also
+        --------
+        PetscSFSetRankOrder
+
+        """
         cdef PetscBool bval = asBool(flag)
         CHKERR( PetscSFSetRankOrder(self.sf, bval) )
 
-    #
-
     def getMulti(self) -> SF:
+        """Get the inner SF implementing gathers and scatters
+        Collective.
+
+        See also
+        --------
+        PetscSFGetMultiSF
+
+        """
         cdef SF sf = SF()
         CHKERR( PetscSFGetMultiSF(self.sf, &sf.sf) )
         PetscINCREF(sf.obj)
         return sf
 
     def createInverse(self) -> SF:
+        """Create the inverse map given a PetscSF in which all vertices have 
+        degree 1.
+        Collective.
+
+        See also
+        --------
+        PetscSFCreateInverseSF
+
+        """
         cdef SF sf = SF()
         CHKERR( PetscSFCreateInverseSF(self.sf, &sf.sf) )
         return sf
 
-    def computeDegree(self) -> int:
+    def computeDegree(self) -> ndarray:
+        """Compute degree for each root vertex.
+        Collective.
+
+        See also
+        --------
+        PetscSFComputeDegreeBegin, PetscSFComputeDegreeEnd
+
+        """
         cdef const PetscInt *cdegree = NULL
         cdef PetscInt nroots
         CHKERR( PetscSFComputeDegreeBegin(self.sf, &cdegree) )
@@ -241,7 +282,20 @@ cdef class SF(Object):
         degree = array_i(nroots, cdegree)
         return degree
 
-    def createEmbeddedRootSF(self, selected) -> SF:
+    def createEmbeddedRootSF(self, selected : Sequence[int]) -> SF:
+        """Remove edges from all but the selected roots, does not remap indices
+        Collective.
+
+        Parameters
+        ----------
+        selected
+            Indices of the selected roots on this process.
+
+        See also
+        --------
+        PetscSFCreateEmbeddedRootSF
+
+        """
         cdef PetscInt nroots = asInt(len(selected))
         cdef PetscInt *cselected = NULL
         selected = iarray_i(selected, &nroots, &cselected)
@@ -249,7 +303,21 @@ cdef class SF(Object):
         CHKERR( PetscSFCreateEmbeddedRootSF(self.sf, nroots, cselected, &sf.sf) )
         return sf
 
-    def createEmbeddedLeafSF(self, selected) -> SF:
+    def createEmbeddedLeafSF(self, selected : Sequence[int]) -> SF:
+        """Removes edges from all but the selected leaves, does not remap 
+        indices.
+        Collective.
+
+        Parameters
+        ----------
+        selected
+            Indices of the selected roots on this process.
+
+        See also
+        --------
+        PetscSFCreateEmbeddedLeafSF
+
+        """
         cdef PetscInt nleaves = asInt(len(selected))
         cdef PetscInt *cselected = NULL
         selected = iarray_i(selected, &nleaves, &cselected)
@@ -257,7 +325,29 @@ cdef class SF(Object):
         CHKERR( PetscSFCreateEmbeddedLeafSF(self.sf, nleaves, cselected, &sf.sf) )
         return sf
 
+    # TODO: types
     def createSectionSF(self, Section rootSection, remoteOffsets, Section leafSection) -> SF:
+        """Create an expanded `SF` of dofs, assuming the input `SF` relates 
+        points.
+        Collective.
+
+        Parameters
+        ----------
+        rootSection
+            Data layout of remote points for outgoing data (this is usually 
+            the serial section)
+        remoteOffsets
+            Offsets for point data on remote processes (these are offsets from 
+            the root section), or `None`
+        leafSection
+            Data layout of local points for incoming data (this is the 
+            distributed section)
+
+        See also
+        --------
+        PetscSFCreateSectionSF
+
+        """
         cdef SF sectionSF = SF()
         cdef PetscInt noffsets = 0
         cdef PetscInt *cremoteOffsets = NULL
@@ -268,6 +358,23 @@ cdef class SF(Object):
         return sectionSF
 
     def distributeSection(self, Section rootSection, Section leafSection=None):
+        #                                            
+        """Create a new `Section` reorganized, moving from the root to 
+        the leaves of the `SF`.
+        Collective.
+
+        Parameters:
+        -----------
+        rootSection
+            Section defined on root space
+        leafSection
+            Section defined on the leaf space
+
+        See also
+        --------
+        PetscSFDistributeSection
+
+        """
         cdef PetscInt lpStart
         cdef PetscInt lpEnd
         cdef PetscInt *cremoteOffsets = NULL
@@ -284,13 +391,29 @@ cdef class SF(Object):
         CHKERR( PetscFree(cremoteOffsets) )
         return (remoteOffsets, leafSection)
 
+    # TODO: self or Self?
     def compose(self, SF sf) -> SF:
+        """Compose a new `SF` by putting the `SF` under `Self` 
+        in a top (roots) down (leaves) view.
+        Collective.
+
+        Parameters
+        ----------
+        sf
+            `SF` to put under `Self`
+
+        See also
+        --------
+        PetscSFCompose
+
+        """
         cdef SF csf = SF()
         CHKERR( PetscSFCompose(self.sf, sf.sf, &csf.sf))
         return csf
 
     def bcastBegin(self, unit, ndarray rootdata, ndarray leafdata, op) -> None:
-        """Begin pointwise broadcast with root value being reduced to leaf value, to be concluded with call to bcastEnd
+        """Begin pointwise broadcast with root value being reduced to 
+        leaf value, to be concluded with call to bcastEnd.
         Collective
 
         Parameters
@@ -345,7 +468,8 @@ cdef class SF(Object):
                                 <void*>PyArray_DATA(leafdata), cop) )
 
     def reduceBegin(self, unit, ndarray leafdata, ndarray rootdata, op) -> None:
-        """Begin reduction of leafdata into rootdata, to be completed with call to reduceEnd
+        """Begin reduction of leafdata into rootdata, 
+        to be completed with call to reduceEnd.
         Collective
 
         Parameters
@@ -372,7 +496,7 @@ cdef class SF(Object):
                                    <void*>PyArray_DATA(rootdata), cop) )
 
     def reduceEnd(self, unit, ndarray leafdata, ndarray rootdata, op) -> None:
-        """End a reduction operation started with reduceBegin
+        """End a reduction operation started with reduceBegin.
         Collective
 
         Parameters
@@ -399,7 +523,9 @@ cdef class SF(Object):
                                  <void*>PyArray_DATA(rootdata), cop) )
 
     def scatterBegin(self, unit, ndarray multirootdata, ndarray leafdata) -> None:
-        """Begin pointwise scatter operation from multi-roots to leaves, to be completed with scatterEnd
+        """Begin pointwise scatter operation from multi-roots to leaves, 
+        to be completed with scatterEnd.
+        Collective.
 
         Parameters
         ----------
@@ -422,8 +548,8 @@ cdef class SF(Object):
                                     <void*>PyArray_DATA(leafdata)) )
 
     def scatterEnd(self, unit, ndarray multirootdata, ndarray leafdata) -> None:
-        """End pointwise scatter operation that was started with scatterBegin
-        Collective
+        """End pointwise scatter operation that was started with scatterBegin.
+        Collective.
 
         Parameters
         ----------
@@ -446,8 +572,9 @@ cdef class SF(Object):
                                   <void*>PyArray_DATA(leafdata)) )
 
     def gatherBegin(self, unit, ndarray leafdata, ndarray multirootdata) -> None:
-        """Begin pointwise gather of all leaves into multi-roots, to be completed with gatherEnd
-        Collective
+        """Begin pointwise gather of all leaves into multi-roots, 
+        to be completed with gatherEnd.
+        Collective.
 
         Parameters
         ----------
@@ -458,7 +585,8 @@ cdef class SF(Object):
         leafdata
             leaf data to gather to roots
         multirootdata
-            root buffer to gather into, amount of space per root is equal to its degree
+            root buffer to gather into, amount of space per root is 
+            equal to its degree
             
         See also
         --------
@@ -480,11 +608,13 @@ cdef class SF(Object):
         unit
             data type
         rootdata
-            root values to be updated, input state is seen by first process to perform an update
+            root values to be updated, input state is seen by first process 
+            to perform an update
         leafdata
             leaf values to use in reduction
         leafupdate
-            state at each leaf's respective root immediately prior to my atomic update
+            state at each leaf's respective root immediately prior to my atomic 
+            update
         op
             operation to use for reduction
             
@@ -498,7 +628,8 @@ cdef class SF(Object):
                                  <void*>PyArray_DATA(multirootdata)) )
 
     def fetchAndOpBegin(self, unit, rootdata, leafdata, leafupdate, op) -> None:
-        """Begin operation that fetches values from root and updates atomically by applying operation using my leaf value, to be completed with fetchAndOpEnd
+        """Begin operation that fetches values from root and updates atomically 
+        by applying operation using my leaf value, to be completed with fetchAndOpEnd
         Collective
 
         Parameters
@@ -508,11 +639,13 @@ cdef class SF(Object):
         unit
             data type
         rootdata
-            root values to be updated, input state is seen by first process to perform an update
+            root values to be updated, input state is seen by first process to 
+            perform an update
         leafdata
             leaf values to use in reduction
         leafupdate
-            state at each leaf's respective root immediately prior to my atomic update
+            state at each leaf's respective root immediately prior to my atomic 
+            update
         op
             operation to use for reduction
             
@@ -528,8 +661,10 @@ cdef class SF(Object):
                                        <void*>PyArray_DATA(leafupdate), cop) )
 
     def fetchAndOpEnd(self, unit, rootdata, leafdata, leafupdate, op) -> None:
-        """End operation started in matching call to fetchAndOpBegin to fetch values from roots and update atomically by applying operation using my leaf value
-        Collective
+        """End operation started in matching call to fetchAndOpBegin to fetch 
+        values from roots and update atomically by applying operation using 
+        my leaf value.
+        Collective.
 
         Parameters
         ----------
