@@ -1,16 +1,11 @@
 # --------------------------------------------------------------------
-
-cdef object functools = None
 import functools
 
-# --------------------------------------------------------------------
 
 cdef class Log:
 
     @classmethod
     def Stage(cls, name):
-        """
-        """
         if not name: raise ValueError("empty name")
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
@@ -54,62 +49,108 @@ cdef class Log:
         return event
 
     @classmethod
-    def begin(cls, all=False):
+    def begin(cls, all: bool = False):
+        """Turn on the logging of the objects and events.
+
+        Logically Collective on `PETSC_COMM_WORLD`.
+
+        Parameters
+        ----------
+        all
+            Wheter to enable extensive logging.
+
+        Notes
+        -----
+        if all=True, an extensive logging is provided, which 
+        creates large log files and shows the program down.
+        if all=False, the default logging functions are used.
+        This logs flop rates and object creation and should 
+        not slow programs down too much. This routine may be 
+        called more than once.
+
+        See Also
+        --------
+        petsc.PetscLogAllBegin, petsc.PetscLogDefaultBegin
+
+        """
         if all: CHKERR( PetscLogAllBegin() )
         else:   CHKERR( PetscLogDefaultBegin() )
 
     @classmethod
     def view(cls, Viewer viewer=None):
+        """Print a summary of the logging.
+
+        Collective over `MPI_Comm`.
+
+        Parameters
+        ----------
+        viewer : an ASCII viewer, optional
+            Viewer instance. If ``None`` then will default to an instance of
+            `Viewer.Type.ASCII`.
+        
+        See Also
+        --------
+        petsc_options, petsc.PetscLogView
+
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         if vwr == NULL: vwr = PETSC_VIEWER_STDOUT_WORLD
         CHKERR( PetscLogView(vwr) )
 
     @classmethod
-    def logFlops(cls, flops):
+    def logFlops(cls, flops: float) -> None:
         """Add floating point operations to global counter.
+
+        Not Collective.
 
         Parameters
         ----------
-        flops : double
+        flops
             Flop counter.
 
         See Also
         --------
-        petsc:PetscLogFlops
+        petsc.PetscLogFlops
+
         """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
-
+        
     @classmethod
-    def addFlops(cls, flops):
+    def addFlops(cls, flops: float) -> None:
         """Add floating point operations to global counter.
 
-        Parameter
+        Not Collective.
+
+        Parameters
         ----------
-        flops : double
+        flops
             Flop counter.
 
         See Also
         --------
-        TODO
+        petsc.PetscLogFlops
+
         """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
 
     @classmethod
-    def getFlops(cls):
+    def getFlops(cls) -> float:
         """Return the number of flops used on this 
             processor since the program began.
 
+        Not Collective.
+
         Returns
         -------
-        cflops : double
-            Number of floating point operations
+            Number of floating point operations.
 
         See Also
         --------
-        petsc:PetscGetFlops
+        petsc.PetscGetFlops
+
         """
         cdef PetscLogDouble cflops=0
         CHKERR( PetscGetFlops(&cflops) )
@@ -117,16 +158,19 @@ cdef class Log:
 
     @classmethod
     def getTime(cls):
-        """ Return the current time of day in seconds.
+        """Return the current time of day in seconds.
         
-        Return
+        Collective over `MPI_Comm`.
+
+        Returns
         -------
         wctime : double
             Current time.
         
         See Also
         --------
-        petsc:PetscTime
+        petsc.PetscTime
+
         """
         cdef PetscLogDouble wctime=0
         CHKERR( PetscTime(&wctime) )
@@ -134,29 +178,35 @@ cdef class Log:
 
     @classmethod
     def getCPUTime(cls):
+        """Get the CPU time.
+        
+        Returns
+        -------
+        cputime : double
 
+        """
         cdef PetscLogDouble cputime=0
         CHKERR( PetscGetCPUTime(&cputime) )
         return cputime
 
-    @classmethod
+    @classmethod    
     def EventDecorator(cls, name=None, klass=None):
-        """Decorate a function with a PETSc event.
+        """Decorate a function with a `PETSc` event.
 
+        Notes
+        -----
         If no event name is specified it will default to the name of the function.
-
-        Usage::
-
-            @Log.EventDecorator("My Function")
+        
+        Usage:
+            @EventDecorator("My Function")
             def myfunc():
                 ...
 
-        or::
+            or
 
-            @Log.EventDecorator()
+            @EventDecorator()
             def myfunc():
                 ...
-
         """
         def decorator(func):
             @functools.wraps(func)
@@ -172,7 +222,20 @@ cdef class Log:
 
     @classmethod
     def isActive(cls):
-        """Return whether logging is turned on."""
+        """Check if logging is currently in progress.
+        
+        Not Collective.
+
+        Returns
+        -------
+        bool
+            Inform if the logging is in progress
+
+        See Also
+        --------
+        petsc.PetscLogIsActive
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogIsActive(&flag) )
         return toBool(flag)
@@ -201,21 +264,28 @@ cdef class LogStage:
     def push(self):
         """Push a stage on the logging stack. 
             Events started and stopped until 
-            PetscLogStagePop() will be associated with the stage
+            PetscLogStagePop will be associated 
+            with the stage
+
+        Not Collective.
 
         See Also
         --------
-        petsc:PetscLogStagePush
+        petsc.PetscLogStagePush
+
         """
         CHKERR( PetscLogStagePush(self.id) )
 
     def pop(self):
         """Pop a stage on the logging stack that was 
-            pushed with PetscLogStagePush().
+            pushed with self.push.
+
+        Not Collective.
 
         See Also
         --------
-        petsc:PetscLogStagePop
+        petsc.PetscLogStagePop
+
         """
         <void>self # unused
         CHKERR( PetscLogStagePop() )
@@ -223,8 +293,6 @@ cdef class LogStage:
     #
 
     def getName(self):
-        """Do not have c documentation
-        """
         cdef const char *cval = NULL
         CHKERR( PetscLogStageFindName(self.id, &cval) )
         return bytes2str(cval)
@@ -239,51 +307,64 @@ cdef class LogStage:
     #
 
     def activate(self):
-        """Set if a stage is used for PetscLogEventBegin().
+        """Activate the stage used for LogEvent.begin (petsc.PetscLogEventBegin).
+
+        Not Collective.
 
         See Also
         --------
-        petsc:PetscLogStageSetActive
+        petsc.PetscLogStageSetActive
+
         """
         CHKERR( PetscLogStageSetActive(self.id, PETSC_TRUE) )
 
     def deactivate(self):
-        """Set if a stage is used for PetscLogEventEnd().
+        """Deactivate the stage used for LogEvent.end (petsc.PetscLogEventEnd).
+
+        Not Collective.
 
         See Also
         --------
-        petsc:PetscLogStageSetActive
+        petsc.PetscLogStageSetActive
+
         """
         CHKERR( PetscLogStageSetActive(self.id, PETSC_FALSE) )
 
     def getActive(self):
-        """ Check if a stage is used for PetscLogEventBegin() 
-            and PetscLogEventEnd()
+        """Check if a stage is used for LogEvent.begin (petsc.PetscLogEventBegin) 
+            and LogEvent.end (petsc.PetscLogEventEnd).
         
-        Return
-        ------
-        toBool(flag) : Boolean
+        Not Collective.
+
+        Returns
+        -------
+        bool
+            The activity flag for logging.
 
         See Also
         --------
-        petsc:PetscLogStageGetActive
+        petsc.PetscLogStageGetActive
+
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogStageGetActive(self.id, &flag) )
         return toBool(flag)
 
     def setActive(self, flag): 
-        """Set if a stage is used for PetscLogEventBegin() 
-            or PetscLogEventEnd().
+        """Set if a stage is used for LogEvent.begin (petsc.PetscLogEventBegin)
+            or LogEvent.end (petsc.PetscLogEventEnd).
 
-        Parameter
+        Not Collective.
+
+        Parameters
         ----------
-        flag : 
-
+        flag : bool
+            Activate for looging if True, else looging is not activated.
 
         See Also
         --------
-        petsc:PetscLogStageSetActive
+        petsc.PetscLogStageSetActive
+
         """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
@@ -297,27 +378,36 @@ cdef class LogStage:
 
     #
 
-    def getVisible(self):
-        """Return stage visibility in  in PetscLogView()
+    def getVisible(self) -> bool:
+        """Return whether the stage is visible.
 
-        Return
-        ------
-        toBool(flag) : Boolean
+        Not Collective.
 
         See Also
         --------
-
+        LogStage.setVisible,  petsc.PetscLogStageSetVisible
 
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogStageGetVisible(self.id, &flag) )
         return toBool(flag)
 
-    def setVisible(self, flag):
-        """Return stage visibility in  in PetscLogView()
+    def setVisible(self, flag: bool) -> None:
+        """Set the visibility of the stage. 
         
+        Not Collective.
+
+        Parameters
+        ----------
+        flag : bool
+            `True` if the stage is visible, `False` otherwise.
+            
+            The visibility flag.
+
         See Also
         --------
+        LogStage.getVisible, petsc.PetscLogStageSetVisible
+
         """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
@@ -425,32 +515,38 @@ cdef class LogEvent:
     
 
     def begin(self, *objs):
-        """Log the beginning of a user event
+        """Log the beginning of a user event.
 
-        Parameter
-        ---------
-        *objs : list
+        Not Collective.
+
+        Parameters
+        ----------
+        *objs
             objects associated with the event
         
         See Also
         --------
-        petsc:PetscLogEventBegin
+        petsc.PetscLogEventBegin
+
         """
         cdef PetscObject o[4]
         event_args2objs(objs, o)
         CHKERR( PetscLogEventBegin(self.id, o[0], o[1], o[2], o[3]) )
 
     def end(self, *objs):
-        """Log the end of a user event
+        """Log the end of a user event.
 
-        Parameter
-        ---------
-        *objs : list
-            objects associated with the event
+        Not Collective.
+
+        Parameters
+        ----------
+        *objs
+            Objects associated with the event.
         
         See Also
         --------
-        petsc:PetscLogEventEnd
+        petsc.PetscLogEventEnd
+
         """
         cdef PetscObject o[4]
         event_args2objs(objs, o)
@@ -472,16 +568,48 @@ cdef class LogEvent:
     #
 
     def activate(self):
+        """Indicate that the event should be logged.
+
+        Not Collective
+
+        See Also
+        --------
+        petsc.PetscLogEventActivate
+
+        """
         CHKERR( PetscLogEventActivate(self.id) )
 
     def deactivate(self):
+        """Indicate that the event should not be logged.
+        
+        Not Collective
+
+        See also
+        --------
+        petsc.PetscLogEventDeactivate
+
+        """
         CHKERR( PetscLogEventDeactivate(self.id) )
 
     def getActive(self):
         <void>self # unused
         raise NotImplementedError
 
-    def setActive(self, flag):
+    def setActive(self, flag: bool):
+        """Indicate if the event should be not be logged.
+
+        Not Collective
+
+        Parameters
+        ----------
+        flag
+            Instruction will either activate or deactivate the event.
+
+        See Also
+        --------
+        petsc.PetscLogEventDeactivate, petsc.PetscLogEventActivate
+
+        """
         if flag:
             CHKERR( PetscLogEventActivate(self.id) )
         else:
@@ -498,6 +626,19 @@ cdef class LogEvent:
         raise NotImplementedError
 
     def setActiveAll(self, flag):
+        """Turn on logging of all events.
+
+        Parameters
+        ----------
+        flag : bool
+            Active (if True) or deactivate (if False) the
+            logging of all events.
+        
+        See Also
+        --------
+        petsc.PetscLogEventSetActiveAll
+
+        """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
         CHKERR( PetscLogEventSetActiveAll(self.id, tval) )
@@ -510,7 +651,25 @@ cdef class LogEvent:
 
     #
 
-    def getPerfInfo(self, stage=None):
+    def getPerfInfo(self, stage: int | None = None) -> etscEventPerfInfo:
+        """Return the performance information about the given event
+            in the given event.   
+
+        Parameters
+        ----------
+        stage
+            The stage number, defaults to `PETSC_DETERMINE`.
+
+        Returns
+        -------
+        info : etscEventPerfInfo
+            This structure is filled with the performance information.
+        
+        See Also
+        --------
+        petsc.PetscLogEventGetPerfInfo
+
+        """
         cdef PetscEventPerfInfo info
         cdef PetscInt cstage = PETSC_DETERMINE
         if stage is not None: cstage = asInt(stage)
