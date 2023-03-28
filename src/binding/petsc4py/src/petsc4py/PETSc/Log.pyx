@@ -49,12 +49,13 @@ cdef class Log:
         return event
 
     @classmethod
-    def begin(cls, all=False):
+    def begin(cls, all: bool = False):
         """Turn on the logging of the objects and events.
 
         Parameters
         ----------
-        all : bool, optional
+        all
+            Wheter to enable extensive logging.
 
         Notes
         -----
@@ -67,8 +68,8 @@ cdef class Log:
 
         See Also
         --------
-        petsc: PetscLogAllBegin
-        petsc: PetscLogDefaultBegin
+        PetscLogAllBegin
+        PetscLogDefaultBegin
         """
         if all: CHKERR( PetscLogAllBegin() )
         else:   CHKERR( PetscLogDefaultBegin() )
@@ -85,7 +86,7 @@ cdef class Log:
         
         See Also
         --------
-        petsc:PetscLogView
+        PetscLogView
         """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
@@ -103,7 +104,7 @@ cdef class Log:
 
         See Also
         --------
-        petsc:PetscLogFlops
+        PetscLogFlops
         """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
@@ -119,7 +120,7 @@ cdef class Log:
 
         See Also
         --------
-        petsc:PetscLogFlops
+        PetscLogFlops
         """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
@@ -136,7 +137,7 @@ cdef class Log:
 
         See Also
         --------
-        petsc:PetscGetFlops
+        PetscGetFlops
         """
         cdef PetscLogDouble cflops=0
         CHKERR( PetscGetFlops(&cflops) )
@@ -153,7 +154,7 @@ cdef class Log:
         
         See Also
         --------
-        petsc:PetscTime
+        PetscTime
         """
         cdef PetscLogDouble wctime=0
         CHKERR( PetscTime(&wctime) )
@@ -213,7 +214,7 @@ cdef class Log:
 
         See Also
         --------
-        petsc:PetscLogIsActive
+        PetscLogIsActive
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogIsActive(&flag) )
@@ -248,7 +249,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStagePush
+        PetscLogStagePush
         """
         CHKERR( PetscLogStagePush(self.id) )
 
@@ -258,7 +259,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStagePop
+        PetscLogStagePop
         """
         <void>self # unused
         CHKERR( PetscLogStagePop() )
@@ -266,8 +267,6 @@ cdef class LogStage:
     #
 
     def getName(self):
-        """
-        """
         cdef const char *cval = NULL
         CHKERR( PetscLogStageFindName(self.id, &cval) )
         return bytes2str(cval)
@@ -286,7 +285,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStageSetActive
+        PetscLogStageSetActive
         """
         CHKERR( PetscLogStageSetActive(self.id, PETSC_TRUE) )
 
@@ -295,7 +294,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStageSetActive
+        PetscLogStageSetActive
         """
         CHKERR( PetscLogStageSetActive(self.id, PETSC_FALSE) )
 
@@ -310,7 +309,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStageGetActive
+        PetscLogStageGetActive
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogStageGetActive(self.id, &flag) )
@@ -328,7 +327,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStageSetActive
+        PetscLogStageSetActive
         """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
@@ -352,7 +351,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStageSetVisible
+        PetscLogStageSetVisible
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogStageGetVisible(self.id, &flag) )
@@ -368,7 +367,7 @@ cdef class LogStage:
 
         See Also
         --------
-        petsc:PetscLogStageSetVisible
+        PetscLogStageSetVisible
         """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
@@ -485,7 +484,7 @@ cdef class LogEvent:
         
         See Also
         --------
-        petsc:PetscLogEventBegin
+        PetscLogEventBegin
         """
         cdef PetscObject o[4]
         event_args2objs(objs, o)
@@ -501,7 +500,7 @@ cdef class LogEvent:
         
         See Also
         --------
-        petsc:PetscLogEventEnd
+        PetscLogEventEnd
         """
         cdef PetscObject o[4]
         event_args2objs(objs, o)
@@ -527,7 +526,7 @@ cdef class LogEvent:
 
         See Also
         --------
-        petsc:PetscLogEventActivate
+        PetscLogEventActivate
         """
         CHKERR( PetscLogEventActivate(self.id) )
 
@@ -536,7 +535,7 @@ cdef class LogEvent:
         
         See also
         --------
-        petsc:PetscLogEventDeactivate
+        PetscLogEventDeactivate
         """
         CHKERR( PetscLogEventDeactivate(self.id) )
 
@@ -550,13 +549,12 @@ cdef class LogEvent:
         Parameters
         ----------
         flag
-            Instruction if will either activate ou deactivate
-            the event.
+            Instruction will either activate or deactivate the event.
 
         See Also
         --------
-        petsc:PetscLogEventDeactivate (to deactivate)
-        petsc:PetscLogEventActivate (to activate)
+        PetscLogEventDeactivate (to deactivate)
+        PetscLogEventActivate (to activate)
         """
         if flag:
             CHKERR( PetscLogEventActivate(self.id) )
@@ -584,7 +582,7 @@ cdef class LogEvent:
         
         See Also
         --------
-        petsc:PetscLogEventSetActiveAll
+        PetscLogEventSetActiveAll
         """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
@@ -613,7 +611,7 @@ cdef class LogEvent:
         
         See Also
         --------
-        petsc:PetscLogEventGetPerfInfo
+        PetscLogEventGetPerfInfo
         """
         cdef PetscEventPerfInfo info
         cdef PetscInt cstage = PETSC_DETERMINE
