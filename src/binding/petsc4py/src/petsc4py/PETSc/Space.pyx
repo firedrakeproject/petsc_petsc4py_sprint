@@ -19,10 +19,10 @@ cdef class Space(Object):
         self.obj = <PetscObject*> &self.space
         self.space  = NULL
 
-    def setUp(self):
+    def setUp(self) -> None:
         CHKERR( PetscSpaceSetUp(self.space) )
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None):
         """TODO
 
         Not collective.
@@ -34,7 +34,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceCreate
 
         """
 
@@ -44,7 +44,7 @@ cdef class Space(Object):
         PetscCLEAR(self.obj); self.space = newsp
         return self
 
-    def destroy(self):
+    def destroy(self) -> Self:
         """TODO
 
         Not collective.
@@ -56,13 +56,13 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceDestroy
 
         """
         CHKERR( PetscSpaceDestroy(&self.space) )
         return self
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
         """TODO
 
         Not collective.
@@ -74,14 +74,14 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceView
 
         """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( PetscSpaceView(self.space, vwr) )
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
         """TODO
 
         Not collective.
@@ -93,12 +93,12 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSetFromOptions
 
         """
         CHKERR( PetscSpaceSetFromOptions(self.space) )
 
-    def getDimension(self):
+    def getDimension(self) -> int:
         """TODO
 
         Not collective.
@@ -110,14 +110,14 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceGetDimension
 
         """
         cdef PetscInt cdim
         CHKERR( PetscSpaceGetDimension(self.space, &cdim))
         return toInt(cdim)
 
-    def getDegree(self):
+    def getDegree(self) -> tuple(int, int):
         """TODO
 
         Not collective.
@@ -129,14 +129,14 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceGetDegree
 
         """
         cdef PetscInt cdegmax, cdegmin
         CHKERR( PetscSpaceGetDegree(self.space, &cdegmin, &cdegmax))
         return toInt(cdegmin), toInt(cdegmax)
 
-    def setDegree(self, degree, maxDegree):
+    def setDegree(self, degree: int | None, maxDegree: int | None) -> None:
         """TODO
 
         Not collective.
@@ -148,7 +148,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSetDegree
 
         """
         assert( (degree != None) & (maxDegree != None))
@@ -158,7 +158,7 @@ cdef class Space(Object):
         if maxDegree is not None: cmaxdegree = asInt(maxDegree)
         CHKERR( PetscSpaceSetDegree(self.space, cdegree, cmaxdegree) )
 
-    def getNumVariables(self):
+    def getNumVariables(self) -> int:
         """TODO
 
         Not collective.
@@ -170,14 +170,14 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceGetNumVariables
 
         """
         cdef PetscInt cnvars
         CHKERR( PetscSpaceGetNumVariables(self.space, &cnvars))
         return toInt(cnvars)
 
-    def setNumVariables(self, n):
+    def setNumVariables(self, n: int) -> None:
         """TODO
 
         Not collective.
@@ -189,13 +189,13 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSetNumVariables
 
         """
         cdef PetscInt cn = asInt(n)
         CHKERR( PetscSpaceSetNumVariables(self.space, cn) )
 
-    def getNumComponents(self):
+    def getNumComponents(self) -> int:
         """TODO
 
         Not collective.
@@ -207,14 +207,14 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceGetNumComponents
 
         """
         cdef PetscInt cncomps
         CHKERR( PetscSpaceGetNumComponents(self.space, &cncomps))
         return toInt(cncomps)
 
-    def setNumComponents(self, nc):
+    def setNumComponents(self, nc: int) -> None:
         """TODO
 
         Not collective.
@@ -226,7 +226,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSetNumComponents
 
         """
         cdef PetscInt cnc = asInt(nc)
@@ -243,7 +243,7 @@ cdef class Space(Object):
     #    CHKERR( PetscSpaceEvaluate(self.space, cnpoints, &cpoints, &B, &D, &H) )
     #    return array_r(cnpoints*cdim, B), array_r(cnpoints*cnc, D), array_r(, H)
 
-    def getType(self):
+    def getType(self) -> str:
         """TODO
 
         Not collective.
@@ -255,14 +255,14 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceGetType
 
         """
         cdef PetscSpaceType cval = NULL
         CHKERR( PetscSpaceGetType(self.space, &cval) )
         return bytes2str(cval)
 
-    def setType(self, space_type):
+    def setType(self, space_type: str):
         """TODO
 
         Not collective.
@@ -274,7 +274,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSetType
 
         """
         cdef PetscSpaceType cval = NULL
@@ -294,7 +294,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSumGetConcatenate
 
         """
         cdef PetscBool concatenate
@@ -313,7 +313,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSumSetConcatenate
 
         """
         cdef PetscBool cconcatenate = asBool(concatenate)
@@ -331,7 +331,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSumGetNumSubspaces
 
         """
         cdef PetscInt numSumSpaces
@@ -350,7 +350,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSumGetSubspace
 
         """
         cdef Space subsp = Space()
@@ -370,7 +370,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSumSetSubspace
 
         """
         cdef PetscInt cs = asInt(s)
@@ -388,7 +388,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceSumSetNumSubspaces
 
         """
         cdef PetscInt cnumSumSpaces = asInt(numSumSpaces)
@@ -406,7 +406,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceTensorGetNumSubspaces
 
         """
         cdef PetscInt cnumTensSpaces = 0
@@ -425,7 +425,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceTensorSetSubspace
 
         """
         cdef PetscInt cs = asInt(s)
@@ -443,7 +443,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceTensorGetSubspace
 
         """
         cdef PetscInt cs = asInt(s)
@@ -463,7 +463,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceTensorSetNumSubspaces
 
         """
         cdef PetscInt cnumTensSpaces = asInt(numTensSpaces)
@@ -481,7 +481,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpacePolynomialGetTensor
 
         """
         cdef PetscBool ctensor
@@ -500,7 +500,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpacePolynomialSetTensor
 
         """
         cdef PetscBool ctensor = asBool(tensor)
@@ -518,7 +518,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpacePointSetPoints
 
         """
         CHKERR( PetscSpacePointSetPoints(self.space, quad.quad))
@@ -535,7 +535,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpacePointGetPoints
 
         """
         cdef Quad quad = Quad()
@@ -554,7 +554,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpacePTrimmedSetFormDegree
 
         """
         cdef PetscInt cformDegree = asInt(formDegree)
@@ -572,7 +572,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpacePTrimmedGetFormDegree
 
         """
         cdef PetscInt cformDegree = 0
@@ -591,7 +591,7 @@ cdef class Space(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscSpaceViewFromOptions
 
         """
         cdef const char *cname = NULL
@@ -630,7 +630,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSetUp
 
         """
         CHKERR( PetscDualSpaceSetUp(self.dualspace) )
@@ -647,7 +647,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -668,7 +668,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceView
 
         """
         cdef PetscViewer vwr = NULL
@@ -687,7 +687,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceDestroy
 
         """
         CHKERR( PetscDualSpaceDestroy(&self.dualspace) )
@@ -705,7 +705,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceDuplicate
 
         """
         cdef DualSpace spNew = DualSpace()
@@ -723,7 +723,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetDM
 
         """
         cdef DM dm = DM()
@@ -742,7 +742,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSetDM
 
         """
         CHKERR( PetscDualSpaceSetDM(self.dualspace, dm.dm) )
@@ -759,7 +759,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetDimension
 
         """
         cdef PetscInt cdim
@@ -778,7 +778,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetNumComponents
 
         """
         cdef PetscInt cncomps
@@ -797,7 +797,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSetNumComponents
 
         """
         cdef PetscInt cnc = asInt(nc)
@@ -815,7 +815,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetType
 
         """
         cdef PetscDualSpaceType cval = NULL
@@ -834,7 +834,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSetType
 
         """
         cdef PetscDualSpaceType cval = NULL
@@ -854,7 +854,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetOrder
 
         """
         cdef PetscInt corder
@@ -873,7 +873,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSetOrder
 
         """
         cdef PetscInt corder = asInt(order)
@@ -891,7 +891,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetNumDof
 
         """
         cdef const PetscInt *cndof = NULL
@@ -912,7 +912,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetFunctional
 
         """
         cdef PetscInt ci = asInt(i)
@@ -932,7 +932,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceGetInteriorDimension
 
         """
         cdef PetscInt cintdim = asInt(intdim)
@@ -951,7 +951,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceLagrangeGetContinuity
 
         """
         cdef PetscBool ccontinuous = PETSC_FALSE
@@ -970,7 +970,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceLagrangeSetContinuity
 
         """
         cdef PetscBool ccontinuous = asBool(continuous)
@@ -988,7 +988,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceLagrangeGetTensor
 
         """
         cdef PetscBool ctensor = PETSC_FALSE
@@ -1007,7 +1007,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceLagrangeSetTensor
 
         """
         cdef PetscBool ctensor = asBool(tensor)
@@ -1025,7 +1025,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceLagrangeGetTrimmed
 
         """
         cdef PetscBool ctrimmed = PETSC_FALSE
@@ -1044,7 +1044,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceLagrangeSetTrimmed
 
         """
         cdef PetscBool ctrimmed = asBool(trimmed)
@@ -1062,7 +1062,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceViewFromOptions
 
         """
         cdef const char *cname = NULL
@@ -1083,7 +1083,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSimpleSetDimension
 
         """
         cdef PetscInt cdim = asInt(dim)
@@ -1101,7 +1101,7 @@ cdef class DualSpace(Object):
 
         See also
         --------
-        petsc.TODO
+        petsc.PetscDualSpaceSimpleSetFunctional
 
         """
         cdef PetscInt cfunc = asInt(func)
