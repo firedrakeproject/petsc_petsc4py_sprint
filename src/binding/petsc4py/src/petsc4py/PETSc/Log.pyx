@@ -6,8 +6,6 @@ cdef class Log:
 
     @classmethod
     def Stage(cls, name):
-        """
-        """
         if not name: raise ValueError("empty name")
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
@@ -57,6 +55,16 @@ cdef class Log:
 
     @classmethod
     def view(cls, Viewer viewer=None):
+        """Print a summary of the logging.
+
+        Parameters
+        ----------
+        viewer : an ASCII viewer, optional
+        
+        See Also
+        --------
+        petsc:PetscLogView
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         if vwr == NULL: vwr = PETSC_VIEWER_STDOUT_WORLD
@@ -82,14 +90,14 @@ cdef class Log:
     def addFlops(cls, flops):
         """Add floating point operations to global counter.
 
-        Parameter
+        Parameters
         ----------
         flops : double
             Flop counter.
 
         See Also
         --------
-        TODO
+        petsc:PetscLogFlops
         """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
@@ -99,8 +107,8 @@ cdef class Log:
         """Return the number of flops used on this 
             processor since the program began.
 
-        Return
-        ------
+        Returns
+        -------
         cflops : double
             Number of floating point operations
 
@@ -114,10 +122,10 @@ cdef class Log:
 
     @classmethod
     def getTime(cls):
-        """ Return the current time of day in seconds.
+        """Return the current time of day in seconds.
         
-        Return
-        ------
+        Returns
+        -------
         wctime : double
             Current time.
         
@@ -167,8 +175,13 @@ cdef class Log:
 
     @classmethod
     def isActive(cls):
-        """Return ``True`` if logging is switched on and ``False`` otherwise.
+        """ Check if logging is currently in progress.
         
+        Returns
+        -------
+        bool
+            Inform if the logging is in progress
+
         See Also
         --------
         petsc:PetscLogIsActive
@@ -201,7 +214,8 @@ cdef class LogStage:
     def push(self):
         """Push a stage on the logging stack. 
             Events started and stopped until 
-            PetscLogStagePop() will be associated with the stage
+            PetscLogStagePop() will be associated 
+            with the stage
 
         See Also
         --------
@@ -223,11 +237,6 @@ cdef class LogStage:
     #
 
     def getName(self):
-        """
-        Return
-        ------
-
-        """
         cdef const char *cval = NULL
         CHKERR( PetscLogStageFindName(self.id, &cval) )
         return bytes2str(cval)
@@ -263,10 +272,10 @@ cdef class LogStage:
         """Check if a stage is used for PetscLogEventBegin() 
             and PetscLogEventEnd()
         
-        Return
-        ------
+        Returns
+        -------
         bool
-            The activity flag False for logging.
+            The activity flag for logging.
 
         See Also
         --------
@@ -280,7 +289,7 @@ cdef class LogStage:
         """Set if a stage is used for PetscLogEventBegin() 
             or PetscLogEventEnd().
 
-        Parameter
+        Parameters
         ----------
         flag : bool
             Activate for looging if True, else looging is not activated.
@@ -303,26 +312,32 @@ cdef class LogStage:
     #
 
     def getVisible(self):
-        """Return stage visibility in  in PetscLogView()
+        """Return the visibility stage in PetscLogView()
 
-        Return
-        ------
+        Returns
+        -------
         bool
+            The visibility flag.
 
         See Also
         --------
-
-
+        petsc:PetscLogStageSetVisible
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( PetscLogStageGetVisible(self.id, &flag) )
         return toBool(flag)
 
     def setVisible(self, flag):
-        """Return stage visibility in  in PetscLogView()
+        """Determine the visibility stage in PetscLogView().
         
+        Parameters
+        ----------
+        flag : bool
+            Determine the visibility flag.
+
         See Also
         --------
+        petsc:PetscLogStageSetVisible
         """
         cdef PetscBool tval = PETSC_FALSE
         if flag: tval = PETSC_TRUE
@@ -432,8 +447,8 @@ cdef class LogEvent:
     def begin(self, *objs):
         """Log the beginning of a user event
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         *objs : list
             objects associated with the event
         
@@ -448,10 +463,10 @@ cdef class LogEvent:
     def end(self, *objs):
         """Log the end of a user event
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         *objs : list
-            objects associated with the event
+            Objects associated with the event.
         
         See Also
         --------
@@ -479,7 +494,7 @@ cdef class LogEvent:
     def activate(self):
         """Indicate that a particular event should be logged.
 
-        See also
+        See Also
         --------
         petsc:PetscLogEventActivate
         """
@@ -501,13 +516,13 @@ cdef class LogEvent:
     def setActive(self, flag: bool):
         """Indicate if a particular event should be not be logged.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         flag
             Instruction if will either activate ou deactivate
             the event.
 
-        See also
+        See Also
         --------
         petsc:PetscLogEventDeactivate (to deactivate)
         petsc:PetscLogEventActivate (to activate)
@@ -530,10 +545,14 @@ cdef class LogEvent:
     def setActiveAll(self, flag):
         """Turn on logging of all events.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         flag : bool
-
+            Active (if True) or deactivate (if False) the
+            logging of all events.
+        
+        See Also
+        --------
         petsc:PetscLogEventSetActiveAll
         """
         cdef PetscBool tval = PETSC_FALSE
@@ -548,7 +567,25 @@ cdef class LogEvent:
 
     #
 
-    def getPerfInfo(self, stage=None):
+    def getPerfInfo(self, stage: Optional[int]=None):
+        """Return the performance information about the given event
+            in the given event
+
+        Parameters
+        ----------
+        stage : int, optional
+
+
+        Returns
+        -------
+        info : etscEventPerfInfo
+
+            This structure is filled with the performance information.
+        
+        See Also
+        --------
+        petsc:PetscLogEventGetPerfInfo
+        """
         cdef PetscEventPerfInfo info
         cdef PetscInt cstage = PETSC_DETERMINE
         if stage is not None: cstage = asInt(stage)
