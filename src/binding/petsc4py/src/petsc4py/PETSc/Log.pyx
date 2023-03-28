@@ -94,12 +94,28 @@ cdef class Log:
         CHKERR( PetscLogView(vwr) )
 
     @classmethod
-    def logFlops(cls, flops):
+    def logFlops(cls, flops: float) -> None:
         """Add floating point operations to global counter.
 
         Parameters
         ----------
-        flops : double
+        flops
+            Flop counter.
+
+        See Also
+        --------
+        PetscLogFlops
+        """
+        cdef PetscLogDouble cflops=flops
+        CHKERR( PetscLogFlops(cflops) )
+        
+    @classmethod
+    def addFlops(cls, flops: float) -> None:
+        """Add floating point operations to global counter.
+
+        Parameters
+        ----------
+        flops
             Flop counter.
 
         See Also
@@ -110,30 +126,13 @@ cdef class Log:
         CHKERR( PetscLogFlops(cflops) )
 
     @classmethod
-    def addFlops(cls, flops):
-        """Add floating point operations to global counter.
-
-        Parameters
-        ----------
-        flops : double
-            Flop counter.
-
-        See Also
-        --------
-        PetscLogFlops
-        """
-        cdef PetscLogDouble cflops=flops
-        CHKERR( PetscLogFlops(cflops) )
-
-    @classmethod
-    def getFlops(cls):
+    def getFlops(cls) -> float:
         """Return the number of flops used on this 
             processor since the program began.
 
         Returns
         -------
-        cflops : double
-            Number of floating point operations
+            Number of floating point operations.
 
         See Also
         --------
@@ -244,7 +243,7 @@ cdef class LogStage:
     def push(self):
         """Push a stage on the logging stack. 
             Events started and stopped until 
-            PetscLogStagePop() will be associated 
+            PetscLogStagePop will be associated 
             with the stage
 
         See Also
@@ -596,13 +595,14 @@ cdef class LogEvent:
 
     #
 
-    def getPerfInfo(self, stage: Optional[int]=None):
+    def getPerfInfo(self, stage: int | None = None) -> etscEventPerfInfo:
         """Return the performance information about the given event
             in the given event
 
         Parameters
         ----------
-        stage : int, optional
+        stage
+            The stage number, defaults to `PETSC_DETERMINE`.
 
         Returns
         -------
