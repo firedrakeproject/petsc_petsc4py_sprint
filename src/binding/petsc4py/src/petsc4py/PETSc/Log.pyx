@@ -274,13 +274,13 @@ cdef class LogStage:
 
     def pop(self):
         """Pop a stage on the logging stack that was 
-            pushed with self.push.
+            pushed.
 
         Not Collective.
 
         See Also
         --------
-        petsc.PetscLogStagePop
+        LogStage.push, petsc.PetscLogStagePop
 
         """
         <void>self # unused
@@ -302,8 +302,8 @@ cdef class LogStage:
 
     #
 
-    def activate(self):
-        """Activate the stage used for LogEvent.begin (petsc.PetscLogEventBegin).
+    def activate(self) -> None:
+        """Activate the stage.
 
         Not Collective.
 
@@ -314,8 +314,8 @@ cdef class LogStage:
         """
         CHKERR( PetscLogStageSetActive(self.id, PETSC_TRUE) )
 
-    def deactivate(self):
-        """Deactivate the stage used for LogEvent.end (petsc.PetscLogEventEnd).
+    def deactivate(self) -> None:
+        """Deactivate the stage.
 
         Not Collective.
 
