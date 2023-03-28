@@ -55,20 +55,72 @@ cdef class DM(Object):
         self.obj = <PetscObject*> &self.dm
         self.dm  = NULL
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
+        """View the `DM`.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            The DM viewer.
+        
+        See Also
+        --------
+        petsc.DMView
+
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( DMView(self.dm, vwr) )
 
-    def load(self, Viewer viewer):
+    def load(self, Viewer viewer) -> Self:
+        """Load a `DM` stored in binary.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            Viewer used to display the DM, either 
+            `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
+        
+        See Also
+        --------
+        petsc.DMLoad
+
+        """
         CHKERR( DMLoad(self.dm, viewer.vwr) )
         return self
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the object.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMDestroy
+
+        """
         CHKERR( DMDestroy(&self.dm) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
+        """Create an empty `DM`.
+
+        Collective.
+        
+        Parameters
+        ----------
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+       
+        See Also
+        --------
+        petsc.DMCreate
+        
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscDM newdm = NULL
         CHKERR( DMCreate(ccomm, &newdm) )
