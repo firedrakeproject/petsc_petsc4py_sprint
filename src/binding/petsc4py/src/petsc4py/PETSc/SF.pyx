@@ -153,7 +153,7 @@ cdef class SF(Object):
     #
 
     def getGraph(self) -> tuple[int, ndarray, ndarray]:
-        """Get graph.
+        """Return graph.
         *nleaves* can be determined from the size of local.
 
         Not collective.
@@ -245,7 +245,7 @@ cdef class SF(Object):
         CHKERR( PetscSFSetRankOrder(self.sf, bval) )
 
     def getMulti(self) -> SF:
-        """Get the inner SF implementing gathers and scatters.
+        """Return the inner SF implementing gathers and scatters.
 
         Collective.
 
