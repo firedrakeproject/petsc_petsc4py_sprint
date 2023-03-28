@@ -201,8 +201,6 @@ cdef class Vec(Object):
     def setType(self, vec_type: Vec.Type | str) -> None:
         """Set the type of the vector.
 
-        Collective.
-
         Parameters
         ----------
         vec_type
@@ -217,14 +215,22 @@ cdef class Vec(Object):
         vec_type = str2bytes(vec_type, &cval)
         CHKERR( VecSetType(self.vec, cval) )
 
-    def setSizes(self, size: int, bsize: int | None = None) -> None:
+    def setSizes(
+        self,
+        size: tuple[int, int] | int,
+        bsize: int | None = None,
+    ) -> None:
         """Set the local and global sizes of the vector.
 
         Collective.
 
         Parameters
         ----------
-
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            Block size, defaults to ``1``.
 
         See Also
         --------
@@ -239,7 +245,31 @@ cdef class Vec(Object):
 
     #
 
-    def createSeq(self, size, bsize=None, comm=None):
+    def createSeq(
+        self,
+        size: tuple[int, int] | int,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a standard, sequential vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Vec.createMPI, petsc.VecCreateSeq
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_SELF)
         cdef PetscInt bs=0, n=0, N=0
         Vec_Sizes(size, bsize, &bs, &n, &N)
@@ -253,7 +283,31 @@ cdef class Vec(Object):
         PetscCLEAR(self.obj); self.vec = newvec
         return self
 
-    def createMPI(self, size, bsize=None, comm=None):
+    def createMPI(
+        self,
+        size: tuple[int, int] | int,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a parallel vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Vec.createSeq, petsc.VecCreateMPI
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt bs=0, n=0, N=0
         Vec_Sizes(size, bsize, &bs, &n, &N)
@@ -267,7 +321,38 @@ cdef class Vec(Object):
         PetscCLEAR(self.obj); self.vec = newvec
         return self
 
-    def createWithArray(self, array, size=None, bsize=None, comm=None):
+    def createWithArray(
+        self,
+        array: Sequence[Scalar],
+        size: tuple[int, int] | int = None,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a vector using a provided array.
+
+        This method will create either a `Vec.Type.SEQ` or `Vec.Type.MPI`
+        depending on whether the communicator has more than one rank.
+
+        Collective.
+
+        Parameters
+        ----------
+        array
+            Array to store the vector values. Must be at least as large as
+            the local size of the vector.
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateSeqWithArray, petsc.VecCreateMPIWithArray
+
+        """
         cdef PetscInt na=0
         cdef PetscScalar *sa=NULL
         array = iarray_s(array, &na, &sa)
@@ -289,17 +374,37 @@ cdef class Vec(Object):
         self.set_attr('__array__', array)
         return self
 
-    def createCUDAWithArrays(self, cpuarray=None, cudahandle=None, size=None, bsize=None, comm=None):
-        """
-        Returns an instance of :class:`Vec`, a VECCUDA with user provided
-        memory spaces for CPU and GPU arrays.
+    def createCUDAWithArrays(
+        self,
+        cpuarray: Sequence[Scalar] | None = None,
+        cudahandle: Any | None = None,  # FIXME What type is appropriate here?
+        size: tuple[int, int] | int = None,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a vector with type `Vec.Type.CUDA` with optional arrays.
 
-        :arg cpuarray: A :class:`numpy.ndarray`. Will be lazily allocated if
-            *None*.
-        :arg cudahandle: Address of the array on the GPU. Will be lazily
-            allocated if *None*.
-        :arg size: A :class:`int` denoting the size of the Vec.
-        :arg bsize: A :class:`int` denoting the block size.
+        Collective.
+
+        Parameters
+        ----------
+        cpuarray
+            Host array. Will be lazily allocated if not provided.
+        cudahandle
+            Address of the array on the GPU. Will be lazily allocated if
+            not provided.
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateSeqCUDAWithArrays, petsc.VecCreateMPICUDAWithArrays
+
         """
         cdef PetscInt na=0
         cdef PetscScalar *sa=NULL
@@ -329,17 +434,37 @@ cdef class Vec(Object):
             self.set_attr('__array__', cpuarray)
         return self
 
-    def createHIPWithArrays(self, cpuarray=None, hiphandle=None, size=None, bsize=None, comm=None):
-        """
-        Returns an instance of :class:`Vec`, a VECHIP with user provided
-        memory spaces for CPU and GPU arrays.
+    def createHIPWithArrays(
+        self,
+        cpuarray: Sequence[Scalar] | None = None,
+        hiphandle: Any | None = None,  # FIXME What type is appropriate here?
+        size: tuple[int, int] | int | None = None,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a vector with type `Vec.Type.HIP` with optional arrays.
 
-        :arg cpuarray: A :class:`numpy.ndarray`. Will be lazily allocated if
-            *None*.
-        :arg hiphandle: Address of the array on the GPU. Will be lazily
-            allocated if *None*.
-        :arg size: A :class:`int` denoting the size of the Vec.
-        :arg bsize: A :class:`int` denoting the block size.
+        Collective.
+
+        Parameters
+        ----------
+        cpuarray
+            Host array. Will be lazily allocated if not provided.
+        hiphandle
+            Address of the array on the GPU. Will be lazily allocated if
+            not provided.
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateSeqHIPWithArrays, petsc.VecCreateMPIHIPWithArrays
+
         """
         cdef PetscInt na=0
         cdef PetscScalar *sa=NULL
@@ -369,17 +494,37 @@ cdef class Vec(Object):
             self.set_attr('__array__', cpuarray)
         return self
 
-    def createViennaCLWithArrays(self, cpuarray=None, viennaclvechandle=None, size=None, bsize=None, comm=None):
-        """
-        Returns an instance :class:`Vec`, a VECVIENNACL with user provided memory
-        spaces for CPU and GPU arrays.
+    def createViennaCLWithArrays(
+        self,
+        cpuarray: Sequence[Scalar] | None = None,
+        viennaclvechandle: Any | None = None,  # FIXME What type is appropriate here?
+        size: tuple[int, int] | int | None = None,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a vector with type `Vec.Type.VIENNACL` with optional arrays.
 
-        :arg cpuarray: A :class:`numpy.ndarray`. Will be lazily allocated if
-            *None*.
-        :arg viennaclvechandle: Address of the array on the GPU. Will be lazily
-            allocated if *None*.
-        :arg size: A :class:`int` denoting the size of the Vec.
-        :arg size: A :class:`int` denoting the block size.
+        Collective.
+
+        Parameters
+        ----------
+        cpuarray
+            Host array. Will be lazily allocated if not provided.
+        viennaclvechandle
+            Address of the array on the GPU. Will be lazily allocated if
+            not provided.
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateSeqViennaCLWithArrays, petsc.VecCreateMPIViennaCLWithArrays
+
         """
         cdef PetscInt na=0
         cdef PetscScalar *sa=NULL
