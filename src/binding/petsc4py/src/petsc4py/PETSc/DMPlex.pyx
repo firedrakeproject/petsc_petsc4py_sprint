@@ -13,8 +13,8 @@ cdef class DMPlex(DM):
 
     #
 
-    def create(self, comm: Comm | None = None) -> DMPlex:
-        """Creates a `DMPlex` object, which encapsulates an unstructured mesh, or CW complex, which can be expressed using a Hasse Diagram.
+    def create(self, comm: Comm | None = None) -> Self:
+        """Create a `DMPlex` object, which encapsulates an unstructured mesh, or CW complex, which can be expressed using a Hasse Diagram.
 
         Collective.
 
@@ -34,7 +34,7 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createFromCellList(self, dim: int, cells: Sequence, coords: Sequence, interpolate: bool = True, comm: Comm | None = None) -> DMPlex:
+    def createFromCellList(self, dim: int, cells: Sequence[int], coords: Sequence[float], interpolate: bool = True, comm: Comm | None = None) -> Self:
         """Create `DMPlex` from a list of vertices for each cell (common mesh generator output), but only process 0 takes in the input
 
         Collective.
@@ -88,41 +88,32 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createBoxMesh(self, faces, lower=(0,0,0), upper=(1,1,1),
-                      simplex=True, periodic=False, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateBoxMesh - Creates a mesh on the tensor product of unit intervals (box) using simplices or tensor cells (hexahedra).
+    def createBoxMesh(self, faces: Sequence[int], lower: Sequence[int] | None = (0,0,0), upper: Sequence[int] | None = (1,1,1),
+                      simplex: bool | None = True, periodic: Sequence | str | int | bool | None = False, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create a mesh on the tensor product of unit intervals (box) using simplices or tensor cells (hexahedra).
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The communicator for the `DM` object
-        dim
-            The spatial dimension
-        simplex
-            `PETSC_TRUE` for simplices, `PETSC_FALSE` for tensor cells
         faces
-            Number of faces per dimension, or `NULL` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D
+            Number of faces per dimension, or ``None`` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D.
         lower
-            The lower left corner, or `NULL` for (0, 0, 0)
+            The lower left corner, defaults to (0, 0, 0).
         upper
-            The upper right corner, or `NULL` for (1, 1, 1)
-        periodicity
-            The boundary type for the X,Y,Z direction, or `NULL` for `DM_BOUNDARY_NONE`
+            The upper right corner, defaults to (1, 1, 1).
+        simplex
+            ``True`` for simplices, ``False`` for tensor cells, defaults to ``True``.
+        periodic
+            The boundary type for the X,Y,Z direction, or ``None`` for `DM_BOUNDARY_NONE`, defaults to ``False``.
         interpolate
-            Flag to create intermediate mesh pieces (edges, faces)
-
-        Returns
-        -------
-        dm
-            The `DM` object
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMSetFromOptions()`, `DMPlexCreateFromFile()`, `DMPlexCreateHexCylinderMesh()`, `DMSetType()`, `DMCreate()`
+            Flag to create intermediate mesh pieces (edges, faces), defaults to ``True``.
+        comm
+            The communicator for the `DMPlex` object.
 
         See Also
         --------
-        `petsc.DMPlexCreateBoxMesh`
+        `DM`, `DMPlex`, `DM.setFromOptions`, `DMPlex.createFromFile`, `DMPlex.createHexCylinderMesh`, `DM.setType`, `DM.create`, `petsc.DMPlexCreateBoxMesh`
 
         """
         cdef Py_ssize_t i = 0
@@ -159,11 +150,11 @@ cdef class DMPlex(DM):
         dim
             The spatial dimension of the box, so the resulting mesh is has dimension `dim`-1
         faces
-            Number of faces per dimension, or `NULL` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D
+            Number of faces per dimension, or ``None`` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D
         lower
-            The lower left corner, or `NULL` for (0, 0, 0)
+            The lower left corner, or ``None`` for (0, 0, 0)
         upper
-            The upper right corner, or `NULL` for (1, 1, 1)
+            The upper right corner, or ``None`` for (1, 1, 1)
         interpolate
             Flag to create intermediate mesh pieces (edges, faces)
 
@@ -172,7 +163,7 @@ cdef class DMPlex(DM):
         dm
             The `DM` object
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMSetFromOptions()`, `DMPlexCreateBoxMesh()`, `DMPlexCreateFromFile()`, `DMSetType()`, `DMCreate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMSetFromOptions`, `DMPlexCreateBoxMesh`, `DMPlexCreateFromFile`, `DMSetType`, `DMCreate`
 
         See Also
         --------
@@ -223,7 +214,7 @@ cdef class DMPlex(DM):
         Use -dm_plex_create_ prefix to pass options to the internal PetscViewer, e.g.
         $ -dm_plex_create_viewer_hdf5_collective
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreateFromDAG()`, `DMPlexCreateFromCellListPetsc()`, `DMPlexCreate()`, `PetscObjectSetName()`, `DMView()`, `DMLoad()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreateFromDAG`, `DMPlexCreateFromCellListPetsc`, `DMPlexCreate`, `PetscObjectSetName`, `DMView`, `DMLoad`
 
         See Also
         --------
@@ -242,7 +233,7 @@ cdef class DMPlex(DM):
         return self
 
     def createCGNS(self, cgid, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateCGNS - Create a `DMPLEX` mesh from a CGNS file.
+        """DMPlexCreateCGNS - Create a `DMPlex` mesh from a CGNS file.
 
         Collective.
 
@@ -260,7 +251,7 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexCreateCGNS()`, `DMPlexCreateExodus()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexCreateCGNS`, `DMPlexCreateExodus`
 
         See Also
         --------
@@ -286,7 +277,7 @@ cdef class DMPlex(DM):
         return self
 
     def createExodusFromFile(self, filename, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateExodusFromFile - Create a `DMPLEX` mesh from an ExodusII file.
+        """DMPlexCreateExodusFromFile - Create a `DMPlex` mesh from an ExodusII file.
 
         Collective.
 
@@ -304,7 +295,7 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `PETSCVIEWEREXODUSII`, `DMPLEX`, `DMCreate()`, `DMPlexCreateExodus()`
+        .seealso: [](chapter_unstructured), `DM`, `PETSCVIEWEREXODUSII`, `DMPlex`, `DMCreate`, `DMPlexCreateExodus`
 
         See Also
         --------
@@ -321,7 +312,7 @@ cdef class DMPlex(DM):
         return self
 
     def createExodus(self, exoid, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateExodus - Create a `DMPLEX` mesh from an ExodusII file ID.
+        """DMPlexCreateExodus - Create a `DMPlex` mesh from an ExodusII file ID.
 
         Collective.
 
@@ -339,7 +330,7 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `PETSCVIEWEREXODUSII`, `DMPLEX`, `DMPLEX`, `DMCreate()`
+        .seealso: [](chapter_unstructured), `DM`, `PETSCVIEWEREXODUSII`, `DMPlex`, `DMPlex`, `DMCreate`
 
         See Also
         --------
@@ -355,7 +346,7 @@ cdef class DMPlex(DM):
         return self
 
     def createGmsh(self, Viewer viewer, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateGmsh - Create a `DMPLEX` mesh from a Gmsh file viewer
+        """DMPlexCreateGmsh - Create a `DMPlex` mesh from a Gmsh file viewer
 
         Collective.
 
@@ -388,7 +379,7 @@ cdef class DMPlex(DM):
 
         By default, the "Cell Sets", "Face Sets", and "Vertex Sets" labels are created, and only insert the first tag on a point. By using -dm_plex_gmsh_multiple_tags, all tags can be inserted. Instead, -dm_plex_gmsh_use_regions creates labels based on the region names from the PhysicalNames section, and all tags are used.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMCreate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMCreate`
 
         See Also
         --------
@@ -412,7 +403,7 @@ cdef class DMPlex(DM):
         hasLagrange
             The mesh has Lagrange unknowns in the cohesive cells
         label
-            A label name, or `NULL`
+            A label name, or ``None``
         value
             A label value
 
@@ -421,7 +412,7 @@ cdef class DMPlex(DM):
         subdm
             The surface mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetSubpointMap()`, `DMPlexCreateSubmesh()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSubpointMap`, `DMPlexCreateSubmesh`
 
         See Also
         --------
@@ -442,7 +433,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
 
         Returns
         -------
@@ -451,7 +442,7 @@ cdef class DMPlex(DM):
         pEnd
             The upper bound for mesh points
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetChart`
 
         See Also
         --------
@@ -470,13 +461,13 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         pStart
             The first mesh point
         pEnd
             The upper bound for mesh points
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetChart`
 
         See Also
         --------
@@ -495,16 +486,16 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
 
         Returns
         -------
         size
             The cone size for point `p`
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexSetConeSize()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetConeSize`, `DMPlexSetChart`
 
         See Also
         --------
@@ -527,16 +518,16 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         size
             The cone size for point `p`
 
         Note:
-        This should be called after `DMPlexSetChart()`.
+        This should be called after `DMPlexSetChart`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetConeSize()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetConeSize`, `DMPlexSetChart`
 
         See Also
         --------
@@ -558,9 +549,9 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
 
         Returns
         -------
@@ -568,10 +559,10 @@ cdef class DMPlex(DM):
             An array of points which are on the in-edges for point `p`
 
         Fortran Note:
-        You must also call `DMPlexRestoreCone()` after you finish using the returned array.
-        `DMPlexRestoreCone()` is not needed/available in C.
+        You must also call `DMPlexRestoreCone` after you finish using the returned array.
+        `DMPlexRestoreCone` is not needed/available in C.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetConeSize()`, `DMPlexSetCone()`, `DMPlexGetConeTuple()`, `DMPlexSetChart()`, `DMPlexRestoreCone()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetConeSize`, `DMPlexSetCone`, `DMPlexGetConeTuple`, `DMPlexSetChart`, `DMPlexRestoreCone`
 
         See Also
         --------
@@ -596,18 +587,18 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         coneOrientation
             An array of orientations
 
         Notes:
-        This should be called after all calls to `DMPlexSetConeSize()` and `DMSetUp()`.
+        This should be called after all calls to `DMPlexSetConeSize` and `DMSetUp`.
 
-        The meaning of coneOrientation is detailed in `DMPlexGetConeOrientation()`.
+        The meaning of coneOrientation is detailed in `DMPlexGetConeOrientation`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetConeOrientation()`, `DMPlexSetCone()`, `DMPlexSetChart()`, `DMPlexSetConeSize()`, `DMSetUp()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetConeOrientation`, `DMPlexSetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
 
         See Also
         --------
@@ -640,15 +631,15 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         conePos
             The local index in the cone where the point should be put
         conePoint
             The mesh point to insert
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetCone()`, `DMPlexSetChart()`, `DMPlexSetConeSize()`, `DMSetUp()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
 
         See Also
         --------
@@ -668,18 +659,18 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         conePos
             The local index in the cone where the point should be put
         coneOrientation
             The point orientation to insert
 
         Note:
-        The meaning of coneOrientation values is detailed in `DMPlexGetConeOrientation()`.
+        The meaning of coneOrientation values is detailed in `DMPlexGetConeOrientation`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetCone()`, `DMPlexSetChart()`, `DMPlexSetConeSize()`, `DMSetUp()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
 
         See Also
         --------
@@ -699,9 +690,9 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
 
         Returns
         -------
@@ -712,14 +703,14 @@ cdef class DMPlex(DM):
         Note:
         The number indexes the symmetry transformations for the cell type (see manual). Orientation 0 is always
         the identity transformation. Negative orientation indicates reflection so that -(o+1) is the reflection
-        of o, however it is not necessarily the inverse. To get the inverse, use `DMPolytopeTypeComposeOrientationInv()`
+        of o, however it is not necessarily the inverse. To get the inverse, use `DMPolytopeTypeComposeOrientationInv`
         with the identity.
 
         Fortran Note:
-        You must also call `DMPlexRestoreConeOrientation()` after you finish using the returned array.
-        `DMPlexRestoreConeOrientation()` is not needed/available in C.
+        You must also call `DMPlexRestoreConeOrientation` after you finish using the returned array.
+        `DMPlexRestoreConeOrientation` is not needed/available in C.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPolytopeTypeComposeOrientation()`, `DMPolytopeTypeComposeOrientationInv()`, `DMPlexCreate()`, `DMPlexGetCone()`, `DMPlexSetCone()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPolytopeTypeComposeOrientation`, `DMPolytopeTypeComposeOrientationInv`, `DMPlexCreate`, `DMPlexGetCone`, `DMPlexSetCone`, `DMPlexSetChart`
 
         See Also
         --------
@@ -744,18 +735,18 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         coneOrientation
             An array of orientations
 
         Notes:
-        This should be called after all calls to `DMPlexSetConeSize()` and `DMSetUp()`.
+        This should be called after all calls to `DMPlexSetConeSize` and `DMSetUp`.
 
-        The meaning of coneOrientation is detailed in `DMPlexGetConeOrientation()`.
+        The meaning of coneOrientation is detailed in `DMPlexGetConeOrientation`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetConeOrientation()`, `DMPlexSetCone()`, `DMPlexSetChart()`, `DMPlexSetConeSize()`, `DMSetUp()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetConeOrientation`, `DMPlexSetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
 
         See Also
         --------
@@ -782,19 +773,19 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         cell
             The cell
         celltype
             The polytope type of the cell
 
         Note:
-        By default, cell types will be automatically computed using `DMPlexComputeCellTypes()` before this function
+        By default, cell types will be automatically computed using `DMPlexComputeCellTypes` before this function
         is executed. This function will override the computed type. However, if automatic classification will not succeed
         and a user wants to manually specify all types, the classification must be disabled by calling
         DMCreaateLabel(dm, "celltype") before getting or setting any cell types.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetCellTypeLabel()`, `DMPlexGetDepthLabel()`, `DMPlexGetDepth()`, `DMPlexComputeCellTypes()`, `DMCreateLabel()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellTypeLabel`, `DMPlexGetDepthLabel`, `DMPlexGetDepth`, `DMPlexComputeCellTypes`, `DMCreateLabel`
 
         See Also
         --------
@@ -813,7 +804,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         cell
             The cell
 
@@ -822,7 +813,7 @@ cdef class DMPlex(DM):
         celltype
             The polytope type of the cell
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPolytopeType`, `DMPlexGetCellTypeLabel()`, `DMPlexGetDepthLabel()`, `DMPlexGetDepth()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPolytopeType`, `DMPlexGetCellTypeLabel`, `DMPlexGetDepthLabel`, `DMPlexGetDepth`
 
         See Also
         --------
@@ -842,7 +833,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
@@ -853,7 +844,7 @@ cdef class DMPlex(DM):
         This function will trigger automatica computation of cell types. This can be disabled by calling
         `DMCreateLabel`(dm, "celltype") beforehand.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetCellType()`, `DMPlexGetDepthLabel()`, `DMCreateLabel()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellType`, `DMPlexGetDepthLabel`, `DMCreateLabel`
 
         See Also
         --------
@@ -873,16 +864,16 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
 
         Returns
         -------
         size
             The support size for point `p`
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexSetConeSize()`, `DMPlexSetChart()`, `DMPlexGetConeSize()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetConeSize`, `DMPlexSetChart`, `DMPlexGetConeSize`
 
         See Also
         --------
@@ -905,16 +896,16 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         size
             The support size for point `p`
 
         Note:
-        This should be called after `DMPlexSetChart()`.
+        This should be called after `DMPlexSetChart`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexGetSupportSize()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetSupportSize`, `DMPlexSetChart`
 
         See Also
         --------
@@ -936,9 +927,9 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
 
         Returns
         -------
@@ -946,10 +937,10 @@ cdef class DMPlex(DM):
             An array of points which are on the out-edges for point `p`
 
         Fortran Note:
-        You must also call `DMPlexRestoreSupport()` after you finish using the returned array.
-        `DMPlexRestoreSupport()` is not needed/available in C.
+        You must also call `DMPlexRestoreSupport` after you finish using the returned array.
+        `DMPlexRestoreSupport` is not needed/available in C.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetSupportSize()`, `DMPlexSetSupport()`, `DMPlexGetCone()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSupportSize`, `DMPlexSetSupport`, `DMPlexGetCone`, `DMPlexSetChart`
 
         See Also
         --------
@@ -974,16 +965,16 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart()`
+            The point, which must lie in the chart set with `DMPlexSetChart`
         support
             An array of points which are on the out-edges for point `p`
 
         Note:
-        This should be called after all calls to `DMPlexSetSupportSize()` and `DMSetUp()`.
+        This should be called after all calls to `DMPlexSetSupportSize` and `DMSetUp`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexSetCone()`, `DMPlexSetConeSize()`, `DMPlexCreate()`, `DMPlexGetSupport()`, `DMPlexSetChart()`, `DMPlexSetSupportSize()`, `DMSetUp()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexSetCone`, `DMPlexSetConeSize`, `DMPlexCreate`, `DMPlexGetSupport`, `DMPlexSetChart`, `DMPlexSetSupportSize`, `DMSetUp`
 
         See Also
         --------
@@ -1008,7 +999,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
 
         Returns
         -------
@@ -1017,7 +1008,7 @@ cdef class DMPlex(DM):
         maxSupportSize
             The maximum number of out-edges
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexSetConeSize()`, `DMPlexSetChart()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetConeSize`, `DMPlexSetChart`
 
         See Also
         --------
@@ -1036,12 +1027,12 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
 
         Note:
-        This should be called after all calls to `DMPlexSetCone()`
+        This should be called after all calls to `DMPlexSetCone`
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexSetChart()`, `DMPlexSetConeSize()`, `DMPlexSetCone()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMPlexSetCone`
 
         See Also
         --------
@@ -1061,9 +1052,9 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         mesh
-            The `DMPLEX`
+            The `DMPlex`
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMPlexSymmetrize()`, `DMPlexComputeCellTypes()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSymmetrize`, `DMPlexComputeCellTypes`
 
         See Also
         --------
@@ -1085,7 +1076,7 @@ cdef class DMPlex(DM):
 
         This routine will fail for non-orientable surfaces, such as the Moebius strip.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMCreate()`, `DMPLEX`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMCreate`, `DMPlex`
 
         See Also
         --------
@@ -1100,14 +1091,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
         globalCellNumbers
             Global cell numbers for all cells on this process
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetVertexNumbering()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetVertexNumbering`
 
         See Also
         --------
@@ -1125,14 +1116,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
         globalVertexNumbers
             Global vertex numbers for all vertices on this process
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetCellNumbering()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellNumbering`
 
         See Also
         --------
@@ -1152,14 +1143,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
         globalPointNumbers
             Global numbers for all points on this process
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetCellNumbering()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellNumbering`
 
         See Also
         --------
@@ -1178,7 +1169,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
@@ -1186,13 +1177,13 @@ cdef class DMPlex(DM):
             The number of strata (breadth first levels) in the DAG
 
         Notes:
-        This returns maximum of point depths over all points, i.e. maximum value of the label returned by `DMPlexGetDepthLabel()`.
+        This returns maximum of point depths over all points, i.e. maximum value of the label returned by `DMPlexGetDepthLabel`.
 
-        The point depth is described more in detail in `DMPlexGetDepthStratum()`.
+        The point depth is described more in detail in `DMPlexGetDepthStratum`.
 
         An empty mesh gives -1.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetDepthLabel()`, `DMPlexGetDepthStratum()`, `DMPlexGetPointDepth()`, `DMPlexSymmetrize()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetDepthLabel`, `DMPlexGetDepthStratum`, `DMPlexGetPointDepth`, `DMPlexSymmetrize`
 
         See Also
         --------
@@ -1211,7 +1202,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         depth
             The requested depth
 
@@ -1224,10 +1215,10 @@ cdef class DMPlex(DM):
 
         Notes:
         Depth indexing is related to topological dimension.  Depth stratum 0 contains the lowest topological dimension points,
-        often "vertices".  If the mesh is "interpolated" (see `DMPlexInterpolate()`), then depth stratum 1 contains the next
+        often "vertices".  If the mesh is "interpolated" (see `DMPlexInterpolate`), then depth stratum 1 contains the next
         higher dimension, e.g., "edges".
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetHeightStratum()`, `DMPlexGetDepth()`, `DMPlexGetDepthLabel()`, `DMPlexGetPointDepth()`, `DMPlexSymmetrize()`, `DMPlexInterpolate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetHeightStratum`, `DMPlexGetDepth`, `DMPlexGetDepthLabel`, `DMPlexGetPointDepth`, `DMPlexSymmetrize`, `DMPlexInterpolate`
 
         See Also
         --------
@@ -1246,7 +1237,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         height
             The requested height
 
@@ -1257,7 +1248,7 @@ cdef class DMPlex(DM):
         end
             One beyond the last point at this `height`
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetDepthStratum()`, `DMPlexGetDepth()`, `DMPlexGetPointHeight()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetDepthStratum`, `DMPlexGetDepth`, `DMPlexGetPointHeight`
 
         See Also
         --------
@@ -1276,7 +1267,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         numPoints
             The number of input points for the meet
         points
@@ -1292,7 +1283,7 @@ cdef class DMPlex(DM):
         Fortran Note:
         The `numCoveredPoints` argument is not present in the Fortran binding since it is internal to the array.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetMeet()`, `DMPlexGetFullMeet()`, `DMPlexGetJoin()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetMeet`, `DMPlexGetFullMeet`, `DMPlexGetJoin`
 
         See Also
         --------
@@ -1318,7 +1309,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         numPoints
             The number of input points for the join
         points
@@ -1334,7 +1325,7 @@ cdef class DMPlex(DM):
         Fortran Note:
         The `numCoveredPoints` argument is not present in the Fortran binding since it is internal to the array.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetJoin()`, `DMPlexGetFullJoin()`, `DMPlexGetMeet()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetJoin`, `DMPlexGetFullJoin`, `DMPlexGetMeet`
 
         See Also
         --------
@@ -1360,7 +1351,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         numPoints
             The number of input points for the join
         points
@@ -1376,7 +1367,7 @@ cdef class DMPlex(DM):
         Fortran Note:
         The `numCoveredPoints` argument is not present in the Fortran binding since it is internal to the array.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetJoin()`, `DMPlexGetFullJoin()`, `DMPlexGetMeet()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetJoin`, `DMPlexGetFullJoin`, `DMPlexGetMeet`
 
         See Also
         --------
@@ -1402,20 +1393,20 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX`
+            The `DMPlex`
         p
             The mesh point
         useCone
-            `PETSC_TRUE` for the closure, otherwise return the star
+            ``True`` for the closure, otherwise return the star
         numPoints
             The number of points in the closure, so points[] is of size 2*`numPoints`
         points
             The points and point orientations, interleaved as pairs [p0, o0, p1, o1, ...]
 
         Note:
-        If not using internal storage (points is not `NULL` on input), this call is unnecessary
+        If not using internal storage (points is not ``None`` on input), this call is unnecessary
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetTransitiveClosure()`, `DMPlexCreate()`, `DMPlexSetCone()`, `DMPlexSetChart()`, `DMPlexGetCone()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetTransitiveClosure`, `DMPlexCreate`, `DMPlexSetCone`, `DMPlexSetChart`, `DMPlexGetCone`
 
         See Also
         --------
@@ -1446,23 +1437,17 @@ cdef class DMPlex(DM):
         dm
             The `DM`
         section
-            The section describing the layout in `v`, or `NULL` to use the default section
+            The section describing the layout in `v`, or ``None`` to use the default section
         v
             The local vector
         point
             The point in the `DM`
         csize
-            The number of values in the closure, or `NULL`
+            The number of values in the closure, or ``None``
         values
             The array of values, which is a borrowed array and should not be freed
 
-        Note:
-        The array values are discarded and not copied back into `v`. In order to copy values back to `v`, use `DMPlexVecSetClosure()`
-
-        Fortran Note:
-        The `csize` argument is not present in the Fortran binding since it is internal to the array.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexVecGetClosure()`, `DMPlexVecSetClosure()`, `DMPlexMatSetClosure()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexVecGetClosure`, `DMPlexVecSetClosure`, `DMPlexMatSetClosure`
 
         See Also
         --------
@@ -1488,23 +1473,23 @@ cdef class DMPlex(DM):
         dm
             The `DM`
         section
-            The section describing the layout in `v`, or `NULL` to use the default section
+            The section describing the layout in `v`, or ``None`` to use the default section
         v
             The local vector
         point
             The point in the `DM`
         csize
-            The number of values in the closure, or `NULL`
+            The number of values in the closure, or ``None``
         values
             The array of values, which is a borrowed array and should not be freed
 
         Note:
-        The array values are discarded and not copied back into `v`. In order to copy values back to `v`, use `DMPlexVecSetClosure()`
+        The array values are discarded and not copied back into `v`. In order to copy values back to `v`, use `DMPlexVecSetClosure`
 
         Fortran Note:
         The `csize` argument is not present in the Fortran binding since it is internal to the array.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexVecGetClosure()`, `DMPlexVecSetClosure()`, `DMPlexMatSetClosure()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexVecGetClosure`, `DMPlexVecSetClosure`, `DMPlexMatSetClosure`
 
         See Also
         --------
@@ -1531,7 +1516,7 @@ cdef class DMPlex(DM):
         dm
             The `DM`
         section
-            The section describing the layout in `v`, or `NULL` to use the default section
+            The section describing the layout in `v`, or ``None`` to use the default section
         v
             The local vector
         point
@@ -1542,7 +1527,7 @@ cdef class DMPlex(DM):
             The insert mode. One of `INSERT_ALL_VALUES`, `ADD_ALL_VALUES`, `INSERT_VALUES`, `ADD_VALUES`, `INSERT_BC_VALUES`, and `ADD_BC_VALUES`,
         where `INSERT_ALL_VALUES` and `ADD_ALL_VALUES` also overwrite boundary conditions.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexVecGetClosure()`, `DMPlexMatSetClosure()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexVecGetClosure`, `DMPlexMatSetClosure`
 
         See Also
         --------
@@ -1568,9 +1553,9 @@ cdef class DMPlex(DM):
         dm
             The `DM`
         section
-            The section describing the layout in `v`, or `NULL` to use the default section
+            The section describing the layout in `v`, or ``None`` to use the default section
         globalSection
-            The section describing the layout in `v`, or `NULL` to use the default global section
+            The section describing the layout in `v`, or ``None`` to use the default global section
         A
             The matrix
         point
@@ -1580,7 +1565,7 @@ cdef class DMPlex(DM):
         mode
             The insert mode, where `INSERT_ALL_VALUES` and `ADD_ALL_VALUES` also overwrite boundary conditions
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexMatSetClosureGeneral()`, `DMPlexVecGetClosure()`, `DMPlexVecSetClosure()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexMatSetClosureGeneral`, `DMPlexVecGetClosure`, `DMPlexVecSetClosure`
 
         See Also
         --------
@@ -1604,7 +1589,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         boundary
-            The `DMPLEX` boundary object
+            The `DMPlex` boundary object
         name
             The mesh generation package name
         interpolate
@@ -1613,13 +1598,13 @@ cdef class DMPlex(DM):
         Returns
         -------
         mesh
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Options Database Keys:
         +  -dm_plex_generate <name> - package to generate mesh, for example, triangle, ctetgen or tetgen
         -  -dm_generator <name> - package to generate mesh, for example, triangle, ctetgen or tetgen
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `DMRefine()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMRefine`
 
         See Also
         --------
@@ -1640,10 +1625,10 @@ cdef class DMPlex(DM):
         Not collective.
 
         Inputs Parameters:
-        + dm - The `DMPLEX` object
+        + dm - The `DMPlex` object
         - opts - The command line options
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexTetgenSetOptions()`, `DMPlexGenerate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTetgenSetOptions`, `DMPlexGenerate`
 
         See Also
         --------
@@ -1660,10 +1645,10 @@ cdef class DMPlex(DM):
         Not collective.
 
         Inputs Parameters:
-        + dm - The `DMPLEX` object
+        + dm - The `DMPlex` object
         - opts - The command line options
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexTriangleSetOptions()`, `DMPlexGenerate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTriangleSetOptions`, `DMPlexGenerate`
 
         See Also
         --------
@@ -1692,9 +1677,9 @@ cdef class DMPlex(DM):
             The `DMLabel` marking boundary faces with the given value
 
         Note:
-        This function will use the point `PetscSF` from the input `DM` to exclude points on the partition boundary from being marked, unless the partition overlap is greater than zero. If you also wish to mark the partition boundary, you can use `DMSetPointSF()` to temporarily set it to `NULL`, and then reset it to the original object after the call.
+        This function will use the point `PetscSF` from the input `DM` to exclude points on the partition boundary from being marked, unless the partition overlap is greater than zero. If you also wish to mark the partition boundary, you can use `DMSetPointSF` to temporarily set it to ``None``, and then reset it to the original object after the call.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMLabelCreate()`, `DMCreateLabel()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLabelCreate`, `DMCreateLabel`
 
         See Also
         --------
@@ -1726,7 +1711,7 @@ cdef class DMPlex(DM):
         label
             A `DMLabel` marking all surface points in the transitive closure
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexLabelCohesiveComplete()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexLabelCohesiveComplete`
 
         See Also
         --------
@@ -1746,13 +1731,13 @@ cdef class DMPlex(DM):
         label
             A `DMLabel` marking the surface
         blabel
-            A `DMLabel` marking the vertices on the boundary which will not be duplicated, or `NULL` to find them automatically
+            A `DMLabel` marking the vertices on the boundary which will not be duplicated, or ``None`` to find them automatically
         bvalue
             Value of `DMLabel` marking the vertices on the boundary
         flip
             Flag to flip the submesh normal and replace points on the other side
         subdm
-            The `DM` associated with the label, or `NULL`
+            The `DM` associated with the label, or ``None``
 
         Returns
         -------
@@ -1762,7 +1747,7 @@ cdef class DMPlex(DM):
         Note:
         The vertices in blabel are called "unsplit" in the terminology from hybrid cell creation.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexConstructCohesiveCells()`, `DMPlexLabelComplete()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexConstructCohesiveCells`, `DMPlexLabelComplete`
 
         See Also
         --------
@@ -1783,7 +1768,7 @@ cdef class DMPlex(DM):
         useAnchors
             Flag to use the constraints. If PETSC_TRUE, then constrained points are omitted from DMPlexGetAdjacency(), and their anchor points appear in their place.
 
-        .seealso: `DMPLEX`, `DMGetAdjacency()`, `DMSetAdjacency()`, `DMPlexDistribute()`, `DMPlexPreallocateOperator()`, `DMPlexSetAnchors()`
+        .seealso: `DMPlex`, `DMGetAdjacency`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlexSetAnchors`
 
         See Also
         --------
@@ -1806,7 +1791,7 @@ cdef class DMPlex(DM):
         useAnchors
             Flag to use the closure. If PETSC_TRUE, then constrained points are omitted from DMPlexGetAdjacency(), and their anchor points appear in their place.
 
-        .seealso: `DMPLEX`, `DMPlexSetAdjacencyUseAnchors()`, `DMSetAdjacency()`, `DMGetAdjacency()`, `DMPlexDistribute()`, `DMPlexPreallocateOperator()`, `DMPlexSetAnchors()`
+        .seealso: `DMPlex`, `DMPlexSetAdjacencyUseAnchors`, `DMSetAdjacency`, `DMGetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlexSetAnchors`
 
         See Also
         --------
@@ -1830,16 +1815,16 @@ cdef class DMPlex(DM):
         Returns
         -------
         adjSize
-            The maximum size of `adj` if it is non-`NULL`, or `PETSC_DETERMINE`;
+            The maximum size of `adj` if it is non-``None``, or `PETSC_DETERMINE`;
         on output the number of adjacent points
         adj
-            Either `NULL` so that the array is allocated, or an existing array with size `adjSize`;
+            Either ``None`` so that the array is allocated, or an existing array with size `adjSize`;
         on output contains the adjacent points
 
         Notes:
-        The user must `PetscFree()` the `adj` array if it was not passed in.
+        The user must `PetscFree` the `adj` array if it was not passed in.
 
-        .seealso: `DMPLEX`, `DMSetAdjacency()`, `DMPlexDistribute()`, `DMCreateMatrix()`, `DMPlexPreallocateOperator()`
+        .seealso: `DMPlex`, `DMSetAdjacency`, `DMPlexDistribute`, `DMCreateMatrix`, `DMPlexPreallocateOperator`
 
         See Also
         --------
@@ -1871,7 +1856,7 @@ cdef class DMPlex(DM):
         Note:
         Any existing `PetscPartitioner` will be destroyed.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `PetscPartitioner`,`DMPlexDistribute()`, `DMPlexGetPartitioner()`, `PetscPartitionerCreate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`,`DMPlexDistribute`, `DMPlexGetPartitioner`, `PetscPartitionerCreate`
 
         See Also
         --------
@@ -1898,7 +1883,7 @@ cdef class DMPlex(DM):
         Note:
         This gets a borrowed reference, so the user should not destroy this `PetscPartitioner`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `PetscPartitioner`, `PetscSection`, `DMPlexDistribute()`, `DMPlexSetPartitioner()`, `PetscPartitionerDMPlexPartition()`, `PetscPartitionerCreate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`, `PetscSection`, `DMPlexDistribute`, `DMPlexSetPartitioner`, `PetscPartitionerDMPlexPartition`, `PetscPartitionerCreate`
 
         See Also
         --------
@@ -1914,7 +1899,7 @@ cdef class DMPlex(DM):
         """DMPlexRebalanceSharedPoints - Redistribute points in the plex that are shared in order to achieve better balancing. This routine updates the `PointSF` of the `DM` inplace.
 
         Input parameters:
-        + dm               - The `DMPLEX` object.
+        + dm               - The `DMPlex` object.
         . entityDepth      - depth of the entity to balance (0 -> balance vertices).
         . useInitialGuess  - whether to use the current distribution as initial guess (only used by ParMETIS).
         - parallel         - whether to use ParMETIS and do the partition in parallel or whether to gather the graph onto a single process and use METIS.
@@ -1928,7 +1913,7 @@ cdef class DMPlex(DM):
         .  -dm_plex_rebalance_shared_points_use_mat_partitioning - Use the MatPartitioning object to perform the partition, the prefix for those operations is -dm_plex_rebalance_shared_points_
         -  -dm_plex_rebalance_shared_points_monitor - Monitor the shared points rebalance process
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexDistribute()`, `DMPlexCreateOverlap()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexDistribute`, `DMPlexCreateOverlap`
 
         See Also
         --------
@@ -1950,24 +1935,24 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The original `DMPLEX` object
+            The original `DMPlex` object
         overlap
             The overlap of partitions, 0 is the default
 
         Returns
         -------
         sf
-            The `PetscSF` used for point distribution, or `NULL` if not needed
+            The `PetscSF` used for point distribution, or ``None`` if not needed
         dmParallel
-            The distributed `DMPLEX` object
+            The distributed `DMPlex` object
 
         Note:
-        If the mesh was not distributed, the output `dmParallel` will be `NULL`.
+        If the mesh was not distributed, the output `dmParallel` will be ``None``.
 
-        The user can control the definition of adjacency for the mesh using `DMSetAdjacency()`. They should choose the combination appropriate for the function
+        The user can control the definition of adjacency for the mesh using `DMSetAdjacency`. They should choose the combination appropriate for the function
         representation on the mesh.
 
-        .seealso: `DMPLEX`, `DM`, `DMPlexCreate()`, `DMSetAdjacency()`, `DMPlexGetOverlap()`
+        .seealso: `DMPlex`, `DM`, `DMPlexCreate`, `DMSetAdjacency`, `DMPlexGetOverlap`
 
         See Also
         --------
@@ -1990,7 +1975,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The non-overlapping distributed `DMPLEX` object
+            The non-overlapping distributed `DMPlex` object
         overlap
             The overlap of partitions (the same on all ranks)
 
@@ -1999,7 +1984,7 @@ cdef class DMPlex(DM):
         sf
             The `PetscSF` used for point distribution
         dmOverlap
-            The overlapping distributed `DMPLEX` object, or `NULL`
+            The overlapping distributed `DMPlex` object, or ``None``
 
         Options Database Keys:
         + -dm_plex_overlap_labels <name1,name2,...> - List of overlap label names
@@ -2008,12 +1993,12 @@ cdef class DMPlex(DM):
         - -dm_plex_overlap_exclude_value <int>      - Label value used to exclude points from overlap
 
         Notes:
-        If the mesh was not distributed, the return value is `NULL`.
+        If the mesh was not distributed, the return value is ``None``.
 
-        The user can control the definition of adjacency for the mesh using `DMSetAdjacency()`. They should choose the combination appropriate for the function
+        The user can control the definition of adjacency for the mesh using `DMSetAdjacency`. They should choose the combination appropriate for the function
         representation on the mesh.
 
-        .seealso: `DMPLEX`, `PetscSF`, `DM`, `DMPlexCreate()`, `DMSetAdjacency()`, `DMPlexDistribute()`, `DMPlexCreateOverlapLabel()`, `DMPlexGetOverlap()`
+        .seealso: `DMPlex`, `PetscSF`, `DM`, `DMPlexCreate`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexCreateOverlapLabel`, `DMPlexGetOverlap`
 
         See Also
         --------
@@ -2045,10 +2030,10 @@ cdef class DMPlex(DM):
 
         Notes:
         This currently finds out whether at least two ranks have any DAG points.
-        This involves `MPI_Allreduce()` with one integer.
+        This involves `MPI_Allreduce` with one integer.
         The result is currently not stashed so every call to this routine involves this global communication.
 
-        .seealso: `DMPLEX`, `DMPLEX`, `DMPlexDistribute()`, `DMPlexGetOverlap()`, `DMPlexIsInterpolated()`
+        .seealso: `DMPlex`, `DMPlex`, `DMPlexDistribute`, `DMPlexGetOverlap`, `DMPlexIsInterpolated`
 
         See Also
         --------
@@ -2065,7 +2050,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
@@ -2074,9 +2059,9 @@ cdef class DMPlex(DM):
 
         Note:
         This just gives the first range of cells found. If the mesh has several cell types, it will only give the first.
-        If the mesh has no cells, this returns `PETSC_FALSE`.
+        If the mesh has no cells, this returns ``False``.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetSimplexOrBoxCells()`, `DMPlexGetCellType()`, `DMPlexGetHeightStratum()`, `DMPolytopeTypeGetNumVertices()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSimplexOrBoxCells`, `DMPlexGetCellType`, `DMPlexGetHeightStratum`, `DMPolytopeTypeGetNumVertices`
 
         See Also
         --------
@@ -2102,7 +2087,7 @@ cdef class DMPlex(DM):
         dist
             Flag for distribution
 
-        .seealso: `DMPLEX`, `DM`, `DMPlexDistributeSetDefault()`, `DMPlexDistribute()`
+        .seealso: `DMPlex`, `DM`, `DMPlexDistributeSetDefault`, `DMPlexDistribute`
 
         See Also
         --------
@@ -2125,7 +2110,7 @@ cdef class DMPlex(DM):
         dist
             Flag for distribution
 
-        .seealso: `DMPLEX`, `DMPlexDistributeGetDefault()`, `DMPlexDistribute()`
+        .seealso: `DMPlex`, `DMPlexDistributeGetDefault`, `DMPlexDistribute`
 
         See Also
         --------
@@ -2147,12 +2132,12 @@ cdef class DMPlex(DM):
             The name of the specific parallel distribution
 
         Note:
-        If distribution name is set when saving, `DMPlexTopologyView()` saves the plex's
+        If distribution name is set when saving, `DMPlexTopologyView` saves the plex's
         parallel distribution (i.e., partition, ownership, and local ordering of points) under
-        this name. Conversely, if distribution name is set when loading, `DMPlexTopologyLoad()`
+        this name. Conversely, if distribution name is set when loading, `DMPlexTopologyLoad`
         loads the parallel distribution stored in file under this name.
 
-        .seealso: `DMPLEX`, `DMPlexDistributionGetName()`, `DMPlexTopologyView()`, `DMPlexTopologyLoad()`
+        .seealso: `DMPlex`, `DMPlexDistributionGetName`, `DMPlexTopologyView`, `DMPlexTopologyLoad`
 
         See Also
         --------
@@ -2178,12 +2163,12 @@ cdef class DMPlex(DM):
             The name of the specific parallel distribution
 
         Note:
-        If distribution name is set when saving, `DMPlexTopologyView()` saves the plex's
+        If distribution name is set when saving, `DMPlexTopologyView` saves the plex's
         parallel distribution (i.e., partition, ownership, and local ordering of points) under
-        this name. Conversely, if distribution name is set when loading, `DMPlexTopologyLoad()`
+        this name. Conversely, if distribution name is set when loading, `DMPlexTopologyLoad`
         loads the parallel distribution stored in file under this name.
 
-        .seealso: `DMPLEX`, `DMPlexDistributionSetName()`, `DMPlexTopologyView()`, `DMPlexTopologyLoad()`
+        .seealso: `DMPlex`, `DMPlexDistributionSetName`, `DMPlexTopologyView`, `DMPlexTopologyLoad`
 
         See Also
         --------
@@ -2200,7 +2185,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
 
         Returns
         -------
@@ -2209,9 +2194,9 @@ cdef class DMPlex(DM):
 
         Note:
         This just gives the first range of cells found. If the mesh has several cell types, it will only give the first.
-        If the mesh has no cells, this returns `PETSC_FALSE`.
+        If the mesh has no cells, this returns ``False``.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetSimplexOrBoxCells()`, `DMPlexGetCellType()`, `DMPlexGetHeightStratum()`, `DMPolytopeTypeGetNumVertices()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSimplexOrBoxCells`, `DMPlexGetCellType`, `DMPlexGetHeightStratum`, `DMPolytopeTypeGetNumVertices`
 
         See Also
         --------
@@ -2230,12 +2215,12 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object with only cells and vertices
+            The `DMPlex` object with only cells and vertices
 
         Returns
         -------
         dmInt
-            The complete `DMPLEX` object
+            The complete `DMPlex` object
 
         Note:
         Labels and coordinates are copied.
@@ -2243,7 +2228,7 @@ cdef class DMPlex(DM):
         Developer Note:
         It sets plex->interpolated = `DMPLEX_INTERPOLATED_FULL`.
 
-        .seealso: `DMPLEX`, `DMPlexUninterpolate()`, `DMPlexCreateFromCellListPetsc()`, `DMPlexCopyCoordinates()`
+        .seealso: `DMPlex`, `DMPlexUninterpolate`, `DMPlexCreateFromCellListPetsc`, `DMPlexCopyCoordinates`
 
         See Also
         --------
@@ -2262,14 +2247,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The complete `DMPLEX` object
+            The complete `DMPlex` object
 
         Returns
         -------
         dmUnint
-            The `DMPLEX` object with only cells and vertices
+            The `DMPlex` object with only cells and vertices
 
-        .seealso: `DMPLEX`, `DMPlexInterpolate()`, `DMPlexCreateFromCellListPetsc()`, `DMPlexCopyCoordinates()`
+        .seealso: `DMPlex`, `DMPlexInterpolate`, `DMPlexCreateFromCellListPetsc`, `DMPlexCopyCoordinates`
 
         See Also
         --------
@@ -2289,7 +2274,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         pointSF
             The `PetscSF` describing the communication pattern
         originalSection
@@ -2304,7 +2289,7 @@ cdef class DMPlex(DM):
         newVec
             The new data in a local vector
 
-        .seealso: `DMPLEX`, `DMPlexDistribute()`, `DMPlexDistributeFieldIS()`, `DMPlexDistributeData()`
+        .seealso: `DMPlex`, `DMPlexDistribute`, `DMPlexDistributeFieldIS`, `DMPlexDistributeData`
 
         See Also
         --------
@@ -2333,14 +2318,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            the `DMPLEX`
+            the `DMPlex`
 
         Returns
         -------
         minradius
             the minimum cell radius
 
-        .seealso: `DMPLEX`, `DMGetCoordinates()`
+        .seealso: `DMPlex`, `DMGetCoordinates`
 
         See Also
         --------
@@ -2366,7 +2351,7 @@ cdef class DMPlex(DM):
         fpointIS
             The `IS` of all the fine points which exist in the original coarse mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `IS`, `DMRefine()`, `DMPlexSetRefinementUniform()`, `DMPlexGetSubpointIS()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `IS`, `DMRefine`, `DMPlexSetRefinementUniform`, `DMPlexGetSubpointIS`
 
         See Also
         --------
@@ -2387,7 +2372,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         label
             The label indicating the mesh support of each field, or NULL for the whole mesh
         numComp
@@ -2401,7 +2386,7 @@ cdef class DMPlex(DM):
         bcComps
             [Optional] An array of size numBC giving an `IS` holding the field components to which each boundary condition applies
         bcPoints
-            An array of size numBC giving an `IS` holding the `DMPLEX` points to which each boundary condition applies
+            An array of size numBC giving an `IS` holding the `DMPlex` points to which each boundary condition applies
         perm
             Optional permutation of the chart, or NULL
 
@@ -2410,7 +2395,7 @@ cdef class DMPlex(DM):
         section
             The `PetscSection` object
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexCreate()`, `PetscSectionCreate()`, `PetscSectionSetPermutation()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `PetscSectionCreate`, `PetscSectionSetPermutation`
 
         See Also
         --------
@@ -2479,7 +2464,7 @@ cdef class DMPlex(DM):
         end
             end of point data
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetPointLocalField()`, `DMGetLocalSection()`, `PetscSectionGetOffset()`, `PetscSectionGetDof()`, `DMPlexPointLocalRead()`, `DMPlexPointLocalRead()`, `DMPlexPointLocalRef()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointLocalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
 
         See Also
         --------
@@ -2515,7 +2500,7 @@ cdef class DMPlex(DM):
         Note:
         This is a half open interval [start, end)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetPointLocal()`, `DMGetLocalSection()`, `PetscSectionGetOffset()`, `PetscSectionGetDof()`, `DMPlexPointLocalRead()`, `DMPlexPointLocalRead()`, `DMPlexPointLocalRef()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointLocal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
 
         See Also
         --------
@@ -2550,7 +2535,7 @@ cdef class DMPlex(DM):
         Note:
         This is a half open interval [start, end)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetPointGlobalField()`, `DMGetLocalSection()`, `PetscSectionGetOffset()`, `PetscSectionGetDof()`, `DMPlexPointGlobalRead()`, `DMPlexGetPointLocal()`, `DMPlexPointGlobalRead()`, `DMPlexPointGlobalRef()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointGlobalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlexGetPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
 
         See Also
         --------
@@ -2586,7 +2571,7 @@ cdef class DMPlex(DM):
         Note:
         This is a half open interval [start, end)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexGetPointGlobal()`, `DMGetLocalSection()`, `PetscSectionGetOffset()`, `PetscSectionGetDof()`, `DMPlexPointGlobalRead()`, `DMPlexGetPointLocal()`, `DMPlexPointGlobalRead()`, `DMPlexPointGlobalRef()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointGlobal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlexGetPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
 
         See Also
         --------
@@ -2614,7 +2599,7 @@ cdef class DMPlex(DM):
         Note:
         This should greatly improve the performance of the closure operations, at the cost of additional memory.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `PetscSection`, `DMPlexVecGetClosure()`, `DMPlexVecRestoreClosure()`, `DMPlexVecSetClosure()`, `DMPlexMatSetClosure()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscSection`, `DMPlexVecGetClosure`, `DMPlexVecRestoreClosure`, `DMPlexVecSetClosure`, `DMPlexMatSetClosure`
 
         See Also
         --------
@@ -2636,7 +2621,7 @@ cdef class DMPlex(DM):
         refinementUniform
             The flag for uniform refinement
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMRefine()`, `DMPlexGetRefinementUniform()`, `DMPlexGetRefinementLimit()`, `DMPlexSetRefinementLimit()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexGetRefinementUniform`, `DMPlexGetRefinementLimit`, `DMPlexSetRefinementLimit`
 
         See Also
         --------
@@ -2659,7 +2644,7 @@ cdef class DMPlex(DM):
         refinementUniform
             The flag for uniform refinement
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMRefine()`, `DMPlexSetRefinementUniform()`, `DMPlexGetRefinementLimit()`, `DMPlexSetRefinementLimit()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexSetRefinementUniform`, `DMPlexGetRefinementLimit`, `DMPlexSetRefinementLimit`
 
         See Also
         --------
@@ -2680,7 +2665,7 @@ cdef class DMPlex(DM):
         refinementLimit
             The maximum cell volume in the refined mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMRefine()`, `DMPlexGetRefinementLimit()`, `DMPlexGetRefinementUniform()`, `DMPlexSetRefinementUniform()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexGetRefinementLimit`, `DMPlexGetRefinementUniform`, `DMPlexSetRefinementUniform`
 
         See Also
         --------
@@ -2703,7 +2688,7 @@ cdef class DMPlex(DM):
         refinementLimit
             The maximum cell volume in the refined mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMRefine()`, `DMPlexSetRefinementLimit()`, `DMPlexGetRefinementUniform()`, `DMPlexSetRefinementUniform()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexSetRefinementLimit`, `DMPlexGetRefinementUniform`, `DMPlexSetRefinementUniform`
 
         See Also
         --------
@@ -2726,14 +2711,14 @@ cdef class DMPlex(DM):
         otype
             type of reordering, see `MatOrderingType`
         label
-            [Optional] Label used to segregate ordering into sets, or `NULL`
+            [Optional] Label used to segregate ordering into sets, or ``None``
 
         Returns
         -------
         perm
             The point permutation as an `IS`, `perm`[old point number] = new point number
 
-        .seealso: `DMPLEX`, `DMPlexPermute()`, `MatOrderingType`, `MatGetOrdering()`
+        .seealso: `DMPlex`, `DMPlexPermute`, `MatOrderingType`, `MatGetOrdering`
 
         See Also
         --------
@@ -2755,7 +2740,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            The `DMPLEX` object
+            The `DMPlex` object
         perm
             The point permutation, `perm`[old point number] = new point number
 
@@ -2764,7 +2749,7 @@ cdef class DMPlex(DM):
         pdm
             The permuted `DM`
 
-        .seealso: `DMPLEX`, `MatPermute()`
+        .seealso: `DMPlex`, `MatPermute`
 
         See Also
         --------
@@ -2790,7 +2775,7 @@ cdef class DMPlex(DM):
         reorder
             Flag for reordering
 
-        .seealso: `DMPlexReorderSetDefault()`
+        .seealso: `DMPlexReorderSetDefault`
 
         See Also
         --------
@@ -2813,7 +2798,7 @@ cdef class DMPlex(DM):
         reorder
             Flag for reordering
 
-        .seealso: `DMPlexReorderGetDefault()`
+        .seealso: `DMPlexReorderGetDefault`
 
         See Also
         --------
@@ -2834,7 +2819,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         dm
-            the `DMPLEX`
+            the `DMPlex`
         cell
             the cell
 
@@ -2847,7 +2832,7 @@ cdef class DMPlex(DM):
         normal
             the cell normal, if appropriate
 
-        .seealso: `DMPLEX`, `DMGetCoordinateSection()`, `DMGetCoordinates()`
+        .seealso: `DMPlex`, `DMGetCoordinateSection`, `DMGetCoordinates`
 
         See Also
         --------
@@ -2871,7 +2856,7 @@ cdef class DMPlex(DM):
         dm
             The original `DM`
         labelName
-            The label specifying the boundary faces, or "Face Sets" if this is `NULL`
+            The label specifying the boundary faces, or "Face Sets" if this is ``None``
 
         Returns
         -------
@@ -2880,7 +2865,7 @@ cdef class DMPlex(DM):
         dmGhosted
             The new `DM`
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMCreate()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMCreate`
 
         See Also
         --------
@@ -2907,7 +2892,7 @@ cdef class DMPlex(DM):
         + dm      - The DM
         - uniform - Is the metric uniform?
 
-        .seealso: `DMPlexMetricIsUniform()`, `DMPlexMetricSetIsotropic()`, `DMPlexMetricSetRestrictAnisotropyFirst()`
+        .seealso: `DMPlexMetricIsUniform`, `DMPlexMetricSetIsotropic`, `DMPlexMetricSetRestrictAnisotropyFirst`
 
         See Also
         --------
@@ -2926,7 +2911,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . uniform - Is the metric uniform?
 
-        .seealso: `DMPlexMetricSetUniform()`, `DMPlexMetricIsIsotropic()`, `DMPlexMetricRestrictAnisotropyFirst()`
+        .seealso: `DMPlexMetricSetUniform`, `DMPlexMetricIsIsotropic`, `DMPlexMetricRestrictAnisotropyFirst`
 
         See Also
         --------
@@ -2944,7 +2929,7 @@ cdef class DMPlex(DM):
         + dm        - The DM
         - isotropic - Is the metric isotropic?
 
-        .seealso: `DMPlexMetricIsIsotropic()`, `DMPlexMetricSetUniform()`, `DMPlexMetricSetRestrictAnisotropyFirst()`
+        .seealso: `DMPlexMetricIsIsotropic`, `DMPlexMetricSetUniform`, `DMPlexMetricSetRestrictAnisotropyFirst`
 
         See Also
         --------
@@ -2963,7 +2948,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . isotropic - Is the metric isotropic?
 
-        .seealso: `DMPlexMetricSetIsotropic()`, `DMPlexMetricIsUniform()`, `DMPlexMetricRestrictAnisotropyFirst()`
+        .seealso: `DMPlexMetricSetIsotropic`, `DMPlexMetricIsUniform`, `DMPlexMetricRestrictAnisotropyFirst`
 
         See Also
         --------
@@ -2981,7 +2966,7 @@ cdef class DMPlex(DM):
         + dm                      - The DM
         - restrictAnisotropyFirst - Should anisotropy be normalized first?
 
-        .seealso: `DMPlexMetricSetIsotropic()`, `DMPlexMetricRestrictAnisotropyFirst()`
+        .seealso: `DMPlexMetricSetIsotropic`, `DMPlexMetricRestrictAnisotropyFirst`
 
         See Also
         --------
@@ -3000,7 +2985,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . restrictAnisotropyFirst - Is anisotropy be normalized first?
 
-        .seealso: `DMPlexMetricIsIsotropic()`, `DMPlexMetricSetRestrictAnisotropyFirst()`
+        .seealso: `DMPlexMetricIsIsotropic`, `DMPlexMetricSetRestrictAnisotropyFirst`
 
         See Also
         --------
@@ -3018,7 +3003,7 @@ cdef class DMPlex(DM):
         + dm       - The DM
         - noInsert - Should node insertion and deletion be turned off?
 
-        .seealso: `DMPlexMetricNoInsertion()`, `DMPlexMetricSetNoSwapping()`, `DMPlexMetricSetNoMovement()`, `DMPlexMetricSetNoSurf()`
+        .seealso: `DMPlexMetricNoInsertion`, `DMPlexMetricSetNoSwapping`, `DMPlexMetricSetNoMovement`, `DMPlexMetricSetNoSurf`
 
         See Also
         --------
@@ -3037,7 +3022,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . noInsert - Are node insertion and deletion turned off?
 
-        .seealso: `DMPlexMetricSetNoInsertion()`, `DMPlexMetricNoSwapping()`, `DMPlexMetricNoMovement()`, `DMPlexMetricNoSurf()`
+        .seealso: `DMPlexMetricSetNoInsertion`, `DMPlexMetricNoSwapping`, `DMPlexMetricNoMovement`, `DMPlexMetricNoSurf`
 
         See Also
         --------
@@ -3055,7 +3040,7 @@ cdef class DMPlex(DM):
         + dm     - The DM
         - noSwap - Should facet swapping be turned off?
 
-        .seealso: `DMPlexMetricNoSwapping()`, `DMPlexMetricSetNoInsertion()`, `DMPlexMetricSetNoMovement()`, `DMPlexMetricSetNoSurf()`
+        .seealso: `DMPlexMetricNoSwapping`, `DMPlexMetricSetNoInsertion`, `DMPlexMetricSetNoMovement`, `DMPlexMetricSetNoSurf`
 
         See Also
         --------
@@ -3074,7 +3059,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . noSwap - Is facet swapping turned off?
 
-        .seealso: `DMPlexMetricSetNoSwapping()`, `DMPlexMetricNoInsertion()`, `DMPlexMetricNoMovement()`, `DMPlexMetricNoSurf()`
+        .seealso: `DMPlexMetricSetNoSwapping`, `DMPlexMetricNoInsertion`, `DMPlexMetricNoMovement`, `DMPlexMetricNoSurf`
 
         See Also
         --------
@@ -3092,7 +3077,7 @@ cdef class DMPlex(DM):
         + dm     - The DM
         - noMove - Should node movement be turned off?
 
-        .seealso: `DMPlexMetricNoMovement()`, `DMPlexMetricSetNoInsertion()`, `DMPlexMetricSetNoSwapping()`, `DMPlexMetricSetNoSurf()`
+        .seealso: `DMPlexMetricNoMovement`, `DMPlexMetricSetNoInsertion`, `DMPlexMetricSetNoSwapping`, `DMPlexMetricSetNoSurf`
 
         See Also
         --------
@@ -3111,7 +3096,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . noMove - Is node movement turned off?
 
-        .seealso: `DMPlexMetricSetNoMovement()`, `DMPlexMetricNoInsertion()`, `DMPlexMetricNoSwapping()`, `DMPlexMetricNoSurf()`
+        .seealso: `DMPlexMetricSetNoMovement`, `DMPlexMetricNoInsertion`, `DMPlexMetricNoSwapping`, `DMPlexMetricNoSurf`
 
         See Also
         --------
@@ -3129,7 +3114,7 @@ cdef class DMPlex(DM):
         + dm     - The DM
         - noSurf - Should surface modification be turned off?
 
-        .seealso: `DMPlexMetricNoSurf()`, `DMPlexMetricSetNoMovement()`, `DMPlexMetricSetNoInsertion()`, `DMPlexMetricSetNoSwapping()`
+        .seealso: `DMPlexMetricNoSurf`, `DMPlexMetricSetNoMovement`, `DMPlexMetricSetNoInsertion`, `DMPlexMetricSetNoSwapping`
 
         See Also
         --------
@@ -3148,7 +3133,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . noSurf - Is surface modification turned off?
 
-        .seealso: `DMPlexMetricSetNoSurf()`, `DMPlexMetricNoMovement()`, `DMPlexMetricNoInsertion()`, `DMPlexMetricNoSwapping()`
+        .seealso: `DMPlexMetricSetNoSurf`, `DMPlexMetricNoMovement`, `DMPlexMetricNoInsertion`, `DMPlexMetricNoSwapping`
 
         See Also
         --------
@@ -3166,7 +3151,7 @@ cdef class DMPlex(DM):
         + dm        - The DM
         - verbosity - The verbosity, where -1 is silent and 10 is maximum
 
-        .seealso: `DMPlexMetricGetVerbosity()`, `DMPlexMetricSetNumIterations()`
+        .seealso: `DMPlexMetricGetVerbosity`, `DMPlexMetricSetNumIterations`
 
         See Also
         --------
@@ -3185,7 +3170,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . verbosity - The verbosity, where -1 is silent and 10 is maximum
 
-        .seealso: `DMPlexMetricSetVerbosity()`, `DMPlexMetricGetNumIterations()`
+        .seealso: `DMPlexMetricSetVerbosity`, `DMPlexMetricGetNumIterations`
 
         See Also
         --------
@@ -3203,7 +3188,7 @@ cdef class DMPlex(DM):
         + dm      - The DM
         - numIter - the number of parallel adaptation iterations
 
-        .seealso: `DMPlexMetricSetVerbosity()`, `DMPlexMetricGetNumIterations()`
+        .seealso: `DMPlexMetricSetVerbosity`, `DMPlexMetricGetNumIterations`
 
         See Also
         --------
@@ -3222,7 +3207,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . numIter - the number of parallel adaptation iterations
 
-        .seealso: `DMPlexMetricSetNumIterations()`, `DMPlexMetricGetVerbosity()`
+        .seealso: `DMPlexMetricSetNumIterations`, `DMPlexMetricGetVerbosity`
 
         See Also
         --------
@@ -3240,7 +3225,7 @@ cdef class DMPlex(DM):
         + dm    - The DM
         - h_min - The minimum tolerated metric magnitude
 
-        .seealso: `DMPlexMetricGetMinimumMagnitude()`, `DMPlexMetricSetMaximumMagnitude()`
+        .seealso: `DMPlexMetricGetMinimumMagnitude`, `DMPlexMetricSetMaximumMagnitude`
 
         See Also
         --------
@@ -3259,7 +3244,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . h_min - The minimum tolerated metric magnitude
 
-        .seealso: `DMPlexMetricSetMinimumMagnitude()`, `DMPlexMetricGetMaximumMagnitude()`
+        .seealso: `DMPlexMetricSetMinimumMagnitude`, `DMPlexMetricGetMaximumMagnitude`
 
         See Also
         --------
@@ -3277,7 +3262,7 @@ cdef class DMPlex(DM):
         + dm    - The DM
         - h_max - The maximum tolerated metric magnitude
 
-        .seealso: `DMPlexMetricGetMaximumMagnitude()`, `DMPlexMetricSetMinimumMagnitude()`
+        .seealso: `DMPlexMetricGetMaximumMagnitude`, `DMPlexMetricSetMinimumMagnitude`
 
         See Also
         --------
@@ -3296,7 +3281,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . h_max - The maximum tolerated metric magnitude
 
-        .seealso: `DMPlexMetricSetMaximumMagnitude()`, `DMPlexMetricGetMinimumMagnitude()`
+        .seealso: `DMPlexMetricSetMaximumMagnitude`, `DMPlexMetricGetMinimumMagnitude`
 
         See Also
         --------
@@ -3314,7 +3299,7 @@ cdef class DMPlex(DM):
         + dm    - The DM
         - a_max - The maximum tolerated metric anisotropy
 
-        .seealso: `DMPlexMetricGetMaximumAnisotropy()`, `DMPlexMetricSetMaximumMagnitude()`
+        .seealso: `DMPlexMetricGetMaximumAnisotropy`, `DMPlexMetricSetMaximumMagnitude`
 
         See Also
         --------
@@ -3333,7 +3318,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . a_max - The maximum tolerated metric anisotropy
 
-        .seealso: `DMPlexMetricSetMaximumAnisotropy()`, `DMPlexMetricGetMaximumMagnitude()`
+        .seealso: `DMPlexMetricSetMaximumAnisotropy`, `DMPlexMetricGetMaximumMagnitude`
 
         See Also
         --------
@@ -3351,7 +3336,7 @@ cdef class DMPlex(DM):
         + dm               - The DM
         - targetComplexity - The target metric complexity
 
-        .seealso: `DMPlexMetricGetTargetComplexity()`, `DMPlexMetricSetNormalizationOrder()`
+        .seealso: `DMPlexMetricGetTargetComplexity`, `DMPlexMetricSetNormalizationOrder`
 
         See Also
         --------
@@ -3370,7 +3355,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . targetComplexity - The target metric complexity
 
-        .seealso: `DMPlexMetricSetTargetComplexity()`, `DMPlexMetricGetNormalizationOrder()`
+        .seealso: `DMPlexMetricSetTargetComplexity`, `DMPlexMetricGetNormalizationOrder`
 
         See Also
         --------
@@ -3388,7 +3373,7 @@ cdef class DMPlex(DM):
         + dm - The DM
         - p  - The normalization order
 
-        .seealso: `DMPlexMetricGetNormalizationOrder()`, `DMPlexMetricSetTargetComplexity()`
+        .seealso: `DMPlexMetricGetNormalizationOrder`, `DMPlexMetricSetTargetComplexity`
 
         See Also
         --------
@@ -3407,7 +3392,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . p - The normalization order
 
-        .seealso: `DMPlexMetricSetNormalizationOrder()`, `DMPlexMetricGetTargetComplexity()`
+        .seealso: `DMPlexMetricSetNormalizationOrder`, `DMPlexMetricGetTargetComplexity`
 
         See Also
         --------
@@ -3425,7 +3410,7 @@ cdef class DMPlex(DM):
         + dm   - The DM
         - beta - The metric gradation factor
 
-        .seealso: `DMPlexMetricGetGradationFactor()`, `DMPlexMetricSetHausdorffNumber()`
+        .seealso: `DMPlexMetricGetGradationFactor`, `DMPlexMetricSetHausdorffNumber`
 
         See Also
         --------
@@ -3444,7 +3429,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . beta - The metric gradation factor
 
-        .seealso: `DMPlexMetricSetGradationFactor()`, `DMPlexMetricGetHausdorffNumber()`
+        .seealso: `DMPlexMetricSetGradationFactor`, `DMPlexMetricGetHausdorffNumber`
 
         See Also
         --------
@@ -3462,7 +3447,7 @@ cdef class DMPlex(DM):
         + dm    - The DM
         - hausd - The metric Hausdorff number
 
-        .seealso: `DMPlexMetricSetGradationFactor()`, `DMPlexMetricGetHausdorffNumber()`
+        .seealso: `DMPlexMetricSetGradationFactor`, `DMPlexMetricGetHausdorffNumber`
 
         See Also
         --------
@@ -3481,7 +3466,7 @@ cdef class DMPlex(DM):
         Output parameters:
         . hausd - The metric Hausdorff number
 
-        .seealso: `DMPlexMetricGetGradationFactor()`, `DMPlexMetricSetHausdorffNumber()`
+        .seealso: `DMPlexMetricGetGradationFactor`, `DMPlexMetricSetHausdorffNumber`
 
         See Also
         --------
@@ -3530,7 +3515,7 @@ cdef class DMPlex(DM):
         . -dm_plex_metric_no_move                   - Should node movement be turned off?
         - -dm_plex_metric_verbosity                 - Choose a verbosity level from -1 (silent) to 10 (maximum).
 
-        .seealso: `DMPlexMetricCreateUniform()`, `DMPlexMetricCreateIsotropic()`
+        .seealso: `DMPlexMetricCreateUniform`, `DMPlexMetricCreateIsotropic`
 
         See Also
         --------
@@ -3553,7 +3538,7 @@ cdef class DMPlex(DM):
         Output parameter:
         . metric - The uniform metric
 
-        .seealso: `DMPlexMetricCreate()`, `DMPlexMetricCreateIsotropic()`
+        .seealso: `DMPlexMetricCreate`, `DMPlexMetricCreateIsotropic`
 
         See Also
         --------
@@ -3577,7 +3562,7 @@ cdef class DMPlex(DM):
         Output parameter:
         . metric    - The isotropic metric
 
-        .seealso: `DMPlexMetricCreate()`, `DMPlexMetricCreateUniform()`
+        .seealso: `DMPlexMetricCreate`, `DMPlexMetricCreateUniform`
 
         See Also
         --------
@@ -3636,7 +3621,7 @@ cdef class DMPlex(DM):
         . -dm_plex_metric_h_max     - Maximum tolerated metric magnitude
         - -dm_plex_metric_a_max     - Maximum tolerated anisotropy
 
-        .seealso: `DMPlexMetricNormalize()`, `DMPlexMetricIntersection()`
+        .seealso: `DMPlexMetricNormalize`, `DMPlexMetricIntersection`
 
         See Also
         --------
@@ -3674,7 +3659,7 @@ cdef class DMPlex(DM):
         . -dm_plex_metric_p                         - L-p normalization order
         - -dm_plex_metric_target_complexity         - Target metric complexity
 
-        .seealso: `DMPlexMetricEnforceSPD()`, `DMPlexMetricIntersection()`
+        .seealso: `DMPlexMetricEnforceSPD`, `DMPlexMetricIntersection`
 
         See Also
         --------
@@ -3703,7 +3688,7 @@ cdef class DMPlex(DM):
         metricAvg
             The averaged metric
 
-        .seealso: `DMPlexMetricAverage()`, `DMPlexMetricAverage3()`
+        .seealso: `DMPlexMetricAverage`, `DMPlexMetricAverage3`
 
         See Also
         --------
@@ -3732,7 +3717,7 @@ cdef class DMPlex(DM):
         metricAvg
             The averaged metric
 
-        .seealso: `DMPlexMetricAverage()`, `DMPlexMetricAverage2()`
+        .seealso: `DMPlexMetricAverage`, `DMPlexMetricAverage2`
 
         See Also
         --------
@@ -3759,7 +3744,7 @@ cdef class DMPlex(DM):
         metricInt
             The intersected metric
 
-        .seealso: `DMPlexMetricIntersection()`, `DMPlexMetricIntersection3()`
+        .seealso: `DMPlexMetricIntersection`, `DMPlexMetricIntersection3`
 
         See Also
         --------
@@ -3788,7 +3773,7 @@ cdef class DMPlex(DM):
         metricInt
             The intersected metric
 
-        .seealso: `DMPlexMetricIntersection()`, `DMPlexMetricIntersection2()`
+        .seealso: `DMPlexMetricIntersection`, `DMPlexMetricIntersection2`
 
         See Also
         --------
@@ -3815,7 +3800,7 @@ cdef class DMPlex(DM):
         locC
             A `Vec` which holds the Clement interpolant of the gradient
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMProjectFunction()`, `DMComputeL2Diff()`, `DMPlexComputeL2FieldDiff()`, `DMComputeL2GradientDiff()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMProjectFunction`, `DMComputeL2Diff`, `DMPlexComputeL2FieldDiff`, `DMComputeL2GradientDiff`
 
         See Also
         --------
@@ -3828,7 +3813,7 @@ cdef class DMPlex(DM):
     # View
 
     def topologyView(self, Viewer viewer):
-        """DMPlexTopologyView - Saves a `DMPLEX` topology into a file
+        """DMPlexTopologyView - Saves a `DMPlex` topology into a file
 
         Collective.
 
@@ -3839,7 +3824,7 @@ cdef class DMPlex(DM):
         viewer
             The `PetscViewer` to save it in
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMView()`, `DMPlexCoordinatesView()`, `DMPlexLabelsView()`, `DMPlexTopologyLoad()`, `PetscViewer`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexCoordinatesView`, `DMPlexLabelsView`, `DMPlexTopologyLoad`, `PetscViewer`
 
         See Also
         --------
@@ -3849,7 +3834,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexTopologyView(self.dm, viewer.vwr))
 
     def coordinatesView(self, Viewer viewer):
-        """DMPlexCoordinatesView - Saves `DMPLEX` coordinates into a file
+        """DMPlexCoordinatesView - Saves `DMPlex` coordinates into a file
 
         Collective.
 
@@ -3860,7 +3845,7 @@ cdef class DMPlex(DM):
         viewer
             The `PetscViewer` for saving
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMView()`, `DMPlexTopologyView()`, `DMPlexLabelsView()`, `DMPlexCoordinatesLoad()`, `PetscViewer`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexTopologyView`, `DMPlexLabelsView`, `DMPlexCoordinatesLoad`, `PetscViewer`
 
         See Also
         --------
@@ -3870,7 +3855,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexCoordinatesView(self.dm, viewer.vwr))
 
     def labelsView(self, Viewer viewer):
-        """DMPlexLabelsView - Saves `DMPLEX` labels into a file
+        """DMPlexLabelsView - Saves `DMPlex` labels into a file
 
         Collective.
 
@@ -3881,7 +3866,7 @@ cdef class DMPlex(DM):
         viewer
             The `PetscViewer` for saving
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMView()`, `DMPlexTopologyView()`, `DMPlexCoordinatesView()`, `DMPlexLabelsLoad()`, `PetscViewer`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexTopologyView`, `DMPlexCoordinatesView`, `DMPlexLabelsLoad`, `PetscViewer`
 
         See Also
         --------
@@ -3891,7 +3876,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexLabelsView(self.dm, viewer.vwr))
 
     def sectionView(self, Viewer viewer, DM sectiondm):
-        """DMPlexSectionView - Saves a section associated with a `DMPLEX`
+        """DMPlexSectionView - Saves a section associated with a `DMPlex`
 
         Collective.
 
@@ -3904,7 +3889,7 @@ cdef class DMPlex(DM):
         sectiondm
             The `DM` that contains the section to be saved
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMView()`, `DMPlexTopologyView()`, `DMPlexCoordinatesView()`, `DMPlexLabelsView()`, `DMPlexGlobalVectorView()`, `DMPlexLocalVectorView()`, `PetscSectionView()`, `DMPlexSectionLoad()`, `PetscViewer`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexTopologyView`, `DMPlexCoordinatesView`, `DMPlexLabelsView`, `DMPlexGlobalVectorView`, `DMPlexLocalVectorView`, `PetscSectionView`, `DMPlexSectionLoad`, `PetscViewer`
 
         See Also
         --------
@@ -3929,7 +3914,7 @@ cdef class DMPlex(DM):
         vec
             The global vector to be saved
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexTopologyView()`, `DMPlexSectionView()`, `DMPlexLocalVectorView()`, `DMPlexGlobalVectorLoad()`, `DMPlexLocalVectorLoad()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyView`, `DMPlexSectionView`, `DMPlexLocalVectorView`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`
 
         See Also
         --------
@@ -3954,7 +3939,7 @@ cdef class DMPlex(DM):
         vec
             The local vector to be saved
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexTopologyView()`, `DMPlexSectionView()`, `DMPlexGlobalVectorView()`, `DMPlexGlobalVectorLoad()`, `DMPlexLocalVectorLoad()`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyView`, `DMPlexSectionView`, `DMPlexGlobalVectorView`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`
 
         See Also
         --------
@@ -3966,7 +3951,7 @@ cdef class DMPlex(DM):
     # Load
 
     def topologyLoad(self, Viewer viewer):
-        """DMPlexTopologyLoad - Loads a topology into a `DMPLEX`
+        """DMPlexTopologyLoad - Loads a topology into a `DMPlex`
 
         Collective.
 
@@ -3980,9 +3965,9 @@ cdef class DMPlex(DM):
         Returns
         -------
         globalToLocalPointSF
-            The `PetscSF` that pushes points in [0, N) to the associated points in the loaded `DMPLEX`, where N is the global number of points; `NULL` if unneeded
+            The `PetscSF` that pushes points in [0, N) to the associated points in the loaded `DMPlex`, where N is the global number of points; ``None`` if unneeded
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMLoad()`, `DMPlexCoordinatesLoad()`, `DMPlexLabelsLoad()`, `DMView()`, `PetscViewerHDF5Open()`, `PetscViewerPushFormat()`,
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexCoordinatesLoad`, `DMPlexLabelsLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
         `PetscViewer`, `PetscSF`
 
         See Also
@@ -3995,7 +3980,7 @@ cdef class DMPlex(DM):
         return sf
 
     def coordinatesLoad(self, Viewer viewer, SF sfxc):
-        """DMPlexCoordinatesLoad - Loads coordinates into a `DMPLEX`
+        """DMPlexCoordinatesLoad - Loads coordinates into a `DMPlex`
 
         Collective.
 
@@ -4006,9 +3991,9 @@ cdef class DMPlex(DM):
         viewer
             The `PetscViewer` for the saved coordinates
         globalToLocalPointSF
-            The `PetscSF` returned by `DMPlexTopologyLoad()` when loading dm from viewer
+            The `PetscSF` returned by `DMPlexTopologyLoad` when loading dm from viewer
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMLoad()`, `DMPlexTopologyLoad()`, `DMPlexLabelsLoad()`, `DMView()`, `PetscViewerHDF5Open()`, `PetscViewerPushFormat()`,
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexLabelsLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
         `PetscSF`, `PetscViewer`
 
         See Also
@@ -4019,7 +4004,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexCoordinatesLoad(self.dm, viewer.vwr, sfxc.sf))
 
     def labelsLoad(self, Viewer viewer, SF sfxc):
-        """DMPlexLabelsLoad - Loads labels into a `DMPLEX`
+        """DMPlexLabelsLoad - Loads labels into a `DMPlex`
 
         Collective.
 
@@ -4030,9 +4015,9 @@ cdef class DMPlex(DM):
         viewer
             The `PetscViewer` for the saved labels
         globalToLocalPointSF
-            The `PetscSF` returned by `DMPlexTopologyLoad()` when loading `dm` from viewer
+            The `PetscSF` returned by `DMPlexTopologyLoad` when loading `dm` from viewer
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMLoad()`, `DMPlexTopologyLoad()`, `DMPlexCoordinatesLoad()`, `DMView()`, `PetscViewerHDF5Open()`, `PetscViewerPushFormat()`,
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexCoordinatesLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
         `PetscSF`, `PetscViewer`
 
         See Also
@@ -4043,7 +4028,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexLabelsLoad(self.dm, viewer.vwr, sfxc.sf))
 
     def sectionLoad(self, Viewer viewer, DM sectiondm, SF sfxc):
-        """DMPlexSectionLoad - Loads section into a `DMPLEX`
+        """DMPlexSectionLoad - Loads section into a `DMPlex`
 
         Collective.
 
@@ -4061,11 +4046,11 @@ cdef class DMPlex(DM):
         Returns
         -------
         globalDofSF
-            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a global `Vec` associated with the `sectiondm`'s global section (`NULL` if not needed)
+            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a global `Vec` associated with the `sectiondm`'s global section (``None`` if not needed)
         localDofSF
-            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a local `Vec` associated with the `sectiondm`'s local section (`NULL` if not needed)
+            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a local `Vec` associated with the `sectiondm`'s local section (``None`` if not needed)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMLoad()`, `DMPlexTopologyLoad()`, `DMPlexCoordinatesLoad()`, `DMPlexLabelsLoad()`, `DMPlexGlobalVectorLoad()`, `DMPlexLocalVectorLoad()`, `PetscSectionLoad()`, `DMPlexSectionView()`, `PetscSF`, `PetscViewer`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexCoordinatesLoad`, `DMPlexLabelsLoad`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`, `PetscSectionLoad`, `DMPlexSectionView`, `PetscSF`, `PetscViewer`
 
         See Also
         --------
@@ -4095,7 +4080,7 @@ cdef class DMPlex(DM):
         vec
             The global vector to set values of
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexTopologyLoad()`, `DMPlexSectionLoad()`, `DMPlexLocalVectorLoad()`, `DMPlexGlobalVectorView()`, `DMPlexLocalVectorView()`,
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyLoad`, `DMPlexSectionLoad`, `DMPlexLocalVectorLoad`, `DMPlexGlobalVectorView`, `DMPlexLocalVectorView`,
         `PetscSF`, `PetscViewer`
 
         See Also
@@ -4124,7 +4109,7 @@ DMPlexLocalVectorLoad - Loads on-disk vector data into a local vector
         vec
             The local vector to set values of
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPLEX`, `DMPlexTopologyLoad()`, `DMPlexSectionLoad()`, `DMPlexGlobalVectorLoad()`, `DMPlexGlobalVectorView()`, `DMPlexLocalVectorView()`,
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyLoad`, `DMPlexSectionLoad`, `DMPlexGlobalVectorLoad`, `DMPlexGlobalVectorView`, `DMPlexLocalVectorView`,
         `PetscSF`, `PetscViewer`
 
         See Also
