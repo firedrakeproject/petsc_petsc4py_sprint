@@ -44,5 +44,7 @@ cdef TSIJacobian
 cdef TSI2Function
 cdef TSI2Jacobian
 cdef TSMonitorFunction
+cdef TSEventHandlerFunction
+cdef TSPostEventFunction
 cdef TSPreStepFunction
 cdef TSPostStepFunction

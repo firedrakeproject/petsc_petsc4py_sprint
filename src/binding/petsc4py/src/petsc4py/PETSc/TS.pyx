@@ -80,6 +80,18 @@ class TSEquationType(object):
     DAE_IMPLICIT_INDEXHI      = TS_EQ_DAE_IMPLICIT_INDEXHI
 
 class TSExactFinalTime(object):
+    """
+    Attributes
+    ----------
+    UNSPECIFIED
+        No final time option has been set.
+    STEPOVER
+        Take the full time step once final time has been exceed.
+    INTERPOLATE
+        Interpolate back to the final time.
+    MATCHSTEP
+        Adapt the final time step size to match the final time.
+    """
     UNSPECIFIED = TS_EXACTFINALTIME_UNSPECIFIED
     STEPOVER    = TS_EXACTFINALTIME_STEPOVER
     INTERPOLATE = TS_EXACTFINALTIME_INTERPOLATE
@@ -140,7 +152,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSView
+        petsc.TSView
         """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
@@ -156,7 +168,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSLoad
+        petsc.TSLoad
         """
         CHKERR( TSLoad(self.ts, viewer.vwr) )
 
@@ -165,7 +177,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSDestroy
+        petsc.TSDestroy
         """
         CHKERR( TSDestroy(&self.ts) )
         return self
@@ -183,7 +195,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSCreate
+        petsc.TSCreate
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscTS newts = NULL
@@ -203,7 +215,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSClone
+        petsc.TSClone
         """
         cdef TS ts = TS()
         CHKERR( TSClone(self.ts, &ts.ts) )
@@ -223,7 +235,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetType
+        petsc.TSSetType
         """
         cdef PetscTSType cval = NULL
         ts_type = str2bytes(ts_type, &cval)
@@ -243,7 +255,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSRKSetType
+        petsc.TSRKSetType
         """
         cdef PetscTSRKType cval = NULL
         ts_type = str2bytes(ts_type, &cval)
@@ -263,7 +275,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSARKIMEXSetType
+        petsc.TSARKIMEXSetType
         """
         cdef PetscTSARKIMEXType cval = NULL
         ts_type = str2bytes(ts_type, &cval)
@@ -279,7 +291,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSARKIMEXSetFullyImplicit
+        petsc.TSARKIMEXSetFullyImplicit
         """
         cdef PetscBool bval = asBool(flag)
         CHKERR( TSARKIMEXSetFullyImplicit(self.ts, bval) )
@@ -289,7 +301,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSGetType
+        petsc.TSGetType
         """
         cdef PetscTSType cval = NULL
         CHKERR( TSGetType(self.ts, &cval) )
@@ -300,7 +312,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSRKGetType
+        petsc.TSRKGetType
         """
         cdef PetscTSRKType cval = NULL
         CHKERR( TSRKGetType(self.ts, &cval) )
@@ -311,7 +323,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSARKIMEXGetType
+        petsc.TSARKIMEXGetType
         """
         cdef PetscTSARKIMEXType cval = NULL
         CHKERR( TSARKIMEXGetType(self.ts, &cval) )
@@ -327,7 +339,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetProblemType
+        petsc.TSSetProblemType
         """
         CHKERR( TSSetProblemType(self.ts, ptype) )
 
@@ -336,7 +348,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetProblemType
+        petsc.TSGetProblemType
         """
         cdef PetscTSProblemType ptype = TS_NONLINEAR
         CHKERR( TSGetProblemType(self.ts, &ptype) )
@@ -354,7 +366,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSSetEquationType
+        petsc.TSSetEquationType
         """
         CHKERR( TSSetEquationType(self.ts, eqtype) )
 
@@ -363,7 +375,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetEquationType
+        petsc.TSGetEquationType
         """
         cdef PetscTSEquationType eqtype = TS_EQ_UNSPECIFIED
         CHKERR( TSGetEquationType(self.ts, &eqtype) )
@@ -383,7 +395,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetOptionsPrefix
+        petsc.TSSetOptionsPrefix
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -394,7 +406,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetOptionsPrefix
+        petsc.TSGetOptionsPrefix
         """
         cdef const char *cval = NULL
         CHKERR( TSGetOptionsPrefix(self.ts, &cval) )
@@ -414,7 +426,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSAppendOptionsPrefix
+        petsc.TSAppendOptionsPrefix
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -425,7 +437,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetFromOptions, ``petsc_options``
+        petsc.TSSetFromOptions, ``petsc_options``
         """
         CHKERR( TSSetFromOptions(self.ts) )
 
@@ -468,7 +480,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetRHSFunction
+        petsc.TSSetRHSFunction
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -507,7 +519,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetRHSJacobian
+        petsc.TSSetRHSJacobian
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -536,7 +548,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSComputeRHSFunction
+        petsc.TSComputeRHSFunction
         """
         cdef PetscReal time = asReal(t)
         CHKERR( TSComputeRHSFunction(self.ts, time, x.vec, f.vec) )
@@ -555,7 +567,7 @@ cdef class TS(Object):
     
         See Also
         --------
-        TSComputeRHSFunctionLinear
+        petsc.TSComputeRHSFunctionLinear
         """
         cdef PetscReal time = asReal(t)
         CHKERR( TSComputeRHSFunctionLinear(self.ts, time, x.vec, f.vec, NULL) )
@@ -578,7 +590,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeRHSJacobian
+        petsc.TSComputeRHSJacobian
         """
         cdef PetscReal time = asReal(t)
         cdef PetscMat jmat = J.mat, pmat = J.mat
@@ -603,7 +615,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeRHSJacobianConstant
+        petsc.TSComputeRHSJacobianConstant
         """
         cdef PetscReal time = asReal(t)
         cdef PetscMat jmat = J.mat, pmat = J.mat
@@ -618,7 +630,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetRHSFunction
+        petsc.TSGetRHSFunction
         """
         cdef Vec f = Vec()
         CHKERR( TSGetRHSFunction(self.ts, &f.vec, NULL, NULL) )
@@ -633,7 +645,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetRHSJacobian
+        petsc.TSGetRHSJacobian
         """
         cdef Mat J = Mat(), P = Mat()
         CHKERR( TSGetRHSJacobian(self.ts, &J.mat, &P.mat, NULL, NULL) )
@@ -666,7 +678,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetIFunction
+        petsc.TSSetIFunction
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -708,7 +720,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetIJacobian
+        petsc.TSSetIJacobian
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -748,7 +760,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSSetIJacobianP
+        petsc.TSSetIJacobianP
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -783,7 +795,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeIFunction
+        petsc.TSComputeIFunction
         """
         cdef PetscReal rval = asReal(t)
         cdef PetscBool bval = imex
@@ -817,7 +829,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeIJacobian
+        petsc.TSComputeIJacobian
         """
         cdef PetscReal rval1 = asReal(t)
         cdef PetscReal rval2 = asReal(a)
@@ -851,7 +863,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeIJacobianP
+        petsc.TSComputeIJacobianP
         """
         cdef PetscReal rval1 = asReal(t)
         cdef PetscReal rval2 = asReal(a)
@@ -867,7 +879,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetIFunction
+        petsc.TSGetIFunction
         """
         cdef Vec f = Vec()
         CHKERR( TSGetIFunction(self.ts, &f.vec, NULL, NULL) )
@@ -882,7 +894,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetIJacobian
+        petsc.TSGetIJacobian
         """
         cdef Mat J = Mat(), P = Mat()
         CHKERR( TSGetIJacobian(self.ts, &J.mat, &P.mat, NULL, NULL) )
@@ -914,7 +926,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetI2Function
+        petsc.TSSetI2Function
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -953,7 +965,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetI2Jacobian
+        petsc.TSSetI2Jacobian
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -988,7 +1000,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeI2Function
+        petsc.TSComputeI2Function
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSComputeI2Function(self.ts, rval, x.vec, xdot.vec, xdotdot.vec,
@@ -1031,7 +1043,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSComputeI2Jacobian
+        petsc.TSComputeI2Jacobian
         """
         cdef PetscReal rval1 = asReal(t)
         cdef PetscReal rval2 = asReal(v)
@@ -1048,7 +1060,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetI2Function
+        petsc.TSGetI2Function
         """
         cdef Vec f = Vec()
         CHKERR( TSGetI2Function(self.ts, &f.vec, NULL, NULL) )
@@ -1063,7 +1075,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetI2Jacobian
+        petsc.TSGetI2Jacobian
         """
         cdef Mat J = Mat(), P = Mat()
         CHKERR( TSGetI2Jacobian(self.ts, &J.mat, &P.mat, NULL, NULL) )
@@ -1085,7 +1097,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSSetSolution
+        petsc.TSSetSolution
         """
         CHKERR( TSSetSolution(self.ts, u.vec) )
 
@@ -1099,7 +1111,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TSGetSolution
+        petsc.TSGetSolution
         """
         cdef Vec u = Vec()
         CHKERR( TSGetSolution(self.ts, &u.vec) )
@@ -1114,13 +1126,13 @@ cdef class TS(Object):
         Parameters
         ----------
         u
-            the solution vector
+            The solution vector.
         v
-            the time derivative vector
+            The time derivative vector.
 
         See Also
         --------
-        TS2SetSolution
+        petsc.TS2SetSolution
         """
         CHKERR( TS2SetSolution(self.ts, u.vec, v.vec) )
 
@@ -1134,7 +1146,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        TS2GetSolution
+        petsc.TS2GetSolution
         """
         cdef Vec u = Vec()
         cdef Vec v = Vec()
@@ -1159,7 +1171,7 @@ cdef class TS(Object):
         Parameters
         ----------
         tspan
-            the sequence of time points
+            The sequence of time points.
         
         Notes
         -----
@@ -1167,7 +1179,7 @@ cdef class TS(Object):
         
         See Also
         --------
-        TSSetTimeSpan
+        petsc.TSSetTimeSpan
         """
         cdef PetscInt  nt = 0
         cdef PetscReal *rtspan = NULL
@@ -1175,10 +1187,13 @@ cdef class TS(Object):
         CHKERR( TSSetTimeSpan(self.ts, nt, rtspan) )
 
     def getTimeSpan(self) -> NDArray[float]:
-        """
+        """Return the time span.
+
+        Not collective.
+
         See Also
         --------
-        TSGetTimeSpan
+        petsc.TSGetTimeSpan
         """
         cdef const PetscReal *rtspan = NULL
         cdef PetscInt   nt = 0
@@ -1187,9 +1202,11 @@ cdef class TS(Object):
         return tspan
 
     def getTimeSpanSolutions(self) -> list[Vec]:
-        """
+        """Return the solutions at the times in the time span.
+
         See Also
         --------
+        petsc.`setTimeSpan`
         TSGetTimeSpanSolutions
         """
         cdef PetscInt nt = 0
@@ -1203,10 +1220,14 @@ cdef class TS(Object):
     # --- inner solver ---
 
     def getSNES(self) -> SNES:
-        """
+        """Return the `SNES` associated with the `TS`.
+
+        Not collective but parallel if `TS` is parallel. Only valid for
+        nonlinear problems.
+
         See Also
         --------
-        TSGetSNES
+        petsc.TSGetSNES
         """
         cdef SNES snes = SNES()
         CHKERR( TSGetSNES(self.ts, &snes.snes) )
@@ -1214,10 +1235,14 @@ cdef class TS(Object):
         return snes
 
     def getKSP(self) -> KSP:
-        """
+        """Return the `KSP` associated with the `TS`.
+
+        Not collective but parallel if `TS` is parallel. Only valid for methods
+        which use a `KSP`.
+
         See Also
         --------
-        TSGetKSP
+        petsc.TSGetKSP
         """
         cdef KSP ksp = KSP()
         CHKERR( TSGetKSP(self.ts, &ksp.ksp) )
@@ -1227,10 +1252,14 @@ cdef class TS(Object):
     # --- discretization space ---
 
     def getDM(self) -> DM:
-        """
+        """Return the `DM` associated with the `TS`.
+
+        Not collective. Only valid if nonlinear solvers or preconditioners are
+        used which use the `DM`.
+
         See Also
         --------
-        TSGetDM
+        petsc.TSGetDM
         """
         cdef PetscDM newdm = NULL
         CHKERR( TSGetDM(self.ts, &newdm) )
@@ -1240,155 +1269,259 @@ cdef class TS(Object):
         return dm
 
     def setDM(self, DM dm) -> None:
-        """
+        """Set the DM that may be used by some nonlinear solvers or preconditioners.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        dm
+            The `DM` object.
+
         See Also
         --------
-        TSSetDM
+        petsc.TSSetDM
         """
         CHKERR( TSSetDM(self.ts, dm.dm) )
 
     # --- customization ---
 
-    def setTime(self, t) -> None:
-        """
+    def setTime(self, t: float) -> None:
+        """Set the time.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        t
+            The time.
+
         See Also
         --------
-        TSSetTime
+        petsc.TSSetTime
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSSetTime(self.ts, rval) )
 
     def getTime(self) -> float:
-        """
+        """Return the time of the most recently completed step.
+
+        Not collective. When called during time step evaluation (e.g. during
+        residual evaluation or via hooks set using `setPreStep`, `setPreStage`,
+        `setPostStage`, or `setPostStep`), the time returned is at the start of
+        the step.
+
         See Also
         --------
-        TSGetTime
+        petsc.TSGetTime
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetTime(self.ts, &rval) )
         return toReal(rval)
 
     def getPrevTime(self) -> float:
-        """
+        """Return the starting time of the previously completed step.
+
+        Not collective. 
+
         See Also
         --------
-        TSGetPrevTime
+        petsc.TSGetPrevTime
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetPrevTime(self.ts, &rval) )
         return toReal(rval)
 
     def getSolveTime(self) -> float:
-        """
+        """Return the time after a call to `solve`.
+
+        Not collective. This time corresponds to the final time set with
+        `setMaxTime`.
+
         See Also
         --------
-        TSGetSolveTime
+        petsc.TSGetSolveTime
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetSolveTime(self.ts, &rval) )
         return toReal(rval)
 
-    def setTimeStep(self, time_step) -> None:
-        """
+    def setTimeStep(self, time_step: float) -> None:
+        """Set the duration of the timestep.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        time_step
+            the duration of the timestep
+
         See Also
         --------
-        TSSetTimeStep
+        petsc.TSSetTimeStep
         """
         cdef PetscReal rval = asReal(time_step)
         CHKERR( TSSetTimeStep(self.ts, rval) )
 
     def getTimeStep(self) -> float:
-        """
+        """Return the duration of the current timestep.
+
+        Not collective.
+
         See Also
         --------
-        TSGetTimeStep
+        petsc.TSGetTimeStep
         """
         cdef PetscReal tstep = 0
         CHKERR( TSGetTimeStep(self.ts, &tstep) )
         return toReal(tstep)
 
-    def setStepNumber(self, step_number) -> None:
-        """
+    def setStepNumber(self, step_number: int) -> None:
+        """Set the number of steps completed.
+
+        Logically collective. For most uses of the `TS` solvers the user need
+        not explicitly call `setStepNumber`, as the step counter is
+        appropriately updated in `solve`/`step`/`rollBack`. Power users may call
+        this routine to reinitialize timestepping by setting the step counter to
+        zero (and time to the initial time) to solve a similar problem with
+        different initial conditions or parameters. It may also be used to
+        continue timestepping from a previously interrupted run in such a way
+        that `TS` monitors will be called with a initial nonzero step counter.
+
+        Parameters
+        ----------
+        step_number
+            the number of steps completed
+
         See Also
         --------
-        TSSetStepNumber
+        petsc.TSSetStepNumber
         """
         cdef PetscInt ival = asInt(step_number)
         CHKERR( TSSetStepNumber(self.ts, ival) )
 
     def getStepNumber(self) -> int:
-        """
+        """Return the number of time steps completed.
+
+        Not collective.
+
         See Also
         --------
-        TSGetStepNumber
+        petsc.TSGetStepNumber
         """
         cdef PetscInt ival = 0
         CHKERR( TSGetStepNumber(self.ts, &ival) )
         return toInt(ival)
 
-    def setMaxTime(self, max_time) -> None:
-        """
+    def setMaxTime(self, max_time: float) -> None:
+        """Set the maximum (final) time.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        max_time
+            the final time
+
+        Notes
+        -----
+        ``-ts_max_time`` sets the max time from the commandline
+
         See Also
         --------
-        TSSetMaxTime
+        petsc.TSSetMaxTime
         """
         cdef PetscReal rval = asReal(max_time)
         CHKERR( TSSetMaxTime(self.ts, rval) )
 
     def getMaxTime(self) -> float:
-        """
+        """Return the maximum (final) time.
+
+        Not collective. Defaults to 5.
+
         See Also
         --------
-        TSGetMaxTime
+        petsc.TSGetMaxTime
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetMaxTime(self.ts, &rval) )
         return toReal(rval)
 
-    def setMaxSteps(self, max_steps) -> None:
-        """
+    def setMaxSteps(self, max_steps: int) -> None:
+        """Set the maximum number of steps to use.
+
+        Logically collective. Defaults to 5000.
+
+        Parameters
+        ----------
+        max_steps
+            The maximum number of steps to use.
+
         See Also
         --------
-        TSSetMaxSteps
+        petsc.TSSetMaxSteps
         """
         cdef PetscInt  ival = asInt(max_steps)
         CHKERR( TSSetMaxSteps(self.ts, ival) )
 
     def getMaxSteps(self) -> int:
-        """
+        """Return the maximum number of steps to use.
+
+        Not collective.
+
         See Also
         --------
-        TSGetMaxSteps
+        petsc.TSGetMaxSteps
         """
         cdef PetscInt ival = 0
         CHKERR( TSGetMaxSteps(self.ts, &ival) )
         return toInt(ival)
 
     def getSNESIterations(self) -> int:
-        """
+        """Return the total number of nonlinear iterations used by the `TS`.
+
+        Not collective. This counter is reset to zero for each successive call
+        to `solve`.
+
         See Also
         --------
-        TSGetSNESIterations
+        petsc.TSGetSNESIterations
         """
         cdef PetscInt n = 0
         CHKERR( TSGetSNESIterations(self.ts, &n) )
         return toInt(n)
 
     def getKSPIterations(self) -> int:
-        """
+        """Return the total number of linear iterations used by the `TS`.
+
+        Not collective. This counter is reset to zero for each successive call
+        to `solve`.
+
         See Also
         --------
-        TSGetKSPIterations
+        petsc.TSGetKSPIterations
         """
         cdef PetscInt n = 0
         CHKERR( TSGetKSPIterations(self.ts, &n) )
         return toInt(n)
 
-    def setMaxStepRejections(self, n) -> None:
-        """
+    def setMaxStepRejections(self, n: int) -> None:
+        """Set the maximum number of step rejections before a time step fails.
+
+        Not collective.
+
+        Parameters
+        ----------
+        n
+            The maximum number of rejected steps, use ``-1`` for unlimited.
+
+        Notes
+        -----
+        ``-ts_max_reject`` can be used to set this from the commandline
+
         See Also
         --------
-        TSSetMaxStepRejections
+        petsc.TSSetMaxStepRejections
         """
         cdef PetscInt rej = asInt(n)
         CHKERR( TSSetMaxStepRejections(self.ts, rej))
@@ -1399,20 +1532,32 @@ cdef class TS(Object):
     #    return toInt(n)
 
     def getStepRejections(self) -> int:
-        """
+        """Return the total number of rejected steps.
+
+        Not collective. This counter is reset to zero for each successive call
+        to `solve`.
+
         See Also
         --------
-        TSGetStepRejections
+        petsc.TSGetStepRejections
         """
         cdef PetscInt n = 0
         CHKERR( TSGetStepRejections(self.ts, &n) )
         return toInt(n)
 
-    def setMaxSNESFailures(self, n) -> None:
-        """
+    def setMaxSNESFailures(self, n: int) -> None:
+        """Set the maximum number of SNES solves failures allowed.
+
+        Not collective.
+
+        Parameters
+        ----------
+        n
+            The maximum number of failed nonlinear solver, use ``-1`` for unlimited.
+
         See Also
         --------
-        TSSetMaxSNESFailures
+        petsc.TSSetMaxSNESFailures
         """
         cdef PetscInt fails = asInt(n)
         CHKERR( TSSetMaxSNESFailures(self.ts, fails))
@@ -1423,29 +1568,59 @@ cdef class TS(Object):
     #    return toInt(n)
 
     def getSNESFailures(self) -> int:
-        """
+        """Return the total number of failed `SNES` solves in the `TS`.
+
+        Not collective. This counter is reset to zero for each successive call
+        to `solve`.
+
         See Also
         --------
-        TSGetSNESFailures
+        petsc.TSGetSNESFailures
         """
         cdef PetscInt n = 0
         CHKERR( TSGetSNESFailures(self.ts, &n) )
         return toInt(n)
 
-    def setErrorIfStepFails(self, flag=True) -> None:
-        """
+    def setErrorIfStepFails(self, flag: bool=True) -> None:
+        """Immediately error is no step succeeds.
+
+        Not collective.
+
+        Parameters
+        ----------
+        flag
+            Enable to error if no step succeeds.
+
+        Notes
+        -----
+        ``-ts_error_if_step_fails`` to enable from the commandline.
+
         See Also
         --------
-        TSSetErrorIfStepFails
+        petsc.TSSetErrorIfStepFails
         """
         cdef PetscBool bval = flag
         CHKERR( TSSetErrorIfStepFails(self.ts, bval))
 
     def setTolerances(self, rtol=None, atol=None) -> None:
-        """
+        """Set tolerances for local truncation error when using an adaptive controller.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        rtol
+            The relative tolerance or ``None`` to leave the current value.
+        atol
+            The absolute tolerance or ``None`` to leave the current value.
+
+        Notes
+        -----
+        ``-ts_rtol`` and ``-ts_atol`` may be used to set values from the commandline.
+
         See Also
         --------
-        TSSetTolerances
+        petsc.TSSetTolerances
         """
         cdef PetscReal rrtol = PETSC_DEFAULT
         cdef PetscReal ratol = PETSC_DEFAULT
@@ -1466,10 +1641,20 @@ cdef class TS(Object):
         CHKERR( TSSetTolerances(self.ts, ratol, vatol, rrtol, vrtol) )
 
     def getTolerances(self) ->tuple[float,float]:
-        """
+        """Return the tolerances for local truncation error when using adaptive controller.
+
+        Logically collective.
+
+        Returns
+        -------
+        rtol : float
+            the relative tolerance
+        atol : float
+            the absolute tolerance
+
         See Also
         --------
-        TSGetTolerances
+        petsc.TSGetTolerances
         """
         cdef PetscReal rrtol = PETSC_DEFAULT
         cdef PetscReal ratol = PETSC_DEFAULT
@@ -1488,29 +1673,53 @@ cdef class TS(Object):
             atol = toReal(ratol)
         return (rtol, atol)
 
-    def setExactFinalTime(self, option) -> None:
-        """
+    def setExactFinalTime(self, option: TS.ExactFinalTime) -> None:
+        """Set method of computing the final time step.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        option
+            The exact final time option
+        
+        Notes
+        -----
+        ``-ts_exact_final_time`` may be used to specify from the commandline.
+
         See Also
         --------
-        TSSetExactFinalTime
+        petsc.TSSetExactFinalTime
         """
         cdef PetscTSExactFinalTimeOption oval = option
         CHKERR( TSSetExactFinalTime(self.ts, oval) )
 
-    def setConvergedReason(self, reason) -> None:
-        """
+    def setConvergedReason(self, reason: TS.ConvergedReason) -> None:
+        """Set the reason for handling the convergence of `solve`.
+
+        Logically collective. Can only be called when `solve` is active and
+        ``reason`` must contain common value.
+
+        Parameters
+        ----------
+        reason
+            The reason for convergence.
+
         See Also
         --------
-        TSSetConvergedReason
+        petsc.TSSetConvergedReason
         """
         cdef PetscTSConvergedReason cval = reason
         CHKERR( TSSetConvergedReason(self.ts, cval) )
 
     def getConvergedReason(self) -> TSConvergedReason:
-        """
+        """Return the reason the `TS` step was stopped.
+
+        Not collective. Can only be called once `solve` is complete.
+
         See Also
         --------
-        TSGetConvergedReason
+        petsc.TSGetConvergedReason
         """
         cdef PetscTSConvergedReason reason = TS_CONVERGED_ITERATING
         CHKERR( TSGetConvergedReason(self.ts, &reason) )
@@ -1518,11 +1727,27 @@ cdef class TS(Object):
 
     # --- monitoring ---
 
-    def setMonitor(self, monitor, args=None, kargs=None) -> None:
-        """
+    def setMonitor(
+        self, 
+        monitor: TSMonitorFunction, 
+        args : tuple[Any, ...] | None = None,
+        kargs : dict[str, Any] | None = None) -> None:
+        """Set an additional monitor to the `TS`.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        monitor
+            The custom monitor function.
+        args
+            Additional posititional arguments for ``monitor``.
+        kargs
+            Additional keyword arguments for ``monitor``.
+
         See Also
         --------
-        TSMonitorSet
+        petsc.TSMonitorSet
         """
         if monitor is None: return
         cdef object monitorlist = self.get_attr('__monitor__')
@@ -1535,27 +1760,44 @@ cdef class TS(Object):
         context = (monitor, args, kargs)
         monitorlist.append(context)
 
-    def getMonitor(self) -> TSMonitorFunction:
-        """
+    def getMonitor(self) -> list[tuple[TSMonitorFunction,tuple[Any, ...],dict[str, Any]]]:
+        """Return the monitor.
+
+        See Also
+        --------
+        setMonitor
         """
         return self.get_attr('__monitor__')
 
     def monitorCancel(self) -> None:
-        """
+        """Clear all the monitors that have been set.
+
+        Logically collective.
+
         See Also
         --------
-        TSMonitorCancel
+        petsc.TSMonitorCancel
         """
         self.set_attr('__monitor__', None)
         CHKERR( TSMonitorCancel(self.ts) )
 
     cancelMonitor = monitorCancel
 
-    def monitor(self, step, time, Vec u=None) -> None:
-        """
+    def monitor(self, step: int, time: float, Vec u=None) -> None:
+        """Monitor the solve.
+
+        Parameters
+        ----------
+        step
+            The step number that has just completed.
+        time
+            The model time of the state.
+        u
+            The state at the current model time.
+
         See Also
         --------
-        TSMonitor
+        petsc.TSMonitor
         """
         cdef PetscInt  ival = asInt(step)
         cdef PetscReal rval = asReal(time)
@@ -1567,11 +1809,36 @@ cdef class TS(Object):
 
     # --- event handling ---
 
-    def setEventHandler(self, direction, terminate, eventhandler, postevent=None, args=None, kargs=None) -> None:
-        """
+    def setEventHandler(
+        self, 
+        direction: Sequence[int], 
+        terminate: Sequence[bool], 
+        eventhandler: TSEventHandlerFunction, 
+        postevent: TSPostEventFunction=None, 
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None) -> None:
+        """Set a function used for detecting events.
+
+        Logically collective.
+        
+        Parameters
+        ----------
+        direction
+            Direction of zero crossing to be detected {-1,0,+1}.
+        terminate
+            Flags for each event to indicate stepping should be terminated.
+        eventhandler
+            Function for detecting the event
+        postevent
+            Function to execute after the event
+        args
+            Additional posititional arguments for ``eventhandler``.
+        kargs
+            Additional keyword arguments for ``eventhandler``.
+
         See Also
         --------
-        TSSetEventHandler
+        petsc.TSSetEventHandler
         """
         cdef PetscInt  ndirs = 0
         cdef PetscInt *idirs = NULL
@@ -1596,11 +1863,26 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetEventHandler(self.ts, nevents, idirs, iterm, NULL, NULL, <void*>NULL) )
 
-    def setEventTolerances(self, tol=None, vtol=None) -> None:
-        """
+    def setEventTolerances(self, tol: float=None, vtol: Sequence[float]=None) -> None:
+        """Set tolerances for event zero crossings when using event handler.
+
+        Logically collective. ``setEventHandler`` must have already been called.
+
+        Parameters
+        ----------
+        tol
+            The scalar tolerance or ``None`` to leave at the current value
+        vtol
+            A sequence of scalar tolerance for each event. Used in preference to
+            ``tol`` if present. Set to ``None`` to leave at the current value.
+
+        Notes
+        -----
+        ``-ts_event_tol`` can be used to set values from the commandline.
+
         See Also
         --------
-        TSSetEventTolerances
+        petsc.TSSetEventTolerances
         """
         cdef PetscInt  nevents = 0
         cdef PetscReal tolr = PETSC_DEFAULT
@@ -1615,10 +1897,13 @@ cdef class TS(Object):
         CHKERR( TSSetEventTolerances(self.ts, tolr, vtolr) )
 
     def getNumEvents(self) -> int:
-        """
+        """Return the number of events.
+
+        Logically collective.
+
         See Also
         --------
-        TSGetNumEvents
+        petsc.TSGetNumEvents
         """
         cdef PetscInt nevents = 0
         CHKERR( TSGetNumEvents(self.ts, &nevents) )
@@ -1626,11 +1911,27 @@ cdef class TS(Object):
 
     # --- solving ---
 
-    def setPreStep(self, prestep, args=None, kargs=None) -> None:
-        """
+    def setPreStep(
+        self, 
+        prestep: TSPreStepFunction, 
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None) -> None:
+        """Set a function to be called at the beginning of each time step.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        prestep
+            The function to be called at the beginning of each step.
+        args
+            Additional posititional arguments for ``prestep``.
+        kargs
+            Additional keyword arguments for ``prestep``.
+
         See Also
         --------
-        TSSetPreStep
+        petsc.TSSetPreStep
         """
         if prestep is not None:
             if args  is None: args  = ()
@@ -1642,16 +1943,35 @@ cdef class TS(Object):
             self.set_attr('__prestep__', None)
             CHKERR( TSSetPreStep(self.ts, NULL) )
 
-    def getPreStep(self) -> TSPreStepFunction:
-        """
+    def getPreStep(self) -> tuple[TSPreStepFunction,tuple[Any, ...] | None,dict[str, Any] | None]:
+        """Return the prestep function.
+
+        See Also
+        --------
+        setPreStep
         """
         return self.get_attr('__prestep__')
 
-    def setPostStep(self, poststep, args=None, kargs=None) -> None:
-        """
+    def setPostStep(self, 
+        poststep: TSPostStepFunction,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None) -> None:
+        """Set a function to be called at the end of each time step.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        poststep
+            The function to be called at the end of each step.
+        args
+            Additional posititional arguments for ``poststep``.
+        kargs
+            Additional keyword arguments for ``poststep``.
+
         See Also
         --------
-        TSSetPostStep
+        petsc.TSSetPostStep
         """
         if poststep is not None:
             if args  is None: args  = ()
@@ -1663,73 +1983,132 @@ cdef class TS(Object):
             self.set_attr('__poststep__', None)
             CHKERR( TSSetPostStep(self.ts, NULL) )
 
-    def getPostStep(self) -> TSPostStepFunction:
-        """
+    def getPostStep(self) -> tuple[TSPostStepFunction,tuple[Any, ...] | None,dict[str, Any] | None]:
+        """Return the poststep function.
         """
         return self.get_attr('__poststep__')
 
     def setUp(self) -> None:
-        """
+        """Set up the internal data structures for the `TS`.
+
+        Collective.
+
         See Also
         --------
-        TSSetUp
+        petsc.TSSetUp
         """
         CHKERR( TSSetUp(self.ts) )
 
     def reset(self) -> None:
-        """
+        """Reset the `TS`, removing any allocated vectors and matrices.
+
+        Collective.
+
         See Also
         --------
-        TSReset
+        petsc.TSReset
         """
         CHKERR( TSReset(self.ts) )
 
     def step(self) -> None:
-        """
+        """Take one step.
+
+        Collective. The preferred interface for the `TS`solvers is `solve`. If
+        you need to execute code at the beginning or ending of each step, use
+        `setPreStep` and `setPostStep` respectively.
+
         See Also
         --------
-        TSStep
+        petsc.TSStep
         """
         CHKERR( TSStep(self.ts) )
 
     def restartStep(self) -> None:
-        """
+        """Flag the solver to restart the next step.
+
+        Collective. Multistep methods like TSBDF or Runge-Kutta methods with
+        FSAL property require restarting the solver in the event of
+        discontinuities. These discontinuities may be introduced as a
+        consequence of explicitly modifications to the solution vector (which
+        PETSc attempts to detect and handle) or problem coefficients (which
+        PETSc is not able to detect). For the sake of correctness and maximum
+        safety, users are expected to call TSRestart() whenever they introduce
+        discontinuities in callback routines (e.g. prestep and poststep
+        routines, or implicit/rhs function routines with discontinuous source
+        terms).
+
         See Also
         --------
-        TSRestartStep
+        petsc.TSRestartStep
         """
         CHKERR( TSRestartStep(self.ts) )
 
     def rollBack(self) -> None:
-        """
+        """Roll back one time step.
+
         See Also
         --------
-        TSRollBack
+        petsc.TSRollBack
         """
         CHKERR( TSRollBack(self.ts) )
 
     def solve(self, Vec u) -> None:
-        """
+        """Step the requested number of timesteps.
+
+        Collective.
+
+        Parameters
+        ----------
+        u
+            The solution vector. Can be ``None`` if `setSolution` was used and
+            `setExactFinalTime` is not set as ``TS_EXACTFINALTIME_MATCHSTEP``.
+            Otherwise this vector must contain the initial conditions and will
+            contain the solution at the final requested time.
+
         See Also
         --------
-        TSSolve
+        petsc.TSSolve
         """
         CHKERR( TSSolve(self.ts, u.vec) )
 
-    def interpolate(self, t, Vec u) -> None:
-        """
+    def interpolate(self, t: float, Vec u) -> None:
+        """Interpolate the solution to a given time.
+
+        Collective.
+
+        Parameters
+        ----------
+        t
+            The time to interpolate.
+        u
+            The state vector to interpolate.
+
         See Also
         --------
-        TSInterpolate
+        petsc.TSInterpolate
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSInterpolate(self.ts, rval, u.vec) )
 
-    def setStepLimits(self, hmin, hmax) -> None:
-        """
+    def setStepLimits(self, hmin: float, hmax: float) -> None:
+        """Set the minimum and maximum step sizes to be considered by the time step controller.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        hmin
+            the minimum step size
+        hmax
+            the maximum step size
+        
+        Notes
+        -----
+        ``-ts_adapt_dt_min`` and ``-ts_adapt_dt_max`` may be used to set from the commandline.
+
         See Also
         --------
-        TSAdaptSetStepLimits
+        petsc.TSAdaptSetStepLimits
         """
         cdef PetscTSAdapt tsadapt = NULL
         cdef PetscReal hminr = toReal(hmin)
@@ -1738,10 +2117,11 @@ cdef class TS(Object):
         CHKERR( TSAdaptSetStepLimits(tsadapt, hminr, hmaxr) )
 
     def getStepLimits(self) -> tuple[float,float]:
-        """
+        """Return the minimum and maximum time step size to be used by the time step controller.
+
         See Also
         --------
-        TSAdaptGetStepLimits
+        petsc.TSAdaptGetStepLimits
         """
         cdef PetscTSAdapt tsadapt = NULL
         cdef PetscReal hminr = 0.
@@ -1753,37 +2133,65 @@ cdef class TS(Object):
     # --- Adjoint methods ---
 
     def setSaveTrajectory(self) -> None:
-        """
+        """Enable to save solutions as a `TSTrajectory`.
+
+        Collective. This routine shuld be called after all `TS` options have
+        been set.
+
+        Notes
+        -----
+        ``-ts_save_trajectory`` can be used to save a trajectory to a file.
+
         See Also
         --------
-        TSSetSaveTrajectory
+        petsc.TSSetSaveTrajectory
         """
         CHKERR(TSSetSaveTrajectory(self.ts))
 
     def removeTrajectory(self) -> None:
-        """
+        """Remove the internal `TSTrajectory` object from a `TS`.
+
+        Collective.
+
         See Also
         --------
-        TSRemoveTrajectory
+        petsc.TSRemoveTrajectory
         """
         CHKERR(TSRemoveTrajectory(self.ts))
 
     def getCostIntegral(self) -> Vec:
-        """
+        """Return a vector of values of the integral term in the cost functions. 
+                
         See Also
         --------
-        TSGetCostIntegral
+        petsc.TSGetCostIntegral
         """
         cdef Vec cost = Vec()
         CHKERR( TSGetCostIntegral(self.ts, &cost.vec) )
         PetscINCREF(cost.obj)
         return cost
 
-    def setCostGradients(self, vl, vm=None) -> None:
-        """
+    def setCostGradients(
+        self, 
+        vl: Vec | Sequence[Vec] | None, 
+        vm: Vec | Sequence[Vec] | None=None) -> None:
+        """Set the cost gradients.
+        
+        Logically collective.
+
+        Parameters
+        ----------
+        vl
+            gradients with respect to the initial condition variables, the
+            dimension and parallel layout of these vectors is the same as the
+            ODE solution vector
+        vm
+            gradients with respect to the parameters, the number of entries in
+            these vectors is the same as the number of parameters
+
         See Also
         --------
-        TSSetCostGradients
+        petsc.TSSetCostGradients
         """
         cdef PetscInt n = 0;
         cdef PetscVec *vecl = NULL
@@ -1809,10 +2217,12 @@ cdef class TS(Object):
         CHKERR( TSSetCostGradients(self.ts, n, vecl, vecm) )
 
     def getCostGradients(self) -> tuple[list[Vec],list[Vec]]:
-        """
+        """Return the cost gradients.
+
         See Also
         --------
-        TSGetCostGradients
+        setCostGradients
+        petsc.TSGetCostGradients
         """
         cdef PetscInt i = 0, n = 0
         cdef PetscVec *vecl = NULL
@@ -1829,7 +2239,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSSetRHSJacobianP
+        petsc.TSSetRHSJacobianP
         """
         cdef PetscMat Amat=NULL
         if A is not None: Amat = A.mat
@@ -1846,7 +2256,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSCreateQuadratureTS
+        petsc.TSCreateQuadratureTS
         """
         cdef TS qts = TS()
         cdef PetscBool fwd = forward
@@ -1858,7 +2268,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSGetQuadratureTS
+        petsc.TSGetQuadratureTS
         """
         cdef TS qts = TS()
         cdef PetscBool fwd = PETSC_FALSE
@@ -1870,7 +2280,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSSetRHSJacobianP
+        petsc.TSSetRHSJacobianP
         """
         cdef PetscMat Amat=NULL
         if A is not None: Amat = A.mat
@@ -1883,53 +2293,81 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetRHSJacobianP(self.ts, Amat, NULL, NULL) )
 
-    def computeRHSJacobianP(self, t, Vec x, Mat J) -> None:
-        """
+    def computeRHSJacobianP(self, t: float, Vec x, Mat J) -> None:
+        """Run the user-defined JacobianP function.
+
+        Parameters
+        ----------
+        t
+            The time at which to compute the Jacobian.
+        x
+            The solution at which to compute the Jacobian.
+        J
+            The output Jacobian matrx.
+
         See Also
         --------
-        TSComputeRHSJacobianP
+        petsc.TSComputeRHSJacobianP
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSComputeRHSJacobianP(self.ts, rval, x.vec, J.mat) )
 
-    def adjointSetSteps(self, adjoint_steps) -> None:
-        """
+    def adjointSetSteps(self, adjoint_steps: int) -> None:
+        """Set the number of steps the adjoint solver should take backward in time.
+
+        Parameters
+        ----------
+        adjoint_steps
+            The number of steps to take.
+        
         See Also
         --------
-        TSAdjointSetSteps
+        petsc.TSAdjointSetSteps
         """
         cdef PetscInt ival = asInt(adjoint_steps)
         CHKERR( TSAdjointSetSteps(self.ts, ival) )
 
     def adjointSetUp(self) -> None:
-        """
+        """Set up the internal data structures for the later use of an adjoint solver.
+
+        Collective.
+
         See Also
         --------
-        TSAdjointSetUp
+        petsc.TSAdjointSetUp
         """
         CHKERR(TSAdjointSetUp(self.ts))
 
     def adjointSolve(self) -> None:
-        """
+        """Solve the discrete adjoint problem for an ODE/DAE.
+
+        Collective.
+
         See Also
         --------
-        TSAdjointSolve
+        petsc.TSAdjointSolve
         """
         CHKERR( TSAdjointSolve(self.ts) )
 
     def adjointStep(self) -> None:
-        """
+        """Step one time step backward in the adjoint run.
+
+        Collective.
+
         See Also
         --------
-        TSAdjointStep
+        petsc.TSAdjointStep
         """
         CHKERR(TSAdjointStep(self.ts))
 
     def adjointReset(self) -> None:
-        """
+        """Resets a `TS`, removing any allocated vectors and matrices.
+
+        Collective.
+
         See Also
         --------
-        TSAdjointReset
+        petsc.TSAdjointReset
         """
         CHKERR(TSAdjointReset(self.ts))
 
@@ -1939,7 +2377,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSCreate
+        petsc.TSCreate
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscTS newts = NULL
@@ -1953,7 +2391,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSPythonSetContext
+        petsc.TSPythonSetContext
         """
         CHKERR( TSPythonSetContext(self.ts, <void*>context) )
 
@@ -1961,7 +2399,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSPythonGetContext
+        petsc.TSPythonGetContext
         """
         cdef void *context = NULL
         CHKERR( TSPythonGetContext(self.ts, &context) )
@@ -1972,7 +2410,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSPythonSetType
+        petsc.TSPythonSetType
         """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
@@ -1982,7 +2420,7 @@ cdef class TS(Object):
         """
         See Also
         --------
-        TSPythonGetType
+        petsc.TSPythonGetType
         """
         cdef const char *cval = NULL
         CHKERR( TSPythonGetType(self.ts, &cval) )
@@ -1990,39 +2428,59 @@ cdef class TS(Object):
 
     # --- Theta ---
 
-    def setTheta(self, theta) -> None:
-        """
+    def setTheta(self, theta: float) -> None:
+        """Set the abscissa of the stage in ``(0,1]`` for `TSTHETA`.
+
+        Parameters
+        ----------
+        theta
+            stage abscissa
+        
+        Notes
+        -----
+        ``-ts_theta_theta`` can be used to set a value from the commandline.
+
         See Also
         --------
-        TSThetaSetTheta
+        petsc.TSThetaSetTheta
         """
         cdef PetscReal rval = asReal(theta)
         CHKERR( TSThetaSetTheta(self.ts, rval) )
 
     def getTheta(self) -> float:
-        """
+        """Return the abscissa of the stage in ``(0,1]`` for `TSTHETA`.
+
+        Not collective.
+
         See Also
         --------
-        TSThetaGetTheta
+        petsc.TSThetaGetTheta
         """
         cdef PetscReal rval = 0
         CHKERR( TSThetaGetTheta(self.ts, &rval) )
         return toReal(rval)
 
     def setThetaEndpoint(self, flag=True) -> None:
-        """
+        """Set to use the endpoint variant of `TSTHETA`.
+
+        Parameters
+        ----------
+        flag
+            Enable to use the endpoint variant.
+
         See Also
         --------
-        TSThetaSetEndpoint
+        petsc.TSThetaSetEndpoint
         """
         cdef PetscBool bval = flag
         CHKERR( TSThetaSetEndpoint(self.ts, bval) )
 
     def getThetaEndpoint(self) -> bool:
-        """
+        """Return whether the endpoint variable of `TSTHETA` is used.
+
         See Also
         --------
-        TSThetaGetEndpoint
+        petsc.TSThetaGetEndpoint
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( TSThetaGetEndpoint(self.ts, &flag) )
@@ -2030,20 +2488,48 @@ cdef class TS(Object):
 
     # --- Alpha ---
 
-    def setAlphaRadius(self, radius) -> None:
-        """
+    def setAlphaRadius(self, radius: float) -> None:
+        """Set the spectral radius for `TSALPHA`.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        radius
+            the spectral radius
+
+        Notes
+        -----
+        ``-ts_alpha_radius`` can be used to set this from the commandline.
+
         See Also
         --------
-        TSAlphaSetRadius
+        petsc.TSAlphaSetRadius
         """
         cdef PetscReal rval = asReal(radius)
         CHKERR( TSAlphaSetRadius(self.ts, rval) )
 
-    def setAlphaParams(self, alpha_m=None,alpha_f=None, gamma=None) -> None:
-        """
+    def setAlphaParams(
+        self, 
+        alpha_m: float | None=None,
+        alpha_f: float | None=None, 
+        gamma: float | None=None) -> None:
+        """Set the algorithmic parameters for `TSALPHA`.
+
+        Logically collective. Users should call `tsSetRadius`.
+
+        Parameters
+        ----------
+        alpha_m
+            Parameter, leave ``None``  to keep current value.
+        alpha_f
+            Parameter, leave ``None``  to keep current value.
+        gamma
+            Parameter, leave ``None``  to keep current value.
+
         See Also
         --------
-        TSAlphaSetParams
+        petsc.TSAlphaSetParams
         """
         cdef PetscReal rval1 = 0, rval2 = 0, rval3 = 0
         try: CHKERR( TSAlphaGetParams(self.ts, &rval1, &rval2, &rval3) )
@@ -2054,10 +2540,11 @@ cdef class TS(Object):
         CHKERR( TSAlphaSetParams(self.ts,  rval1,  rval2,  rval3) )
 
     def getAlphaParams(self) -> tuple[float, float, float]:
-        """
+        """Return the algorithmic parameters for `TSALPHA`.
+
         See Also
         --------
-        TSAlphaGetParams
+        petsc.TSAlphaGetParams
         """
         cdef PetscReal rval1 = 0, rval2 = 0, rval3 = 0
         CHKERR( TSAlphaGetParams(self.ts, &rval1, &rval2, &rval3) )
@@ -2066,8 +2553,7 @@ cdef class TS(Object):
     # --- application context ---
 
     property appctx:
-        """
-        """
+        """Application context."""
         def __get__(self) -> Any:
             return self.getAppCtx()
         def __set__(self, value) -> None:
@@ -2076,8 +2562,7 @@ cdef class TS(Object):
     # --- discretization space ---
 
     property dm:
-        """
-        """
+        """The `DM`."""
         def __get__(self) -> DM:
             return self.getDM()
         def __set__(self, value) -> None:
@@ -2086,62 +2571,66 @@ cdef class TS(Object):
     # --- xxx ---
 
     property problem_type:
-        """
-        """
+        """The problem type."""
         def __get__(self) -> TS.ProblemType:
             return self.getProblemType()
         def __set__(self, value) -> None:
             self.setProblemType(value)
 
     property equation_type:
-        """
-        """
+        """The equation type."""
         def __get__(self) -> TS.EquationType:
             return self.getEquationType()
         def __set__(self, value) -> None:
             self.setEquationType(value)
 
     property snes:
-        """
-        """
+        """The `SNES`."""
         def __get__(self) -> SNES:
             return self.getSNES()
 
     property ksp:
+        """The `KSP`."""
         def __get__(self) -> KSP:
             return self.getKSP()
 
     property vec_sol:
+        """The solution vector."""
         def __get__(self) -> Vec:
             return self.getSolution()
 
     # --- xxx ---
 
     property time:
+        """The current time."""
         def __get__(self) -> float:
             return self.getTime()
         def __set__(self, value) -> None:
             self.setTime(value)
 
     property time_step:
+        """The current time step size."""
         def __get__(self) -> None:
             return self.getTimeStep()
         def __set__(self, value):
             self.setTimeStep(value)
 
     property step_number:
+        """The current step number."""
         def __get__(self) -> int:
             return self.getStepNumber()
         def __set__(self, value) -> None:
             self.setStepNumber(value)
 
     property max_time:
+        """The maximum time."""
         def __get__(self) -> float:
             return self.getMaxTime()
         def __set__(self, value) -> None:
             self.setMaxTime(value)
 
     property max_steps:
+        """The maximum number of steps."""
         def __get__(self) -> int:
             return self.getMaxSteps()
         def __set__(self, value) -> None:
@@ -2150,32 +2639,38 @@ cdef class TS(Object):
     # --- convergence ---
 
     property rtol:
+        """The relative tolerance."""
         def __get__(self) -> float:
             return self.getTolerances()[0]
         def __set__(self, value) -> None:
             self.setTolerances(rtol=value)
 
     property atol:
+        """The absolute tolerance."""
         def __get__(self) -> float:
             return self.getTolerances()[1]
         def __set__(self, value) -> None:
             self.setTolerances(atol=value)
 
     property reason:
+        """The converged reason."""
         def __get__(self) -> TSConvergedReason:
             return self.getConvergedReason()
         def __set__(self, value) -> None:
             self.setConvergedReason(value)
 
     property iterating:
+        """Indicates the `TS` is still iterating."""
         def __get__(self) -> bool:
             return self.reason == 0
 
     property converged:
+        """Indicates the `TS` has converged."""
         def __get__(self) -> bool:
             return self.reason > 0
 
     property diverged:
+        """Indicates the `TS` has stopped."""
         def __get__(self) -> bool:
             return self.reason < 0
 
