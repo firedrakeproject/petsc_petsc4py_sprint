@@ -918,8 +918,19 @@ cdef class IS(Object):
 
 
 class GLMapMode(object):
+    """Enum describing mapping behavior for global-to-local maps when global
+    indices are missing.
+
+    See Also
+    --------
+    https://petsc.org/release/docs/manualpages/IS/ISGlobalToLocalMappingMode/
+    """
+
     MASK = PETSC_IS_GTOLM_MASK
+    """Give missing global indices a local index of -1."""
+
     DROP = PETSC_IS_GTOLM_DROP
+    """Drop missing global indices."""
 
 
 class LGMapType(object):
@@ -930,39 +941,110 @@ class LGMapType(object):
 # --------------------------------------------------------------------
 
 cdef class LGMap(Object):
+    """Mapping from an arbitrary local ordering from 0 to n-1 to a
+    global PETSc ordering used by a vector or matrix.
+
+    See Also
+    --------
+    petsc:ISLocalToGlobalMapping
+    """
 
     MapMode = GLMapMode
 
     Type = LGMapType
     #
 
-    def __cinit__(self):
+    def __cinit__(self) -> None:
         self.obj = <PetscObject*> &self.lgm
         self.lgm = NULL
 
-    def __call__(self, indices, result=None):
+    def __call__(self, indices: Sequence[int], result: Optional[NDArray[int]]=None) -> None:
+        """Convert a locally numbered list of integers to a global numbering.
+
+        Parameters
+        ----------
+        indices
+            Input indices in local numbering.
+        result
+            Array to write the global numbering to. If ``None`` then a
+            new array will be allocated.
+
+        See Also
+        --------
+        petsc: ISLocalToGlobalMappingApply
+        """
         self.apply(indices, result)
 
     #
 
-    def setType(self, lgmap_type):
+    def setType(self, lgmap_type: LGMap.Type | str) -> None:
+        """Set the type of the local-to-global map.
+
+        Notes
+        -----
+        Use ``-islocaltoglobalmapping_type`` to set the type in the
+        options database.
+
+        See Also
+        --------
+        petsc:ISLocalToGlobalMappingSetType
+        """
         cdef PetscISLocalToGlobalMappingType cval = NULL
         lgmap_type = str2bytes(lgmap_type, &cval)
         CHKERR( ISLocalToGlobalMappingSetType(self.lgm, cval) )
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
+        """Set mapping options from the options database.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingSetFromOptions/
+        """
         CHKERR( ISLocalToGlobalMappingSetFromOptions(self.lgm) )
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer: Optional[Viewer]=None) -> None:
+        """View the local-to-global mapping.
+
+        Parameters
+        ----------
+        viewer
+            Viewer instance. If ``None`` then will default to an instance of
+            `Viewer.Type.ASCII`.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingView/
+        """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( ISLocalToGlobalMappingView(self.lgm, cviewer) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the local-to-global mapping.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingDestroy/
+        """
         CHKERR( ISLocalToGlobalMappingDestroy(&self.lgm) )
         return self
 
-    def create(self, indices, bsize=None, comm=None):
+    def create(self, indices: Sequence[int], bsize: Optional[int]=None, comm: Optional[Comm]=None) -> Self:
+        """Create a local-to-global mapping.
+
+        Parameters
+        ----------
+        indices
+            Global index for each local element.
+        bsize
+            Block size. If ``None`` then will default to 1.
+        comm
+            MPI communicator. If ``None`` then will default to ``PETSC_COMM_DEFAULT``.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingCreate/
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt bs = 1, nidx = 0, *idx = NULL
         cdef PetscCopyMode cm = PETSC_COPY_VALUES
@@ -975,31 +1057,73 @@ cdef class LGMap(Object):
         PetscCLEAR(self.obj); self.lgm = newlgm
         return self
 
-    def createIS(self, IS iset):
+    def createIS(self, IS iset: IS) -> Self:
+        """Create a local-to-global mapping from an index set.
+
+        Parameters
+        ----------
+        iset
+            Index set containing the global numbers for each local number. 
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingCreateIS/
+        """
         cdef PetscLGMap newlgm = NULL
         CHKERR( ISLocalToGlobalMappingCreateIS(
             iset.iset, &newlgm) )
         PetscCLEAR(self.obj); self.lgm = newlgm
         return self
 
-    def createSF(self, SF sf, start):
+    def createSF(self, SF sf: SF, start: int) -> Self:
+        """Create a local-to-global mapping from a star forest.
+
+        Parameters
+        ----------
+        sf
+            Star forest mapping contiguous local indices to (rank, offset).
+        start
+            First global index on this process.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingCreateSF/
+        """
         cdef PetscLGMap newlgm = NULL
         cdef PetscInt cstart = asInt(start)
         CHKERR( ISLocalToGlobalMappingCreateSF(sf.sf, cstart, &newlgm) )
         PetscCLEAR(self.obj); self.lgm = newlgm
         return self
 
-    def getSize(self):
+    def getSize(self) -> int:
+        """Return the local size of a local-to-global mapping.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetSize/
+        """
         cdef PetscInt n = 0
         CHKERR( ISLocalToGlobalMappingGetSize(self.lgm, &n) )
         return toInt(n)
 
-    def getBlockSize(self):
+    def getBlockSize(self) -> int:
+        """Return the block size of the local-to-global mapping.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetBlockSize/
+        """
         cdef PetscInt bs = 1
         CHKERR( ISLocalToGlobalMappingGetBlockSize(self.lgm, &bs) )
         return toInt(bs)
 
-    def getIndices(self):
+    def getIndices(self) -> NDArray[int]:
+        """Return the global indices for each local point in the mapping.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetIndices/
+        """
         cdef PetscInt size = 0
         cdef const PetscInt *indices = NULL
         CHKERR( ISLocalToGlobalMappingGetSize(
@@ -1014,7 +1138,13 @@ cdef class LGMap(Object):
                     self.lgm, &indices) )
         return oindices
 
-    def getBlockIndices(self):
+    def getBlockIndices(self) -> NDArray[int]:
+        """Return the global indices for each local block.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetBlockIndices/
+        """
         cdef PetscInt size = 0, bs = 1
         cdef const PetscInt *indices = NULL
         CHKERR( ISLocalToGlobalMappingGetSize(
@@ -1031,7 +1161,19 @@ cdef class LGMap(Object):
                     self.lgm, &indices) )
         return oindices
 
-    def getInfo(self):
+    def getInfo(self) -> dict[int, NDArray[int]]:
+        """Determine the indices shared with neighbouring processes.
+
+        Returns
+        -------
+        dict[int, NDArray[int]]
+            Mapping from neighbouring processor number to an array of shared
+            indices (in local numbering).
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetInfo/
+        """
         cdef PetscInt i, nproc = 0, *procs = NULL,
         cdef PetscInt *numprocs = NULL, **indices = NULL
         cdef object neighs = { }
@@ -1045,7 +1187,19 @@ cdef class LGMap(Object):
                 self.lgm, &nproc, &procs, &numprocs, &indices)
         return neighs
 
-    def getBlockInfo(self):
+    def getBlockInfo(self) -> dict[int, NDArray[int]]:
+        """Determine the block indices shared with neighbouring processes.
+
+        Returns
+        -------
+        dict[int, NDArray[int]]
+            Mapping from neighbouring processor number to an array of shared
+            block indices (in local numbering).
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetBlockInfo/
+        """
         cdef PetscInt i, nproc = 0, *procs = NULL,
         cdef PetscInt *numprocs = NULL, **indices = NULL
         cdef object neighs = { }
@@ -1061,7 +1215,26 @@ cdef class LGMap(Object):
 
     #
 
-    def apply(self, indices, result=None):
+    def apply(self, indices: Sequence[int], result: Optional[NDArray[int]]=None) -> NDArray[int]:
+        """Convert a locally numbered list of integers to a global numbering.
+
+        Parameters
+        ----------
+        indices
+            Input indices in local numbering.
+        result
+            Array to write the global numbering to. If ``None`` then a
+            new array will be allocated.
+
+        Returns
+        -------
+        result : NDArray[int]
+            Indices in global numbering.
+
+        See Also
+        --------
+        petsc: ISLocalToGlobalMappingApply
+        """
         cdef PetscInt niidx = 0, *iidx = NULL
         cdef PetscInt noidx = 0, *oidx = NULL
         indices = iarray_i(indices, &niidx, &iidx)
@@ -1072,7 +1245,26 @@ cdef class LGMap(Object):
             self.lgm, niidx, iidx, oidx) )
         return result
 
-    def applyBlock(self, indices, result=None):
+    def applyBlock(self, indices: Sequence[int], result: Optional[NDArray[int]]=None) -> NDArray[int]:
+        """Convert a local block numbering to a global block numbering.
+
+        Parameters
+        ----------
+        indices
+            Input block indices in local numbering.
+        result
+            Array to write the global numbering to. If ``None`` then a
+            new array will be allocated.
+
+        Returns
+        -------
+        result : NDArray[int]
+            Block indices in global numbering.
+
+        See Also
+        --------
+        petsc: ISLocalToGlobalMappingApplyBlock
+        """
         cdef PetscInt niidx = 0, *iidx = NULL
         cdef PetscInt noidx = 0, *oidx = NULL
         indices = iarray_i(indices, &niidx, &iidx)
@@ -1083,13 +1275,48 @@ cdef class LGMap(Object):
             self.lgm, niidx, iidx, oidx) )
         return result
 
-    def applyIS(self, IS iset):
+    def applyIS(self, IS iset: IS) -> IS:
+        """Create an index set with global numbering from one with local numbering.
+
+        Parameters
+        ----------
+        iset
+            Index set with local numbering.
+
+        Returns
+        -------
+        IS
+            Index set with global numbering.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingApplyIS/
+        """
         cdef IS result = IS()
         CHKERR( ISLocalToGlobalMappingApplyIS(
             self.lgm, iset.iset, &result.iset) )
         return result
 
-    def applyInverse(self, indices, mode=None):
+    def applyInverse(self, indices: Sequence[int], mode: Optional[LGMap.MapMode|str]=None) -> NDArray[int]:
+        """Compute the local numbering of an array of indices provided with a
+        global numbering.
+
+        Parameters
+        ----------
+        indices
+            Indices with a global numbering.
+        mode
+            Flag indicating what to do with indices that have no local value.
+
+        Returns
+        -------
+        NDArray[int]
+            Indices with a local numbering.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISGlobalToLocalMappingApply/
+        """
         cdef PetscGLMapMode cmode = PETSC_IS_GTOLM_MASK
         if mode is not None: cmode = mode
         cdef PetscInt n = 0, *idx = NULL
