@@ -5,8 +5,8 @@ class KSPType(object):
 
     See Also
     --------
-    `:petsc:KSP`
-    resolves to https://petsc.org/release/docs/manualpages/KSP/KSPType/ ?
+    petsc:KSP
+    resolves to https://petsc.org/release/docs/manualpages/KSP/KSPType/
     """
     RICHARDSON = S_(KSPRICHARDSON)
     CHEBYSHEV  = S_(KSPCHEBYSHEV)
@@ -135,7 +135,7 @@ cdef class KSP(Object):
         return self
 
     def setType(self, ksp_type):
-        """Build the KSP datastructure for a particular KSPType
+        """Build the KSP data structure for a particular KSPType
 
         Parameters
         ----------
@@ -144,7 +144,7 @@ cdef class KSP(Object):
 
         Notes:
         ------
-        See petsc/include/petscksp.h for available methods (for instance, `KSP.CG` or `KSP.GMRES`).
+        See petsc:KSPType for available methods (for instance, `KSP.CG` or `KSP.GMRES`).
 
         Normally, it is best to use the `KSP.SetFromOptions` command
         and then set the KSP type from the options database rather than
@@ -159,35 +159,183 @@ cdef class KSP(Object):
         appropriate method. In other words, this routine is not for
         beginners.
 
-        See also:
-        ---------
-
+        See also
+        --------
+        petsc:KSPSetType
         """
         cdef PetscKSPType cval = NULL
         ksp_type = str2bytes(ksp_type, &cval)
         CHKERR( KSPSetType(self.ksp, cval) )
 
     def getType(self):
+        """Get the KSP type as a string from the KSP object.
+
+        Returns
+        -------
+        ksp_type: string
+            The KSP Type as a string
+
+        See also
+        --------
+        petsc:KSPGetType
+        """
         cdef PetscKSPType cval = NULL
         CHKERR( KSPGetType(self.ksp, &cval) )
         return bytes2str(cval)
 
     def setOptionsPrefix(self, prefix):
+        """Set the prefix used for searching for all KSP options in the database.
+
+        Parameters
+        ----------
+        prefix : string
+            The options prefix.
+
+        Notes
+        -----
+        A hyphen (-) must NOT be given at the beginning of the prefix
+        name. The first character of all runtime options is
+        AUTOMATICALLY the hyphen. For example, to distinguish between
+        the runtime options for two different `KSP` contexts, one could
+        call
+        ```
+        KSPSetOptionsPrefix(ksp1, "sys1_")
+        KSPSetOptionsPrefix(ksp2, "sys2_")
+        ```
+
+        This would enable use of different options for each system, such as
+        ```
+        -sys1_ksp_type gmres -sys1_ksp_rtol 1.e-3
+        -sys2_ksp_type bcgs  -sys2_ksp_rtol 1.e-4
+        ```
+
+
+        See also
+        --------
+        petsc:KSPSetOptionsPrefix
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( KSPSetOptionsPrefix(self.ksp, cval) )
 
     def getOptionsPrefix(self):
+        """Get the prefix used for searching for all KSP options in the database.
+
+        Returns
+        -------
+        ksp_type: string
+            The KSP prefix as a string
+
+        See also
+        --------
+        petsc:KSPGetOptionsPrefix
+        """
         cdef const char *cval = NULL
         CHKERR( KSPGetOptionsPrefix(self.ksp, &cval) )
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix):
+        """Appends to the prefix used for searching for all KSP options in the database.
+
+        Parameters
+        ----------
+        prefix : string
+            The options prefix to append.
+
+        Notes
+        -----
+        Notes
+        A hyphen (-) must NOT be given at the beginning of the prefix
+        name. The first character of all runtime options is
+        AUTOMATICALLY the hyphen.
+
+        See also
+        --------
+        petsc:KSPAppendOptionsPrefix
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( KSPAppendOptionsPrefix(self.ksp, cval) )
 
     def setFromOptions(self):
+        """Sets KSP options from the options database.
+
+        This routine must be called before KSP.SetUp if the user is to be allowed to set the Krylov type.
+
+        Notes
+        -----
+        - ``-ksp_max_it`` - maximum number of linear iterations
+        - ``-ksp_rtol rtol`` - relative tolerance used in default
+            determination of convergence, i.e. if residual norm decreases
+            by this factor than convergence is declared
+        - ``-ksp_atol abstol`` - absolute tolerance used in default
+            convergence test, i.e. if residual norm is less than this then
+            convergence is declared
+        - ``-ksp_divtol tol`` - if residual norm increases by this factor
+            than divergence is declared
+        - ``-ksp_converged_use_initial_residual_norm`` - see
+            KSP.ConvergedDefaultSetUIRNorm
+        - ``-ksp_converged_use_min_initial_residual_norm`` - see
+            KSP.ConvergedDefaultSetUMIRNorm
+        - ``-ksp_converged_maxits`` - see
+            KSPConvergedDefaultSetConvergedMaxits
+        - ``-ksp_norm_type`` - none - skip norms used in convergence tests
+            (useful only when not using convergence test (say you always
+            want to run with 5 iterations) to save on communication
+            overhead preconditioned - default for left preconditioning
+            unpreconditioned or natural - see KSP.SetNormType
+        - ``-ksp_check_norm_iteration it`` - do not compute residual norm
+            until iteration number it (does compute at 0th iteration) works
+            only for KSP.BCGS, KSP.IBCGS and and KSP.CG
+        - ``-ksp_lag_norm`` - compute the norm of the residual for the ``i``th
+            iteration on the ``i+1``th iteration; this means that one
+            can use the norm of the residual for convergence test
+            WITHOUT an extra ``MPI_Allreduce()`` limiting global
+            synchronizations. This will require 1 more iteration of the
+            solver than usual.
+        - ``-ksp_guess_type`` - Type of initial guess generator for
+            repeated linear solves.
+        - ``-ksp_fischer_guess <model,size>`` - uses the Fischer initial
+            guess generator for repeated linear solves.
+        - ``-ksp_constant_null_space`` - assume the operator (matrix) has
+            the constant vector in its null space.
+        - ``-ksp_test_null_space`` - tests the null space set with
+            Mat.SetNullSpace to see if it truly is a null space.
+        - ``-ksp_knoll`` - compute initial guess by applying the
+            preconditioner to the right hand side.
+        - ``-ksp_monitor_cancel`` - cancel all previous convergence monitor
+            routines set.
+        - ``-ksp_monitor`` - print residual norm at each iteration
+        - ``-ksp_monitor draw::draw_lg`` - plot residual norm at each
+            iteration.
+        - ``-ksp_monitor_true_residual`` - print true residual norm at each
+            iteration.
+        - ``-all_ksp_monitor`` - print residual norm at each iteration for
+            ALL KSP solves, regardless of their prefix. This is useful for
+            PCFIELDSPLIT, PCMG, etc that have inner solvers and you wish to
+            track the convergence of all the solvers.
+        - ``-ksp_monitor_solution
+            [ascii binary or draw][:filename][:format option]`` - plot
+            solution at each iteration
+        - ``-ksp_monitor_singular_value`` - monitor extreme singular values
+            at each iteration.
+        - ``-ksp_converged_reason`` - view the convergence state at the end
+            of the solve.
+        - ``-ksp_use_explicittranspose`` - transpose the system explicitly
+            in KSP.SolveTranspose
+        - ``-ksp_error_if_not_converged`` - stop the program as soon as an
+            error is detected in a KSP.Solve, KSP_DIVERGED_ITS is not
+            treated as an error on inner solves.
+        - ``-ksp_converged_rate`` - view the convergence rate at the end of
+            the solve
+
+        To see all options, run your program with the -help option or
+        consult [KSP: Linear System Solvers](https://petsc.org/release/docs/manual/ksp/#chapter-ksp)
+
+        See also
+        --------
+        petsc:KSPSetFromOptions
+        """
         CHKERR( KSPSetFromOptions(self.ksp) )
 
     # --- application context ---
