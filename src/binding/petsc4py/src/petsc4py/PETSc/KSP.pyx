@@ -425,8 +425,8 @@ cdef class KSP(Object):
         The routine you provide will be called EACH you call `KSP.solve`
         to prepare the new right hand side for that solve.
 
-        See also:
-        ---------
+        See also
+        --------
         KSP, KSP.solve, petsc.KSPSetComputeRHS
 
         """
