@@ -315,8 +315,9 @@ cdef class SF(Object):
         return sf
 
     def createEmbeddedLeafSF(self, selected: Sequence[int]) -> SF:
-        """Remove edges from all but the selected leaves, does not remap 
-        indices.
+        """Remove edges from all but the selected leaves.
+        
+        Does not remap indices.
 
         Collective.
 
@@ -338,8 +339,9 @@ cdef class SF(Object):
         return sf
 
     def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int] | None, Section leafSection) -> SF:
-        """Create an expanded `SF` of dofs, assuming the input `SF` relates 
-        points.
+        """Create an expanded `SF` of dofs
+        
+        Assumes the input `SF` relates points.
 
         Collective.
 
@@ -370,8 +372,9 @@ cdef class SF(Object):
         return sectionSF
 
     def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ndarray, Section]:
-        """Create a new `Section` reorganized, moving from the root to 
-        the leaves of the `SF`.
+        """Create a new, reorganized `Section` reorganized.
+        
+        Moves from the root to the leaves of the `SF`.
 
         Collective.
 
@@ -403,17 +406,17 @@ cdef class SF(Object):
         CHKERR( PetscFree(cremoteOffsets) )
         return (remoteOffsets, leafSection)
 
-    # TODO: self or Self?
     def compose(self, SF sf) -> SF:
-        """Compose a new `SF` by putting the `SF` under `Self` 
-        in a top (roots) down (leaves) view.
+        """Compose a new `SF`.
+        
+        Puts the `sf` under `self` in a top (roots) down (leaves) view.
 
         Collective.
 
         Parameters
         ----------
         sf
-            `SF` to put under `Self`.
+            `SF` to put under `self`.
 
         See also
         --------
@@ -455,7 +458,7 @@ cdef class SF(Object):
                                   <void*>PyArray_DATA(leafdata), cop) )
 
     def bcastEnd(self, unit: Datatype, ndarray rootdata, ndarray leafdata, op: Op) -> None:
-        """End a broadcast & reduce operation started with bcastBegin.
+        """End a broadcast & reduce operation started with `bcastBegin`.
 
         Collective.
 
@@ -481,8 +484,9 @@ cdef class SF(Object):
                                 <void*>PyArray_DATA(leafdata), cop) )
 
     def reduceBegin(self, unit: Datatype, ndarray leafdata, ndarray rootdata, op: Op) -> None:
-        """Begin reduction of leafdata into rootdata, 
-        to be completed with call to reduceEnd.
+        """Begin reduction of leafdata into rootdata.
+
+        This call has to be completed with call to `reduceEnd`.
 
         Collective.
 
@@ -508,7 +512,7 @@ cdef class SF(Object):
                                    <void*>PyArray_DATA(rootdata), cop) )
 
     def reduceEnd(self, unit: Datatype, ndarray leafdata, ndarray rootdata, op: Op) -> None:
-        """End a reduction operation started with reduceBegin.
+        """End a reduction operation started with `reduceBegin`.
 
         Collective.
 
@@ -534,8 +538,10 @@ cdef class SF(Object):
                                  <void*>PyArray_DATA(rootdata), cop) )
 
     def scatterBegin(self, unit: Datatype, ndarray multirootdata, ndarray leafdata) -> None:
-        """Begin pointwise scatter operation from multi-roots to leaves, 
-        to be completed with scatterEnd.
+        """Begin pointwise scatter operation.
+        
+        Operation is from multi-roots to leaves.
+        This call has to be completed with scatterEnd.
 
         Collective.
 
@@ -558,7 +564,7 @@ cdef class SF(Object):
                                     <void*>PyArray_DATA(leafdata)) )
 
     def scatterEnd(self, unit: Datatype, ndarray multirootdata, ndarray leafdata) -> None:
-        """End pointwise scatter operation that was started with scatterBegin.
+        """End scatter operation that was started with `scatterBegin`.
 
         Collective.
 
@@ -581,8 +587,9 @@ cdef class SF(Object):
                                   <void*>PyArray_DATA(leafdata)) )
 
     def gatherBegin(self, unit: Datatype, ndarray leafdata, ndarray multirootdata) -> None:
-        """Begin pointwise gather of all leaves into multi-roots, 
-        to be completed with gatherEnd.
+        """Begin pointwise gather of all leaves into multi-roots.
+
+        This call has to be completed with `gatherEnd`.
 
         Collective.
 
@@ -606,7 +613,7 @@ cdef class SF(Object):
                                    <void*>PyArray_DATA(multirootdata)) )
 
     def gatherEnd(self, unit: Datatype, ndarray leafdata, ndarray multirootdata) -> None:
-        """End pointwise gather operation that was started with gatherBegin.
+        """End gather operation that was started with `gatherBegin`.
 
         Collective.
 
@@ -630,9 +637,12 @@ cdef class SF(Object):
                                  <void*>PyArray_DATA(multirootdata)) )
 
     def fetchAndOpBegin(self, unit: Datatype, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: Op) -> None:
-        """Begin operation that fetches values from root and updates atomically 
-        by applying operation using my leaf value, to be completed with 
-        `fetchAndOpEnd`.
+        """Begin fetch and update operation.
+        
+        This operation fetches values from root and updates atomically 
+        by applying operation using the leaf value. 
+        
+        This call has to be completed with `fetchAndOpEnd`.
 
         Collective.
 
@@ -663,9 +673,7 @@ cdef class SF(Object):
                                        <void*>PyArray_DATA(leafupdate), cop) )
 
     def fetchAndOpEnd(self, unit: Datatype, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: Op) -> None:
-        """End operation started in a matching call to `fetchAndOpBegin` to fetch 
-        values from roots and update atomically by applying operation using 
-        my leaf value.
+        """End operation started in a matching call to `fetchAndOpBegin`.
 
         Collective.
 
