@@ -404,8 +404,8 @@ cdef class KSP(Object):
     def setComputeRHS(
         self,
         rhs: KSPComputeRHSFunction,
-        args: tuple = None,
-        kargs: dict = None
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None
     ) -> None:
         """Set routine to compute the right hand side of the linear system.
 
@@ -439,8 +439,8 @@ cdef class KSP(Object):
     def setComputeOperators(
         self,
         operators: KSPComputeOperatorsFunction,
-        args=None,
-        kargs=None
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None
     ) -> None:
         """Set routine to compute the linear operators.
 
@@ -588,7 +588,47 @@ cdef class KSP(Object):
 
     # --- tolerances and convergence ---
 
-    def setTolerances(self, rtol=None, atol=None, divtol=None, max_it=None):
+    def setTolerances(
+        self,
+        float rtol=None,
+        float atol=None,
+        float divtol=None,
+        int max_it=None
+    ) -> None:
+        """Set various tolerances used by the KSP convergence testers.
+
+        Sets the relative, absolute, divergence, and maximum iteration
+        tolerances used by the default KSP convergence testers.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        rtol
+            The relative convergence tolerance, relative decrease in
+            the (possibly preconditioned) residual norm.
+        atol
+            The absolute convergence tolerance absolute size of the
+            (possibly preconditioned) residual norm.
+        dtol
+            The divergence tolerance, amount (possibly preconditioned)
+            residual norm can increase before `KSP.convergedDefault`
+            concludes that the method is diverging.
+        max_it
+            Maximum number of iterations to use.
+
+        Notes
+        -----
+        Use `PETSC_DEFAULT` to retain the default value of any of the
+        tolerances.
+
+        See also
+        --------
+        petsc_options, KSP.getTolerances, KSP.convergedDefault,
+        KSP.setConvergenceTest, petsc.KSPsetTolerances
+
+
+        """
         cdef PetscReal crtol, catol, cdivtol
         crtol = catol = cdivtol = PETSC_DEFAULT;
         if rtol   is not None: crtol   = asReal(rtol)
@@ -598,13 +638,79 @@ cdef class KSP(Object):
         if max_it is not None: cmaxits = asInt(max_it)
         CHKERR( KSPSetTolerances(self.ksp, crtol, catol, cdivtol, cmaxits) )
 
-    def getTolerances(self):
+    def getTolerances(self) -> tuple[float, float, float, int]:
+        """Get various tolerances used by the KSP convergence tests.
+
+        Gets the relative, absolute, divergence, and maximum iteration
+        tolerances used by the default KSP convergence tests.
+
+        Not collective.
+
+        Returns
+        -------
+        rtol: float
+            The relative convergence tolerance
+        atol: float
+            The absolute convergence tolerance
+        dtol: float
+            The divergence tolerance
+        maxits: int
+            Maximum number of iterations
+
+        See also
+        --------
+        KSP.setTolerances, petsc.KSPGetTolerances
+
+        """
         cdef PetscReal crtol=0, catol=0, cdivtol=0
         cdef PetscInt cmaxits=0
         CHKERR( KSPGetTolerances(self.ksp, &crtol, &catol, &cdivtol, &cmaxits) )
         return (toReal(crtol), toReal(catol), toReal(cdivtol), toInt(cmaxits))
 
-    def setConvergenceTest(self, converged, args=None, kargs=None):
+    def setConvergenceTest(
+        self,
+        converged: KSPConvergenceTestFunction,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None
+    ) -> None:
+        """Set the function to be used to determine convergence.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        converged
+            Callback which computes the convergence.
+        args
+            Positional arguments for callback function ``converged``.
+        kargs
+            Keyword arguments for callback function ``converged``.
+
+        Notes
+        -----
+        Must be called after the KSP type has been set so put this
+        after a call to `KSP.setType`, or `KSP.setFromOptions`.
+
+        The default convergence test, `KSP.convergedDefault`, aborts if
+        the residual grows to more than 10000 times the initial
+        residual.
+
+        The default is a combination of relative and absolute
+        tolerances. The residual value that is tested may be an
+        approximation; routines that need exact values should compute
+        them.
+
+        In the default PETSc convergence test, the precise values of
+        reason are macros such as ``KSP_CONVERGED_RTOL``, which are
+        defined in ``petscksp.h``.
+
+        See also
+        --------
+        KSP.convergedDefault, KSP.getConvergenceContext, KSP.setTolerances,
+        KSP.getConvergenceTest, KSP.getAndClearConvergenceTest,
+        petsc.KSPSetConvergenceTest
+
+        """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
         cdef void* cctx = NULL
         if converged is not None:
@@ -626,17 +732,74 @@ cdef class KSP(Object):
                         NULL, NULL) )
             self.set_attr('__converged__', None)
 
-    def getConvergenceTest(self):
+    def getConvergenceTest(self) -> KSPConvergenceTestFunction:
+        """Gets the function to be used to determine convergence.
+
+        Logically collective.
+
+        See also
+        --------
+        KSP.convergedDefault, KSP.getConvergenceContext, KSP.setTolerances,
+        KSP.getConvergenceTest, KSP.getAndClearConvergenceTest,
+        petsc.KSPGetConvergenceTest
+        """
         return self.get_attr('__converged__')
 
-    def callConvergenceTest(self, its, rnorm):
+    def callConvergenceTest(self, int its, float rnorm):
+        """Call the convergence test callback.
+
+        Parameters
+        ----------
+        its
+            Number of iterations.
+        rnorm
+            The residual norm.
+
+        Notes
+        -----
+        This functionality is implemented in petsc4py.
+
+        """
         cdef PetscInt  ival = asInt(its)
         cdef PetscReal rval = asReal(rnorm)
         cdef PetscKSPConvergedReason reason = KSP_CONVERGED_ITERATING
         CHKERR( KSPConvergenceTestCall(self.ksp, ival, rval, &reason) )
         return reason
 
-    def setConvergenceHistory(self, length=None, reset=False):
+    def setConvergenceHistory(
+        self,
+        length: int | None = None,
+        reset: bool = False
+    ) -> None:
+        """Set the array used to hold the residual history.
+
+        If set, this array will contain the residual norms computed at
+        each iteration of the solver.
+
+        Not collective.
+
+        Parameters
+        ----------
+        length
+            Length of array to store history in.
+        reset
+            ``True`` indicates the history counter is reset to zero for
+            each new linear solve.
+
+        Notes
+        -----
+        If ``length`` is not provided or ``None`` then a default array
+        of length 10000 is allocated.
+
+        If the array is not long enough then once the iterations is
+        longer than the array length `KSP.solve` stops recording the
+        history.
+
+        See also
+        --------
+        KSP.getResidualHistory, petsc.KSPSetResidualHistory
+
+        """
         cdef PetscReal *data = NULL
         cdef PetscInt   size = 10000
         cdef PetscBool flag = PETSC_FALSE
@@ -648,13 +811,34 @@ cdef class KSP(Object):
         self.set_attr('__history__', hist)
         CHKERR( KSPSetResidualHistory(self.ksp, data, size, flag) )
 
-    def getConvergenceHistory(self):
+    def getConvergenceHistory(self) -> ndarray:
+        """Get array containing the residual history.
+
+        Not collective.
+
+        See also
+        --------
+        KSP.setResidualHistory, petsc.KSPGetResidualHistory
+
+        """
         cdef const PetscReal *data = NULL
         cdef PetscInt   size = 0
         CHKERR( KSPGetResidualHistory(self.ksp, &data, &size) )
         return array_r(size, data)
 
-    def logConvergenceHistory(self, rnorm):
+    def logConvergenceHistory(self, float rnorm):
+        """Add residual to convergence history.
+
+        Parameters
+        ----------
+        rnorm
+            Residual norm to be added to convergence history.
+
+        See also
+        --------
+        petsc.KSPLogResidualHistory
+
+        """
         cdef PetscReal rval = asReal(rnorm)
         CHKERR( KSPLogResidualHistory(self.ksp, rval) )
 
