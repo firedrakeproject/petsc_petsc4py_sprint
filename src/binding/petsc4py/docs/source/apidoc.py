@@ -452,6 +452,11 @@ from typing import (
     Sequence,
     Mapping,
 )
+from mpi4py.MPI import (
+    Intracomm,
+    Datatype,
+    Op,
+)
 """
 
 

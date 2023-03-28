@@ -152,7 +152,7 @@ cdef class SF(Object):
 
     #
 
-    def getGraph(self) -> Tuple[int, ndarray, ndarray]:
+    def getGraph(self) -> tuple[int, ndarray, ndarray]:
         """Get graph.
         *nleaves* can be determined from the size of local.
 
@@ -369,7 +369,7 @@ cdef class SF(Object):
                                        leafSection.sec, &sectionSF.sf) )
         return sectionSF
 
-    def distributeSection(self, Section rootSection, Section leafSection=None) -> Tuple[ndarray, Section]:
+    def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ndarray, Section]:
         """Create a new `Section` reorganized, moving from the root to 
         the leaves of the `SF`.
 
@@ -424,22 +424,24 @@ cdef class SF(Object):
         CHKERR( PetscSFCompose(self.sf, sf.sf, &csf.sf))
         return csf
 
-    def bcastBegin(self, unit: TODO, ndarray rootdata, ndarray leafdata, op: TODO) -> None:
-        """Begin pointwise broadcast with root value being reduced to 
-        leaf value, to be concluded with call to bcastEnd.
+    def bcastBegin(self, unit: Datatype, ndarray rootdata, ndarray leafdata, op: Op) -> None:
+        """Begin pointwise broadcast.
+        
+        Root values are reduced to leaf values. This call has to be concluded 
+        with a call to `bcastEnd`.
 
         Collective.
 
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         rootdata
             Buffer to broadcast.
         leafdata
             Buffer to be reduced with values from each leaf's respective root.
         op
-            Operation to use for reduction.
+            MPI reduction operation.
 
         See also
         --------
@@ -452,7 +454,7 @@ cdef class SF(Object):
         CHKERR( PetscSFBcastBegin(self.sf, dtype, <const void*>PyArray_DATA(rootdata),
                                   <void*>PyArray_DATA(leafdata), cop) )
 
-    def bcastEnd(self, unit: TODO, ndarray rootdata, ndarray leafdata, op: TODO) -> None:
+    def bcastEnd(self, unit: Datatype, ndarray rootdata, ndarray leafdata, op: Op) -> None:
         """End a broadcast & reduce operation started with bcastBegin.
 
         Collective.
@@ -460,13 +462,13 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         rootdata
             Buffer to broadcast.
         leafdata
             Buffer to be reduced with values from each leaf's respective root.
         op
-            Operation to use for reduction.
+            MPI reduction operation.
             
         See also
         --------
@@ -478,7 +480,7 @@ cdef class SF(Object):
         CHKERR( PetscSFBcastEnd(self.sf, dtype, <const void*>PyArray_DATA(rootdata),
                                 <void*>PyArray_DATA(leafdata), cop) )
 
-    def reduceBegin(self, unit: TODO, ndarray leafdata, ndarray rootdata, op: TODO) -> None:
+    def reduceBegin(self, unit: Datatype, ndarray leafdata, ndarray rootdata, op: Op) -> None:
         """Begin reduction of leafdata into rootdata, 
         to be completed with call to reduceEnd.
 
@@ -487,13 +489,13 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         leafdata
             Values to reduce.
         rootdata
             Result of reduction of values from all leaves of each root.
         op
-            Reduction operation.
+            MPI reduction operation.
             
         See also
         --------
@@ -505,7 +507,7 @@ cdef class SF(Object):
         CHKERR( PetscSFReduceBegin(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                    <void*>PyArray_DATA(rootdata), cop) )
 
-    def reduceEnd(self, unit: TODO, ndarray leafdata, ndarray rootdata, op: TODO) -> None:
+    def reduceEnd(self, unit: Datatype, ndarray leafdata, ndarray rootdata, op: Op) -> None:
         """End a reduction operation started with reduceBegin.
 
         Collective.
@@ -513,13 +515,13 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         leafdata
             Values to reduce.
         rootdata
             Result of reduction of values from all leaves of each root.
         op
-            Reduction operation.
+            MPI reduction operation.
             
         See also
         --------
@@ -531,7 +533,7 @@ cdef class SF(Object):
         CHKERR( PetscSFReduceEnd(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                  <void*>PyArray_DATA(rootdata), cop) )
 
-    def scatterBegin(self, unit: TODO, ndarray multirootdata, ndarray leafdata) -> None:
+    def scatterBegin(self, unit: Datatype, ndarray multirootdata, ndarray leafdata) -> None:
         """Begin pointwise scatter operation from multi-roots to leaves, 
         to be completed with scatterEnd.
 
@@ -540,7 +542,7 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         multirootdata
             Root buffer to send to each leaf, one unit of data per leaf.
         leafdata
@@ -555,7 +557,7 @@ cdef class SF(Object):
         CHKERR( PetscSFScatterBegin(self.sf, dtype, <const void*>PyArray_DATA(multirootdata),
                                     <void*>PyArray_DATA(leafdata)) )
 
-    def scatterEnd(self, unit: TOOD, ndarray multirootdata, ndarray leafdata) -> None:
+    def scatterEnd(self, unit: Datatype, ndarray multirootdata, ndarray leafdata) -> None:
         """End pointwise scatter operation that was started with scatterBegin.
 
         Collective.
@@ -563,7 +565,7 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         multirootdata
             Root buffer to send to each leaf, one unit of data per leaf.
         leafdata
@@ -578,7 +580,7 @@ cdef class SF(Object):
         CHKERR( PetscSFScatterEnd(self.sf, dtype, <const void*>PyArray_DATA(multirootdata),
                                   <void*>PyArray_DATA(leafdata)) )
 
-    def gatherBegin(self, unit: TODO, ndarray leafdata, ndarray multirootdata) -> None:
+    def gatherBegin(self, unit: Datatype, ndarray leafdata, ndarray multirootdata) -> None:
         """Begin pointwise gather of all leaves into multi-roots, 
         to be completed with gatherEnd.
 
@@ -587,7 +589,7 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         leafdata
             Leaf data to gather to roots.
         multirootdata
@@ -603,7 +605,7 @@ cdef class SF(Object):
         CHKERR( PetscSFGatherBegin(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                    <void*>PyArray_DATA(multirootdata)) )
 
-    def gatherEnd(self, unit: TODO, ndarray leafdata, ndarray multirootdata) -> None:
+    def gatherEnd(self, unit: Datatype, ndarray leafdata, ndarray multirootdata) -> None:
         """End pointwise gather operation that was started with gatherBegin.
 
         Collective.
@@ -611,7 +613,7 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         leafdata
             Leaf data to gather to roots.
         multirootdata
@@ -627,7 +629,7 @@ cdef class SF(Object):
         CHKERR( PetscSFGatherEnd(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                  <void*>PyArray_DATA(multirootdata)) )
 
-    def fetchAndOpBegin(self, unit: TODO, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: TODO) -> None:
+    def fetchAndOpBegin(self, unit: Datatype, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: Op) -> None:
         """Begin operation that fetches values from root and updates atomically 
         by applying operation using my leaf value, to be completed with 
         `fetchAndOpEnd`.
@@ -637,7 +639,7 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         rootdata
             Root values to be updated, input state is seen by first process 
             to perform an update.
@@ -647,7 +649,7 @@ cdef class SF(Object):
             State at each leaf's respective root immediately prior to my atomic 
             update.
         op
-            Operation to use for reduction.
+            MPI reduction operation.
 
         See also
         --------
@@ -660,7 +662,7 @@ cdef class SF(Object):
                                        <const void*>PyArray_DATA(leafdata),
                                        <void*>PyArray_DATA(leafupdate), cop) )
 
-    def fetchAndOpEnd(self, unit: TODO, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: TODO) -> None:
+    def fetchAndOpEnd(self, unit: Datatype, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: Op) -> None:
         """End operation started in a matching call to `fetchAndOpBegin` to fetch 
         values from roots and update atomically by applying operation using 
         my leaf value.
@@ -670,7 +672,7 @@ cdef class SF(Object):
         Parameters
         ----------
         unit
-            Data type.
+            MPI datatype.
         rootdata
             Root values to be updated, input state is seen by first process 
             to perform an update.
@@ -680,7 +682,7 @@ cdef class SF(Object):
             State at each leaf's respective root immediately prior to my atomic 
             update.
         op
-            Operation to use for reduction.
+            MPI reduction operation.
 
         See also
         --------
@@ -698,3 +700,7 @@ cdef class SF(Object):
 del SFType
 
 # --------------------------------------------------------------------
+
+# TODO: remove
+cdef Datatype
+cdef Op
