@@ -1,7 +1,6 @@
 # --------------------------------------------------------------------
 
 class ISType(object):
-    """TODO"""
     GENERAL = S_(ISGENERAL)
     BLOCK   = S_(ISBLOCK)
     STRIDE  = S_(ISSTRIDE)
@@ -9,28 +8,13 @@ class ISType(object):
 # --------------------------------------------------------------------
 
 cdef class IS(Object):
-    """PETSc object used for efficient indexing.
+    """Set of indices.
 
-    Attributes
-    ----------
-    permutation
-        TODO
-    identity
-        TODO
-    sorted
-        TODO
-    sizes
-        TODO
-    size
-        TODO
-    local_size
-        TODO
-    block_size
-        TODO
-    indices
-        TODO
-    array
-        TODO
+    IS objects are used to index into vectors and matrices and to setup vector scatters.
+
+    See Also
+    --------
+    https://petsc.org/release/docs/manualpages/IS/IS/
     """
 
     Type = ISType
@@ -96,16 +80,13 @@ cdef class IS(Object):
         CHKERR( ISDestroy(&self.iset) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Optional[Comm]=None) -> Self:
         """Create an IS.
 
         Parameters
         ----------
-        comm : PetscComm?, optional
-
-        Returns
-        -------
-        self
+        comm
+            The MPI communicator, default is ``PETSC_COMM_DEFAULT``.
 
         See Also
         --------
@@ -117,17 +98,17 @@ cdef class IS(Object):
         PetscCLEAR(self.obj); self.iset = newiset
         return self
 
-    def setType(self, is_type):
-        """Build an IS for a particular :class:`ISType`.
+    def setType(self, is_type: str) -> None:
+        """Build an IS for a particular `petsc:ISType`.
 
         Parameters
         ----------
-        is_type : str
+        is_type
             The name of the index set type.
 
         See Also
         --------
-        TODO https://petsc.org/release/docs/manualpages/IS/ISSetType/
+        https://petsc.org/release/docs/manualpages/IS/ISSetType/
         """
         cdef PetscISType cval = NULL
         is_type = str2bytes(is_type, &cval)
@@ -208,25 +189,19 @@ cdef class IS(Object):
         PetscCLEAR(self.obj); self.iset = newiset
         return self
 
-    def createStride(self, size, first=0, step=0, comm=None):
-        """Create an IS consisting of evenly spaced integers.
+    def createStride(self, size: int, first: int=0, step: int=0, comm: Optional[Comm]=None) -> Self:
+        """Create an index set consisting of evenly spaced values.
 
         Parameters
         ----------
-        size : int
+        size
             The length of the locally owned portion of the index set.
-        first : int, default 0
+        first
             The first element of the index set.
-        step : int, default 0
+        step
             The difference between adjacent indices.
-        comm : optional
+        comm
             The MPI communicator.
-
-        Returns
-        -------
-        TODO or self?
-        IS
-            The new IS.
 
         See Also
         --------
@@ -241,7 +216,7 @@ cdef class IS(Object):
         PetscCLEAR(self.obj); self.iset = newiset
         return self
 
-    def duplicate(self):
+    def duplicate(self) -> IS:
         """Create a copy of the index set.
 
         Returns
@@ -257,17 +232,17 @@ cdef class IS(Object):
         CHKERR( ISDuplicate(self.iset, &iset.iset) )
         return iset
 
-    def copy(self, IS result=None):
+    def copy(self, IS result: Optional[IS]=None) -> IS:
         """Copy the contents of the IS into another.
 
         Parameters
         ----------
-        result : IS, optional
-            The target IS. If ``None`` then `IS.duplicate` is called first.
+        result
+            The target index set. If ``None`` then `IS.duplicate` is called first.
 
         Returns
         -------
-        IS
+        result : IS
             The copied IS.
 
         See Also
@@ -281,19 +256,13 @@ cdef class IS(Object):
         CHKERR( ISCopy(self.iset, result.iset) )
         return result
 
-    def load(self, Viewer viewer):
+    def load(self, Viewer viewer: Viewer) -> Self:
         """Load a stored index set.
 
         Parameters
         ----------
         viewer : Viewer
             Binary (``BINARY`` or ``HDF5``) file viewer.
-
-        Returns
-        -------
-        # TODO or self?
-        IS
-            The loaded index set.
 
         See Also
         --------
@@ -307,7 +276,7 @@ cdef class IS(Object):
         CHKERR( ISLoad(self.iset, viewer.vwr) )
         return self
 
-    def allGather(self):
+    def allGather(self) -> IS:
         """Concatenate index sets stored across processors.
 
         Returns
@@ -323,17 +292,13 @@ cdef class IS(Object):
         CHKERR( ISAllGather(self.iset, &iset.iset) )
         return iset
 
-    def toGeneral(self):
-        """Convert the index set type to `ISType.GENERAL`.
-
-        Returns
-        -------
-        IS
-            self
+    def toGeneral(self) -> Self:
+        """Convert the index set type to ``"general"``.
 
         See Also
         --------
         petsc:ISToGeneral
+        petsc:ISType
         """
         CHKERR( ISToGeneral(self.iset) )
         return self
@@ -348,12 +313,12 @@ cdef class IS(Object):
         CHKERR( ISBuildTwoSided(self.iset, ctoindx, &result.iset) )
         return result
 
-    def invertPermutation(self, nlocal=None):
+    def invertPermutation(self, nlocal: Optional[int]=None) -> IS:
         """Creates a new permutation that is the inverse of a given permutation.
 
         Parameters
         ----------
-        nlocal : int, optional
+        nlocal
             The number of indices on this processor in the result
             (default ``PETSC_DECIDE``).
 
@@ -372,7 +337,7 @@ cdef class IS(Object):
         CHKERR( ISInvertPermutation(self.iset, cnlocal, &iset.iset) )
         return iset
 
-    def getSize(self):
+    def getSize(self) -> int:
         """Return the global length of an index set.
 
         Returns
@@ -388,8 +353,8 @@ cdef class IS(Object):
         CHKERR( ISGetSize(self.iset, &N) )
         return toInt(N)
 
-    def getLocalSize(self):
-        """Return the process-local length of an index set.
+    def getLocalSize(self) -> int:
+        """Return the process-local length of the index set.
 
         Returns
         -------
@@ -404,8 +369,8 @@ cdef class IS(Object):
         CHKERR( ISGetLocalSize(self.iset, &n) )
         return toInt(n)
 
-    def getSizes(self):
-        """Return the local and global sizes of an index set.
+    def getSizes(self) -> tuple[int, int]:
+        """Return the local and global sizes of the index set.
 
         Returns
         -------
@@ -424,13 +389,13 @@ cdef class IS(Object):
         CHKERR( ISGetSize(self.iset, &N) )
         return (toInt(n), toInt(N))
 
-    def getBlockSize(self):
+    def getBlockSize(self) -> int:
         """Return the number of elements in a block.
 
         Returns
         -------
         int
-            The number of elements in a block.
+            Number of elements in a block.
 
         See Also
         --------
@@ -440,12 +405,12 @@ cdef class IS(Object):
         CHKERR( ISGetBlockSize(self.iset, &bs) )
         return toInt(bs)
 
-    def setBlockSize(self, bs):
+    def setBlockSize(self, bs: int) -> None:
         """Set the block size of the index set.
 
         Parameters
         ----------
-        bs : int
+        bs
             Block size.
 
         See Also
@@ -455,13 +420,8 @@ cdef class IS(Object):
         cdef PetscInt cbs = asInt(bs)
         CHKERR( ISSetBlockSize(self.iset, cbs) )
 
-    def sort(self):
+    def sort(self) -> Self:
         """Sort the indices of an index set.
-
-        Returns
-        -------
-        IS
-            self
 
         See Also
         --------
@@ -470,7 +430,7 @@ cdef class IS(Object):
         CHKERR( ISSort(self.iset) )
         return self
 
-    def isSorted(self):
+    def isSorted(self) -> bool:
         """Check that the indices have been sorted.
 
         Returns
@@ -497,7 +457,13 @@ cdef class IS(Object):
         return self
 
     def isPermutation(self) -> bool:
-        """Return ``True`` if the index set has been declared a permutation.
+        """Check if an index set has been declared to be a permutation.
+
+        Returns
+        -------
+        bool
+            ``True`` if the index set has been declared to be a permutation,
+            ``False`` otherwise.
 
         See Also
         --------
@@ -544,13 +510,13 @@ cdef class IS(Object):
         CHKERR( ISEqual(self.iset, iset.iset, &flag) )
         return toBool(flag)
 
-    def sum(self, IS iset: IS):
+    def sum(self, IS iset: IS) -> IS:
         """Compute the union of two (sorted) index sets.
 
         Parameters
         ----------
         iset : IS
-            The `IS` to compute the union with.
+            The index set to compute the union with.
 
         Returns
         -------
@@ -626,7 +592,7 @@ cdef class IS(Object):
         Returns
         -------
         IS
-            Index set representing the difference between `self` and `iset`.
+            Index set representing the difference between ``self`` and ``iset``.
 
         See Also
         --------
@@ -692,7 +658,7 @@ cdef class IS(Object):
         CHKERR( ISEmbed(self.iset, iset.iset, bval, &out.iset) )
         return out
 
-    def renumber(self, IS mult: Optional[IS]=None) -> Tuple[int, IS]:
+    def renumber(self, IS mult: Optional[IS]=None) -> tuple[int, IS]:
         """Renumber the non-negative entries of an index set, starting from 0.
 
         Parameters
@@ -721,7 +687,9 @@ cdef class IS(Object):
     #
 
     def setIndices(self, indices: Sequence[int]) -> None:
-        """Set the indices of an `ISType.GENERAL` index set.
+        """Set the indices of an index set.
+
+        The index set is assumed to have `petsc:ISType` ``"general"``.
 
         See Also
         --------
@@ -732,7 +700,13 @@ cdef class IS(Object):
         indices = iarray_i(indices, &nidx, &idx)
         CHKERR( ISGeneralSetIndices(self.iset, nidx, idx, cm) )
 
-    def getIndices(self):
+    def getIndices(self) -> NDArray[int]:
+        """Return the indices of the index set.
+
+        See Also
+        --------
+        petsc:ISGetIndices
+        """
         cdef PetscInt size = 0
         cdef const PetscInt *indices = NULL
         CHKERR( ISGetLocalSize(self.iset, &size) )
@@ -744,14 +718,33 @@ cdef class IS(Object):
             CHKERR( ISRestoreIndices(self.iset, &indices) )
         return oindices
 
-    def setBlockIndices(self, bsize, indices):
+    def setBlockIndices(self, bsize: int, indices: Sequence[int]) -> None:
+        """Set the indices for an index set with `petsc:ISType` ``"block"``.
+
+        Parameters
+        ----------
+        bsize
+            Number of elements in each block.
+        indices
+            List of integers.
+
+        See Also
+        --------
+        petsc:ISBlockSetIndices
+        """
         cdef PetscInt bs = asInt(bsize)
         cdef PetscInt nidx = 0, *idx = NULL
         cdef PetscCopyMode cm = PETSC_COPY_VALUES
         indices = iarray_i(indices, &nidx, &idx)
         CHKERR( ISBlockSetIndices(self.iset, bs, nidx, idx, cm) )
 
-    def getBlockIndices(self):
+    def getBlockIndices(self) -> NDArray[int]:
+        """Return the indices of an index set with `petsc:ISType` ``"block"``.
+
+        See Also
+        --------
+        petsc:ISBlockGetIndices
+        """
         cdef PetscInt size = 0, bs = 1
         cdef const PetscInt *indices = NULL
         CHKERR( ISGetLocalSize(self.iset, &size) )
@@ -764,19 +757,63 @@ cdef class IS(Object):
             CHKERR( ISBlockRestoreIndices(self.iset, &indices) )
         return oindices
 
-    def setStride(self, size, first=0, step=1):
+    def setStride(self, size: int, first: int=0, step: int=1) -> None:
+        """Set the stride information for a strided index set.
+
+        Parameters
+        ----------
+        size
+            Length of the locally owned portion of the index set.
+        first
+            First element of the index set.
+        step
+            Difference between adjacent indices.
+
+        See Also
+        --------
+        petsc:ISStrideSetStride
+        """
         cdef PetscInt csize = asInt(size)
         cdef PetscInt cfirst = asInt(first)
         cdef PetscInt cstep = asInt(step)
         CHKERR( ISStrideSetStride(self.iset, csize, cfirst, cstep) )
 
-    def getStride(self):
+    def getStride(self) -> tuple[int, int, int]:
+        """Return size and stride information for a strided index set.
+
+        Returns
+        -------
+        size : int
+            Length of the locally owned portion of the index set.
+        first : int
+            First element of the index set.
+        step : int
+            Difference between adjacent indices.
+
+        See Also
+        --------
+        petsc:ISGetLocalSize
+        petsc:ISStrideGetInfo
+        """
         cdef PetscInt size=0, first=0, step=0
         CHKERR( ISGetLocalSize(self.iset, &size) )
         CHKERR( ISStrideGetInfo(self.iset, &first, &step) )
         return (toInt(size), toInt(first), toInt(step))
 
-    def getInfo(self):
+    def getInfo(self) -> tuple[int, int]:
+        """Return stride information for a strided index set.
+
+        Returns
+        -------
+        first : int
+            First element of the index set.
+        step : int
+            Difference between adjacent indices.
+
+        See Also
+        --------
+        petsc:ISStrideGetInfo
+        """
         cdef PetscInt first = 0, step = 0
         CHKERR( ISStrideGetInfo(self.iset, &first, &step) )
         return (toInt(first), toInt(step))
@@ -784,41 +821,90 @@ cdef class IS(Object):
     #
 
     property permutation:
-        def __get__(self):
+        """``True`` if index set is a permutation, ``False`` otherwise.
+        
+        See Also
+        --------
+        IS.isPermutation
+        """
+        def __get__(self) -> bool:
             return self.isPermutation()
 
     property identity:
-        def __get__(self):
+        """``True`` if index set is an identity, ``False`` otherwise.
+        
+        See Also
+        --------
+        IS.isIdentity
+        """
+        def __get__(self) -> bool:
             return self.isIdentity()
 
     property sorted:
-        def __get__(self):
+        """``True`` if index set is sorted, ``False`` otherwise.
+        
+        See Also
+        --------
+        IS.isSorted
+        """
+        def __get__(self) -> bool:
             return self.isSorted()
 
     #
 
     property sizes:
-        def __get__(self):
+        """The local and global sizes of the index set.
+        
+        See Also
+        --------
+        IS.getSizes
+        """
+        def __get__(self) -> tuple[int, int]:
             return self.getSizes()
 
     property size:
-        def __get__(self):
+        """The global size of the index set.
+        
+        See Also
+        --------
+        IS.getSize
+        """
+        def __get__(self) -> int:
             return self.getSize()
 
     property local_size:
-        def __get__(self):
+        """The local size of the index set.
+        
+        See Also
+        --------
+        IS.getLocalSize
+        """
+        def __get__(self) -> int:
             return self.getLocalSize()
 
     property block_size:
-        def __get__(self):
+        """The number of elements in a block.
+        
+        See Also
+        --------
+        IS.getBlockSize
+        """
+        def __get__(self) -> int:
             return self.getBlockSize()
 
     property indices:
-        def __get__(self):
+        """The indices of the index set.
+        
+        See Also
+        --------
+        IS.getIndices
+        """
+        def __get__(self) -> NDArray[int]:
             return self.getIndices()
 
     property array:
-        def __get__(self):
+        """View of the index set as an array of integers."""
+        def __get__(self) -> NDArray[int]:
             return asarray(self)
 
     # --- NumPy array interface (legacy) ---
