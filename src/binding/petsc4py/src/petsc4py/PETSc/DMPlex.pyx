@@ -35,7 +35,7 @@ cdef class DMPlex(DM):
         return self
 
     def createFromCellList(self, dim: int, cells: Sequence[int], coords: Sequence[float], interpolate: bool = True, comm: Comm | None = None) -> Self:
-        """Create `DMPlex` from a list of vertices for each cell (common mesh generator output), but only process 0 takes in the input
+        """Create `DMPlex` from a list of vertices for each cell (common mesh generator output), but only process 0 takes in the input.
 
         Collective.
 
@@ -426,7 +426,7 @@ cdef class DMPlex(DM):
         return subdm
 
     def getChart(self) -> tuple[int, int]:
-        """Return the interval for all mesh points [``pStart``, ``pEnd``)
+        """Return the interval for all mesh points [``pStart``, ``pEnd``).
 
         Not collective.
 
@@ -439,53 +439,40 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetChart(self.dm, &pStart, &pEnd) )
         return toInt(pStart), toInt(pEnd)
 
-    def setChart(self, pStart, pEnd):
-        """DMPlexSetChart - Set the interval for all mesh points [`pStart`, `pEnd`)
+    def setChart(self, pStart: int, pEnd: int) -> None:
+        """Set the interval for all mesh points [``pStart``, ``pEnd``).
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         pStart
-            The first mesh point
+            The first mesh point.
         pEnd
-            The upper bound for mesh points
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetChart`
+            The upper bound for mesh points.
 
         See Also
         --------
-        petsc.DMPlexSetChart
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getChart`, petsc.DMPlexSetChart
 
         """
         cdef PetscInt cStart = asInt(pStart)
         cdef PetscInt cEnd   = asInt(pEnd)
         CHKERR( DMPlexSetChart(self.dm, cStart, cEnd) )
 
-    def getConeSize(self, p):
-        """DMPlexGetConeSize - Return the number of in-edges for this point in the DAG
+    def getConeSize(self, p: int) -> int:
+        """Return the number of in-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-
-        Returns
-        -------
-        size
-            The cone size for point `p`
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetConeSize`, `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
 
         See Also
         --------
-        petsc.DMPlexGetConeSize
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setConeSize`, `DMPlex.setChart`, petsc.DMPlexGetConeSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -496,28 +483,21 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetConeSize(self.dm, cp, &csize) )
         return toInt(csize)
 
-    def setConeSize(self, p, size):
-        """DMPlexSetConeSize - Set the number of in-edges for this point in the DAG
+    def setConeSize(self, p: int, size: int) -> None:
+        """Set the number of in-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
         size
-            The cone size for point `p`
-
-        Note:
-        This should be called after `DMPlexSetChart`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetConeSize`, `DMPlexSetChart`
+            The cone size for point ``p``.
 
         See Also
         --------
-        petsc.DMPlexSetConeSize
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getConeSize`, `DMPlex.setChart`, petsc.DMPlexSetConeSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -527,32 +507,19 @@ cdef class DMPlex(DM):
         cdef PetscInt csize = asInt(size)
         CHKERR( DMPlexSetConeSize(self.dm, cp, csize) )
 
-    def getCone(self, p):
-        """DMPlexGetCone - Return the points on the in-edges for this point in the DAG
+    def getCone(self, p: int) -> ndarray:
+        """Return the points on the in-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-
-        Returns
-        -------
-        cone
-            An array of points which are on the in-edges for point `p`
-
-        Fortran Note:
-        You must also call `DMPlexRestoreCone` after you finish using the returned array.
-        `DMPlexRestoreCone` is not needed/available in C.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetConeSize`, `DMPlexSetCone`, `DMPlexGetConeTuple`, `DMPlexSetChart`, `DMPlexRestoreCone`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
 
         See Also
         --------
-        petsc.DMPlexGetCone
+        `DM`, `DMPlex`, `DMPlex.getConeSize`, `DMPlex.setCone`, `DMPlex.getConeTuple`, `DMPlex.setChart`, `DMPlex.restoreCone`, petsc.DMPlexGetCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -565,30 +532,23 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetCone(self.dm, cp, &icone) )
         return array_i(ncone, icone)
 
-    def setCone(self, p, cone, orientation=None):
-        """DMPlexSetConeOrientation - Set the orientations on the in-edges for this point in the DAG
+    def setCone(self, p: int, cone: Sequence[int], orientation: Sequence[int] | None = None) -> None:
+        """Set the points on the in-edges for this point in the DAG; that is these are the points that cover the specific point.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-        coneOrientation
-            An array of orientations
-
-        Notes:
-        This should be called after all calls to `DMPlexSetConeSize` and `DMSetUp`.
-
-        The meaning of coneOrientation is detailed in `DMPlexGetConeOrientation`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetConeOrientation`, `DMPlexSetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
+        cone
+            An array of points which are on the in-edges for point ``p``.
+        orientation
+            An array of orientations, defaults to None.
 
         See Also
         --------
-        petsc.DMPlexSetConeOrientation
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, `DMPlex.setSupport`, `DMPlex.setSupportSize`, petsc.DMPlexSetCone
 
         """
         cdef PetscInt cp = asInt(p)
