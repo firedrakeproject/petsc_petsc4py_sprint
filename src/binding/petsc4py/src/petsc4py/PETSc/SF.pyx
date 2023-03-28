@@ -39,7 +39,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFView
+        petsc.PetscSFView
 
         """
         cdef PetscViewer vwr = NULL
@@ -53,7 +53,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFDestroy
+        petsc.PetscSFDestroy
 
         """
         CHKERR( PetscSFDestroy(&self.sf) )
@@ -71,7 +71,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFCreate
+        petsc.PetscSFCreate
 
         """
 
@@ -93,7 +93,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFSetType
+        petsc.PetscSFSetType
 
         """
         cdef PetscSFType cval = NULL
@@ -107,7 +107,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFGetType
+        petsc.PetscSFGetType
 
         """
         cdef PetscSFType cval = NULL
@@ -121,7 +121,7 @@ cdef class SF(Object):
         
         See also
         --------
-        PetscSFSetFromOptions, petsc_options
+        petsc.PetscSFSetFromOptions, petsc_options
 
         """
         CHKERR( PetscSFSetFromOptions(self.sf) )
@@ -133,7 +133,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFSetUp
+        petsc.PetscSFSetUp
 
         """
         CHKERR( PetscSFSetUp(self.sf) )
@@ -145,14 +145,14 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFReset
+        petsc.PetscSFReset
 
         """
         CHKERR( PetscSFReset(self.sf) )
 
     #
 
-    def getGraph(self):
+    def getGraph(self) -> Tuple[int, ndarray, ndarray]:
         """Get graph.
         *nleaves* can be determined from the size of local.
 
@@ -171,7 +171,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFGetGraph
+        petsc.PetscSFGetGraph
 
         """
         cdef PetscInt nroots = 0, nleaves = 0
@@ -208,7 +208,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFSetGraph
+        petsc.PetscSFSetGraph
 
         """
 
@@ -226,7 +226,7 @@ cdef class SF(Object):
             nleaves = nremote // 2
         CHKERR( PetscSFSetGraph(self.sf, cnroots, nleaves, ilocal, PETSC_COPY_VALUES, iremote, PETSC_COPY_VALUES) )
 
-    def setRankOrder(self, flag):
+    def setRankOrder(self, flag: bool):
         """Sort multi-points for gathers and scatters by rank order.
 
         Logically collective.
@@ -238,7 +238,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFSetRankOrder
+        petsc.PetscSFSetRankOrder
 
         """
         cdef PetscBool bval = asBool(flag)
@@ -251,7 +251,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFGetMultiSF
+        petsc.PetscSFGetMultiSF
 
         """
         cdef SF sf = SF()
@@ -267,7 +267,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFCreateInverseSF
+        petsc.PetscSFCreateInverseSF
 
         """
         cdef SF sf = SF()
@@ -281,7 +281,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFComputeDegreeBegin, PetscSFComputeDegreeEnd
+        petsc.PetscSFComputeDegreeBegin, petsc.PetscSFComputeDegreeEnd
 
         """
         cdef const PetscInt *cdegree = NULL
@@ -304,7 +304,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFCreateEmbeddedRootSF
+        petsc.PetscSFCreateEmbeddedRootSF
 
         """
         cdef PetscInt nroots = asInt(len(selected))
@@ -327,7 +327,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFCreateEmbeddedLeafSF
+        petsc.PetscSFCreateEmbeddedLeafSF
 
         """
         cdef PetscInt nleaves = asInt(len(selected))
@@ -337,7 +337,7 @@ cdef class SF(Object):
         CHKERR( PetscSFCreateEmbeddedLeafSF(self.sf, nleaves, cselected, &sf.sf) )
         return sf
 
-    def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int], Section leafSection) -> SF:
+    def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int] | None, Section leafSection) -> SF:
         """Create an expanded `SF` of dofs, assuming the input `SF` relates 
         points.
 
@@ -357,7 +357,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFCreateSectionSF
+        petsc.PetscSFCreateSectionSF
 
         """
         cdef SF sectionSF = SF()
@@ -384,7 +384,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFDistributeSection
+        petsc.PetscSFDistributeSection
 
         """
         cdef PetscInt lpStart
@@ -417,14 +417,14 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFCompose
+        petsc.PetscSFCompose
 
         """
         cdef SF csf = SF()
         CHKERR( PetscSFCompose(self.sf, sf.sf, &csf.sf))
         return csf
 
-    def bcastBegin(self, unit, ndarray rootdata, ndarray leafdata, op) -> None:
+    def bcastBegin(self, unit: TODO, ndarray rootdata, ndarray leafdata, op: TODO) -> None:
         """Begin pointwise broadcast with root value being reduced to 
         leaf value, to be concluded with call to bcastEnd.
 
@@ -443,7 +443,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFBcastBegin
+        petsc.PetscSFBcastBegin
 
         """
 
@@ -452,7 +452,7 @@ cdef class SF(Object):
         CHKERR( PetscSFBcastBegin(self.sf, dtype, <const void*>PyArray_DATA(rootdata),
                                   <void*>PyArray_DATA(leafdata), cop) )
 
-    def bcastEnd(self, unit, ndarray rootdata, ndarray leafdata, op) -> None:
+    def bcastEnd(self, unit: TODO, ndarray rootdata, ndarray leafdata, op: TODO) -> None:
         """End a broadcast & reduce operation started with bcastBegin.
 
         Collective.
@@ -470,7 +470,7 @@ cdef class SF(Object):
             
         See also
         --------
-        PetscSFBcastEnd
+        petsc.PetscSFBcastEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -478,7 +478,7 @@ cdef class SF(Object):
         CHKERR( PetscSFBcastEnd(self.sf, dtype, <const void*>PyArray_DATA(rootdata),
                                 <void*>PyArray_DATA(leafdata), cop) )
 
-    def reduceBegin(self, unit, ndarray leafdata, ndarray rootdata, op) -> None:
+    def reduceBegin(self, unit: TODO, ndarray leafdata, ndarray rootdata, op: TODO) -> None:
         """Begin reduction of leafdata into rootdata, 
         to be completed with call to reduceEnd.
 
@@ -497,7 +497,7 @@ cdef class SF(Object):
             
         See also
         --------
-        PetscSFReduceBegin
+        petsc.PetscSFReduceBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -505,7 +505,7 @@ cdef class SF(Object):
         CHKERR( PetscSFReduceBegin(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                    <void*>PyArray_DATA(rootdata), cop) )
 
-    def reduceEnd(self, unit, ndarray leafdata, ndarray rootdata, op) -> None:
+    def reduceEnd(self, unit: TODO, ndarray leafdata, ndarray rootdata, op: TODO) -> None:
         """End a reduction operation started with reduceBegin.
 
         Collective.
@@ -523,7 +523,7 @@ cdef class SF(Object):
             
         See also
         --------
-        PetscSFReduceEnd
+        petsc.PetscSFReduceEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -531,7 +531,7 @@ cdef class SF(Object):
         CHKERR( PetscSFReduceEnd(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                  <void*>PyArray_DATA(rootdata), cop) )
 
-    def scatterBegin(self, unit, ndarray multirootdata, ndarray leafdata) -> None:
+    def scatterBegin(self, unit: TODO, ndarray multirootdata, ndarray leafdata) -> None:
         """Begin pointwise scatter operation from multi-roots to leaves, 
         to be completed with scatterEnd.
 
@@ -548,14 +548,14 @@ cdef class SF(Object):
             
         See also
         --------
-        PetscSFScatterBegin
+        petsc.PetscSFScatterBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
         CHKERR( PetscSFScatterBegin(self.sf, dtype, <const void*>PyArray_DATA(multirootdata),
                                     <void*>PyArray_DATA(leafdata)) )
 
-    def scatterEnd(self, unit, ndarray multirootdata, ndarray leafdata) -> None:
+    def scatterEnd(self, unit: TOOD, ndarray multirootdata, ndarray leafdata) -> None:
         """End pointwise scatter operation that was started with scatterBegin.
 
         Collective.
@@ -571,14 +571,14 @@ cdef class SF(Object):
             
         See also
         --------
-        PetscSFScatterEnd
+        petsc.PetscSFScatterEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
         CHKERR( PetscSFScatterEnd(self.sf, dtype, <const void*>PyArray_DATA(multirootdata),
                                   <void*>PyArray_DATA(leafdata)) )
 
-    def gatherBegin(self, unit, ndarray leafdata, ndarray multirootdata) -> None:
+    def gatherBegin(self, unit: TODO, ndarray leafdata, ndarray multirootdata) -> None:
         """Begin pointwise gather of all leaves into multi-roots, 
         to be completed with gatherEnd.
 
@@ -596,14 +596,14 @@ cdef class SF(Object):
             
         See also
         --------
-        PetscSFGatherBegin
+        petsc.PetscSFGatherBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
         CHKERR( PetscSFGatherBegin(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                    <void*>PyArray_DATA(multirootdata)) )
 
-    def gatherEnd(self, unit, ndarray leafdata, ndarray multirootdata) -> None:
+    def gatherEnd(self, unit: TODO, ndarray leafdata, ndarray multirootdata) -> None:
         """End pointwise gather operation that was started with gatherBegin.
 
         Collective.
@@ -612,30 +612,25 @@ cdef class SF(Object):
         ----------
         unit
             Data type.
-        rootdata
-            Root values to be updated, input state is seen by first process 
-            to perform an update.
         leafdata
-            Leaf values to use in reduction.
-        leafupdate
-            State at each leaf's respective root immediately prior to my atomic 
-            update.
-        op
-            Operation to use for reduction.
+            Leaf data to gather to roots.
+        multirootdata
+            Root buffer to gather into, amount of space per root is 
+            equal to its degree.
             
         See also
         --------
-        PetscSFGatherEnd
+        petsc.PetscSFGatherEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
         CHKERR( PetscSFGatherEnd(self.sf, dtype, <const void*>PyArray_DATA(leafdata),
                                  <void*>PyArray_DATA(multirootdata)) )
 
-    def fetchAndOpBegin(self, unit, rootdata, leafdata, leafupdate, op) -> None:
+    def fetchAndOpBegin(self, unit: TODO, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: TODO) -> None:
         """Begin operation that fetches values from root and updates atomically 
         by applying operation using my leaf value, to be completed with 
-        fetchAndOpEnd.
+        `fetchAndOpEnd`.
 
         Collective.
 
@@ -656,7 +651,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFFetchAndOpBegin
+        petsc.PetscSFFetchAndOpBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -665,8 +660,8 @@ cdef class SF(Object):
                                        <const void*>PyArray_DATA(leafdata),
                                        <void*>PyArray_DATA(leafupdate), cop) )
 
-    def fetchAndOpEnd(self, unit, rootdata, leafdata, leafupdate, op) -> None:
-        """End operation started in matching call to fetchAndOpBegin to fetch 
+    def fetchAndOpEnd(self, unit: TODO, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: TODO) -> None:
+        """End operation started in matching call to `fetchAndOpBegin` to fetch 
         values from roots and update atomically by applying operation using 
         my leaf value.
 
@@ -689,7 +684,7 @@ cdef class SF(Object):
 
         See also
         --------
-        PetscSFFetchAndOpEnd
+        petsc.PetscSFFetchAndOpEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
