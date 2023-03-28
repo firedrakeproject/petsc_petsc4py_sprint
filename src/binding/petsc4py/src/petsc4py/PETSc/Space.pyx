@@ -262,7 +262,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceGetType(self.space, &cval) )
         return bytes2str(cval)
 
-    def setType(self, space_type: str):
+    def setType(self, space_type: Space.Type | str) -> Self:
         """TODO
 
         Not collective.
@@ -282,7 +282,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceSetType(self.space, cval) )
         return self
 
-    def getSumConcatenate(self):
+    def getSumConcatenate(self) -> bool:
         """TODO
 
         Not collective.
@@ -301,7 +301,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceSumGetConcatenate(self.space, &concatenate))
         return toBool(concatenate)
 
-    def setSumConcatenate(self, concatenate):
+    def setSumConcatenate(self, concatenate: bool) -> None:
         """TODO
 
         Not collective.
@@ -319,7 +319,7 @@ cdef class Space(Object):
         cdef PetscBool cconcatenate = asBool(concatenate)
         CHKERR( PetscSpaceSumSetConcatenate(self.space, concatenate))
 
-    def getSumNumSubspaces(self):
+    def getSumNumSubspaces(self) -> int:
         """TODO
 
         Not collective.
@@ -338,7 +338,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceSumGetNumSubspaces(self.space, &numSumSpaces))
         return toInt(numSumSpaces)
 
-    def getSumSubspace(self, s):
+    def getSumSubspace(self, s: int) -> Space:
         """TODO
 
         Not collective.
@@ -358,7 +358,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceSumGetSubspace(self.space, s, &subsp.space) )
         return subsp
 
-    def setSumSubspace(self, s, Space subsp):
+    def setSumSubspace(self, s:int, Space subsp) -> None:
         """TODO
 
         Not collective.
@@ -376,7 +376,7 @@ cdef class Space(Object):
         cdef PetscInt cs = asInt(s)
         CHKERR( PetscSpaceSumSetSubspace(self.space, cs, subsp.space) )
 
-    def setSumNumSubspaces(self, numSumSpaces):
+    def setSumNumSubspaces(self, numSumSpaces: int) -> None:
         """TODO
 
         Not collective.
@@ -394,7 +394,7 @@ cdef class Space(Object):
         cdef PetscInt cnumSumSpaces = asInt(numSumSpaces)
         CHKERR( PetscSpaceSumSetNumSubspaces(self.space, cnumSumSpaces) )
 
-    def getTensorNumSubspaces(self):
+    def getTensorNumSubspaces(self) -> int:
         """TODO
 
         Not collective.
@@ -413,7 +413,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceTensorGetNumSubspaces(self.space, &cnumTensSpaces) )
         return toInt(cnumTensSpaces)
 
-    def setTensorSubspace(self, s, Space subsp):
+    def setTensorSubspace(self, s: int, Space subsp) -> None:
         """TODO
 
         Not collective.
@@ -431,7 +431,7 @@ cdef class Space(Object):
         cdef PetscInt cs = asInt(s)
         CHKERR( PetscSpaceTensorSetSubspace(self.space, cs, subsp.space) )
 
-    def getTensorSubspace(self, s):
+    def getTensorSubspace(self, s: int) -> Space:
         """TODO
 
         Not collective.
@@ -451,7 +451,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceTensorGetSubspace(self.space, cs, &subsp.space) )
         return subsp
 
-    def setTensorNumSubspaces(self, numTensSpaces):
+    def setTensorNumSubspaces(self, numTensSpaces: int) -> None:
         """TODO
 
         Not collective.
@@ -469,7 +469,7 @@ cdef class Space(Object):
         cdef PetscInt cnumTensSpaces = asInt(numTensSpaces)
         CHKERR( PetscSpaceTensorSetNumSubspaces(self.space, cnumTensSpaces) )
 
-    def getPolynomialTensor(self):
+    def getPolynomialTensor(self) -> bool:
         """TODO
 
         Not collective.
@@ -488,7 +488,7 @@ cdef class Space(Object):
         CHKERR( PetscSpacePolynomialGetTensor(self.space, &ctensor) )
         return toBool(ctensor)
 
-    def setPolynomialTensor(self, tensor):
+    def setPolynomialTensor(self, tensor: bool) -> None:
         """TODO
 
         Not collective.
@@ -506,7 +506,7 @@ cdef class Space(Object):
         cdef PetscBool ctensor = asBool(tensor)
         CHKERR( PetscSpacePolynomialSetTensor(self.space, ctensor) )
 
-    def setPointPoints(self, Quad quad):
+    def setPointPoints(self, Quad quad) -> None:
         """TODO
 
         Not collective.
@@ -523,7 +523,7 @@ cdef class Space(Object):
         """
         CHKERR( PetscSpacePointSetPoints(self.space, quad.quad))
 
-    def getPointPoints(self):
+    def getPointPoints(self) -> Quad:
         """TODO
 
         Not collective.
@@ -542,7 +542,7 @@ cdef class Space(Object):
         CHKERR( PetscSpacePointGetPoints(self.space, &quad.quad))
         return quad
 
-    def setPTrimmedFormDegree(self, formDegree):
+    def setPTrimmedFormDegree(self, formDegree: int) -> None:
         """TODO
 
         Not collective.
@@ -560,7 +560,7 @@ cdef class Space(Object):
         cdef PetscInt cformDegree = asInt(formDegree)
         CHKERR( PetscSpacePTrimmedSetFormDegree(self.space, cformDegree) )
 
-    def getPTrimmedFormDegree(self):
+    def getPTrimmedFormDegree(self) -> int:
         """TODO
 
         Not collective.
@@ -579,7 +579,7 @@ cdef class Space(Object):
         CHKERR( PetscSpacePTrimmedGetFormDegree(self.space, &cformDegree) )
         return toInt(cformDegree)
 
-    def viewFromOptions(self, name, Object obj=None):
+    def viewFromOptions(self, name: str, Object obj=None) -> None:
         """TODO
 
         Not collective.
@@ -618,7 +618,7 @@ cdef class DualSpace(Object):
         self.obj = <PetscObject*> &self.dualspace
         self.dualspace  = NULL
 
-    def setUp(self):
+    def setUp(self) -> None:
         """TODO
 
         Not collective.
@@ -635,7 +635,7 @@ cdef class DualSpace(Object):
         """
         CHKERR( PetscDualSpaceSetUp(self.dualspace) )
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
         """TODO
 
         Not collective.
@@ -656,7 +656,7 @@ cdef class DualSpace(Object):
         PetscCLEAR(self.obj); self.dualspace = newdsp
         return self
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
         """TODO
 
         Not collective.
@@ -675,7 +675,7 @@ cdef class DualSpace(Object):
         if viewer is not None: vwr = viewer.vwr
         CHKERR( PetscDualSpaceView(self.dualspace, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
         """TODO
 
         Not collective.
@@ -693,7 +693,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceDestroy(&self.dualspace) )
         return self
 
-    def duplicate(self):
+    def duplicate(self) -> DualSpace:
         """TODO
 
         Not collective.
@@ -711,7 +711,7 @@ cdef class DualSpace(Object):
         cdef DualSpace spNew = DualSpace()
         CHKERR( PetscDualSpaceDuplicate(self.dualspace, &spNew.dualspace) )
 
-    def getDM(self):
+    def getDM(self) -> DM:
         """TODO
 
         Not collective.
@@ -730,7 +730,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetDM(self.dualspace, &dm.dm) )
         return dm
 
-    def setDM(self, DM dm):
+    def setDM(self, DM dm) -> None:
         """TODO
 
         Not collective.
@@ -747,7 +747,7 @@ cdef class DualSpace(Object):
         """
         CHKERR( PetscDualSpaceSetDM(self.dualspace, dm.dm) )
 
-    def getDimension(self):
+    def getDimension(self) -> int:
         """TODO
 
         Not collective.
@@ -766,7 +766,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetDimension(self.dualspace, &cdim))
         return toInt(cdim)
 
-    def getNumComponents(self):
+    def getNumComponents(self) -> int:
         """TODO
 
         Not collective.
@@ -785,7 +785,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetNumComponents(self.dualspace, &cncomps))
         return toInt(cncomps)
 
-    def setNumComponents(self, nc):
+    def setNumComponents(self, nc: int) -> None:
         """TODO
 
         Not collective.
@@ -803,7 +803,7 @@ cdef class DualSpace(Object):
         cdef PetscInt cnc = asInt(nc)
         CHKERR( PetscDualSpaceSetNumComponents(self.dualspace, cnc) )
 
-    def getType(self):
+    def getType(self) -> str:
         """TODO
 
         Not collective.
@@ -822,7 +822,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetType(self.dualspace, &cval) )
         return bytes2str(cval)
 
-    def setType(self, dualspace_type):
+    def setType(self, dualspace_type: DualSpace.Type | str) -> Self:
         """TODO
 
         Not collective.
@@ -842,7 +842,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceSetType(self.dualspace, cval) )
         return self
 
-    def getOrder(self):
+    def getOrder(self) -> int:
         """TODO
 
         Not collective.
@@ -861,7 +861,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetOrder(self.dualspace, &corder))
         return toInt(corder)
 
-    def setOrder(self, order):
+    def setOrder(self, order: int) -> None:
         """TODO
 
         Not collective.
@@ -879,7 +879,7 @@ cdef class DualSpace(Object):
         cdef PetscInt corder = asInt(order)
         CHKERR( PetscDualSpaceSetOrder(self.dualspace, corder) )
 
-    def getNumDof(self):
+    def getNumDof(self) -> ndarray:
         """TODO
 
         Not collective.
@@ -900,7 +900,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetNumDof(self.dualspace, &cndof) )
         return array_i(cdim + 1, cndof)
 
-    def getFunctional(self, i):
+    def getFunctional(self, i: int) -> Quad:
         """TODO
 
         Not collective.
@@ -920,7 +920,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetFunctional( self.dualspace, ci, &functional.quad) )
         return functional
 
-    def getInteriorDimension(self, intdim):
+    def getInteriorDimension(self, intdim: int) -> int:
         """TODO
 
         Not collective.
@@ -939,7 +939,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetInteriorDimension(self.dualspace, &cintdim) )
         return toInt(cintdim)
 
-    def getLagrangeContinuity(self):
+    def getLagrangeContinuity(self) -> bool:
         """TODO
 
         Not collective.
@@ -958,7 +958,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceLagrangeGetContinuity(self.dualspace, &ccontinuous))
         return toBool(ccontinuous)
 
-    def setLagrangeContinuity(self, continuous):
+    def setLagrangeContinuity(self, continuous: bool) -> None:
         """TODO
 
         Not collective.
@@ -976,7 +976,7 @@ cdef class DualSpace(Object):
         cdef PetscBool ccontinuous = asBool(continuous)
         CHKERR( PetscDualSpaceLagrangeSetContinuity(self.dualspace, ccontinuous))
 
-    def getLagrangeTensor(self):
+    def getLagrangeTensor(self) -> bool:
         """TODO
 
         Not collective.
@@ -995,7 +995,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceLagrangeGetTensor(self.dualspace, &ctensor))
         return toBool(ctensor)
 
-    def setLagrangeTensor(self, tensor):
+    def setLagrangeTensor(self, tensor: bool) -> None:
         """TODO
 
         Not collective.
@@ -1013,7 +1013,7 @@ cdef class DualSpace(Object):
         cdef PetscBool ctensor = asBool(tensor)
         CHKERR( PetscDualSpaceLagrangeSetTensor(self.dualspace, ctensor))
 
-    def getLagrangeTrimmed(self):
+    def getLagrangeTrimmed(self) -> bool:
         """TODO
 
         Not collective.
@@ -1032,7 +1032,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceLagrangeGetTrimmed(self.dualspace, &ctrimmed))
         return toBool(ctrimmed)
 
-    def setLagrangeTrimmed(self, trimmed):
+    def setLagrangeTrimmed(self, trimmed: bool) -> None:
         """TODO
 
         Not collective.
@@ -1050,7 +1050,7 @@ cdef class DualSpace(Object):
         cdef PetscBool ctrimmed = asBool(trimmed)
         CHKERR( PetscDualSpaceLagrangeSetTrimmed(self.dualspace, ctrimmed))
 
-    def viewFromOptions(self, name, Object obj=None):
+    def viewFromOptions(self, name: str, Object obj=None) -> None:
         """TODO
 
         Not collective.
@@ -1071,7 +1071,7 @@ cdef class DualSpace(Object):
         if obj is not None: cobj = obj.obj[0]
         CHKERR( PetscDualSpaceViewFromOptions(self.dualspace, cobj, cname) )
 
-    def setSimpleDimension(self, dim):
+    def setSimpleDimension(self, dim: int) -> None:
         """TODO
 
         Not collective.
@@ -1089,7 +1089,7 @@ cdef class DualSpace(Object):
         cdef PetscInt cdim = asInt(dim)
         CHKERR( PetscDualSpaceSimpleSetDimension(self.dualspace, cdim) )
 
-    def setSimpleFunctional(self, func, Quad functional):
+    def setSimpleFunctional(self, func: int, Quad functional) -> None:
         """TODO
 
         Not collective.
