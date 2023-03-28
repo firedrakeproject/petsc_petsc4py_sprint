@@ -25,7 +25,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMType`, `DM.create`, `DM.setType`, `petsc.DMPlexCreate`
+        `DM`, `DMPlex`, `DMType`, `DM.create`, `DM.setType`, petsc.DMPlexCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -54,7 +54,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.buildFromCellList`, `DMPlex.buildCoordinatesFromCellList`, `DMPlex.createFromDAG`, `DMPlex.create`, `petsc.DMPlexCreateFromCellListPetsc`
+        `DM`, `DMPlex`, `DMPlex.buildFromCellList`, `DMPlex.buildCoordinatesFromCellList`, `DMPlex.createFromDAG`, `DMPlex.create`, petsc.DMPlexCreateFromCellListPetsc
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -113,7 +113,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DM.setFromOptions`, `DMPlex.createFromFile`, `DMPlex.createHexCylinderMesh`, `DM.setType`, `DM.create`, `petsc.DMPlexCreateBoxMesh`
+        `DM`, `DMPlex`, `DM.setFromOptions`, `DMPlex.createFromFile`, `DMPlex.createHexCylinderMesh`, `DM.setType`, `DM.create`, petsc.DMPlexCreateBoxMesh
 
         """
         cdef Py_ssize_t i = 0
@@ -167,7 +167,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateBoxSurfaceMesh`
+        petsc.DMPlexCreateBoxSurfaceMesh
 
         """
         cdef Py_ssize_t i = 0
@@ -218,7 +218,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateFromFile`
+        petsc.DMPlexCreateFromFile
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -255,7 +255,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateCGNS`
+        petsc.DMPlexCreateCGNS
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -299,7 +299,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateExodusFromFile`
+        petsc.DMPlexCreateExodusFromFile
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -334,7 +334,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateExodus`
+        petsc.DMPlexCreateExodus
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -383,7 +383,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateGmsh`
+        petsc.DMPlexCreateGmsh
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -416,7 +416,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateCohesiveSubmesh`
+        petsc.DMPlexCreateCohesiveSubmesh
 
         """
         cdef PetscBool flag = hasLagrange
@@ -425,28 +425,14 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexCreateCohesiveSubmesh(self.dm, flag, NULL, cvalue, &subdm.dm) )
         return subdm
 
-    def getChart(self):
-        """DMPlexGetChart - Return the interval for all mesh points [`pStart`, `pEnd`)
+    def getChart(self) -> tuple[int, int]:
+        """Return the interval for all mesh points [``pStart``, ``pEnd``)
 
         Not collective.
 
-        Parameters
-        ----------
-        mesh
-            The `DMPlex`
-
-        Returns
-        -------
-        pStart
-            The first mesh point
-        pEnd
-            The upper bound for mesh points
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetChart`
-
         See Also
         --------
-        `petsc.DMPlexGetChart`
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setChart`, petsc.DMPlexGetChart
 
         """
         cdef PetscInt pStart = 0, pEnd = 0
@@ -471,7 +457,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetChart`
+        petsc.DMPlexSetChart
 
         """
         cdef PetscInt cStart = asInt(pStart)
@@ -499,7 +485,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetConeSize`
+        petsc.DMPlexGetConeSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -531,7 +517,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetConeSize`
+        petsc.DMPlexSetConeSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -566,7 +552,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetCone`
+        petsc.DMPlexGetCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -602,7 +588,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetConeOrientation`
+        petsc.DMPlexSetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -643,7 +629,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexInsertCone`
+        petsc.DMPlexInsertCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -674,7 +660,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexInsertConeOrientation`
+        petsc.DMPlexInsertConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -714,7 +700,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetConeOrientation`
+        petsc.DMPlexGetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -750,7 +736,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetConeOrientation`
+        petsc.DMPlexSetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -789,7 +775,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetCellType`
+        petsc.DMPlexSetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -817,7 +803,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetCellType`
+        petsc.DMPlexGetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -848,7 +834,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetCellTypeLabel`
+        petsc.DMPlexGetCellTypeLabel
 
         """
         cdef DMLabel label = DMLabel()
@@ -877,7 +863,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetSupportSize`
+        petsc.DMPlexGetSupportSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -909,7 +895,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetSupportSize`
+        petsc.DMPlexSetSupportSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -944,7 +930,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetSupport`
+        petsc.DMPlexGetSupport
 
         """
         cdef PetscInt cp = asInt(p)
@@ -978,7 +964,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetSupport`
+        petsc.DMPlexSetSupport
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1012,7 +998,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetMaxSizes`
+        petsc.DMPlexGetMaxSizes
 
         """
         cdef PetscInt maxConeSize = 0, maxSupportSize = 0
@@ -1036,7 +1022,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSymmetrize`
+        petsc.DMPlexSymmetrize
 
         """
         CHKERR( DMPlexSymmetrize(self.dm) )
@@ -1058,7 +1044,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexStratify`
+        petsc.DMPlexStratify
 
         """
         CHKERR( DMPlexStratify(self.dm) )
@@ -1080,7 +1066,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexOrient`
+        petsc.DMPlexOrient
 
         """
         CHKERR( DMPlexOrient(self.dm) )
@@ -1102,7 +1088,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetCellNumbering`
+        petsc.DMPlexGetCellNumbering
 
         """
         cdef IS iset = IS()
@@ -1127,7 +1113,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetVertexNumbering`
+        petsc.DMPlexGetVertexNumbering
 
         """
         cdef IS iset = IS()
@@ -1154,7 +1140,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreatePointNumbering`
+        petsc.DMPlexCreatePointNumbering
 
         """
         cdef IS iset = IS()
@@ -1187,7 +1173,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetDepth`
+        petsc.DMPlexGetDepth
 
         """
         cdef PetscInt depth = 0
@@ -1222,7 +1208,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetDepthStratum`
+        petsc.DMPlexGetDepthStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
@@ -1252,7 +1238,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetHeightStratum`
+        petsc.DMPlexGetHeightStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
@@ -1287,7 +1273,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexRestoreMeet`
+        petsc.DMPlexRestoreMeet
 
         """
         cdef PetscInt  numPoints = 0
@@ -1329,7 +1315,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexRestoreJoin`
+        petsc.DMPlexRestoreJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1371,7 +1357,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexRestoreJoin`
+        petsc.DMPlexRestoreJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1410,7 +1396,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexRestoreTransitiveClosure`
+        petsc.DMPlexRestoreTransitiveClosure
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1451,7 +1437,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexVecRestoreClosure`
+        petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscInt cp = asInt(p), csize = 0
@@ -1493,7 +1479,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexVecRestoreClosure`
+        petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1531,7 +1517,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexVecSetClosure`
+        petsc.DMPlexVecSetClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1569,7 +1555,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMatSetClosure`
+        petsc.DMPlexMatSetClosure
 
         """
         cdef PetscSection csec  =  sec.sec if  sec is not None else NULL
@@ -1608,7 +1594,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGenerate`
+        petsc.DMPlexGenerate
 
         """
         cdef PetscBool interp = interpolate
@@ -1632,7 +1618,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexTriangleSetOptions`
+        petsc.DMPlexTriangleSetOptions
 
         """
         cdef const char *copts = NULL
@@ -1652,7 +1638,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexTetgenSetOptions`
+        petsc.DMPlexTetgenSetOptions
 
         """
         cdef const char *copts = NULL
@@ -1683,7 +1669,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMarkBoundaryFaces`
+        petsc.DMPlexMarkBoundaryFaces
 
         """
         cdef PetscInt ival = PETSC_DETERMINE
@@ -1715,7 +1701,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexLabelComplete`
+        petsc.DMPlexLabelComplete
 
         """
         CHKERR( DMPlexLabelComplete(self.dm, label.dmlabel) )
@@ -1751,7 +1737,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexLabelCohesiveComplete`
+        petsc.DMPlexLabelCohesiveComplete
 
         """
         cdef PetscBool flg = flip
@@ -1772,7 +1758,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetAdjacencyUseAnchors`
+        petsc.DMPlexSetAdjacencyUseAnchors
 
         """
         cdef PetscBool flag = useAnchors
@@ -1795,7 +1781,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetAdjacencyUseAnchors`
+        petsc.DMPlexGetAdjacencyUseAnchors
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -1828,7 +1814,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetAdjacency`
+        petsc.DMPlexGetAdjacency
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1860,7 +1846,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetPartitioner`
+        petsc.DMPlexSetPartitioner
 
         """
         CHKERR( DMPlexSetPartitioner(self.dm, part.part) )
@@ -1887,7 +1873,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetPartitioner`
+        petsc.DMPlexGetPartitioner
 
         """
         cdef Partitioner part = Partitioner()
@@ -1917,7 +1903,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexRebalanceSharedPoints`
+        petsc.DMPlexRebalanceSharedPoints
 
         """
         cdef PetscInt centityDepth = asInt(entityDepth)
@@ -1956,7 +1942,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistribute`
+        petsc.DMPlexDistribute
 
         """
         cdef PetscDM dmParallel = NULL
@@ -2002,7 +1988,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistributeOverlap`
+        petsc.DMPlexDistributeOverlap
 
         """
         cdef PetscInt coverlap = asInt(overlap)
@@ -2037,7 +2023,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexIsDistributed`
+        petsc.DMPlexIsDistributed
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -2065,7 +2051,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexIsSimplex`
+        petsc.DMPlexIsSimplex
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -2091,7 +2077,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistributeGetDefault`
+        petsc.DMPlexDistributeGetDefault
 
         """
         cdef PetscBool dist = PETSC_FALSE
@@ -2114,7 +2100,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistributeSetDefault`
+        petsc.DMPlexDistributeSetDefault
 
         """
         cdef PetscBool dist = asBool(flag)
@@ -2141,7 +2127,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistributionSetName`
+        petsc.DMPlexDistributionSetName
 
         """
         cdef const char *cname = NULL
@@ -2172,7 +2158,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistributionGetName`
+        petsc.DMPlexDistributionGetName
 
         """
         cdef const char *cname = NULL
@@ -2200,7 +2186,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexIsSimplex`
+        petsc.DMPlexIsSimplex
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -2232,7 +2218,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexInterpolate`
+        petsc.DMPlexInterpolate
 
         """
         cdef PetscDM newdm = NULL
@@ -2258,7 +2244,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexUninterpolate`
+        petsc.DMPlexUninterpolate
 
         """
         cdef PetscDM newdm = NULL
@@ -2293,7 +2279,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexDistributeField`
+        petsc.DMPlexDistributeField
 
         """
         cdef MPI_Comm ccomm = MPI_COMM_NULL
@@ -2329,7 +2315,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetMinRadius`
+        petsc.DMPlexGetMinRadius
 
         """
         cdef PetscReal cminradius = 0.
@@ -2355,7 +2341,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateCoarsePointIS`
+        petsc.DMPlexCreateCoarsePointIS
 
         """
         cdef IS fpoint = IS()
@@ -2399,7 +2385,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateSection`
+        petsc.DMPlexCreateSection
 
         """
         # topological dimension
@@ -2468,7 +2454,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetPointLocal`
+        petsc.DMPlexGetPointLocal
 
         """
         cdef PetscInt start = 0, end = 0
@@ -2504,7 +2490,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetPointLocalField`
+        petsc.DMPlexGetPointLocalField
 
         """
         cdef PetscInt start = 0, end = 0
@@ -2539,7 +2525,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetPointGlobal`
+        petsc.DMPlexGetPointGlobal
 
         """
         cdef PetscInt start = 0, end = 0
@@ -2575,7 +2561,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetPointGlobalField`
+        petsc.DMPlexGetPointGlobalField
 
         """
         cdef PetscInt start = 0, end = 0
@@ -2603,7 +2589,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCreateClosureIndex`
+        petsc.DMPlexCreateClosureIndex
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -2625,7 +2611,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetRefinementUniform`
+        petsc.DMPlexSetRefinementUniform
 
         """
         cdef PetscBool flag = refinementUniform
@@ -2648,7 +2634,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetRefinementUniform`
+        petsc.DMPlexGetRefinementUniform
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -2669,7 +2655,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSetRefinementLimit`
+        petsc.DMPlexSetRefinementLimit
 
         """
         cdef PetscReal rval = asReal(refinementLimit)
@@ -2692,7 +2678,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetRefinementLimit`
+        petsc.DMPlexGetRefinementLimit
 
         """
         cdef PetscReal rval = 0.0
@@ -2722,7 +2708,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGetOrdering`
+        petsc.DMPlexGetOrdering
 
         """
         cdef PetscMatOrderingType cval = NULL
@@ -2753,7 +2739,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexPermute`
+        petsc.DMPlexPermute
 
         """
         cdef DMPlex dm = <DMPlex>type(self)()
@@ -2779,7 +2765,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexReorderGetDefault`
+        petsc.DMPlexReorderGetDefault
 
         """
         cdef PetscDMPlexReorderDefaultFlag reorder = DMPLEX_REORDER_DEFAULT_NOTSET
@@ -2802,7 +2788,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexReorderSetDefault`
+        petsc.DMPlexReorderSetDefault
 
         """
         cdef PetscDMPlexReorderDefaultFlag reorder = flag
@@ -2836,7 +2822,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexComputeCellGeometryFVM`
+        petsc.DMPlexComputeCellGeometryFVM
 
         """
         cdef PetscInt cdim = 0
@@ -2869,7 +2855,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexConstructGhostCells`
+        petsc.DMPlexConstructGhostCells
 
         """
         cdef const char *cname = NULL
@@ -2896,7 +2882,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetUniform`
+        petsc.DMPlexMetricSetUniform
 
         """
         cdef PetscBool bval = asBool(uniform)
@@ -2915,7 +2901,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricIsUniform`
+        petsc.DMPlexMetricIsUniform
 
         """
         cdef PetscBool uniform = PETSC_FALSE
@@ -2933,7 +2919,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetIsotropic`
+        petsc.DMPlexMetricSetIsotropic
 
         """
         cdef PetscBool bval = asBool(isotropic)
@@ -2952,7 +2938,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricIsIsotropic`
+        petsc.DMPlexMetricIsIsotropic
 
         """
         cdef PetscBool isotropic = PETSC_FALSE
@@ -2970,7 +2956,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetRestrictAnisotropyFirst`
+        petsc.DMPlexMetricSetRestrictAnisotropyFirst
 
         """
         cdef PetscBool bval = asBool(restrictAnisotropyFirst)
@@ -2989,7 +2975,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricRestrictAnisotropyFirst`
+        petsc.DMPlexMetricRestrictAnisotropyFirst
 
         """
         cdef PetscBool restrictAnisotropyFirst = PETSC_FALSE
@@ -3007,7 +2993,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetNoInsertion`
+        petsc.DMPlexMetricSetNoInsertion
 
         """
         cdef PetscBool bval = asBool(noInsert)
@@ -3026,7 +3012,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricNoInsertion`
+        petsc.DMPlexMetricNoInsertion
 
         """
         cdef PetscBool noInsert = PETSC_FALSE
@@ -3044,7 +3030,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetNoSwapping`
+        petsc.DMPlexMetricSetNoSwapping
 
         """
         cdef PetscBool bval = asBool(noSwap)
@@ -3063,7 +3049,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricNoSwapping`
+        petsc.DMPlexMetricNoSwapping
 
         """
         cdef PetscBool noSwap = PETSC_FALSE
@@ -3081,7 +3067,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetNoMovement`
+        petsc.DMPlexMetricSetNoMovement
 
         """
         cdef PetscBool bval = asBool(noMove)
@@ -3100,7 +3086,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricNoMovement`
+        petsc.DMPlexMetricNoMovement
 
         """
         cdef PetscBool noMove = PETSC_FALSE
@@ -3118,7 +3104,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetNoSurf`
+        petsc.DMPlexMetricSetNoSurf
 
         """
         cdef PetscBool bval = asBool(noSurf)
@@ -3137,7 +3123,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricNoSurf`
+        petsc.DMPlexMetricNoSurf
 
         """
         cdef PetscBool noSurf = PETSC_FALSE
@@ -3155,7 +3141,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetVerbosity`
+        petsc.DMPlexMetricSetVerbosity
 
         """
         cdef PetscInt ival = asInt(verbosity)
@@ -3174,7 +3160,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetVerbosity`
+        petsc.DMPlexMetricGetVerbosity
 
         """
         cdef PetscInt verbosity = 0
@@ -3192,7 +3178,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetNumIterations`
+        petsc.DMPlexMetricSetNumIterations
 
         """
         cdef PetscInt ival = asInt(numIter)
@@ -3211,7 +3197,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetNumIterations`
+        petsc.DMPlexMetricGetNumIterations
 
         """
         cdef PetscInt numIter = 0
@@ -3229,7 +3215,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetMinimumMagnitude`
+        petsc.DMPlexMetricSetMinimumMagnitude
 
         """
         cdef PetscReal rval = asReal(h_min)
@@ -3248,7 +3234,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetMinimumMagnitude`
+        petsc.DMPlexMetricGetMinimumMagnitude
 
         """
         cdef PetscReal h_min = 0
@@ -3266,7 +3252,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetMaximumMagnitude`
+        petsc.DMPlexMetricSetMaximumMagnitude
 
         """
         cdef PetscReal rval = asReal(h_max)
@@ -3285,7 +3271,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetMaximumMagnitude`
+        petsc.DMPlexMetricGetMaximumMagnitude
 
         """
         cdef PetscReal h_max = 0
@@ -3303,7 +3289,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetMaximumAnisotropy`
+        petsc.DMPlexMetricSetMaximumAnisotropy
 
         """
         cdef PetscReal rval = asReal(a_max)
@@ -3322,7 +3308,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetMaximumAnisotropy`
+        petsc.DMPlexMetricGetMaximumAnisotropy
 
         """
         cdef PetscReal a_max = 0
@@ -3340,7 +3326,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetTargetComplexity`
+        petsc.DMPlexMetricSetTargetComplexity
 
         """
         cdef PetscReal rval = asReal(targetComplexity)
@@ -3359,7 +3345,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetTargetComplexity`
+        petsc.DMPlexMetricGetTargetComplexity
 
         """
         cdef PetscReal targetComplexity = 0
@@ -3377,7 +3363,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetNormalizationOrder`
+        petsc.DMPlexMetricSetNormalizationOrder
 
         """
         cdef PetscReal rval = asReal(p)
@@ -3396,7 +3382,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetNormalizationOrder`
+        petsc.DMPlexMetricGetNormalizationOrder
 
         """
         cdef PetscReal p = 0
@@ -3414,7 +3400,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetGradationFactor`
+        petsc.DMPlexMetricSetGradationFactor
 
         """
         cdef PetscReal rval = asReal(beta)
@@ -3433,7 +3419,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetGradationFactor`
+        petsc.DMPlexMetricGetGradationFactor
 
         """
         cdef PetscReal beta = 0
@@ -3451,7 +3437,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricSetHausdorffNumber`
+        petsc.DMPlexMetricSetHausdorffNumber
 
         """
         cdef PetscReal rval = asReal(hausd)
@@ -3470,7 +3456,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricGetHausdorffNumber`
+        petsc.DMPlexMetricGetHausdorffNumber
 
         """
         cdef PetscReal hausd = 0
@@ -3519,7 +3505,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricCreate`
+        petsc.DMPlexMetricCreate
 
         """
         cdef PetscInt ival = asInt(field)
@@ -3542,7 +3528,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricCreateUniform`
+        petsc.DMPlexMetricCreateUniform
 
         """
         cdef PetscInt  ival = asInt(field)
@@ -3566,7 +3552,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricCreateIsotropic`
+        petsc.DMPlexMetricCreateIsotropic
 
         """
         cdef PetscInt  ival = asInt(field)
@@ -3589,7 +3575,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricDeterminantCreate`
+        petsc.DMPlexMetricDeterminantCreate
 
         """
         cdef PetscInt  ival = asInt(field)
@@ -3625,7 +3611,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricEnforceSPD`
+        petsc.DMPlexMetricEnforceSPD
 
         """
         cdef PetscBool bval_rs = asBool(restrictSizes)
@@ -3663,7 +3649,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricNormalize`
+        petsc.DMPlexMetricNormalize
 
         """
         cdef PetscBool bval_rs = asBool(restrictSizes)
@@ -3692,7 +3678,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricAverage2`
+        petsc.DMPlexMetricAverage2
 
         """
         CHKERR( DMPlexMetricAverage2(self.dm, metric1.vec, metric2.vec, metricAvg.vec) )
@@ -3721,7 +3707,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricAverage3`
+        petsc.DMPlexMetricAverage3
 
         """
         CHKERR( DMPlexMetricAverage3(self.dm, metric1.vec, metric2.vec, metric3.vec, metricAvg.vec) )
@@ -3748,7 +3734,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricIntersection2`
+        petsc.DMPlexMetricIntersection2
 
         """
         CHKERR( DMPlexMetricIntersection2(self.dm, metric1.vec, metric2.vec, metricInt.vec) )
@@ -3777,7 +3763,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexMetricIntersection3`
+        petsc.DMPlexMetricIntersection3
 
         """
         CHKERR( DMPlexMetricIntersection3(self.dm, metric1.vec, metric2.vec, metric3.vec, metricInt.vec) )
@@ -3804,7 +3790,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexComputeGradientClementInterpolant`
+        petsc.DMPlexComputeGradientClementInterpolant
 
         """
         CHKERR( DMPlexComputeGradientClementInterpolant(self.dm, locX.vec, locC.vec) )
@@ -3828,7 +3814,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexTopologyView`
+        petsc.DMPlexTopologyView
 
         """
         CHKERR( DMPlexTopologyView(self.dm, viewer.vwr))
@@ -3849,7 +3835,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCoordinatesView`
+        petsc.DMPlexCoordinatesView
 
         """
         CHKERR( DMPlexCoordinatesView(self.dm, viewer.vwr))
@@ -3870,7 +3856,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexLabelsView`
+        petsc.DMPlexLabelsView
 
         """
         CHKERR( DMPlexLabelsView(self.dm, viewer.vwr))
@@ -3893,7 +3879,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSectionView`
+        petsc.DMPlexSectionView
 
         """
         CHKERR( DMPlexSectionView(self.dm, viewer.vwr, sectiondm.dm))
@@ -3918,7 +3904,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGlobalVectorView`
+        petsc.DMPlexGlobalVectorView
 
         """
         CHKERR( DMPlexGlobalVectorView(self.dm, viewer.vwr, sectiondm.dm, vec.vec))
@@ -3943,7 +3929,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexLocalVectorView`
+        petsc.DMPlexLocalVectorView
 
         """
         CHKERR( DMPlexLocalVectorView(self.dm, viewer.vwr, sectiondm.dm, vec.vec))
@@ -3972,7 +3958,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexTopologyLoad`
+        petsc.DMPlexTopologyLoad
 
         """
         cdef SF sf = SF()
@@ -3998,7 +3984,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexCoordinatesLoad`
+        petsc.DMPlexCoordinatesLoad
 
         """
         CHKERR( DMPlexCoordinatesLoad(self.dm, viewer.vwr, sfxc.sf))
@@ -4022,7 +4008,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexLabelsLoad`
+        petsc.DMPlexLabelsLoad
 
         """
         CHKERR( DMPlexLabelsLoad(self.dm, viewer.vwr, sfxc.sf))
@@ -4054,7 +4040,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexSectionLoad`
+        petsc.DMPlexSectionLoad
 
         """
         cdef SF gsf = SF()
@@ -4085,7 +4071,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `petsc.DMPlexGlobalVectorLoad`
+        petsc.DMPlexGlobalVectorLoad
 
         """
         CHKERR( DMPlexGlobalVectorLoad(self.dm, viewer.vwr, sectiondm.dm, sf.sf, vec.vec))
@@ -4114,7 +4100,7 @@ DMPlexLocalVectorLoad - Loads on-disk vector data into a local vector
 
         See Also
         --------
-        `petsc.DMPlexLocalVectorLoad`
+        petsc.DMPlexLocalVectorLoad
 
         """
         CHKERR( DMPlexLocalVectorLoad(self.dm, viewer.vwr, sectiondm.dm, sf.sf, vec.vec))
