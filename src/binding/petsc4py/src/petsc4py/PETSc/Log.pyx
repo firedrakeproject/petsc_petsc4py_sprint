@@ -157,7 +157,7 @@ cdef class Log:
         return cflops
 
     @classmethod
-    def getTime(cls):
+    def getTime(cls) -> float:
         """Return the current time of day in seconds.
         
         Collective over `MPI_Comm`.
@@ -177,12 +177,8 @@ cdef class Log:
         return wctime
 
     @classmethod
-    def getCPUTime(cls):
+    def getCPUTime(cls) -> float:
         """Get the CPU time.
-        
-        Returns
-        -------
-        cputime : double
 
         """
         cdef PetscLogDouble cputime=0
@@ -221,7 +217,7 @@ cdef class Log:
         return decorator
 
     @classmethod
-    def isActive(cls):
+    def isActive(cls) -> bool:
         """Check if logging is currently in progress.
         
         Not Collective.
@@ -331,8 +327,7 @@ cdef class LogStage:
         CHKERR( PetscLogStageSetActive(self.id, PETSC_FALSE) )
 
     def getActive(self):
-        """Check if a stage is used for LogEvent.begin (petsc.PetscLogEventBegin) 
-            and LogEvent.end (petsc.PetscLogEventEnd).
+        """Check if the stage is activate.
         
         Not Collective.
 
@@ -350,10 +345,9 @@ cdef class LogStage:
         CHKERR( PetscLogStageGetActive(self.id, &flag) )
         return toBool(flag)
 
-    def setActive(self, flag): 
-        """Set if a stage is used for LogEvent.begin (petsc.PetscLogEventBegin)
-            or LogEvent.end (petsc.PetscLogEventEnd).
-
+    def setActive(self, flag: bool) -> None: 
+        """Set if the stage is active.
+        
         Not Collective.
 
         Parameters
@@ -385,7 +379,7 @@ cdef class LogStage:
 
         See Also
         --------
-        LogStage.setVisible,  petsc.PetscLogStageSetVisible
+        LogStage.setVisible, petsc.PetscLogStageSetVisible
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -401,8 +395,6 @@ cdef class LogStage:
         ----------
         flag : bool
             `True` if the stage is visible, `False` otherwise.
-            
-            The visibility flag.
 
         See Also
         --------
@@ -514,7 +506,7 @@ cdef class LogEvent:
 
     
 
-    def begin(self, *objs):
+    def begin(self, *objs) -> None:
         """Log the beginning of a user event.
 
         Not Collective.
@@ -533,7 +525,7 @@ cdef class LogEvent:
         event_args2objs(objs, o)
         CHKERR( PetscLogEventBegin(self.id, o[0], o[1], o[2], o[3]) )
 
-    def end(self, *objs):
+    def end(self, *objs) -> None:
         """Log the end of a user event.
 
         Not Collective.
@@ -567,7 +559,7 @@ cdef class LogEvent:
 
     #
 
-    def activate(self):
+    def activate(self) -> None:
         """Indicate that the event should be logged.
 
         Not Collective
@@ -579,7 +571,7 @@ cdef class LogEvent:
         """
         CHKERR( PetscLogEventActivate(self.id) )
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         """Indicate that the event should not be logged.
         
         Not Collective
@@ -595,8 +587,8 @@ cdef class LogEvent:
         <void>self # unused
         raise NotImplementedError
 
-    def setActive(self, flag: bool):
-        """Indicate if the event should be not be logged.
+    def setActive(self, flag: bool) -> None:
+        """Indicate if the event should be or not be logged.
 
         Not Collective
 
@@ -625,7 +617,7 @@ cdef class LogEvent:
         <void>self # unused
         raise NotImplementedError
 
-    def setActiveAll(self, flag):
+    def setActiveAll(self, flag: bool) -> None:
         """Turn on logging of all events.
 
         Parameters
