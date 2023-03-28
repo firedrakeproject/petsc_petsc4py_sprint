@@ -671,31 +671,21 @@ cdef class DMPlex(DM):
         assert norie == ncone
         CHKERR( DMPlexSetConeOrientation(self.dm, cp, iorie) )
 
-    def setCellType(self, p, ctype):
-        """DMPlexSetCellType - Set the polytope type of a given cell
+    def setCellType(self, p: int, ctype: DMPolytopeType) -> None:
+        """Set the polytope type of a given cell.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        cell
-            The cell
-        celltype
-            The polytope type of the cell
-
-        Note:
-        By default, cell types will be automatically computed using `DMPlexComputeCellTypes` before this function
-        is executed. This function will override the computed type. However, if automatic classification will not succeed
-        and a user wants to manually specify all types, the classification must be disabled by calling
-        DMCreaateLabel(dm, "celltype") before getting or setting any cell types.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellTypeLabel`, `DMPlexGetDepthLabel`, `DMPlexGetDepth`, `DMPlexComputeCellTypes`, `DMCreateLabel`
+        p
+            The cell.
+        ctype
+            The polytope type of the cell.
 
         See Also
         --------
-        petsc.DMPlexSetCellType
+        `DM`, `DMPlex`, `DMPlex.getCellTypeLabel`, `DMPlex.getDepthLabel`, `DMPlex.getDepth`, `DMPlex.computeCellTypes`, `DM.createLabel`, petsc.DMPlexSetCellType
 
         """
         cdef PetscInt cp = asInt(p)
