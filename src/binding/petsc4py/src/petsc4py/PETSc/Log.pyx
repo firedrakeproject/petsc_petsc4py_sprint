@@ -50,6 +50,26 @@ cdef class Log:
 
     @classmethod
     def begin(cls, all=False):
+        """Turn on the logging of the objects and events.
+
+        Parameters
+        ----------
+        all : bool, optional
+
+        Notes
+        -----
+        if all=True, an extensive logging is provided, which 
+        creates large log files and shows the program down.
+        if all=False, the default logging functions are used.
+        This logs flop rates and object creation and should 
+        not slow programs down too much. This routine may be 
+        called more than once.
+
+        See Also
+        --------
+        petsc: PetscLogAllBegin
+        petsc: PetscLogDefaultBegin
+        """
         if all: CHKERR( PetscLogAllBegin() )
         else:   CHKERR( PetscLogDefaultBegin() )
 
@@ -60,6 +80,8 @@ cdef class Log:
         Parameters
         ----------
         viewer : an ASCII viewer, optional
+            Viewer instance. If ``None`` then will default to an instance of
+            `Viewer.Type.ASCII`.
         
         See Also
         --------
@@ -139,7 +161,12 @@ cdef class Log:
 
     @classmethod
     def getCPUTime(cls):
-
+        """Get the CPU time.
+        
+        Returns
+        -------
+        cputime : double
+        """
         cdef PetscLogDouble cputime=0
         CHKERR( PetscGetCPUTime(&cputime) )
         return cputime
@@ -148,6 +175,8 @@ cdef class Log:
     def EventDecorator(cls, name=None, klass=None):
         """Decorate a function with a PETSc event.
 
+        Notes
+        -----
         If no event name is specified it will default to the name of the function.
         
         Usage:
@@ -237,6 +266,8 @@ cdef class LogStage:
     #
 
     def getName(self):
+        """
+        """
         cdef const char *cval = NULL
         CHKERR( PetscLogStageFindName(self.id, &cval) )
         return bytes2str(cval)
@@ -575,11 +606,9 @@ cdef class LogEvent:
         ----------
         stage : int, optional
 
-
         Returns
         -------
         info : etscEventPerfInfo
-
             This structure is filled with the performance information.
         
         See Also
