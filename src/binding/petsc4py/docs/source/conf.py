@@ -14,6 +14,10 @@ import sys
 import typing
 import datetime
 import importlib
+import sphobjinv
+import functools
+from sphinx.ext.napoleon.docstring import NumpyDocstring
+
 sys.path.insert(0, os.path.abspath('.'))
 _today = datetime.datetime.now()
 
@@ -88,13 +92,42 @@ autosummary_context = {
     'autotype': {},
 }
 
+
+def _mangle_petsc_intersphinx():
+    """Preprocess the keys in PETSc's intersphinx inventory.
+
+    PETSc have intersphinx keys of the form::
+
+        manualpages/Vec/VecShift
+
+    instead of:
+
+        petsc.VecShift
+
+    This function downloads their object inventory and strips the leading path
+    elements so that references to PETSc names actually resolve."""
+    inv = sphobjinv.Inventory(url="https://petsc.org/main/objects.inv")
+
+    for obj in inv.objects:
+        if obj.name.startswith("manualpages"):
+            obj.name = "petsc." + "/".join(obj.name.split("/")[2:])
+            obj.role = "class"
+            obj.domain = "py"
+
+    sphobjinv.writebytes("petsc_objects.inv",
+                         sphobjinv.compress(inv.data_file(contract=True)))
+
+
+_mangle_petsc_intersphinx()
+
+
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'mpi4py': ('https://mpi4py.readthedocs.io/en/stable/', None),
     'pyopencl': ('https://documen.tician.de/pyopencl/', None),
     'dlpack': ('https://dmlc.github.io/dlpack/latest/', None),
-    'petsc': ('https://petsc.org/main/', None),
+    'petsc': ('https://petsc.org/main/', 'petsc_objects.inv'),
 }
 
 napoleon_preprocess_types = True
@@ -132,12 +165,18 @@ def _setup_mpi4py_typing():
     try:
         import mpi4py
     except ImportError:
-        mod = type(sys)('mpi4py')
-        sys.modules[mod.__name__] = mod
-        mod.MPI = type(sys)('mpi4py.MPI')
-        sys.modules[mod.MPI.__name__] = mod.MPI
-        mod.MPI.Intracomm = type('Intracomm', (), {})
-        mod.MPI.Intracomm.__module__ = mod.MPI.__name__
+        pkg = type(sys)('mpi4py')
+        sys.modules[pkg.__name__] = pkg
+        pkg.mod = type(sys)('mpi4py.MPI')
+        sys.modules[pkg.mod.__name__] = pkg.mod
+        for clsname in (
+            'Intracomm',
+            'Datatype',
+            'Op',
+        ):
+            cls = type(clsname, (), {})
+            cls.__module__ = pkg.mod.__name__
+            setattr(pkg.mod, clsname, cls)
 
 
 def _patch_domain_python():
@@ -185,6 +224,26 @@ def _setup_autodoc(app):
 
     app.add_autodocumenter(ClassDocumenter, override=True)
     app.add_autodocumenter(ExceptionDocumenter, override=True)
+
+
+def _monkey_patch_see_also():
+    """Rewrite the role of names in "see also" sections.
+
+    Napoleon uses :obj: for all names found in "see also" sections but we
+    need :all: so that references to labels work."""
+
+    _parse_numpydoc_see_also_section = \
+        NumpyDocstring._parse_numpydoc_see_also_section
+
+    @functools.wraps(NumpyDocstring._parse_numpydoc_see_also_section)
+    def wrapper(*args, **kwargs):
+        out = _parse_numpydoc_see_also_section(*args, **kwargs)
+        return [line.replace(":obj:", ":any:") for line in out]
+
+    NumpyDocstring._parse_numpydoc_see_also_section = wrapper
+
+
+_monkey_patch_see_also()
 
 
 def setup(app):
