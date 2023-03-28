@@ -8,13 +8,14 @@ class ISType(object):
 # --------------------------------------------------------------------
 
 cdef class IS(Object):
-    """Set of indices.
+    """A collection of indices.
 
-    IS objects are used to index into vectors and matrices and to setup vector scatters.
+    IS objects are used to index into vectors and matrices and to set up vector scatters.
 
     See Also
     --------
-    https://petsc.org/release/docs/manualpages/IS/IS/
+    petsc.IS
+
     """
 
     Type = ISType
@@ -50,47 +51,52 @@ cdef class IS(Object):
         return buf.exit()
     #
 
-    def view(self, Viewer viewer=None):
-        """Display the IS.
+    def view(self, Viewer viewer=None) -> None:
+        """Display the index set.
+
+        Collective.
 
         Parameters
         ----------
-        viewer : Viewer, optional
+        viewer
             Viewer used to display the IS.
 
         See Also
         --------
-        TODO
+        petsc.ISView
+
         """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( ISView(self.iset, cviewer) )
 
-    def destroy(self):
-        """Destroy the IS.
+    def destroy(self) -> Self:
+        """Destroy the index set.
 
-        Returns
-        -------
-        self
+        Collective.
 
         See Also
         --------
-        TODO https://petsc.org/release/docs/manualpages/IS/ISDestroy/
+        petsc.ISDestroy
+
         """
         CHKERR( ISDestroy(&self.iset) )
         return self
 
-    def create(self, comm: Optional[Comm]=None) -> Self:
+    def create(self, comm: Comm | None = None) -> Self:
         """Create an IS.
+
+        Collective.
 
         Parameters
         ----------
         comm
-            The MPI communicator, default is ``PETSC_COMM_DEFAULT``.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        manualpages/IS/ISCreate
+        petsc.ISCreate
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscIS newiset = NULL
@@ -98,56 +104,59 @@ cdef class IS(Object):
         PetscCLEAR(self.obj); self.iset = newiset
         return self
 
-    def setType(self, is_type: str) -> None:
-        """Build an IS for a particular `petsc:ISType`.
+    def setType(self, is_type: IS.Type | str) -> None:
+        """Set the type of the index set.
+
+        Collective.
 
         Parameters
         ----------
         is_type
-            The name of the index set type.
+            The index set type.
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISSetType/
+        petsc.ISSetType
+
         """
         cdef PetscISType cval = NULL
         is_type = str2bytes(is_type, &cval)
         CHKERR( ISSetType(self.iset, cval) )
 
-    def getType(self):
-        """Return the index set type name associated with the IS.
+    def getType(self) -> IS.Type | str:
+        """Return the index set type associated with the IS.
 
-        Returns
-        -------
-        str
-            Index set type name.
+        Not collective.
 
         See Also
         --------
-        petsc:ISGetType
+        petsc.ISGetType
+
         """
         cdef PetscISType cval = NULL
         CHKERR( ISGetType(self.iset, &cval) )
         return bytes2str(cval)
 
-    def createGeneral(self, indices, comm=None):
+    def createGeneral(
+        self,
+        indices: Sequence[int],
+        comm: Comm | None = None
+    ) -> Self:
         """Create an IS with indices.
+
+        Collective.
 
         Parameters
         ----------
         indices
             Integer array.
-        comm : optional
-            MPI communicator. 
-
-        Returns
-        -------
-        IS
-            A new IS.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        petsc:ISCreateGeneral
+        petsc.ISCreateGeneral
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt nidx = 0, *idx = NULL
@@ -158,26 +167,29 @@ cdef class IS(Object):
         PetscCLEAR(self.obj); self.iset = newiset
         return self
 
-    def createBlock(self, bsize, indices, comm=None):
-        """Create an IS where each integer represents a fixed block of indices.
+    def createBlock(
+        self,
+        bsize: int,
+        indices: Sequence[int],
+        comm: Comm | None = None
+    ) -> Self:
+        """Create an index set where each index represents a fixed block of indices.
+
+        Collective.
 
         Parameters
         ----------
-        bsize : int
-            The block size.
-        indices : array_like
+        bsize
+            Block size.
+        indices
             Integer array of indices.
-        comm : optional
-            MPI communicator.
-
-        Returns
-        -------
-        IS
-            The new, blocked, IS.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        petsc:ISCreateBlock
+        petsc.ISCreateBlock
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt bs = asInt(bsize)
@@ -189,8 +201,16 @@ cdef class IS(Object):
         PetscCLEAR(self.obj); self.iset = newiset
         return self
 
-    def createStride(self, size: int, first: int=0, step: int=0, comm: Optional[Comm]=None) -> Self:
+    def createStride(
+        self,
+        size: int,
+        first: int=0,
+        step: int=0,
+        comm: Comm | None = None
+    ) -> Self:
         """Create an index set consisting of evenly spaced values.
+
+        Collective.
 
         Parameters
         ----------
@@ -201,11 +221,12 @@ cdef class IS(Object):
         step
             The difference between adjacent indices.
         comm
-            The MPI communicator.
+            The MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        petsc:ISCreateStride
+        petsc.ISCreateStride
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt csize  = asInt(size)
@@ -219,35 +240,36 @@ cdef class IS(Object):
     def duplicate(self) -> IS:
         """Create a copy of the index set.
 
-        Returns
-        -------
-        IS
-            The new IS.
+        Collective.
 
         See Also
         --------
-        petsc:ISDuplicate
+        IS.copy, petsc.ISDuplicate
+
         """
         cdef IS iset = type(self)()
         CHKERR( ISDuplicate(self.iset, &iset.iset) )
         return iset
 
-    def copy(self, IS result: Optional[IS]=None) -> IS:
-        """Copy the contents of the IS into another.
+    def copy(self, IS result: IS | None = None) -> IS:
+        """Copy the contents of the index set into another.
+
+        Collective.
 
         Parameters
         ----------
         result
-            The target index set. If ``None`` then `IS.duplicate` is called first.
+            The target index set. If `None` then `IS.duplicate` is called first.
 
         Returns
         -------
-        result : IS
-            The copied IS.
+        IS
+            The copied index set. If ``result`` is not `None` then this is returned here.
 
         See Also
         --------
-        petsc:ISCopy
+        IS.duplicate, petsc.ISCopy
+
         """
         if result is None:
             result = type(self)()
@@ -256,17 +278,20 @@ cdef class IS(Object):
         CHKERR( ISCopy(self.iset, result.iset) )
         return result
 
-    def load(self, Viewer viewer: Viewer) -> Self:
+    def load(self, Viewer viewer) -> Self:
         """Load a stored index set.
+
+        Collective.
 
         Parameters
         ----------
-        viewer : Viewer
-            Binary (``BINARY`` or ``HDF5``) file viewer.
+        viewer
+            Binary file viewer, either `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
 
         See Also
         --------
-        petsc:ISLoad
+        petsc.ISLoad
+
         """
         cdef MPI_Comm comm = MPI_COMM_NULL
         cdef PetscObject obj = <PetscObject>(viewer.vwr)
@@ -279,33 +304,56 @@ cdef class IS(Object):
     def allGather(self) -> IS:
         """Concatenate index sets stored across processors.
 
-        Returns
-        -------
-        IS
-            The concatenated index set (same on different processes).
+        The returned index set will be the same on every processor.
+
+        Collective.
 
         See Also
         --------
-        petsc:ISAllGather
+        petsc.ISAllGather
+
         """
         cdef IS iset = IS()
         CHKERR( ISAllGather(self.iset, &iset.iset) )
         return iset
 
     def toGeneral(self) -> Self:
-        """Convert the index set type to ``"general"``.
+        """Convert the index set type to `IS.Type.GENERAL`.
+
+        Collective.
 
         See Also
         --------
-        petsc:ISToGeneral
-        petsc:ISType
+        petsc.ISToGeneral, petsc.ISType
+
         """
         CHKERR( ISToGeneral(self.iset) )
         return self
 
-    def buildTwoSided(self, IS toindx=None):
-        """
-        TODO
+    def buildTwoSided(self, IS toindx=None) -> IS:
+        """Return an index set that describes where each element will be mapped
+        globally over all ranks.
+
+        This function generates an index set that contains new numbers from
+        remote or local on the index set.
+
+        Collective.
+
+        Parameters
+        ----------
+        toindx
+            Index set describing which indices to send, default is to send
+            natural numbering.
+
+        Returns
+        -------
+        IS
+            New index set containing the new numbers from remote or local.
+
+        See Also
+        --------
+        petsc.ISBuildTwoSided
+
         """
         cdef PetscIS ctoindx = NULL
         if toindx is not None: ctoindx = toindx.iset
@@ -313,23 +361,23 @@ cdef class IS(Object):
         CHKERR( ISBuildTwoSided(self.iset, ctoindx, &result.iset) )
         return result
 
-    def invertPermutation(self, nlocal: Optional[int]=None) -> IS:
-        """Creates a new permutation that is the inverse of a given permutation.
+    def invertPermutation(self, nlocal: int | None = None) -> IS:
+        """Invert the index set.
+
+        For this to be correct the index set must be a permutation.
+
+        Collective.
 
         Parameters
         ----------
         nlocal
-            The number of indices on this processor in the result
-            (default ``PETSC_DECIDE``).
-
-        Returns
-        -------
-        IS
-            The inverted permutation.
+            The number of indices on this processor in the resulting index set,
+            defaults to `PETSC_DECIDE`.
 
         See Also
         --------
-        petsc:ISInvertPermutation
+        petsc.ISInvertPermutation
+
         """
         cdef PetscInt cnlocal = PETSC_DECIDE
         if nlocal is not None: cnlocal = asInt(nlocal)
@@ -340,14 +388,12 @@ cdef class IS(Object):
     def getSize(self) -> int:
         """Return the global length of an index set.
 
-        Returns
-        -------
-        int
-            The global size.
+        Not collective.
 
         See Also
         --------
-        petsc:ISGetSize
+        petsc.ISGetSize
+
         """
         cdef PetscInt N = 0
         CHKERR( ISGetSize(self.iset, &N) )
@@ -356,14 +402,12 @@ cdef class IS(Object):
     def getLocalSize(self) -> int:
         """Return the process-local length of the index set.
 
-        Returns
-        -------
-        int
-            The local size.
+        Not collective.
 
         See Also
         --------
-        petsc:ISGetLocalSize
+        petsc.ISGetLocalSize
+
         """
         cdef PetscInt n = 0
         CHKERR( ISGetLocalSize(self.iset, &n) )
@@ -371,6 +415,8 @@ cdef class IS(Object):
 
     def getSizes(self) -> tuple[int, int]:
         """Return the local and global sizes of the index set.
+
+        Not collective.
 
         Returns
         -------
@@ -383,6 +429,7 @@ cdef class IS(Object):
         --------
         IS.getLocalSize
         IS.getGlobalSize
+
         """
         cdef PetscInt n = 0, N = 0
         CHKERR( ISGetLocalSize(self.iset, &n) )
@@ -392,14 +439,12 @@ cdef class IS(Object):
     def getBlockSize(self) -> int:
         """Return the number of elements in a block.
 
-        Returns
-        -------
-        int
-            Number of elements in a block.
+        Not collective.
 
         See Also
         --------
-        petsc:ISGetBlockSize
+        petsc.ISGetBlockSize
+
         """
         cdef PetscInt bs = 1
         CHKERR( ISGetBlockSize(self.iset, &bs) )
@@ -408,6 +453,8 @@ cdef class IS(Object):
     def setBlockSize(self, bs: int) -> None:
         """Set the block size of the index set.
 
+        Logically collective.
+
         Parameters
         ----------
         bs
@@ -415,7 +462,8 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISSetBlockSize
+        petsc.ISSetBlockSize
+
         """
         cdef PetscInt cbs = asInt(bs)
         CHKERR( ISSetBlockSize(self.iset, cbs) )
@@ -423,24 +471,25 @@ cdef class IS(Object):
     def sort(self) -> Self:
         """Sort the indices of an index set.
 
+        Collective.
+
         See Also
         --------
-        petsc:ISSort
+        petsc.ISSort
+
         """
         CHKERR( ISSort(self.iset) )
         return self
 
     def isSorted(self) -> bool:
-        """Check that the indices have been sorted.
+        """Return whether the indices have been sorted.
 
-        Returns
-        -------
-        bool
-            ``True`` if the index set is sorted, ``False`` otherwise.
+        Collective.
 
         See Also
         --------
-        petsc:ISSorted
+        petsc.ISSorted
+
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISSorted(self.iset, &flag) )
@@ -449,25 +498,25 @@ cdef class IS(Object):
     def setPermutation(self) -> Self:
         """Mark the index set as being a permutation.
 
+        Logically collective.
+
         See Also
         --------
-        petsc:ISSetPermutation
+        petsc.ISSetPermutation
+
         """
         CHKERR( ISSetPermutation(self.iset) )
         return self
 
     def isPermutation(self) -> bool:
-        """Check if an index set has been declared to be a permutation.
+        """Return whether an index set has been declared to be a permutation.
 
-        Returns
-        -------
-        bool
-            ``True`` if the index set has been declared to be a permutation,
-            ``False`` otherwise.
+        Logically collective.
 
         See Also
         --------
-        petsc:ISPermutation
+        petsc.ISPermutation
+
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISPermutation(self.iset, &flag) )
@@ -476,66 +525,75 @@ cdef class IS(Object):
     def setIdentity(self) -> Self:
         """Mark the index set as being an identity.
 
+        Logically collective.
+
         See Also
         --------
-        petsc:ISSetIdentity
+        petsc.ISSetIdentity
+
         """
         CHKERR( ISSetIdentity(self.iset) )
         return self
 
     def isIdentity(self) -> bool:
-        """Return ``True`` if the index set has been declared as an identity.
+        """Return whether the index set has been declared as an identity.
+
+        Collective.
 
         See Also
         --------
-        petsc:ISIdentity
+        petsc.ISIdentity
+
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISIdentity(self.iset, &flag) )
         return toBool(flag)
 
-    def equal(self, IS iset: IS) -> bool:
-        """Return ``True`` if the index sets have the same set of indices.
+    def equal(self, IS iset) -> bool:
+        """Return whether the index sets have the same set of indices or not.
+
+        Collective on ``self``.
 
         Parameters
         ----------
         iset
-            The `IS` to compare indices with.
+            The index set to compare indices with.
 
         See Also
         --------
-        petsc:ISEqual
+        petsc.ISEqual
+
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( ISEqual(self.iset, iset.iset, &flag) )
         return toBool(flag)
 
-    def sum(self, IS iset: IS) -> IS:
+    def sum(self, IS iset) -> IS:
         """Compute the union of two (sorted) index sets.
+
+        Sequential only.
 
         Parameters
         ----------
-        iset : IS
+        iset
             The index set to compute the union with.
-
-        Returns
-        -------
-        IS
-            The new combined index set.
 
         See Also
         --------
-        petsc:ISSum
+        petsc.ISSum
+
         """
         cdef IS out = IS()
         CHKERR( ISSum(self.iset, iset.iset, &out.iset) )
         return out
 
-    def expand(self, IS iset: IS) -> IS:
+    def expand(self, IS iset) -> IS:
         """Compute the union of two (possibly unsorted) index sets.
 
         To compute the union, `expand` concatenates the two index sets
         and removes any duplicates.
+
+        Collective on ``self``.
 
         Parameters
         ----------
@@ -549,17 +607,20 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISExpand
+        petsc.ISExpand
+
         """
         cdef IS out = IS()
         CHKERR( ISExpand(self.iset, iset.iset, &out.iset) )
         return out
 
-    def union(self, IS iset: IS) -> IS: # XXX review this
+    def union(self, IS iset) -> IS: # XXX review this
         """Compute the union of two (possibly unsorted) index sets.
 
-        This function will call either `IS.sum` or `IS.sorted` depending
+        This function will call either `petsc.ISSum` or `petsc.ISExpand` depending
         on whether or not the input sets are already sorted.
+
+        Sequential only (as `petsc.ISSum` is sequential only).
 
         Parameters
         ----------
@@ -570,6 +631,11 @@ cdef class IS(Object):
         -------
         IS
             The new, combined, index set.
+
+        See Also
+        --------
+        IS.expand, IS.sum
+
         """
         cdef PetscBool flag1=PETSC_FALSE, flag2=PETSC_FALSE
         CHKERR( ISSorted(self.iset, &flag1) )
@@ -584,6 +650,8 @@ cdef class IS(Object):
     def difference(self, IS iset: IS) -> IS:
         """Compute the difference between two index sets.
 
+        Collective on ``self``.
+
         Parameters
         ----------
         iset
@@ -596,7 +664,8 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISDifference
+        petsc.ISDifference
+
         """
         cdef IS out = IS()
         CHKERR( ISDifference(self.iset, iset.iset, &out.iset) )
@@ -608,6 +677,8 @@ cdef class IS(Object):
         The complement set of indices is all indices that are not
         in the provided set (and within the provided bounds).
 
+        Collective.
+
         Parameters
         ----------
         nmin
@@ -615,14 +686,10 @@ cdef class IS(Object):
         nmax
             Maximum index that can be found in the complement index set.
 
-        Returns
-        -------
-        IS
-            Complement index set.
-
         See Also
         --------
-        petsc:ISComplement
+        petsc.ISComplement
+
         """
         cdef PetscInt cnmin = asInt(nmin)
         cdef PetscInt cnmax = asInt(nmax)
@@ -630,19 +697,21 @@ cdef class IS(Object):
         CHKERR( ISComplement(self.iset, cnmin, cnmax, &out.iset) )
         return out
 
-    def embed(self, IS iset: IS, drop: bool) -> IS:
-        """Embed `self` into `iset`.
+    def embed(self, IS iset, drop: bool) -> IS:
+        """Embed ``self`` into ``iset``.
 
-        The embedding is performed by finding the locations in `iset` that
-        have the same indices as `self`.
+        The embedding is performed by finding the locations in ``iset`` that
+        have the same indices as ``self``.
+
+        Not collective.
 
         Parameters
         ----------
         iset
-            The `IS` to embed into.
+            The index set to embed into.
         drop
-            Flag indicating whether to drop indices from `self` that are not
-            in `iset`.
+            Flag indicating whether to drop indices from ``self`` that are not
+            in ``iset``.
 
         Returns
         -------
@@ -651,32 +720,36 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISEmbed
+        petsc.ISEmbed
+
         """
         cdef PetscBool bval = drop
         cdef IS out = IS()
         CHKERR( ISEmbed(self.iset, iset.iset, bval, &out.iset) )
         return out
 
-    def renumber(self, IS mult: Optional[IS]=None) -> tuple[int, IS]:
+    def renumber(self, IS mult=None) -> tuple[int, IS]:
         """Renumber the non-negative entries of an index set, starting from 0.
+
+        Collective.
 
         Parameters
         ----------
         mult
-            The multiplicity of each entry in `self`. If ``None`` then will
-            default to 1.
+            The multiplicity of each entry in ``self``, default implies a
+            multiplicity of 1.
 
         Returns
         -------
         int
-            One past the largest entry of the new `IS`.
+            One past the largest entry of the new index set.
         IS
-            The new index set.
+            The renumbered index set.
 
         See Also
         --------
-        petsc:ISRenumber
+        petsc.ISRenumber
+
         """
         cdef PetscIS mlt = NULL
         if mult is not None: mlt = mult.iset
@@ -689,11 +762,14 @@ cdef class IS(Object):
     def setIndices(self, indices: Sequence[int]) -> None:
         """Set the indices of an index set.
 
-        The index set is assumed to have `petsc:ISType` ``"general"``.
+        The index set is assumed to be of type `IS.Type.GENERAL`.
+
+        Logically collective.
 
         See Also
         --------
-        petsc:ISGeneralSetIndices
+        petsc.ISGeneralSetIndices
+
         """
         cdef PetscInt nidx = 0, *idx = NULL
         cdef PetscCopyMode cm = PETSC_COPY_VALUES
@@ -703,9 +779,12 @@ cdef class IS(Object):
     def getIndices(self) -> NDArray[int]:
         """Return the indices of the index set.
 
+        Not collective.
+
         See Also
         --------
-        petsc:ISGetIndices
+        petsc.ISGetIndices
+
         """
         cdef PetscInt size = 0
         cdef const PetscInt *indices = NULL
@@ -719,7 +798,9 @@ cdef class IS(Object):
         return oindices
 
     def setBlockIndices(self, bsize: int, indices: Sequence[int]) -> None:
-        """Set the indices for an index set with `petsc:ISType` ``"block"``.
+        """Set the indices for an index set with type `IS.Type.BLOCK`.
+
+        Collective.
 
         Parameters
         ----------
@@ -730,7 +811,8 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISBlockSetIndices
+        petsc.ISBlockSetIndices
+
         """
         cdef PetscInt bs = asInt(bsize)
         cdef PetscInt nidx = 0, *idx = NULL
@@ -739,11 +821,14 @@ cdef class IS(Object):
         CHKERR( ISBlockSetIndices(self.iset, bs, nidx, idx, cm) )
 
     def getBlockIndices(self) -> NDArray[int]:
-        """Return the indices of an index set with `petsc:ISType` ``"block"``.
+        """Return the indices of an index set with type `IS.Type.BLOCK`.
+
+        Not collective.
 
         See Also
         --------
-        petsc:ISBlockGetIndices
+        petsc.ISBlockGetIndices
+
         """
         cdef PetscInt size = 0, bs = 1
         cdef const PetscInt *indices = NULL
@@ -758,7 +843,9 @@ cdef class IS(Object):
         return oindices
 
     def setStride(self, size: int, first: int=0, step: int=1) -> None:
-        """Set the stride information for a strided index set.
+        """Set the stride information for an index set with type `IS.Type.STRIDE`.
+
+        Logically collective.
 
         Parameters
         ----------
@@ -771,7 +858,8 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISStrideSetStride
+        petsc.ISStrideSetStride
+
         """
         cdef PetscInt csize = asInt(size)
         cdef PetscInt cfirst = asInt(first)
@@ -779,7 +867,10 @@ cdef class IS(Object):
         CHKERR( ISStrideSetStride(self.iset, csize, cfirst, cstep) )
 
     def getStride(self) -> tuple[int, int, int]:
-        """Return size and stride information for a strided index set.
+        """Return size and stride information for an index set with type
+        `IS.Type.STRIDE`.
+
+        Not collective.
 
         Returns
         -------
@@ -792,8 +883,9 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISGetLocalSize
-        petsc:ISStrideGetInfo
+        petsc.ISGetLocalSize
+        petsc.ISStrideGetInfo
+
         """
         cdef PetscInt size=0, first=0, step=0
         CHKERR( ISGetLocalSize(self.iset, &size) )
@@ -801,7 +893,9 @@ cdef class IS(Object):
         return (toInt(size), toInt(first), toInt(step))
 
     def getInfo(self) -> tuple[int, int]:
-        """Return stride information for a strided index set.
+        """Return stride information for an index set with type `IS.Type.STRIDE`.
+
+        Not collective.
 
         Returns
         -------
@@ -812,7 +906,8 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc:ISStrideGetInfo
+        IS.getStride, petsc.ISStrideGetInfo
+
         """
         cdef PetscInt first = 0, step = 0
         CHKERR( ISStrideGetInfo(self.iset, &first, &step) )
@@ -821,31 +916,40 @@ cdef class IS(Object):
     #
 
     property permutation:
-        """``True`` if index set is a permutation, ``False`` otherwise.
+        """`True` if index set is a permutation, `False` otherwise.
+
+        Logically collective.
         
         See Also
         --------
         IS.isPermutation
+
         """
         def __get__(self) -> bool:
             return self.isPermutation()
 
     property identity:
-        """``True`` if index set is an identity, ``False`` otherwise.
+        """`True` if index set is an identity, `False` otherwise.
+
+        Collective.
         
         See Also
         --------
         IS.isIdentity
+
         """
         def __get__(self) -> bool:
             return self.isIdentity()
 
     property sorted:
-        """``True`` if index set is sorted, ``False`` otherwise.
+        """`True` if index set is sorted, `False` otherwise.
+
+        Collective.
         
         See Also
         --------
         IS.isSorted
+
         """
         def __get__(self) -> bool:
             return self.isSorted()
@@ -854,56 +958,75 @@ cdef class IS(Object):
 
     property sizes:
         """The local and global sizes of the index set.
+
+        Not collective.
         
         See Also
         --------
         IS.getSizes
+
         """
         def __get__(self) -> tuple[int, int]:
             return self.getSizes()
 
     property size:
         """The global size of the index set.
+
+        Not collective.
         
         See Also
         --------
         IS.getSize
+
         """
         def __get__(self) -> int:
             return self.getSize()
 
     property local_size:
         """The local size of the index set.
+
+        Not collective.
         
         See Also
         --------
         IS.getLocalSize
+
         """
         def __get__(self) -> int:
             return self.getLocalSize()
 
     property block_size:
         """The number of elements in a block.
+
+        Not collective.
         
         See Also
         --------
         IS.getBlockSize
+
         """
         def __get__(self) -> int:
             return self.getBlockSize()
 
     property indices:
         """The indices of the index set.
+
+        Not collective.
         
         See Also
         --------
         IS.getIndices
+
         """
         def __get__(self) -> NDArray[int]:
             return self.getIndices()
 
     property array:
-        """View of the index set as an array of integers."""
+        """View of the index set as an array of integers.
+
+        Not collective.
+
+        """
         def __get__(self) -> NDArray[int]:
             return asarray(self)
 
@@ -921,16 +1044,19 @@ class GLMapMode(object):
     """Enum describing mapping behavior for global-to-local maps when global
     indices are missing.
 
+    Attributes
+    ----------
+    MASK
+        Give missing global indices a local index of -1.
+    DROP
+        Drop missing global indices.
+        
     See Also
     --------
-    https://petsc.org/release/docs/manualpages/IS/ISGlobalToLocalMappingMode/
+    ISGlobalToLocalMappingMode
     """
-
     MASK = PETSC_IS_GTOLM_MASK
-    """Give missing global indices a local index of -1."""
-
     DROP = PETSC_IS_GTOLM_DROP
-    """Drop missing global indices."""
 
 
 class LGMapType(object):
@@ -1096,7 +1222,7 @@ cdef class LGMap(Object):
         return self
 
     def getSize(self) -> int:
-        """Return the local size of a local-to-global mapping.
+        """Return the local size of the local-to-global mapping.
 
         See Also
         --------
@@ -1143,7 +1269,7 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetBlockIndices/
+        petsc.ISLocalToGlobalMappingGetBlockIndices
         """
         cdef PetscInt size = 0, bs = 1
         cdef const PetscInt *indices = NULL
@@ -1330,7 +1456,26 @@ cdef class LGMap(Object):
                 self.lgm, cmode, n, idx, &nout, idxout) )
         return result
 
-    def applyBlockInverse(self, indices, mode=None):
+    def applyBlockInverse(self, indices: Sequence[int], mode: Optional[LGMap.MapMode|str]=None) -> NDArray[int]:
+        """Compute the local block numbering of an array of indices provided
+        with a global block numbering.
+
+        Parameters
+        ----------
+        indices
+            Indices with a global block numbering.
+        mode
+            Flag indicating what to do with indices that have no local value.
+
+        Returns
+        -------
+        NDArray[int]
+            Indices with a local block numbering.
+
+        See Also
+        --------
+        https://petsc.org/release/docs/manualpages/IS/ISGlobalToLocalMappingApplyBlock/
+        """
         cdef PetscGLMapMode cmode = PETSC_IS_GTOLM_MASK
         if mode is not None: cmode = mode
         cdef PetscInt n = 0, *idx = NULL
@@ -1346,27 +1491,67 @@ cdef class LGMap(Object):
     #
 
     property size:
-        def __get__(self):
+        """The local size.
+
+        See Also
+        --------
+        LGMap.getSize
+        """
+        def __get__(self) -> int:
             return self.getSize()
 
     property block_size:
-        def __get__(self):
+        """The block size.
+
+        See Also
+        --------
+        LGMap.getBlockSize
+        """
+        def __get__(self) -> int:
             return self.getBlockSize()
 
     property indices:
-        def __get__(self):
+        """The global indices for each local point in the mapping.
+
+        See Also
+        --------
+        LGMap.getIndices
+        petsc.ISLocalToGlobalMappingGetIndices
+        """
+        def __get__(self) -> NDArray[int]:
             return self.getIndices()
 
     property block_indices:
-        def __get__(self):
+        """The global indices for each local block in the mapping.
+
+        See Also
+        --------
+        LGMap.getBlockIndices
+        petsc.ISLocalToGlobalMappingGetBlockIndices
+        """
+        def __get__(self) -> NDArray[int]:
             return self.getBlockIndices()
 
     property info:
-        def __get__(self):
+        """Mapping describing indices shared with neighbouring processes.
+
+        See Also
+        --------
+        LGMap.getInfo
+        petsc.ISLocalToGlobalMappingGetInfo
+        """
+        def __get__(self) -> dict[int, NDArray[int]]:
             return self.getInfo()
 
     property block_info:
-        def __get__(self):
+        """Mapping describing block indices shared with neighbouring processes.
+
+        See Also
+        --------
+        LGMap.getBlockInfo
+        petsc.ISLocalToGlobalMappingGetBlockInfo
+        """
+        def __get__(self) -> dict[int, NDArray[int]]:
             return self.getBlockInfo()
 
 # --------------------------------------------------------------------
