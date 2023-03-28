@@ -20,6 +20,11 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+# --- KSP ---
+
+cdef KSPComputeRHSFunction
+cdef KSPComputeOperatorsFunction
+
 # --- TS ---
 
 cdef TSRHSFunction

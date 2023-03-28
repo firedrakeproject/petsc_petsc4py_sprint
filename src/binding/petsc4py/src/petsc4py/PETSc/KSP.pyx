@@ -5,8 +5,9 @@ class KSPType(object):
 
     See Also
     --------
-    `petsc:KSP`
-    resolves to https://petsc.org/release/docs/manualpages/KSP/KSPType/
+    petsc.KSP
+    resolves to `https://petsc.org/release/docs/manualpages/KSP/KSPType/`__
+
     """
     RICHARDSON = S_(KSPRICHARDSON)
     CHEBYSHEV  = S_(KSPCHEBYSHEV)
@@ -99,6 +100,12 @@ class KSPConvergedReason(object):
 # --------------------------------------------------------------------
 
 cdef class KSP(Object):
+    """
+
+    Further info in
+
+    `https://petsc.org/release/docs/manual/ksp/`__
+    """
 
     Type            = KSPType
     NormType        = KSPNormType
@@ -134,8 +141,10 @@ cdef class KSP(Object):
         PetscCLEAR(self.obj); self.ksp = newksp
         return self
 
-    def setType(self, KSPType ksp_type) -> None:
+    def setType(self, ksp_type: KSP.Type | str) -> None:
         """Build the `KSP` data structure for a particular `KSPType`.
+
+        Logically collective.
 
         Parameters
         ----------
@@ -163,6 +172,7 @@ cdef class KSP(Object):
         See also
         --------
         KSPSetType
+
         """
         cdef PetscKSPType cval = NULL
         ksp_type = str2bytes(ksp_type, &cval)
@@ -171,17 +181,21 @@ cdef class KSP(Object):
     def getType(self) -> str:
         """Get the KSP type as a string from the `KSP` object.
 
+        Not collective.
+
         See also
         --------
         KSPGetType
+
         """
         cdef PetscKSPType cval = NULL
         CHKERR( KSPGetType(self.ksp, &cval) )
         return bytes2str(cval)
 
     def setOptionsPrefix(self, prefix: str) -> None:
-        """Set the prefix used for searching for all `KSP` options in
-        the database.
+        """Set the prefix used for all `KSP` options in the database.
+
+        Logically collective.
 
         Parameters
         ----------
@@ -210,26 +224,30 @@ cdef class KSP(Object):
         See also
         --------
         KSPSetOptionsPrefix
+
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( KSPSetOptionsPrefix(self.ksp, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Get the prefix used for searching for all `KSP` options in
-        the database.
+        """Get the prefix used for all `KSP` options in the database.
+
+        Not collective.
 
         See also
         --------
         KSPGetOptionsPrefix
+
         """
         cdef const char *cval = NULL
         CHKERR( KSPGetOptionsPrefix(self.ksp, &cval) )
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix: str) -> None:
-        """Appends to the prefix used for searching for all `KSP`
-        options in the database.
+        """Append to prefix used for all `KSP` options in the database.
+
+        Logically collective.
 
         Parameters
         ----------
@@ -245,6 +263,7 @@ cdef class KSP(Object):
         See also
         --------
         KSPAppendOptionsPrefix
+
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -253,27 +272,69 @@ cdef class KSP(Object):
     def setFromOptions(self) -> None:
         """Sets `KSP` options from the options database.
 
+        Collective.
+
         This routine must be called before `KSP.SetUp` if the user is
         to be allowed to set the Krylov type.
 
         See also
         --------
-        set_options
-        KSPSetFromOptions
+        petsc_options, KSPSetFromOptions
+
         """
         CHKERR( KSPSetFromOptions(self.ksp) )
 
     # --- application context ---
 
-    def setAppCtx(self, appctx):
+    def setAppCtx(self, appctx: Any) -> None:
+        """Set the optional user-defined context for the linear solver.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        appctx
+            The user defined context
+
+        Notes
+        -----
+        The user context is a way for users to attach any information
+        to the `KSP` that they may need later when interacting with the
+        KSP.
+        Use `KSP.getAppCtx` to get access to the context at a later
+        time.
+
+        See also
+        --------
+        KSPSetApplicationContext
+
+        """
         self.set_attr('__appctx__', appctx)
 
-    def getAppCtx(self):
+    def getAppCtx(self) -> Any:
+        """Get the user-defined context for the linear solver.
+
+        Not collective
+
+        See also
+        --------
+        KSPGetApplicationContext
+
+        """
         return self.get_attr('__appctx__')
 
     # --- discretization space ---
 
-    def getDM(self):
+    def getDM(self) -> DM:
+        """Get the `DM` that may be used by some preconditioners.
+
+        Not collective.
+
+        See also
+        --------
+        KSPGetDM, KSP, DM
+
+        """
         cdef PetscDM newdm = NULL
         CHKERR( KSPGetDM(self.ksp, &newdm) )
         cdef DM dm = subtype_DM(newdm)()
@@ -281,48 +342,245 @@ cdef class KSP(Object):
         PetscINCREF(dm.obj)
         return dm
 
-    def setDM(self, DM dm):
+    def setDM(self, DM dm) -> None:
+        """Set the `DM` that may be used by some preconditioners
+
+        Logically collective.
+
+        Parameters
+        ----------
+        dm
+            the dm, cannot be ``None``
+
+        Notes
+        -----
+        If this is used then the `KSP` will attempt to use the `DM` to
+        create the matrix and use the routine set with
+        `DM.setKSPComputeOperators`. Use ``KSP.setDMActive(False)``
+        to instead use the matrix you have provided with
+        `KSP.setOperators`.
+
+        A `DM` can only be used for solving one problem at a time
+        because information about the problem is stored on the DM, even
+        when not using interfaces like `DM.setKSPComputeOperators`. Use
+        `DM.clone` to get a distinct `DM` when solving different
+        problems using the same function space.
+
+        See also
+        --------
+        KSP, DM, DM.setKSPComputeOperators, KSP.setOperators, DM.clone,
+        KSPSetDM
+
+        """
         CHKERR( KSPSetDM(self.ksp, dm.dm) )
 
-    def setDMActive(self, bint flag):
+    def setDMActive(self, bint flag) -> None:
+        """`DM` should be used to generate system matrix & RHS vector.
+
+        Logically collective
+
+        Parameters
+        ----------
+        flag
+            Boolean whether to use the `DM` (or not)
+
+        Notes
+        -----
+        By default `KSP.setDM` sets the `DM` as active, call
+        ``KSP.setDMActive(False)`` after ``KSP.setDM(dm)`` to not
+        have the `KSP` object use the `DM` to generate the matrices.
+
+        See also
+        --------
+        KSP, DM, KSP.setDM, KSPSetDMActive
+
+        """
         cdef PetscBool cflag = PETSC_FALSE
         if flag: cflag = PETSC_TRUE
         CHKERR( KSPSetDMActive(self.ksp, cflag) )
 
     # --- operators and preconditioner ---
 
-    def setComputeRHS(self, rhs, args=None, kargs=None):
+    def setComputeRHS(
+        self,
+        rhs: KSPComputeRHSFunction,
+        args: tuple = None,
+        kargs: dict = None
+    ) -> None:
+        """Set routine to compute the right hand side of the linear system.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        rhs
+            Function which computes the right hand side.
+        args
+            Positional arguments for callback function ``rhs``.
+        kargs
+            Keyword arguments for callback function ``rhs``.
+
+        Notes
+        -----
+        The routine you provide will be called EACH you call `KSP.solve`
+        to prepare the new right hand side for that solve.
+
+        See also:
+        ---------
+        KSP, KSP.solve, KSPSetComputeRHS
+
+        """
         if args  is None: args  = ()
         if kargs is None: kargs = {}
         context = (rhs, args, kargs)
         self.set_attr('__rhs__', context)
         CHKERR( KSPSetComputeRHS(self.ksp, KSP_ComputeRHS, <void*>context) )
 
-    def setComputeOperators(self, operators, args=None, kargs=None):
+    def setComputeOperators(
+        self,
+        operators: KSPComputeOperatorsFunction,
+        args=None,
+        kargs=None
+    ) -> None:
+        """Set routine to compute the linear operators.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        operators
+            Function which computes the operators.
+        args
+            Positional arguments for callback function ``operators``.
+        kargs
+            Keyword arguments for callback function ``operators``.
+
+        Notes
+        -----
+        The user provided function `operators` will be called
+        automatically at the very next call to `KSP.solve`. It will NOT
+        be called at future `KSP.solve` calls unless either
+        `KSP.setComputeOperators` or `KSP.setOperators` is called
+        before that `KSP.solve` is called. This allows the same system
+        to be solved several times with different right hand side
+        functions, but is a confusing API since one might expect it to
+        be called for each `KSP.solve`.
+
+        To reuse the same preconditioner for the next `KSP.solve` and
+        not compute a new one based on the most recently computed
+        matrix call `KSP.setReusePreconditioner`.
+
+        See also
+        --------
+        KSP, KSP.solve, KSP.setOperators, KSP.setReusePreconditioner,
+        KSPSetComputeOperators
+
+        """
         if args  is None: args  = ()
         if kargs is None: kargs = {}
         context = (operators, args, kargs)
         self.set_attr('__operators__', context)
         CHKERR( KSPSetComputeOperators(self.ksp, KSP_ComputeOps, <void*>context) )
 
-    def setOperators(self, Mat A=None, Mat P=None):
+    def setOperators(self, Mat A=None, Mat P=None) -> None:
+        """Set matrix associated with the linear system.
+
+        Sets the matrix associated with the linear system and a
+        (possibly) different one from which the preconditioner will be
+        built.
+
+        Collective.
+
+        Parameters
+        ----------
+        A
+            Matrix that defines the linear system.
+        P
+            Matrix to be used in constructing the preconditioner,
+            usually the same as ``A``.
+
+        Notes
+        -----
+        If you know the operator ``A`` has a null space you can use
+        `Mat.setNullSpace` and `Mat.setTransposeNullSpace` to supply the
+        null space to ``A`` and the `KSP` solvers will automatically use
+        that null space as needed during the solution process.
+
+        All future calls to `KSP.setOperators` must use the same size
+        matrices!
+
+        Passing ``None`` for ``A`` or ``P`` removes the matrix that is
+        currently used.
+
+        See also
+        --------
+        KSP, KSP.solve, KSP.setComputeOperators,
+        KSPSetOperators
+
+        """
         cdef PetscMat amat=NULL
         if A is not None: amat = A.mat
         cdef PetscMat pmat=amat
         if P is not None: pmat = P.mat
         CHKERR( KSPSetOperators(self.ksp, amat, pmat) )
 
-    def getOperators(self):
+    def getOperators(self) -> tuple[Mat, Mat]:
+        """Get the matrix associated with the linear system.
+
+        Gets the matrix associated with the linear system and a
+        (possibly) different one used to construct the preconditioner.
+
+        Collective.
+
+        Returns
+        -------
+        A: Mat
+            Matrix that defines the linear system.
+        P: Mat
+            Matrix to be used in constructing the preconditioner,
+            usually the same as ``A``.
+
+        See also
+        --------
+        KSP, KSP.solve, KSP.setOperators, KSPGetOperators
+
+        """
         cdef Mat A = Mat(), P = Mat()
         CHKERR( KSPGetOperators(self.ksp, &A.mat, &P.mat) )
         PetscINCREF(A.obj)
         PetscINCREF(P.obj)
         return (A, P)
 
-    def setPC(self, PC pc):
+    def setPC(self, PC pc) -> None:
+        """Set the preconditioner.
+
+        Sets the preconditioner to be used to calculate the application
+        of the preconditioner on a vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        pc
+            The preconditioner object
+
+        See also
+        --------
+        KSP, KSP.getPC, KSPSetPC
+
+        """
         CHKERR( KSPSetPC(self.ksp, pc.pc) )
 
-    def getPC(self):
+    def getPC(self) -> PC:
+        """Return the preconditioner.
+
+        Not collective.
+
+        See also
+        --------
+        KSP, KSP.setPC, KSPGetPC
+
+        """
         cdef PC pc = PC()
         CHKERR( KSPGetPC(self.ksp, &pc.pc) )
         PetscINCREF(pc.obj)
