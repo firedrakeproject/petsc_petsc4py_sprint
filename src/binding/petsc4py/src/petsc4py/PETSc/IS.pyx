@@ -1402,8 +1402,8 @@ cdef class LGMap(Object):
     def apply(
         self,
         indices: Sequence[int],
-        result: NDArray[int] | None = None,
-    ) -> NDArray[int]:
+        result: NDArray[int_] | None = None,
+    ) -> NDArray[int_]:
         """Convert a locally numbered list of integers to a global numbering.
 
         Not collective.
@@ -1418,7 +1418,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        NDArray[int]
+        NDArray[int_]
             Indices in global numbering. If ``result`` is not `None` then this is
             returned here.
 
@@ -1440,8 +1440,8 @@ cdef class LGMap(Object):
     def applyBlock(
         self,
         indices: Sequence[int],
-        result: NDArray[int] | None = None,
-    ) -> NDArray[int]:
+        result: NDArray[int_] | None = None,
+    ) -> NDArray[int_]:
         """Convert a local block numbering to a global block numbering.
 
         Not collective.
@@ -1456,13 +1456,13 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        NDArray[int]
+        NDArray[int_]
             Block indices in global numbering. If ``result`` is not `None`
             then this is returned here.
 
         See Also
         --------
-        LGMap.apply, petsc: ISLocalToGlobalMappingApplyBlock
+        LGMap.apply, petsc.ISLocalToGlobalMappingApplyBlock
 
         """
         cdef PetscInt niidx = 0, *iidx = NULL
