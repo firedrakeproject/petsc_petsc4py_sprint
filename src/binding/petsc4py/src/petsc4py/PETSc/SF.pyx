@@ -13,7 +13,7 @@ class SFType(object):
 # --------------------------------------------------------------------
 
 cdef class SF(Object):
-    """SF object for setting up and managing the communication of certain 
+    """SF object for setting up and managing the communication of certain
     entries of arrays and Vec between MPI ranks.
     """
 
@@ -118,7 +118,7 @@ cdef class SF(Object):
         """Set options using the options database.
 
         Logically collective.
-        
+
         See also
         --------
         petsc.PetscSFSetFromOptions, petsc_options
@@ -161,12 +161,12 @@ cdef class SF(Object):
         Returns
         -------
         int
-            Number of root vertices on the current process (these are possible 
+            Number of root vertices on the current process (these are possible
             targets for other process to attach leaves).
         ndarray
             Locations of leaves in leafdata buffers.
         ndarray
-            Remote locations of root vertices for each leaf on the current 
+            Remote locations of root vertices for each leaf on the current
             process.
 
         See also
@@ -189,21 +189,21 @@ cdef class SF(Object):
     def setGraph(self, nroots: int, local: Sequence[int], remote: Sequence[int]) -> None:
         """Set graph.
 
-        The *nleaves* argument is determined from the size of local and/or 
+        The *nleaves* argument is determined from the size of local and/or
         remote.
-        
+
         Collective.
 
         Parameters
         -------
         nroots
-            Number of root vertices on the current process (these are possible 
+            Number of root vertices on the current process (these are possible
             targets for other process to attach leaves).
         local
-            Locations of leaves in leafdata buffers, pass `None` for contiguous 
+            Locations of leaves in leafdata buffers, pass `None` for contiguous
             storage.
         remote
-            Remote locations of root vertices for each leaf on the current 
+            Remote locations of root vertices for each leaf on the current
             process. Should be ``2*nleaves`` long as (rank, index) pairs.
 
         See also
@@ -260,7 +260,7 @@ cdef class SF(Object):
         return sf
 
     def createInverse(self) -> SF:
-        """Create the inverse map given a PetscSF in which all vertices have 
+        """Create the inverse map given a PetscSF in which all vertices have
         degree ``1``.
 
         Collective.
@@ -316,7 +316,7 @@ cdef class SF(Object):
 
     def createEmbeddedLeafSF(self, selected: Sequence[int]) -> SF:
         """Remove edges from all but the selected leaves.
-        
+
         Does not remap indices.
 
         Collective.
@@ -340,7 +340,7 @@ cdef class SF(Object):
 
     def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int] | None, Section leafSection) -> SF:
         """Create an expanded `SF` of dofs
-        
+
         Assumes the input `SF` relates points.
 
         Collective.
@@ -348,13 +348,13 @@ cdef class SF(Object):
         Parameters
         ----------
         rootSection
-            Data layout of remote points for outgoing data (this is usually 
+            Data layout of remote points for outgoing data (this is usually
             the serial section).
         remoteOffsets
-            Offsets for point data on remote processes (these are offsets from 
+            Offsets for point data on remote processes (these are offsets from
             the root section), or `None`.
         leafSection
-            Data layout of local points for incoming data (this is the 
+            Data layout of local points for incoming data (this is the
             distributed section).
 
         See also
@@ -373,7 +373,7 @@ cdef class SF(Object):
 
     def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ndarray, Section]:
         """Create a new, reorganized `Section` reorganized.
-        
+
         Moves from the root to the leaves of the `SF`.
 
         Collective.
@@ -408,7 +408,7 @@ cdef class SF(Object):
 
     def compose(self, SF sf) -> SF:
         """Compose a new `SF`.
-        
+
         Puts the `sf` under `self` in a top (roots) down (leaves) view.
 
         Collective.
@@ -429,8 +429,8 @@ cdef class SF(Object):
 
     def bcastBegin(self, unit: Datatype, ndarray rootdata, ndarray leafdata, op: Op) -> None:
         """Begin pointwise broadcast.
-        
-        Root values are reduced to leaf values. This call has to be concluded 
+
+        Root values are reduced to leaf values. This call has to be concluded
         with a call to `bcastEnd`.
 
         Collective.
@@ -472,7 +472,7 @@ cdef class SF(Object):
             Buffer to be reduced with values from each leaf's respective root.
         op
             MPI reduction operation.
-            
+
         See also
         --------
         petsc.PetscSFBcastEnd
@@ -500,7 +500,7 @@ cdef class SF(Object):
             Result of reduction of values from all leaves of each root.
         op
             MPI reduction operation.
-            
+
         See also
         --------
         petsc.PetscSFReduceBegin
@@ -526,7 +526,7 @@ cdef class SF(Object):
             Result of reduction of values from all leaves of each root.
         op
             MPI reduction operation.
-            
+
         See also
         --------
         petsc.PetscSFReduceEnd
@@ -539,7 +539,7 @@ cdef class SF(Object):
 
     def scatterBegin(self, unit: Datatype, ndarray multirootdata, ndarray leafdata) -> None:
         """Begin pointwise scatter operation.
-        
+
         Operation is from multi-roots to leaves.
         This call has to be completed with scatterEnd.
 
@@ -553,7 +553,7 @@ cdef class SF(Object):
             Root buffer to send to each leaf, one unit of data per leaf.
         leafdata
             Leaf data to be updated with personal data from each respective root.
-            
+
         See also
         --------
         petsc.PetscSFScatterBegin
@@ -576,7 +576,7 @@ cdef class SF(Object):
             Root buffer to send to each leaf, one unit of data per leaf.
         leafdata
             Leaf data to be updated with personal data from each respective root.
-            
+
         See also
         --------
         petsc.PetscSFScatterEnd
@@ -600,9 +600,9 @@ cdef class SF(Object):
         leafdata
             Leaf data to gather to roots.
         multirootdata
-            Root buffer to gather into, amount of space per root is 
+            Root buffer to gather into, amount of space per root is
             equal to its degree.
-            
+
         See also
         --------
         petsc.PetscSFGatherBegin
@@ -624,9 +624,9 @@ cdef class SF(Object):
         leafdata
             Leaf data to gather to roots.
         multirootdata
-            Root buffer to gather into, amount of space per root is 
+            Root buffer to gather into, amount of space per root is
             equal to its degree.
-            
+
         See also
         --------
         petsc.PetscSFGatherEnd
@@ -638,10 +638,10 @@ cdef class SF(Object):
 
     def fetchAndOpBegin(self, unit: Datatype, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: Op) -> None:
         """Begin fetch and update operation.
-        
-        This operation fetches values from root and updates atomically 
-        by applying operation using the leaf value. 
-        
+
+        This operation fetches values from root and updates atomically
+        by applying operation using the leaf value.
+
         This call has to be completed with `fetchAndOpEnd`.
 
         Collective.
@@ -651,12 +651,12 @@ cdef class SF(Object):
         unit
             MPI datatype.
         rootdata
-            Root values to be updated, input state is seen by first process 
+            Root values to be updated, input state is seen by first process
             to perform an update.
         leafdata
             Leaf values to use in reduction.
         leafupdate
-            State at each leaf's respective root immediately prior to my atomic 
+            State at each leaf's respective root immediately prior to my atomic
             update.
         op
             MPI reduction operation.
@@ -682,12 +682,12 @@ cdef class SF(Object):
         unit
             MPI datatype.
         rootdata
-            Root values to be updated, input state is seen by first process 
+            Root values to be updated, input state is seen by first process
             to perform an update.
         leafdata
             Leaf values to use in reduction.
         leafupdate
-            State at each leaf's respective root immediately prior to my atomic 
+            State at each leaf's respective root immediately prior to my atomic
             update.
         op
             MPI reduction operation.
