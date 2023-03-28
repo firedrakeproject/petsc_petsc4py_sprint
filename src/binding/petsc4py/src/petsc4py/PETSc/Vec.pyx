@@ -26,6 +26,13 @@ class VecOption(object):
 # --------------------------------------------------------------------
 
 cdef class Vec(Object):
+    """A vector object.
+
+    See Also
+    --------
+    petsc.Vec
+
+    """
 
     Type = VecType
     Option = VecOption
@@ -134,28 +141,96 @@ cdef class Vec(Object):
 
     #
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
+        """Display the vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            The viewer instance, defaults to `Viewer.Type.DEFAULT`.
+
+        See Also
+        --------
+        petsc.VecView
+
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( VecView(self.vec, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the vector.
+
+        Collective.
+
+        See Also
+        --------
+        Vec.create, petsc.VecDestroy
+
+        """
+
         CHKERR( VecDestroy(&self.vec) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
+        """Create an empty vector object.
+
+        After creation the vector type can then be set with `Vec.setType`
+        or `Vec.setFromOptions`.
+
+        Collective.
+
+        Parameters
+        ----------
+        comm
+            Communicator for the vector, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Vec.destroy, petsc.VecCreate
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscVec newvec = NULL
         CHKERR( VecCreate(ccomm, &newvec) )
         PetscCLEAR(self.obj); self.vec = newvec
         return self
 
-    def setType(self, vec_type):
+    def setType(self, vec_type: Vec.Type | str) -> None:
+        """Set the type of the vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        vec_type
+            The type of the vector.
+
+        See Also
+        --------
+        petsc_options, Vec.setFromOptions, petsc.VecSetType
+
+        """
         cdef PetscVecType cval = NULL
         vec_type = str2bytes(vec_type, &cval)
         CHKERR( VecSetType(self.vec, cval) )
 
-    def setSizes(self, size, bsize=None):
+    def setSizes(self, size: int, bsize: int | None = None) -> None:
+        """Set the local and global sizes of the vector.
+
+        Collective.
+
+        Parameters
+        ----------
+
+
+        See Also
+        --------
+        Vec.getSizes, petsc.VecSetSizes
+
+        """
         cdef PetscInt bs=0, n=0, N=0
         Vec_Sizes(size, bsize, &bs, &n, &N)
         CHKERR( VecSetSizes(self.vec, n, N) )
