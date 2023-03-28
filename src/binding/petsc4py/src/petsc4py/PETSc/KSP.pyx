@@ -104,7 +104,7 @@ cdef class KSP(Object):
 
     Further info in
 
-    `https://petsc.org/release/docs/manual/ksp/`__
+    `KSP: Linear System Solvers <https://petsc.org/release/docs/manual/ksp/>`__
     """
 
     Type            = KSPType
@@ -142,7 +142,7 @@ cdef class KSP(Object):
         return self
 
     def setType(self, ksp_type: KSP.Type | str) -> None:
-        """Build the `KSP` data structure for a particular `KSPType`.
+        """Build the `KSP` data structure for a particular `KSP.Type`.
 
         Logically collective.
 
@@ -153,7 +153,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        See `KSPType` for available methods (for instance, `KSP.CG` or
+        See `petsc.KSPType` for available methods (for instance, `KSP.CG` or
         `KSP.GMRES`).
 
         Normally, it is best to use the `KSP.SetFromOptions` command
@@ -171,7 +171,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPSetType
+        petsc.KSPSetType
 
         """
         cdef PetscKSPType cval = NULL
@@ -185,7 +185,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPGetType
+        petsc.KSPGetType
 
         """
         cdef PetscKSPType cval = NULL
@@ -223,7 +223,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPSetOptionsPrefix
+        petsc.KSPSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -237,7 +237,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPGetOptionsPrefix
+        petsc.KSPGetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -262,7 +262,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPAppendOptionsPrefix
+        petsc.KSPAppendOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -279,7 +279,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSPSetFromOptions
+        petsc_options, petsc.KSPSetFromOptions
 
         """
         CHKERR( KSPSetFromOptions(self.ksp) )
@@ -306,7 +306,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPSetApplicationContext
+        petsc.KSPSetApplicationContext
 
         """
         self.set_attr('__appctx__', appctx)
@@ -318,7 +318,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPGetApplicationContext
+        petsc.KSPGetApplicationContext
 
         """
         return self.get_attr('__appctx__')
@@ -332,7 +332,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSPGetDM, KSP, DM
+        KSP, DM, petsc.KSPGetDM
 
         """
         cdef PetscDM newdm = NULL
@@ -369,7 +369,7 @@ cdef class KSP(Object):
         See also
         --------
         KSP, DM, DM.setKSPComputeOperators, KSP.setOperators, DM.clone,
-        KSPSetDM
+        petsc.KSPSetDM
 
         """
         CHKERR( KSPSetDM(self.ksp, dm.dm) )
@@ -392,7 +392,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, DM, KSP.setDM, KSPSetDMActive
+        KSP, DM, KSP.setDM, petsc.KSPSetDMActive
 
         """
         cdef PetscBool cflag = PETSC_FALSE
@@ -427,7 +427,7 @@ cdef class KSP(Object):
 
         See also:
         ---------
-        KSP, KSP.solve, KSPSetComputeRHS
+        KSP, KSP.solve, petsc.KSPSetComputeRHS
 
         """
         if args  is None: args  = ()
@@ -473,7 +473,7 @@ cdef class KSP(Object):
         See also
         --------
         KSP, KSP.solve, KSP.setOperators, KSP.setReusePreconditioner,
-        KSPSetComputeOperators
+        petsc.KSPSetComputeOperators
 
         """
         if args  is None: args  = ()
@@ -515,7 +515,7 @@ cdef class KSP(Object):
         See also
         --------
         KSP, KSP.solve, KSP.setComputeOperators,
-        KSPSetOperators
+        petsc.KSPSetOperators
 
         """
         cdef PetscMat amat=NULL
@@ -542,7 +542,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.solve, KSP.setOperators, KSPGetOperators
+        KSP, KSP.solve, KSP.setOperators, petsc.KSPGetOperators
 
         """
         cdef Mat A = Mat(), P = Mat()
@@ -566,7 +566,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.getPC, KSPSetPC
+        KSP, KSP.getPC, petsc.KSPSetPC
 
         """
         CHKERR( KSPSetPC(self.ksp, pc.pc) )
@@ -578,7 +578,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.setPC, KSPGetPC
+        KSP, KSP.setPC, petsc.KSPGetPC
 
         """
         cdef PC pc = PC()
