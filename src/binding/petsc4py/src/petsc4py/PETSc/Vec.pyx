@@ -342,7 +342,8 @@ cdef class Vec(Object):
             the local size of the vector.
         size
             Global size ``N`` or 2-tuple ``(n, N)`` with local and global
-            sizes. For more information see `Sys.splitOwnership`.
+            sizes. If `None` then defaults to the size of ``array``. For
+            more information see `Sys.splitOwnership`.
         bsize
             The block size, defaults to 1.
         comm
@@ -395,7 +396,8 @@ cdef class Vec(Object):
             not provided.
         size
             Global size ``N`` or 2-tuple ``(n, N)`` with local and global
-            sizes. For more information see `Sys.splitOwnership`.
+            sizes. If `None` then defaults to the size of ``cpuarray``. For
+            more information see `Sys.splitOwnership`.
         bsize
             The block size, defaults to 1.
         comm
@@ -455,7 +457,8 @@ cdef class Vec(Object):
             not provided.
         size
             Global size ``N`` or 2-tuple ``(n, N)`` with local and global
-            sizes. For more information see `Sys.splitOwnership`.
+            sizes. If `None` then defaults to the size of ``cpuarray``. For
+            more information see `Sys.splitOwnership`.
         bsize
             The block size, defaults to 1.
         comm
@@ -515,7 +518,8 @@ cdef class Vec(Object):
             not provided.
         size
             Global size ``N`` or 2-tuple ``(n, N)`` with local and global
-            sizes. For more information see `Sys.splitOwnership`.
+            sizes. If `None` then defaults to the size of ``cpuarray``. For
+            more information see `Sys.splitOwnership`.
         bsize
             The block size, defaults to 1.
         comm
@@ -552,18 +556,40 @@ cdef class Vec(Object):
             self.set_attr('__array__', cpuarray)
         return self
 
-    def createWithDLPack(self, object dltensor, size=None, bsize=None, comm=None):
-        """
-        Returns an instance :class:`Vec`, a PETSc vector from a DLPack object
-        sharing the same memory.
+    def createWithDLPack(
+        self,
+        object dltensor,
+        size: tuple[int, int] | int | None = None,
+        bsize: int | None = None,
+        comm: Comm | None = None
+    ) -> Self:
+        """Create a vector wrapping a DLPack object, sharing the same memory.
+
         This operation does not modify the storage of the original tensor and
         should be used with contiguous tensors only. If the tensor is stored in
         row-major order (e.g. PyTorch tensors), the resulting vector will look
         like an unrolled tensor using row-major order.
 
-        :arg dltensor: An object with a __dlpack__ method or a DLPack tensor object (for backward compatibility)
-        :arg size: A :class:`int` denoting the size of the Vec.
-        :arg bsize: A :class:`int` denoting the block size.
+        The resulting vector type will be one of `Vec.Type.SEQ`, `Vec.Type.MPI`,
+        `Vec.Type.SEQCUDA`, `Vec.Type.MPICUDA`, `Vec.Type.SEQHIP` or
+        `Vec.Type.MPIHIP` depending on the type of ``dltensor`` and the number
+        of ranks in the communicator.
+
+        Collective.
+
+        Parameters
+        ----------
+        dltensor
+            Either an object with a ``__dlpack__`` method or a DLPack tensor object.
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. If `None` then defaults to the flattened size of
+            ``dltensor``. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
         """
         cdef DLManagedTensor* ptr = NULL
         cdef int bits = 0
@@ -632,21 +658,34 @@ cdef class Vec(Object):
             ptr.manager_deleter(ptr) # free the manager
         return self
 
-    def attachDLPackInfo(self, Vec vec=None, object dltensor=None):
-        """
-        Attach the tensor information from an input vector (vec) or a
-        DLPack tensor if it is not available in current vector. The input
-        vector is typically created with createWithDlpack(). This operation
-        does not copy the data from the input parameters, it simply uses
-        their meta information.
+    def attachDLPackInfo(
+        self,
+        Vec vec=None,
+        object dltensor=None
+    ) -> Self:
+        """Attach tensor information from another vector or DLPack tensor.
 
-        Note that the auxiliary tensor information is required when converting
-        a PETSc vector to a DLPack object.
+        This tensor information is required when converting a `Vec` to a
+        DLPack object.
 
-        See also :meth:`Vec.clearDLPackInfo`.
+        Logically collective.
 
-        :arg vec: A :class:'Vec' containing auxiliary tensor information
-        :arg dltensor: A DLPack tensor object
+        Parameters
+        ----------
+        vec
+            Vector with attached tensor information. This is typically created
+            by calling `Vec.createWithDLPack`.
+        dltensor
+            DLPack tensor. This will only be used if ``vec`` is `None`.
+
+        Notes
+        -----
+        This operation does not copy any data from ``vec`` or ``dltensor``.
+
+        See Also
+        --------
+        Vec.clearDLPackInfo, Vec.createWithDLPack
+
         """
         cdef object ctx0 = self.get_attr('__dltensor_ctx__'), ctx = None
         cdef DLManagedTensor* ptr = NULL
@@ -682,10 +721,15 @@ cdef class Vec(Object):
             self.set_attr('__dltensor_ctx__', (ptr.dl_tensor.ctx.device_type, ptr.dl_tensor.ctx.device_id, ndim, s1, s2))
         return self
 
-    def clearDLPackInfo(self):
-        """
-        Clear the tensor information
-        See also :meth:`Vec.attachDLPackInfo`.
+    def clearDLPackInfo(self) -> Self:
+        """Clear tensor information.
+
+        Logically collective.
+
+        See Also
+        --------
+        Vec.attachDLPackInfo, Vec.createWithDLPack
+
         """
         self.set_attr('__dltensor_ctx__', None)
         return self
@@ -698,9 +742,32 @@ cdef class Vec(Object):
         (dltype, devId, _, _, _) = vec_get_dlpack_ctx(self)
         return (dltype, devId)
 
-    def toDLPack(self, mode='rw'):
-        """
-        Return a DLPack capsule.
+    # FIXME Not sure what the return type should be
+    def toDLPack(self, mode: Literal['rw', 'r', 'w'] | None = 'rw') -> Any:
+        """Return a DLPack `PyCapsule` wrapping the vector data.
+
+        Collective.
+
+        Parameters
+        ----------
+        mode
+            Access mode for the vector. Must be read-write (``'rw'``), read
+            (``'r'``) or write (``'w'``). If `None` defaults to ``'rw'``.
+
+        Returns
+        -------
+        `PyCapsule`
+            Capsule of a DLPack tensor wrapping a `Vec`.
+
+        Notes
+        -----
+        It is important that the access mode is respected by the consumer
+        as this is not enforced internally.
+
+        See Also
+        --------
+        Vec.createWithDLPack
+
         """
         if mode is None: mode = 'rw'
         if mode not in ['rw', 'r', 'w']:
@@ -770,7 +837,35 @@ cdef class Vec(Object):
         dlm_tensor.del_obj = <dlpack_manager_del_obj>PetscDEALLOC
         return PyCapsule_New(dlm_tensor, 'dltensor', pycapsule_deleter)
 
-    def createGhost(self, ghosts, size, bsize=None, comm=None):
+    # FIXME STUCK HERE
+    def createGhost(
+        self,
+        ghosts: ???,
+        size: tuple[int, int] | int,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a parallel vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        ghosts
+            ???
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateGhost, petsc.VecCreateGhostBlock
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt ng=0, *ig=NULL
         ghosts = iarray_i(ghosts, &ng, &ig)
