@@ -114,7 +114,7 @@ cdef class SF(Object):
         CHKERR( PetscSFGetType(self.sf, &cval) )
         return bytes2str(cval)
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
         """Set options using the options database.
 
         Logically collective.
@@ -126,7 +126,7 @@ cdef class SF(Object):
         """
         CHKERR( PetscSFSetFromOptions(self.sf) )
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up communication structures.
 
         Collective.
@@ -138,7 +138,7 @@ cdef class SF(Object):
         """
         CHKERR( PetscSFSetUp(self.sf) )
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset a star forest so that different sizes or neighbors can be used.
 
         Collective.
@@ -186,7 +186,7 @@ cdef class SF(Object):
         remote = remote.reshape(nleaves, 2)
         return toInt(nroots), local, remote
 
-    def setGraph(self, nroots: int, local: Sequence[int], remote: Sequence[int]):
+    def setGraph(self, nroots: int, local: Sequence[int], remote: Sequence[int]) -> None:
         """Set graph.
 
         The *nleaves* argument is determined from the size of local and/or 
@@ -226,7 +226,7 @@ cdef class SF(Object):
             nleaves = nremote // 2
         CHKERR( PetscSFSetGraph(self.sf, cnroots, nleaves, ilocal, PETSC_COPY_VALUES, iremote, PETSC_COPY_VALUES) )
 
-    def setRankOrder(self, flag: bool):
+    def setRankOrder(self, flag: bool) -> None:
         """Sort multi-points for gathers and scatters by rank order.
 
         Logically collective.
@@ -275,7 +275,7 @@ cdef class SF(Object):
         return sf
 
     def computeDegree(self) -> ndarray:
-        """Compute degree for each root vertex.
+        """Compute the degree for each root vertex.
 
         Collective.
 
@@ -315,7 +315,7 @@ cdef class SF(Object):
         return sf
 
     def createEmbeddedLeafSF(self, selected: Sequence[int]) -> SF:
-        """Removes edges from all but the selected leaves, does not remap 
+        """Remove edges from all but the selected leaves, does not remap 
         indices.
 
         Collective.
@@ -369,7 +369,7 @@ cdef class SF(Object):
                                        leafSection.sec, &sectionSF.sf) )
         return sectionSF
 
-    def distributeSection(self, Section rootSection, Section leafSection=None):
+    def distributeSection(self, Section rootSection, Section leafSection=None) -> Tuple[ndarray, Section]:
         """Create a new `Section` reorganized, moving from the root to 
         the leaves of the `SF`.
 
@@ -544,7 +544,7 @@ cdef class SF(Object):
         multirootdata
             Root buffer to send to each leaf, one unit of data per leaf.
         leafdata
-            Leaf data to be update with personal data from each respective root.
+            Leaf data to be updated with personal data from each respective root.
             
         See also
         --------
@@ -567,7 +567,7 @@ cdef class SF(Object):
         multirootdata
             Root buffer to send to each leaf, one unit of data per leaf.
         leafdata
-            Leaf data to be update with personal data from each respective root.
+            Leaf data to be updated with personal data from each respective root.
             
         See also
         --------
@@ -661,7 +661,7 @@ cdef class SF(Object):
                                        <void*>PyArray_DATA(leafupdate), cop) )
 
     def fetchAndOpEnd(self, unit: TODO, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: TODO) -> None:
-        """End operation started in matching call to `fetchAndOpBegin` to fetch 
+        """End operation started in a matching call to `fetchAndOpBegin` to fetch 
         values from roots and update atomically by applying operation using 
         my leaf value.
 
