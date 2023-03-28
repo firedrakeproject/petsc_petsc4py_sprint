@@ -590,10 +590,10 @@ cdef class KSP(Object):
 
     def setTolerances(
         self,
-        float rtol=None,
-        float atol=None,
-        float divtol=None,
-        int max_it=None
+        rtol: float | None = None,
+        atol: float | None = None,
+        divtol: float | None = None,
+        max_it: int | None = None
     ) -> None:
         """Set various tolerances used by the KSP convergence testers.
 
