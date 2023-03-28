@@ -544,7 +544,7 @@ cdef class DMPlex(DM):
         cone
             An array of points which are on the in-edges for point ``p``.
         orientation
-            An array of orientations, defaults to None.
+            An array of orientations, defaults to ``None``.
 
         See Also
         --------
@@ -569,27 +569,23 @@ cdef class DMPlex(DM):
             assert norie == ncone
             CHKERR( DMPlexSetConeOrientation(self.dm, cp, iorie) )
 
-    def insertCone(self, p, conePos, conePoint):
-        """DMPlexInsertCone - Insert a point into the in-edges for the point p in the DAG
+    def insertCone(self, p: int, conePos: int, conePoint: int) -> None:
+        """DMPlexInsertCone - Insert a point into the in-edges for the point p in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
         conePos
-            The local index in the cone where the point should be put
+            The local index in the cone where the point should be put.
         conePoint
-            The mesh point to insert
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
+            The mesh point to insert.
 
         See Also
         --------
-        petsc.DMPlexInsertCone
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexInsertCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -597,30 +593,23 @@ cdef class DMPlex(DM):
         cdef PetscInt cconePoint = asInt(conePoint)
         CHKERR( DMPlexInsertCone(self.dm,cp,cconePos,cconePoint) )
 
-    def insertConeOrientation(self, p, conePos, coneOrientation):
-        """DMPlexInsertConeOrientation - Insert a point orientation for the in-edge for the point p in the DAG
+    def insertConeOrientation(self, p: int, conePos: int, coneOrientation: int) -> None:
+        """Insert a point orientation for the in-edge for the point p in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`
         conePos
-            The local index in the cone where the point should be put
+            The local index in the cone where the point should be put.
         coneOrientation
-            The point orientation to insert
-
-        Note:
-        The meaning of coneOrientation values is detailed in `DMPlexGetConeOrientation`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
+            The point orientation to insert.
 
         See Also
         --------
-        petsc.DMPlexInsertConeOrientation
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexInsertConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -628,39 +617,19 @@ cdef class DMPlex(DM):
         cdef PetscInt cconeOrientation = asInt(coneOrientation)
         CHKERR( DMPlexInsertConeOrientation(self.dm, cp, cconePos, cconeOrientation) )
 
-    def getConeOrientation(self, p):
-        """DMPlexGetConeOrientation - Return the orientations on the in-edges for this point in the DAG
+    def getConeOrientation(self, p: int) -> ndarray:
+        """Return the orientations on the in-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-
-        Returns
-        -------
-        coneOrientation
-            An array of orientations which are on the in-edges for point `p`. An orientation is an
-        integer giving the prescription for cone traversal.
-
-        Note:
-        The number indexes the symmetry transformations for the cell type (see manual). Orientation 0 is always
-        the identity transformation. Negative orientation indicates reflection so that -(o+1) is the reflection
-        of o, however it is not necessarily the inverse. To get the inverse, use `DMPolytopeTypeComposeOrientationInv`
-        with the identity.
-
-        Fortran Note:
-        You must also call `DMPlexRestoreConeOrientation` after you finish using the returned array.
-        `DMPlexRestoreConeOrientation` is not needed/available in C.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPolytopeTypeComposeOrientation`, `DMPolytopeTypeComposeOrientationInv`, `DMPlexCreate`, `DMPlexGetCone`, `DMPlexSetCone`, `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
 
         See Also
         --------
-        petsc.DMPlexGetConeOrientation
+        `DM`, `DMPlex`, `DMPolytopeType.composeOrientation`, `DMPolytopeType.composeOrientationInv`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setCone`, `DMPlex.setChart`, petsc.DMPlexGetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -673,30 +642,21 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetConeOrientation(self.dm, cp, &iorie) )
         return array_i(norie, iorie)
 
-    def setConeOrientation(self, p, orientation):
-        """DMPlexSetConeOrientation - Set the orientations on the in-edges for this point in the DAG
+    def setConeOrientation(self, p: int, orientation: Sequence[int]) -> None:
+        """Set the orientations on the in-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-        coneOrientation
-            An array of orientations
-
-        Notes:
-        This should be called after all calls to `DMPlexSetConeSize` and `DMSetUp`.
-
-        The meaning of coneOrientation is detailed in `DMPlexGetConeOrientation`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetConeOrientation`, `DMPlexSetCone`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMSetUp`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
+        orientation
+            An array of orientations.
 
         See Also
         --------
-        petsc.DMPlexSetConeOrientation
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getConeOrientation`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexSetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
