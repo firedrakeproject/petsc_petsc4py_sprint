@@ -10,7 +10,8 @@ class ISType(object):
 cdef class IS(Object):
     """A collection of indices.
 
-    IS objects are used to index into vectors and matrices and to set up vector scatters.
+    IS objects are used to index into vectors and matrices and to set up vector
+    scatters.
 
     See Also
     --------
@@ -173,7 +174,7 @@ cdef class IS(Object):
         indices: Sequence[int],
         comm: Comm | None = None
     ) -> Self:
-        """Create an index set where each index represents a fixed block of indices.
+        """Create a blocked index set.
 
         Collective.
 
@@ -264,7 +265,8 @@ cdef class IS(Object):
         Returns
         -------
         IS
-            The copied index set. If ``result`` is not `None` then this is returned here.
+            The copied index set. If ``result`` is not `None` then this is
+            returned here.
 
         See Also
         --------
@@ -427,8 +429,7 @@ cdef class IS(Object):
 
         See Also
         --------
-        IS.getLocalSize
-        IS.getGlobalSize
+        IS.getLocalSize, IS.getGlobalSize
 
         """
         cdef PetscInt n = 0, N = 0
@@ -1054,6 +1055,7 @@ class GLMapMode(object):
     See Also
     --------
     ISGlobalToLocalMappingMode
+
     """
     MASK = PETSC_IS_GTOLM_MASK
     DROP = PETSC_IS_GTOLM_DROP
@@ -1072,7 +1074,8 @@ cdef class LGMap(Object):
 
     See Also
     --------
-    petsc:ISLocalToGlobalMapping
+    petsc.ISLocalToGlobalMapping
+
     """
 
     MapMode = GLMapMode
@@ -1084,20 +1087,27 @@ cdef class LGMap(Object):
         self.obj = <PetscObject*> &self.lgm
         self.lgm = NULL
 
-    def __call__(self, indices: Sequence[int], result: Optional[NDArray[int]]=None) -> None:
+    def __call__(
+        self,
+        indices: Sequence[int],
+        result: NDArray[int] | None = None
+    ) -> None:
         """Convert a locally numbered list of integers to a global numbering.
+
+        Not collective. 
 
         Parameters
         ----------
         indices
             Input indices in local numbering.
         result
-            Array to write the global numbering to. If ``None`` then a
+            Array to write the global numbering to. If `None` then a
             new array will be allocated.
 
         See Also
         --------
-        petsc: ISLocalToGlobalMappingApply
+        IS.apply, petsc.ISLocalToGlobalMappingApply
+
         """
         self.apply(indices, result)
 
@@ -1106,6 +1116,13 @@ cdef class LGMap(Object):
     def setType(self, lgmap_type: LGMap.Type | str) -> None:
         """Set the type of the local-to-global map.
 
+        Logically collective.
+
+        Parameters
+        ----------
+        lgmap_type
+            The type of the local-to-global mapping.
+
         Notes
         -----
         Use ``-islocaltoglobalmapping_type`` to set the type in the
@@ -1113,7 +1130,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        petsc:ISLocalToGlobalMappingSetType
+        petsc_options, petsc.ISLocalToGlobalMappingSetType
+
         """
         cdef PetscISLocalToGlobalMappingType cval = NULL
         lgmap_type = str2bytes(lgmap_type, &cval)
@@ -1122,24 +1140,29 @@ cdef class LGMap(Object):
     def setFromOptions(self) -> None:
         """Set mapping options from the options database.
 
+        Not collective.
+
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingSetFromOptions/
+        petsc_options, petsc.ISLocalToGlobalMappingSetFromOptions
+
         """
         CHKERR( ISLocalToGlobalMappingSetFromOptions(self.lgm) )
 
-    def view(self, Viewer viewer: Optional[Viewer]=None) -> None:
+    def view(self, Viewer viewer=None) -> None:
         """View the local-to-global mapping.
+
+        Not collective.
 
         Parameters
         ----------
         viewer
-            Viewer instance. If ``None`` then will default to an instance of
-            `Viewer.Type.ASCII`.
+            Viewer instance, defaults to an instance of `Viewer.Type.ASCII`.
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingView/
+        petsc.ISLocalToGlobalMappingView
+
         """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
@@ -1148,28 +1171,39 @@ cdef class LGMap(Object):
     def destroy(self) -> Self:
         """Destroy the local-to-global mapping.
 
+        Not collective.
+
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingDestroy/
+        petsc.ISLocalToGlobalMappingDestroy
+
         """
         CHKERR( ISLocalToGlobalMappingDestroy(&self.lgm) )
         return self
 
-    def create(self, indices: Sequence[int], bsize: Optional[int]=None, comm: Optional[Comm]=None) -> Self:
+    def create(
+        self,
+        indices: Sequence[int],
+        bsize: int | None = None,
+        comm: Comm | None = None
+    ) -> Self:
         """Create a local-to-global mapping.
+
+        Not collective.
 
         Parameters
         ----------
         indices
             Global index for each local element.
         bsize
-            Block size. If ``None`` then will default to 1.
+            Block size, defaults to 1.
         comm
-            MPI communicator. If ``None`` then will default to ``PETSC_COMM_DEFAULT``.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingCreate/
+        petsc.ISLocalToGlobalMappingCreate
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt bs = 1, nidx = 0, *idx = NULL
@@ -1183,8 +1217,10 @@ cdef class LGMap(Object):
         PetscCLEAR(self.obj); self.lgm = newlgm
         return self
 
-    def createIS(self, IS iset: IS) -> Self:
+    def createIS(self, IS iset) -> Self:
         """Create a local-to-global mapping from an index set.
+
+        Not collective.
 
         Parameters
         ----------
@@ -1193,7 +1229,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingCreateIS/
+        petsc.ISLocalToGlobalMappingCreateIS
+
         """
         cdef PetscLGMap newlgm = NULL
         CHKERR( ISLocalToGlobalMappingCreateIS(
@@ -1201,8 +1238,10 @@ cdef class LGMap(Object):
         PetscCLEAR(self.obj); self.lgm = newlgm
         return self
 
-    def createSF(self, SF sf: SF, start: int) -> Self:
+    def createSF(self, SF sf, start: int) -> Self:
         """Create a local-to-global mapping from a star forest.
+
+        Collective.
 
         Parameters
         ----------
@@ -1213,7 +1252,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingCreateSF/
+        petsc.ISLocalToGlobalMappingCreateSF
+
         """
         cdef PetscLGMap newlgm = NULL
         cdef PetscInt cstart = asInt(start)
@@ -1224,9 +1264,12 @@ cdef class LGMap(Object):
     def getSize(self) -> int:
         """Return the local size of the local-to-global mapping.
 
+        Not collective.
+
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetSize/
+        petsc.ISLocalToGlobalMappingGetSize
+
         """
         cdef PetscInt n = 0
         CHKERR( ISLocalToGlobalMappingGetSize(self.lgm, &n) )
@@ -1235,9 +1278,12 @@ cdef class LGMap(Object):
     def getBlockSize(self) -> int:
         """Return the block size of the local-to-global mapping.
 
+        Not collective.
+
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetBlockSize/
+        petsc.ISLocalToGlobalMappingGetBlockSize
+
         """
         cdef PetscInt bs = 1
         CHKERR( ISLocalToGlobalMappingGetBlockSize(self.lgm, &bs) )
@@ -1246,9 +1292,12 @@ cdef class LGMap(Object):
     def getIndices(self) -> NDArray[int]:
         """Return the global indices for each local point in the mapping.
 
+        Not collective.
+
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetIndices/
+        petsc.ISLocalToGlobalMappingGetIndices
+
         """
         cdef PetscInt size = 0
         cdef const PetscInt *indices = NULL
@@ -1267,9 +1316,12 @@ cdef class LGMap(Object):
     def getBlockIndices(self) -> NDArray[int]:
         """Return the global indices for each local block.
 
+        Not collective.
+
         See Also
         --------
         petsc.ISLocalToGlobalMappingGetBlockIndices
+
         """
         cdef PetscInt size = 0, bs = 1
         cdef const PetscInt *indices = NULL
@@ -1290,6 +1342,8 @@ cdef class LGMap(Object):
     def getInfo(self) -> dict[int, NDArray[int]]:
         """Determine the indices shared with neighbouring processes.
 
+        Collective.
+
         Returns
         -------
         dict[int, NDArray[int]]
@@ -1298,7 +1352,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetInfo/
+        petsc.ISLocalToGlobalMappingGetInfo
+
         """
         cdef PetscInt i, nproc = 0, *procs = NULL,
         cdef PetscInt *numprocs = NULL, **indices = NULL
@@ -1316,6 +1371,8 @@ cdef class LGMap(Object):
     def getBlockInfo(self) -> dict[int, NDArray[int]]:
         """Determine the block indices shared with neighbouring processes.
 
+        Collective.
+
         Returns
         -------
         dict[int, NDArray[int]]
@@ -1324,7 +1381,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingGetBlockInfo/
+        petsc.ISLocalToGlobalMappingGetBlockInfo
+
         """
         cdef PetscInt i, nproc = 0, *procs = NULL,
         cdef PetscInt *numprocs = NULL, **indices = NULL
@@ -1341,25 +1399,33 @@ cdef class LGMap(Object):
 
     #
 
-    def apply(self, indices: Sequence[int], result: Optional[NDArray[int]]=None) -> NDArray[int]:
+    def apply(
+        self,
+        indices: Sequence[int],
+        result: NDArray[int] | None = None,
+    ) -> NDArray[int]:
         """Convert a locally numbered list of integers to a global numbering.
+
+        Not collective.
 
         Parameters
         ----------
         indices
             Input indices in local numbering.
         result
-            Array to write the global numbering to. If ``None`` then a
+            Array to write the global numbering to. If `None` then a
             new array will be allocated.
 
         Returns
         -------
-        result : NDArray[int]
-            Indices in global numbering.
+        NDArray[int]
+            Indices in global numbering. If ``result`` is not `None` then this is
+            returned here.
 
         See Also
         --------
-        petsc: ISLocalToGlobalMappingApply
+        LGMap.applyBlock, petsc.ISLocalToGlobalMappingApply
+
         """
         cdef PetscInt niidx = 0, *iidx = NULL
         cdef PetscInt noidx = 0, *oidx = NULL
@@ -1371,25 +1437,33 @@ cdef class LGMap(Object):
             self.lgm, niidx, iidx, oidx) )
         return result
 
-    def applyBlock(self, indices: Sequence[int], result: Optional[NDArray[int]]=None) -> NDArray[int]:
+    def applyBlock(
+        self,
+        indices: Sequence[int],
+        result: NDArray[int] | None = None,
+    ) -> NDArray[int]:
         """Convert a local block numbering to a global block numbering.
+
+        Not collective.
 
         Parameters
         ----------
         indices
             Input block indices in local numbering.
         result
-            Array to write the global numbering to. If ``None`` then a
+            Array to write the global numbering to. If `None` then a
             new array will be allocated.
 
         Returns
         -------
-        result : NDArray[int]
-            Block indices in global numbering.
+        NDArray[int]
+            Block indices in global numbering. If ``result`` is not `None`
+            then this is returned here.
 
         See Also
         --------
-        petsc: ISLocalToGlobalMappingApplyBlock
+        LGMap.apply, petsc: ISLocalToGlobalMappingApplyBlock
+
         """
         cdef PetscInt niidx = 0, *iidx = NULL
         cdef PetscInt noidx = 0, *oidx = NULL
@@ -1401,8 +1475,10 @@ cdef class LGMap(Object):
             self.lgm, niidx, iidx, oidx) )
         return result
 
-    def applyIS(self, IS iset: IS) -> IS:
-        """Create an index set with global numbering from one with local numbering.
+    def applyIS(self, IS iset) -> IS:
+        """Create an index set with global numbering from a local numbering.
+
+        Collective.
 
         Parameters
         ----------
@@ -1416,23 +1492,30 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISLocalToGlobalMappingApplyIS/
+        petsc.ISLocalToGlobalMappingApplyIS
+
         """
         cdef IS result = IS()
         CHKERR( ISLocalToGlobalMappingApplyIS(
             self.lgm, iset.iset, &result.iset) )
         return result
 
-    def applyInverse(self, indices: Sequence[int], mode: Optional[LGMap.MapMode|str]=None) -> NDArray[int]:
-        """Compute the local numbering of an array of indices provided with a
-        global numbering.
+    def applyInverse(
+        self,
+        indices: Sequence[int],
+        mode: LGMap.MapMode | str | None = None,
+    ) -> NDArray[int]:
+        """Compute local numbering from global numbering.
+
+        Not collective.
 
         Parameters
         ----------
         indices
             Indices with a global numbering.
         mode
-            Flag indicating what to do with indices that have no local value.
+            Flag indicating what to do with indices that have no local value,
+            defaults to `LGMap.MapMode.MASK`.
 
         Returns
         -------
@@ -1441,7 +1524,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISGlobalToLocalMappingApply/
+        petsc.ISGlobalToLocalMappingApply
+
         """
         cdef PetscGLMapMode cmode = PETSC_IS_GTOLM_MASK
         if mode is not None: cmode = mode
@@ -1456,16 +1540,22 @@ cdef class LGMap(Object):
                 self.lgm, cmode, n, idx, &nout, idxout) )
         return result
 
-    def applyBlockInverse(self, indices: Sequence[int], mode: Optional[LGMap.MapMode|str]=None) -> NDArray[int]:
-        """Compute the local block numbering of an array of indices provided
-        with a global block numbering.
+    def applyBlockInverse(
+        self,
+        indices: Sequence[int],
+        mode: LGMap.MapMode | str | None = None,
+    ) -> NDArray[int]:
+        """Compute blocked local numbering from blocked global numbering.
+
+        Not collective.
 
         Parameters
         ----------
         indices
             Indices with a global block numbering.
         mode
-            Flag indicating what to do with indices that have no local value.
+            Flag indicating what to do with indices that have no local value,
+            defaults to `LGMap.MapMode.MASK`.
 
         Returns
         -------
@@ -1474,7 +1564,8 @@ cdef class LGMap(Object):
 
         See Also
         --------
-        https://petsc.org/release/docs/manualpages/IS/ISGlobalToLocalMappingApplyBlock/
+        petsc.ISGlobalToLocalMappingApplyBlock
+
         """
         cdef PetscGLMapMode cmode = PETSC_IS_GTOLM_MASK
         if mode is not None: cmode = mode
@@ -1493,9 +1584,12 @@ cdef class LGMap(Object):
     property size:
         """The local size.
 
+        Not collective.
+
         See Also
         --------
         LGMap.getSize
+
         """
         def __get__(self) -> int:
             return self.getSize()
@@ -1503,9 +1597,12 @@ cdef class LGMap(Object):
     property block_size:
         """The block size.
 
+        Not collective.
+
         See Also
         --------
         LGMap.getBlockSize
+
         """
         def __get__(self) -> int:
             return self.getBlockSize()
@@ -1513,10 +1610,12 @@ cdef class LGMap(Object):
     property indices:
         """The global indices for each local point in the mapping.
 
+        Not collective.
+
         See Also
         --------
-        LGMap.getIndices
-        petsc.ISLocalToGlobalMappingGetIndices
+        LGMap.getIndices, petsc.ISLocalToGlobalMappingGetIndices
+
         """
         def __get__(self) -> NDArray[int]:
             return self.getIndices()
@@ -1524,10 +1623,12 @@ cdef class LGMap(Object):
     property block_indices:
         """The global indices for each local block in the mapping.
 
+        Not collective.
+
         See Also
         --------
-        LGMap.getBlockIndices
-        petsc.ISLocalToGlobalMappingGetBlockIndices
+        LGMap.getBlockIndices, petsc.ISLocalToGlobalMappingGetBlockIndices
+
         """
         def __get__(self) -> NDArray[int]:
             return self.getBlockIndices()
@@ -1535,10 +1636,12 @@ cdef class LGMap(Object):
     property info:
         """Mapping describing indices shared with neighbouring processes.
 
+        Collective.
+
         See Also
         --------
-        LGMap.getInfo
-        petsc.ISLocalToGlobalMappingGetInfo
+        LGMap.getInfo, petsc.ISLocalToGlobalMappingGetInfo
+
         """
         def __get__(self) -> dict[int, NDArray[int]]:
             return self.getInfo()
@@ -1546,10 +1649,12 @@ cdef class LGMap(Object):
     property block_info:
         """Mapping describing block indices shared with neighbouring processes.
 
+        Collective.
+
         See Also
         --------
-        LGMap.getBlockInfo
-        petsc.ISLocalToGlobalMappingGetBlockInfo
+        LGMap.getBlockInfo, petsc.ISLocalToGlobalMappingGetBlockInfo
+
         """
         def __get__(self) -> dict[int, NDArray[int]]:
             return self.getBlockInfo()
