@@ -323,7 +323,7 @@ cdef class Vec(Object):
 
     def createWithArray(
         self,
-        array: Sequence[Scalar],
+        array: Sequence[ScalarType],
         size: tuple[int, int] | int = None,
         bsize: int | None = None,
         comm: Comm | None = None,
@@ -377,7 +377,7 @@ cdef class Vec(Object):
 
     def createCUDAWithArrays(
         self,
-        cpuarray: Sequence[Scalar] | None = None,
+        cpuarray: Sequence[ScalarType] | None = None,
         cudahandle: Any | None = None,  # FIXME What type is appropriate here?
         size: tuple[int, int] | int = None,
         bsize: int | None = None,
@@ -438,7 +438,7 @@ cdef class Vec(Object):
 
     def createHIPWithArrays(
         self,
-        cpuarray: Sequence[Scalar] | None = None,
+        cpuarray: Sequence[ScalarType] | None = None,
         hiphandle: Any | None = None,  # FIXME What type is appropriate here?
         size: tuple[int, int] | int | None = None,
         bsize: int | None = None,
@@ -499,7 +499,7 @@ cdef class Vec(Object):
 
     def createViennaCLWithArrays(
         self,
-        cpuarray: Sequence[Scalar] | None = None,
+        cpuarray: Sequence[ScalarType] | None = None,
         viennaclvechandle: Any | None = None,  # FIXME What type is appropriate here?
         size: tuple[int, int] | int | None = None,
         bsize: int | None = None,
@@ -885,7 +885,7 @@ cdef class Vec(Object):
     def createGhostWithArray(
         self,
         ghosts: Sequence[int],
-        array: Sequence[Scalar],
+        array: Sequence[ScalarType],
         size: tuple[int, int] | int | None = None,
         bsize: int | None = None,
         comm: Comm | None = None,
@@ -1398,7 +1398,7 @@ cdef class Vec(Object):
         else:
             return vec_getbuffer_w(self)
 
-    def getArray(self, readonly: bool=False) -> NDArray[Scalar]:
+    def getArray(self, readonly: bool=False) -> ArrayScalar:
         """Return local portion of the vector as an `ndarray`.
 
         Not collective if ``readonly`` is `True`, logically collective
@@ -1420,7 +1420,7 @@ cdef class Vec(Object):
         else:
             return vec_getarray_w(self)
 
-    def setArray(self, array: Sequence[Scalar]) -> None:
+    def setArray(self, array: Sequence[ScalarType]) -> None:
         """Set the local portion of the vector.
 
         This will fail if ``array`` has a different size to the local portion
@@ -1441,7 +1441,7 @@ cdef class Vec(Object):
         """
         vec_setarray(self, array)
 
-    def placeArray(self, array: Sequence[Scalar]) -> None:
+    def placeArray(self, array: Sequence[ScalarType]) -> None:
         """Set the local portion of the vector to a provided array.
 
         This method can be used instead of `Vec.setArray` to avoid copying
