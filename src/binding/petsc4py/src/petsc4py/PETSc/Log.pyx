@@ -83,7 +83,7 @@ cdef class Log:
     def view(cls, Viewer viewer=None):
         """Print a summary of the logging.
 
-        Collective over `MPI_Comm`.
+        Collective.
 
         Parameters
         ----------
@@ -164,7 +164,7 @@ cdef class Log:
     def getTime(cls) -> float:
         """Return the current time of day in seconds.
         
-        Collective over `MPI_Comm`.
+        Collective.
 
         Returns
         -------
@@ -261,7 +261,7 @@ cdef class LogStage:
 
     #
 
-    def push(self):
+    def push(self) -> None:
         """Push a stage on the logging stack. 
             Events started and stopped until 
             PetscLogStagePop will be associated 
@@ -276,7 +276,7 @@ cdef class LogStage:
         """
         CHKERR( PetscLogStagePush(self.id) )
 
-    def pop(self):
+    def pop(self) -> None:
         """Pop a stage on the logging stack that was 
             pushed.
 
@@ -330,7 +330,7 @@ cdef class LogStage:
         """
         CHKERR( PetscLogStageSetActive(self.id, PETSC_FALSE) )
 
-    def getActive(self):
+    def getActive(self) -> bool:
         """Check if the stage is activate.
         
         Not Collective.
