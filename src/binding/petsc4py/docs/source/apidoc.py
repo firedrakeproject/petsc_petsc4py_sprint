@@ -418,6 +418,11 @@ else:
 
 import numpy
 from numpy import dtype, ndarray
+from mpi4py.MPI import (
+    Intracomm,
+    Datatype,
+    Op,
+)
 
 IntType: dtype = ...
 RealType: dtype =  ...
@@ -491,8 +496,10 @@ def load_module(filename, name=None):
     module = type(sys)(name)
     module.__file__ = filename
     module.__package__ = name.rsplit('.', 1)[0]
+    old = replace_module(module)
     with open(filename) as f:
         exec(f.read(), module.__dict__)  # noqa: S102
+    restore_module(old)
     return module
 
 
@@ -504,12 +511,14 @@ def replace_module(module):
     assert name not in _sys_modules
     _sys_modules[name] = sys.modules[name]
     sys.modules[name] = module
+    return _sys_modules[name]
 
 
 def restore_module(module):
     name = module.__name__
     assert name in _sys_modules
     sys.modules[name] = _sys_modules[name]
+    del _sys_modules[name]
 
 
 def annotate(dest, source):

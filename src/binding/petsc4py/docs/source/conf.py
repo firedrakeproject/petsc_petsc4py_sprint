@@ -234,6 +234,26 @@ def _setup_autodoc(app):
     app.add_autodocumenter(ExceptionDocumenter, override=True)
 
 
+def _monkey_patch_returns():
+    """Rewrite the role of names in "Returns" sections.
+
+    This is needed because Napoleon uses ``:class:`` for the return types
+    and this does not work with type aliases like ``ArrayScalar``. To resolve
+    this we swap ``:class:`` for ``:any:``.
+
+    """
+    _parse_returns_section = \
+        NumpyDocstring._parse_returns_section
+
+    @functools.wraps(NumpyDocstring._parse_returns_section)
+    def wrapper(*args, **kwargs):
+        out = _parse_returns_section(*args, **kwargs)
+        return [line.replace(":class:", ":any:") for line in out]
+
+
+    NumpyDocstring._parse_returns_section = wrapper
+
+
 def _monkey_patch_see_also():
     """Rewrite the role of names in "see also" sections.
 
@@ -251,12 +271,11 @@ def _monkey_patch_see_also():
     NumpyDocstring._parse_numpydoc_see_also_section = wrapper
 
 
-_monkey_patch_see_also()
-
-
 def setup(app):
     _setup_mpi4py_typing()
     _patch_domain_python()
+    _monkey_patch_returns()
+    _monkey_patch_see_also()
     _setup_autodoc(app)
 
     try:
