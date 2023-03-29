@@ -2465,56 +2465,243 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc.VecZeroEntries
+        Vec.set, petsc.VecZeroEntries
 
         """
         CHKERR( VecZeroEntries(self.vec) )
 
-    def set(self, alpha):
+    def set(self, alpha: ScalarType) -> None:
+        """Set all components of the vector to the same value.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alpha
+            Value to set all vector entries to.
+
+        Notes
+        -----
+        This method should not be called between `Vec.setValues` and
+        `Vec.assemblyBegin`.
+
+        See Also
+        --------
+        Vec.zero, Vec.isset, petsc.VecSet
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecSet(self.vec, sval) )
 
-    def isset(self, IS idx, alpha):
+    def isset(self, IS idx, alpha: ScalarType) -> None:
+        """Set specific elements of the vector to the same value.
+
+        Parameters
+        ----------
+        idx
+            Index set specifying the vector entries to set.
+        alpha
+            Value to set the selected entries to.
+
+        See Also
+        --------
+        Vec.set, Vec.zero, petsc.VecISSet
+
+        """
         cdef PetscScalar aval = asScalar(alpha)
         CHKERR( VecISSet(self.vec, idx.iset, aval) )
 
-    def scale(self, alpha):
+    def scale(self, alpha: ScalarType) -> None:
+        """Scale all entries of the vector by some value.
+
+        This method sets each entry (xₙ) in the vector to ɑ·xₙ.
+
+        Not collective.
+
+        Parameters
+        ----------
+        alpha
+            The scaling factor.
+
+        See Also
+        --------
+        Vec.shift, petsc.VecScale
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecScale(self.vec, sval) )
 
-    def shift(self, alpha):
+    def shift(self, alpha: ScalarType) -> None:
+        """Shift all entries in the vector.
+
+        This method sets each entry (xₙ) in the vector to xₙ + ɑ.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alpha
+            The shift to apply to the vector values.
+
+        See Also
+        --------
+        Vec.scale, petsc.VecShift
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecShift(self.vec, sval) )
 
-    def chop(self, tol):
-        cdef PetscReal rval = asReal(tol)
-        CHKERR( VecChop(self.vec, rval) )
+    def swap(self, Vec vec) -> None:
+        """Swap the data stored by two vectors.
 
-    def swap(self, Vec vec):
+        Logically collective.
+
+        Parameters
+        ----------
+        vec
+            The vector to swap data with.
+
+        See Also
+        --------
+        petsc.VecSwap
+
+        """
         CHKERR( VecSwap(self.vec, vec.vec) )
 
-    def axpy(self, alpha, Vec x):
+    def axpy(self, alpha: ScalarType, Vec x) -> None:
+        """Compute and store y = ɑ·x + y.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alpha
+            Scale factor.
+        x
+            Input vector, must not be the current vector.
+
+        See Also
+        --------
+        Vec.isaxpy, petsc.VecAXPY
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecAXPY(self.vec, sval, x.vec) )
 
-    def isaxpy(self, IS idx, alpha, Vec x):
+    def isaxpy(self, IS idx, alpha: ScalarType, Vec x) -> None:
+        """Add a scaled reduced-space vector to a subset of the vector.
+
+        This is equivalent to ``y[idx[i]] += alpha*x[i]``.
+
+        Parameters
+        ----------
+        idx
+            Index set for the reduced space. Negative indices are skipped.
+        alpha
+            Scale factor.
+        x
+            Reduced-space vector.
+
+        See Also
+        --------
+        Vec.axpy, Vec.aypx, Vec.axpby, petsc.VecISAXPY
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecISAXPY(self.vec, idx.iset, sval, x.vec) )
 
-    def aypx(self, alpha, Vec x):
+    def aypx(self, alpha: ScalarType, Vec x) -> None:
+        """Compute and store y = x + ɑ·y.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alpha
+            Scale factor.
+        x
+            Input vector, must not be the current vector.
+
+        See Also
+        --------
+        Vec.axpy, Vec.axpby, petsc.VecAYPX
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecAYPX(self.vec, sval, x.vec) )
 
-    def axpby(self, alpha, beta, Vec y):
+    def axpby(self, alpha: ScalarType, beta: ScalarType, Vec x) -> None:
+        """Compute and store y = ɑ·x + β·y.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alpha
+            First scale factor.
+        beta
+            Second scale factor.
+        x
+            Input vector, must not be the current vector.
+
+        See Also
+        --------
+        Vec.axpy, Vec.aypx, Vec.waxpy, petsc.VecAXPBY
+
+        """
         cdef PetscScalar sval1 = asScalar(alpha)
         cdef PetscScalar sval2 = asScalar(beta)
-        CHKERR( VecAXPBY(self.vec, sval1, sval2, y.vec) )
+        CHKERR( VecAXPBY(self.vec, sval1, sval2, x.vec) )
 
-    def waxpy(self, alpha, Vec x, Vec y):
+    def waxpy(self, alpha: ScalarType, Vec x, Vec y) -> None:
+        """Compute and store w = ɑ·x + y.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alpha
+            Scale factor.
+        x
+            First input vector.
+        y
+            Second input vector.
+
+        Notes
+        -----
+        The current vector (``w``) cannot be used for ``x`` or ``y`` but
+        ``x`` and ``y`` can be the same.
+
+        See Also
+        --------
+        Vec.axpy, Vec.aypx, Vec.axpby, Vec.maxpy, petsc.VecWAXPY
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecWAXPY(self.vec, sval, x.vec, y.vec) )
 
-    def maxpy(self, alphas, vecs):
+    def maxpy(self, alphas: Sequence[ScalarType], vecs: Sequence[Vec]) -> None:
+        """Compute and store y = Σₙ(ɑₙ·``vecs[n]``) + y.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        alphas
+            Array of scale factors, one for each vector in ``vecs``.
+        vecs
+            Array of vectors.
+
+        Notes
+        -----
+        The current vector cannot be used as any of ``vecs``, but ``vecs``
+        can contain duplicates.
+
+        See Also
+        --------
+        Vec.axpy, Vec.aypx, Vec.axpby, Vec.waxpy, petsc.VecMAXPY
+
+        """
         cdef PetscInt n = 0
         cdef PetscScalar *a = NULL
         cdef PetscVec *v = NULL
