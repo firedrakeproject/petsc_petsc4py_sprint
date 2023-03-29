@@ -394,7 +394,7 @@ cdef class LogStage:
         Parameters
         ----------
         flag : bool
-            `True` if the stage is visible, `False` otherwise.
+            `True` to make the stage visible, `False` otherwise.
 
         See Also
         --------
