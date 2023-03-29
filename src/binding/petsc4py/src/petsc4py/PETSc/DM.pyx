@@ -215,23 +215,72 @@ cdef class DM(Object):
         CHKERR( DMGetDimension(self.dm, &dim) )
         return toInt(dim)
 
-    def setDimension(self, dim) -> None:
+    def setDimension(self, dim: int) -> None:
         """Set the topological dimension of the `DM`.
+
+        Collective.
+
+        Parameters
+        ----------
+        dim
+            Topological dimension.
+
+        See Also
+        --------
+        petsc.DMSetDimension
         
         """
         cdef PetscInt cdim = asInt(dim)
         CHKERR( DMSetDimension(self.dm, cdim) )
 
-    def getCoordinateDim(self):
+    def getCoordinateDim(self) -> int:
+        """Get the dimension of embedding space for 
+        coordinates values.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetCoordinateDim
+        
+        """
         cdef PetscInt dim = 0
         CHKERR( DMGetCoordinateDim(self.dm, &dim) )
         return toInt(dim)
 
-    def setCoordinateDim(self, dim):
+    def setCoordinateDim(self, dim: int) -> None:
+        """Set the dimension of embedding space for 
+        coordinates values.
+
+        Not Collective.
+
+        Parameters
+        ----------
+        dim
+            The embedding dimension.
+
+        See Also
+        --------
+        petsc.DMSetCoordinateDim
+        
+        """
         cdef PetscInt cdim = asInt(dim)
         CHKERR( DMSetCoordinateDim(self.dm, cdim) )
 
-    def setOptionsPrefix(self, prefix):
+    def setOptionsPrefix(self, prefix) -> None:
+        """Set .
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        
+
+        See Also
+        --------
+        petsc.DMSetOptionsPrefix
+        
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( DMSetOptionsPrefix(self.dm, cval) )
