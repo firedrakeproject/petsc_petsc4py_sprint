@@ -346,7 +346,7 @@ cdef class LogStage:
         return toBool(flag)
 
     def setActive(self, flag: bool) -> None:
-        """Set if the stage is active.
+        """Activate or deactivate the current stage.
         
         Not Collective.
 
