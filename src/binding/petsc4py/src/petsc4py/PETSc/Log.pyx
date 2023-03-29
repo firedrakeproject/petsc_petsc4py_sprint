@@ -646,7 +646,7 @@ cdef class LogEvent:
 
     #
 
-    def getPerfInfo(self, stage: int | None = None) -> etscEventPerfInfo:
+    def getPerfInfo(self, stage: int | None = None) -> PetscEventPerfInfo:
         """Return the performance information about the given event
             in the given event.   
 
@@ -657,7 +657,7 @@ cdef class LogEvent:
 
         Returns
         -------
-        info : etscEventPerfInfo
+        info : PetscEventPerfInfo
             This structure is filled with the performance information.
         
         See Also
