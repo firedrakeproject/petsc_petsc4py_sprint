@@ -267,14 +267,16 @@ cdef class DM(Object):
         cdef PetscInt cdim = asInt(dim)
         CHKERR( DMSetCoordinateDim(self.dm, cdim) )
 
-    def setOptionsPrefix(self, prefix) -> None:
-        """Set .
+    def setOptionsPrefix(self, prefix: str) -> None:
+        """Set the prefix prepend to all `DM` options.
 
         Logically Collective.
 
         Parameters
         ----------
-        
+        prefix 
+            The prefix to prepend by searching through
+            the options database.
 
         See Also
         --------
@@ -285,20 +287,71 @@ cdef class DM(Object):
         prefix = str2bytes(prefix, &cval)
         CHKERR( DMSetOptionsPrefix(self.dm, cval) )
 
-    def getOptionsPrefix(self):
+    def getOptionsPrefix(self) -> str:
+        """Get the prefix prepended to all `DM` options.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetOptionsPrefix
+        
+        """
         cdef const char *cval = NULL
         CHKERR( DMGetOptionsPrefix(self.dm, &cval) )
         return bytes2str(cval)
 
-    def appendOptionsPrefix(self, prefix):
+    def appendOptionsPrefix(self, prefix: str) -> None:
+        """Append an additional string to an already 
+        existing prefix.
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        prefix 
+            The string to append to the current prefix.
+
+        See Also
+        --------
+        petsc.DMAppendOptionsPrefix
+        
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( DMAppendOptionsPrefix(self.dm, cval) )
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
+        """Set parameters in a `DM` from the options database.
+        
+        Collective.
+
+        Notes
+        -----
+        Options database is available to set up a specific 
+        configuration, e.g., ``-dm_vec_type`` sets the type
+        of vector to create inside of the `DM`.
+
+        See Also
+        --------
+        petsc_options, petsc.DMSetFromOptions
+
+        """
         CHKERR( DMSetFromOptions(self.dm) )
 
-    def viewFromOptions(self, name, Object obj=None):
+    def viewFromOptions(self, name: str, Object obj=None) -> None:
+        """View a `DM` based on a request in the options database.
+
+        Collective.
+
+        Parameters
+        ----------
+        name
+            Option string that is used to activate the viewing.
+        obj
+            Object provides the prefix for the options database.
+
+        """
         cdef const char *cname = NULL
         _ = str2bytes(name, &cname)
         cdef PetscObject  cobj = NULL
