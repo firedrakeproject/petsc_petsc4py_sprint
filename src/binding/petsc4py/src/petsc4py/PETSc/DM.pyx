@@ -281,7 +281,7 @@ cdef class DM(Object):
         CHKERR( DMSetOptionsPrefix(self.dm, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Get the prefix prepended to all `DM` options.
+        """Return the prefix prepended to all `DM` options.
 
         Not Collective.
 
@@ -331,14 +331,14 @@ cdef class DM(Object):
         CHKERR( DMSetFromOptions(self.dm) )
 
     def viewFromOptions(self, name: str, Object obj=None) -> None:
-        """View a `DM` based on a request in the options database.
+        """View a `DM` based in the options.
 
         Collective.
 
         Parameters
         ----------
         name : str
-            Option string that is used to activate the viewing.
+            Name used to activate the viewing.
         obj : Object
             Object provides the prefix for the options database.
 
@@ -397,7 +397,7 @@ cdef class DM(Object):
         CHKERR( DMSetBasicAdjacency(self.dm, uC, uCl) )
 
     def getBasicAdjacency(self):
-        """Get the flags for determing variable influence.
+        """Return the flags for determing variable influence.
 
         Not collective.
 
@@ -468,7 +468,7 @@ cdef class DM(Object):
     #
 
     def createSubDM(self, fields: Sequence[int]):
-        """Creates an `Is` and `DM` encapsuling a subproblem.
+        """Creates an `IS` and `DM` encapsuling a subproblem.
        
         Not collective.
 
