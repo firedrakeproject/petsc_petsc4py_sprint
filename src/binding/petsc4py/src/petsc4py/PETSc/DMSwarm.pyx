@@ -134,14 +134,11 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmDestroyLocalVectorFromField(self.dm, cfieldname, &vec) )
 
     def initializeFieldRegister(self):
-        """TODO
+        """Initiate the registration of fields to a `DMSwarm`.
 
-        Not collective.
+        After all fields have been registered, you must call `finalizeFieldRegister`.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -213,15 +210,28 @@ cdef class DMSwarm(DM):
         fieldname = str2bytes(fieldname, &cfieldname)
         CHKERR( DMSwarmRegisterPetscDatatypeField(self.dm, cfieldname, cblocksize, ctype) )
 
-    def getField(self, fieldname):
-        """TODO
+    def getField(self, fieldname) -> TODO:
+        """Get access to the underlying array storing all entries associated with a registered field.
+
+        The array must be returned using a matching call to `restoreField`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name to identify this field.
+
+        Returns
+        -------
+        TODO:
+        blocksize
+            the number of each data type
+        type
+            the data type
+        data
+            pointer to raw array
+
 
         See also
         --------
@@ -355,15 +365,17 @@ cdef class DMSwarm(DM):
         cdef PetscInt cindex = asInt(index)
         CHKERR( DMSwarmRemovePointAtIndex(self.dm, cindex) )
 
-    def copyPoint(self, pi, pj):
-        """TODO
+    def copyPoint(self, pi: int, pj: int) -> None:
+        """Copy point pj to point pi in the `DMSwarm`.
 
-        Not collective.
+        Not collective. #TODO: verify order
 
         Parameters
         ----------
-        TODO
-            TODO.
+        pi
+            The index of the point to copy.
+        pj
+            The point index where the copy should be located.
 
         See also
         --------
@@ -374,15 +386,10 @@ cdef class DMSwarm(DM):
         cdef PetscInt cpj = asInt(pj)
         CHKERR( DMSwarmCopyPoint(self.dm, cpi, cpj) )
 
-    def getLocalSize(self):
-        """TODO
+    def getLocalSize(self) -> int:
+        """Return the local length of fields registered.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -393,15 +400,10 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmGetLocalSize(self.dm, &size) )
         return toInt(size)
 
-    def getSize(self):
-        """TODO
+    def getSize(self) -> int:
+        """Return the total length of fields registered.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -481,15 +483,10 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmSetCellDM(self.dm, dm.dm) )
 
-    def getCellDM(self):
-        """TODO
+    def getCellDM(self) -> DM:
+        """Return `DM` cell attached to `DMSwarm`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -620,15 +617,17 @@ cdef class DMSwarm(DM):
         cdef PetscReal *coords = <PetscReal*> PyArray_DATA(xyz)
         CHKERR( DMSwarmSetPointCoordinatesCellwise(self.dm, cnpoints, coords) )
 
-    def viewFieldsXDMF(self, filename, fieldnames):
-        """TODO
+    def viewFieldsXDMF(self, filename: str, fieldnames: Sequence[str]) -> None:
+        """Write a selection of `DMSwarm` fields to an XDMF3 file.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        filename
+            The file name of the XDMF file (must have the extension .xmf).
+        fieldnames
+            Array containing the textual name of fields to write.
 
         See also
         --------
@@ -647,15 +646,15 @@ cdef class DMSwarm(DM):
             cfieldnames[i] = cval
         CHKERR( DMSwarmViewFieldsXDMF(self.dm, cfilename, cnfields, cfieldnames ) )
 
-    def viewXDMF(self, filename):
-        """TODO
+    def viewXDMF(self, filename: str) -> None:
+        """Write this `DMSwarm` fields to an XDMF3 file.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        filename
+            The file name of the XDMF file (must have the extension .xmf).
 
         See also
         --------
@@ -683,15 +682,12 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmSortGetAccess(self.dm) )
 
-    def sortRestoreAccess(self):
-        """TODO
+    def sortRestoreAccess(self) -> None:
+        """Invalidates the `DMSwarm` point sorting context.
+
+        You must call `sortGetAccess` before calling `sortRestoreAccess`.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -700,15 +696,15 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmSortRestoreAccess(self.dm) )
 
-    def sortGetPointsPerCell(self, e):
-        """TODO
+    def sortGetPointsPerCell(self, e: int) -> List[int]: #TODO:
+        """Creates an array of point indices for all points in a cell.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        e
+            The index of the cell.
 
         See also
         --------
@@ -724,15 +720,15 @@ cdef class DMSwarm(DM):
         for i from 0 <= i < npoints: pidlist.append(asInt(cpidlist[i]))
         return pidlist
 
-    def sortGetNumberOfPointsPerCell(self, e):
-        """TODO
+    def sortGetNumberOfPointsPerCell(self, e: int) -> int:
+        """Return the number of points in a cell.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        e
+            The index of the cell.
 
         See also
         --------
@@ -744,8 +740,10 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSortGetNumberOfPointsPerCell(self.dm, ce, &npoints) )
         return toInt(npoints)
 
-    def sortGetIsValid(self):
-        """TODO
+    def sortGetIsValid(self) -> bool:
+        """Return flag indicating whether the sort context is up-to-date.
+
+        Returns the `isvalid` flag associated with a `DMSwarm` point sorting context.
 
         Not collective.
 
@@ -763,15 +761,17 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSortGetIsValid(self.dm, &isValid) )
         return toBool(isValid)
 
-    def sortGetSizes(self):
-        """TODO
+    def sortGetSizes(self) -> tuple(int, int):
+        """Gets the sizes associated with a `DMSwarm` point sorting context.
 
         Not collective.
 
-        Parameters
+        Returns
         ----------
-        TODO
-            TODO.
+        ncells : int
+            Number of cells within the sort context.
+        npoints : int
+            Number of points used to create the sort context.
 
         See also
         --------
