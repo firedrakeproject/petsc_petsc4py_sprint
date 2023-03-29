@@ -5,7 +5,7 @@ class KSPType(object):
 
     Notes
     -----
-    `https://petsc.org/release/docs/manualpages/KSP/KSPType/`__
+    `KSP Type <https://petsc.org/release/docs/manualpages/KSP/KSPType/>`__
 
     See Also
     --------
@@ -62,6 +62,27 @@ class KSPType(object):
     HPDDM      = S_(KSPHPDDM)
 
 class KSPNormType(object):
+    """KSP norm type.
+
+    Attributes
+    ----------
+    NONE
+        Skips computing the norm, this should generally only be used if
+        you are using the Krylov method as a smoother with a fixed
+        small number of iterations. Implicitly sets
+        `petsc.KSPConvergedSkip` as KSP convergence test. Note that
+        certain algorithms such as `Type.GMRES` ALWAYS require the norm
+        calculation, for these methods the norms are still computed,
+        they are just not used in the convergence test.
+    PRECONDITIONED
+        The default for left preconditioned solves, uses the l₂ norm of
+        the preconditioned residual P⁻¹(b - Ax).
+    UNPRECONDITIONED
+        Uses the l₂ norm of the true b - Ax residual.
+    NATURAL
+         Supported  by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
+
+    """
     # native
     NORM_DEFAULT          = KSP_NORM_DEFAULT
     NORM_NONE             = KSP_NORM_NONE
@@ -144,8 +165,8 @@ cdef class KSP(Object):
         PetscCLEAR(self.obj); self.ksp = newksp
         return self
 
-    def setType(self, ksp_type: KSP.Type | str) -> None:
-        """Build the `KSP` data structure for a particular `KSP.Type`.
+    def setType(self, ksp_type: Type | str) -> None:
+        """Build the `PETSc.KSP` data structure for a particular `Type`.
 
         Logically collective.
 
@@ -156,21 +177,20 @@ cdef class KSP(Object):
 
         Notes
         -----
-        See `petsc.KSPType` for available methods (for instance, `KSP.CG` or
-        `KSP.GMRES`).
+        See `Type` for available methods (for instance, `Type.CG` or
+        `Type.GMRES`).
 
         Normally, it is best to use the `KSP.setFromOptions` command
         and then set the KSP type from the options database rather than
         by using this routine. Using the options database provides the
         user with maximum flexibility in evaluating the many different
-        Krylov methods. The ``KSP.setType`` routine is provided for
-        those situations where it is necessary to set the iterative
-        solver independently of the command line or options database.
-        This might be the case, for example, when the choice of
-        iterative solver changes during the execution of the program,
-        and the user's application is taking responsibility for
-        choosing the appropriate method. In other words, this routine
-        is not for beginners.
+        Krylov methods. This method is provided for those situations
+        where it is necessary to set the iterative solver independently
+        of the command line or options database. This might be the
+        case, for example, when the choice of iterative solver changes
+        during the execution of the program, and the user's application
+        is taking responsibility for choosing the appropriate method.
+        In other words, this routine is not for beginners.
 
         See also
         --------
@@ -182,7 +202,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetType(self.ksp, cval) )
 
     def getType(self) -> str:
-        """Get the KSP type as a string from the `KSP` object.
+        """Get the KSP type as a string from the `PETSc.KSP` object.
 
         Not collective.
 
@@ -196,7 +216,7 @@ cdef class KSP(Object):
         return bytes2str(cval)
 
     def setOptionsPrefix(self, prefix: str) -> None:
-        """Set the prefix used for all `KSP` options in the database.
+        """Set the prefix used for all `PETSc.KSP` options in the database.
 
         Logically collective.
 
@@ -210,7 +230,7 @@ cdef class KSP(Object):
         A hyphen (-) must NOT be given at the beginning of the prefix
         name. The first character of all runtime options is
         AUTOMATICALLY the hyphen. For example, to distinguish between
-        the runtime options for two different `KSP` contexts, one could
+        the runtime options for two different `PETSc.KSP` contexts, one could
         call
         ```
         KSPSetOptionsPrefix(ksp1, "sys1_")
@@ -234,7 +254,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetOptionsPrefix(self.ksp, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Get the prefix used for all `KSP` options in the database.
+        """Get the prefix used for all `PETSc.KSP` options in the database.
 
         Not collective.
 
@@ -248,7 +268,7 @@ cdef class KSP(Object):
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix: str) -> None:
-        """Append to prefix used for all `KSP` options in the database.
+        """Append to prefix used for all `PETSc.KSP` options in the database.
 
         Logically collective.
 
@@ -273,7 +293,7 @@ cdef class KSP(Object):
         CHKERR( KSPAppendOptionsPrefix(self.ksp, cval) )
 
     def setFromOptions(self) -> None:
-        """Sets `KSP` options from the options database.
+        """Sets `PETSc.KSP` options from the options database.
 
         Collective.
 
@@ -302,7 +322,7 @@ cdef class KSP(Object):
         Notes
         -----
         The user context is a way for users to attach any information
-        to the `KSP` that they may need later when interacting with the
+        to the `PETSc.KSP` that they may need later when interacting with the
         KSP.
         Use `KSP.getAppCtx` to get access to the context at a later
         time.
@@ -357,7 +377,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        If this is used then the `KSP` will attempt to use the `DM` to
+        If this is used then the `PETSc.KSP` will attempt to use the `DM` to
         create the matrix and use the routine set with
         `DM.setKSPComputeOperators`. Use ``KSP.setDMActive(False)``
         to instead use the matrix you have provided with
@@ -391,7 +411,7 @@ cdef class KSP(Object):
         -----
         By default `KSP.setDM` sets the `DM` as active, call
         ``KSP.setDMActive(False)`` after ``KSP.setDM(dm)`` to not
-        have the `KSP` object use the `DM` to generate the matrices.
+        have the `PETSc.KSP` object use the `DM` to generate the matrices.
 
         See also
         --------
@@ -506,7 +526,7 @@ cdef class KSP(Object):
         -----
         If you know the operator ``A`` has a null space you can use
         `Mat.setNullSpace` and `Mat.setTransposeNullSpace` to supply the
-        null space to ``A`` and the `KSP` solvers will automatically use
+        null space to ``A`` and the `PETSc.KSP` solvers will automatically use
         that null space as needed during the solution process.
 
         All future calls to `KSP.setOperators` must use the same size
@@ -908,7 +928,7 @@ cdef class KSP(Object):
         return self.get_attr('__monitor__')
 
     def monitorCancel(self) -> None:
-        """Clear all monitors for a `KSP` object.
+        """Clear all monitors for a `PETSc.KSP` object.
 
         Logically collective.
 
@@ -930,7 +950,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        This routine is called by the `KSP` implementations. It does not
+        This routine is called by the `PETSc.KSP` implementations. It does not
         typically need to be called by the user.
 
         See also
@@ -996,29 +1016,13 @@ cdef class KSP(Object):
         CHKERR( KSPGetPCSide(self.ksp, &side) )
         return side
 
-    def setNormType(self, normtype: KSP.NormType) -> None:
+    def setNormType(self, normtype: NormType) -> None:
         """Sets the norm that is used for convergence testing.
 
         Parameters
         ----------
         normtype
-            one of
-
-            - `KSP.NormType.NONE` - skips computing the norm, this
-              should generally only be used if you are using the Krylov
-              method as a smoother with a fixed small number of
-              iterations. Implicitly sets `petsc.KSPConvergedSkip` as
-              KSP convergence test. Note that certain algorithms such
-              as `KSP.GMRES` ALWAYS require the norm calculation, for
-              these methods the norms are still computed, they are just
-              not used in the convergence test.
-            - `KSP.NormType.PRECONDITIONED` - the default for left
-              preconditioned solves, uses the l₂ norm of the
-              preconditioned residual P⁻¹(b - Ax)
-            - `KSP.NormType.UNPRECONDITIONED` - uses the l₂ norm of the
-              true b - Ax residual.
-            - `KSP.NormType.NATURAL` - supported  by `KSP.CG`, `KSP.CR`,
-              `KSP.CGNE`, `KSP.CGS`.
+            The norm type to use (see `NormType`)
 
         Notes
         -----
@@ -1030,7 +1034,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.setUp, KSP.solve, KSP.destroy,
+        NormType, petsc_options, KSP.setUp, KSP.solve, KSP.destroy,
         KSP.setPCSide, KSP.getPCSide, KSP.NormType,
         petsc.KSPSetNormType, petsc.KSPConvergedSkip,
         petsc.KSPSetCheckNormIteration
