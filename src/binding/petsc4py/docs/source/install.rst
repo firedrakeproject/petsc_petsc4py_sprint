@@ -9,9 +9,7 @@ Install from PyPI using **pip**
 You can use :program:`pip` to install :mod:`petsc4py` and its
 dependencies (:mod:`mpi4py` is optional but highly recommended)::
 
-  $ python -m pip install [--user] numpy mpi4py  (or pip install [--user] numpy mpi4py)
-  $ python -m pip install [--user] petsc petsc4py (or pip install [--user] petsc petsc4py)
-
+  $ python -m pip install mpi4py petsc petsc4py
 
 Install from the PETSc source tree
 ----------------------------------
@@ -34,7 +32,7 @@ Building the documentation
 
 Install the documentation dependencies using the ``[doc]`` extra::
 
-  $ python -m pip install src/binding/petsc4py[doc]
+  $ python -m pip install "src/binding/petsc4py[doc]"
 
 Then::
 
