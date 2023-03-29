@@ -1991,7 +1991,7 @@ cdef class Vec(Object):
         Use `Vec.tDot` for the indefinite form yᵀ·x where yᵀ denotes the
         transpose of y.
 
-        Collective
+        Collective.
 
         Parameters
         ----------
@@ -2061,7 +2061,7 @@ cdef class Vec(Object):
         Use `Vec.dot` for the inner product yᴴ·x where yᴴ denotes the
         conjugate transpose of y.
 
-        Collective
+        Collective.
 
         Parameters
         ----------
@@ -2154,9 +2154,11 @@ cdef class Vec(Object):
 
     def norm(
         self,
-        norm_type: NormType | int | None = None
+        norm_type: NormType | int | None = None,
     ) -> float | tuple[float, float]:
         """Compute the vector norm.
+
+        Collective.
 
         Parameters
         ----------
@@ -2164,13 +2166,14 @@ cdef class Vec(Object):
             The type of norm requested. Possible values (assuming ``self`` as
             x) include:
 
-            - `NormType.NORM_1`    Σₙ |xₙ| 
+            - `NormType.NORM_1` Compute Σₙ |xₙ| 
 
-            - `NormType.NORM_2`    √(Σₙ |xₙ|²)
+            - `NormType.NORM_2` Compute √(Σₙ |xₙ|²)
 
-            - `NormType.NORM_INFINITY`    maxₙ |xₙ| 
+            - `NormType.NORM_INFINITY` Compute maxₙ |xₙ| 
 
-            - `NormType.NORM_1_AND_2`: ???
+            - `NormType.NORM_1_AND_2` Compute both `NormType.NORM_1` and
+              `NormType.NORM_2`.
 
             If `None`, defaults to `NormType.NORM_2`.
 
@@ -2185,7 +2188,6 @@ cdef class Vec(Object):
         NormType, petsc.VecNorm, petsc.NormType
 
         """
-
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2
         cdef PetscNormType ntype = PETSC_NORM_2
         if norm_type is not None: ntype = norm_type
@@ -2194,13 +2196,55 @@ cdef class Vec(Object):
         if ntype != norm_1_2: return toReal(rval[0])
         else: return (toReal(rval[0]), toReal(rval[1]))
 
-    def normBegin(self, norm_type=None):
+    def normBegin(
+        self,
+        norm_type: NormType | int | None = None,
+    ) -> None:
+        """Begin computing the vector norm.
+
+        This should be paired with a call to `Vec.normEnd`.
+
+        Parameters
+        ----------
+        norm_type
+            The type of norm to compute, defaults to `NormType.NORM_2`. See
+            `Vec.norm` for more information.
+
+        See Also
+        --------
+        Vec.normEnd, Vec.norm, petsc.VecNormBegin
+
+        """
         cdef PetscNormType ntype = PETSC_NORM_2
         if norm_type is not None: ntype = norm_type
         cdef PetscReal dummy[2]
         CHKERR( VecNormBegin(self.vec, ntype, dummy) )
 
-    def normEnd(self, norm_type=None):
+    def normEnd(
+        self,
+        norm_type: NormType | int | None = None,
+    ) -> float | tuple[float, float]:
+        """Finish computing the vector norm.
+
+        `Vec.normBegin` should already have been called.
+
+        Parameters
+        ----------
+        norm_type
+            The type of norm to compute, defaults to `NormType.NORM_2`. See
+            `Vec.norm` for more information.
+
+        Returns
+        -------
+        float | tuple[float, float]
+            The computed norm. A 2-tuple is returned if `NormType.NORM_1_AND_2`
+            is specified.
+
+        See Also
+        --------
+        Vec.normBegin, Vec.norm, petsc.VecNormEnd
+
+        """
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2
         cdef PetscNormType ntype = PETSC_NORM_2
         if norm_type is not None: ntype = norm_type
@@ -2209,57 +2253,221 @@ cdef class Vec(Object):
         if ntype != norm_1_2: return toReal(rval[0])
         else: return (toReal(rval[0]), toReal(rval[1]))
 
-    def sum(self):
+    def sum(self) -> ScalarType:
+        """Compute the sum of all the entries of the vector.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.VecSum
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecSum(self.vec, &sval) )
         return toScalar(sval)
 
-    def min(self):
+    def min(self) -> tuple[int, ScalarType]:
+        """Return the entry in the vector with minimum real part.
+
+        Collective.
+
+        Returns
+        -------
+        p : int
+            Location of the minimum value. If multiple entries exist with the
+            same value then the smallest index will be returned.
+        val : ScalarType
+            Minimum value.
+
+        Notes
+        -----
+        Returns ``PETSC_MAX_REAL`` for ``val`` and negative ``p`` if the
+        vector has length ``0``.
+
+        See Also
+        --------
+        Vec.max, petsc.VecMin
+
+        """
         cdef PetscInt  ival = 0
         cdef PetscReal rval = 0
         CHKERR( VecMin(self.vec, &ival, &rval) )
         return (toInt(ival), toReal(rval))
 
-    def max(self):
+    def max(self) -> tuple[int, ScalarType]:
+        """Return the entry in the vector with maximum real part.
+
+        Collective.
+
+        Returns
+        -------
+        p : int
+            Location of the maximum value. If multiple entries exist with the
+            same value then the smallest index will be returned.
+        val : ScalarType
+            Minimum value.
+
+        Notes
+        -----
+        Returns ``PETSC_MIN_REAL`` for ``val`` and negative ``p`` if the
+        vector has length ``0``.
+
+        See Also
+        --------
+        Vec.min, petsc.VecMax
+
+        """
         cdef PetscInt  ival = 0
         cdef PetscReal rval = 0
         CHKERR( VecMax(self.vec, &ival, &rval) )
         return (toInt(ival), toReal(rval))
 
-    def normalize(self):
+    def normalize(self) -> float:
+        """Normalize the vector by its 2-norm.
+
+        Collective.
+
+        Returns
+        -------
+        float
+            The vector norm before normalization.
+
+        See Also
+        --------
+        Vec.norm, petsc.VecNormalize
+
+        """
         cdef PetscReal rval = 0
         CHKERR( VecNormalize(self.vec, &rval) )
         return toReal(rval)
 
-    def reciprocal(self):
+    def reciprocal(self) -> None:
+        """Replace each entry in the vector by its reciprocal.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc.VecReciprocal
+
+        """
         CHKERR( VecReciprocal(self.vec) )
 
-    def exp(self):
+    def exp(self) -> None:
+        """Replace each entry (xₙ) in the vector by exp(xₙ).
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.log, petsc.VecExp
+
+        """
         CHKERR( VecExp(self.vec) )
 
-    def log(self):
+    def log(self) -> None:
+        """Replace each entry in the vector by its natural logarithm.
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.exp, petsc.VecLog
+
+        """
         CHKERR( VecLog(self.vec) )
 
-    def sqrtabs(self):
+    def sqrtabs(self) -> None:
+        """Replace each entry (xₙ) in the vector by √|xₙ|.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.VecSqrtAbs
+
+        """
         CHKERR( VecSqrtAbs(self.vec) )
 
-    def abs(self):
+    def abs(self) -> None:
+        """Replace each entry (xₙ) in the vector by |xₙ|.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc.VecAbs
+
+        """
         CHKERR( VecAbs(self.vec) )
 
     def conjugate(self):
+        """Conjugates the vector.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc.VecConjugate
+
+        """
         CHKERR( VecConjugate(self.vec) )
 
-    def setRandom(self, Random random=None):
+    def setRandom(self, Random random=None) -> None:
+        """Set all components of the vector to random numbers.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        random
+            Random number generator. If `None` then one will be created
+            internally. 
+
+        See Also
+        --------
+        petsc.VecSetRandom
+
+        """
         cdef PetscRandom rnd = NULL
         if random is not None: rnd = random.rnd
         CHKERR( VecSetRandom(self.vec, rnd) )
 
-    def permute(self, IS order, invert=False):
+    def permute(self, IS order, invert: bool = False) -> None:
+        """Permute the vector in-place with a provided ordering.
+
+        Parameters
+        ----------
+        order
+            Ordering for the permutation.
+        invert
+            Whether to invert the permutation.
+
+        Notes
+        -----
+        Parallel index sets with non-local permutations are not currently
+        supported.
+
+        See Also
+        --------
+        petsc.VecPermute
+
+        """
         cdef PetscBool cinvert = PETSC_FALSE
         if invert: cinvert = PETSC_TRUE
         CHKERR( VecPermute(self.vec, order.iset, cinvert) )
 
-    def zeroEntries(self):
+    def zeroEntries(self) -> None:
+        """Set all entries in the vector to zero.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc.VecZeroEntries
+
+        """
         CHKERR( VecZeroEntries(self.vec) )
 
     def set(self, alpha):
