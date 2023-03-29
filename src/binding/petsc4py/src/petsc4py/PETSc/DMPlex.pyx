@@ -1078,31 +1078,23 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexRestoreTransitiveClosure(self.dm, cp, cuseCone, &numPoints, &points) )
         return out[::2],out[1::2]
 
-    def vecGetClosure(self, Section sec, Vec vec, p):
-        """DMPlexVecRestoreClosure - Restore the array of the values on the closure of 'point'
+    def vecGetClosure(self, Section sec, Vec vec, p: int) -> ndarray[Scalar]:
+        """Get an array of the values on the closure of 'point'.
 
-        Not collective
+        Not collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
-        section
-            The section describing the layout in `v`, or ``None`` to use the default section
-        v
-            The local vector
+        sec
+            The section describing the layout in ``vec``.
+        vec
+            The local vector.
         point
-            The point in the `DM`
-        csize
-            The number of values in the closure, or ``None``
-        values
-            The array of values, which is a borrowed array and should not be freed
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexVecGetClosure`, `DMPlexVecSetClosure`, `DMPlexMatSetClosure`
+            The point in the `DMPlex`.
 
         See Also
         --------
-        petsc.DMPlexVecRestoreClosure
+        `DM`, `DMPLEX`, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscInt cp = asInt(p), csize = 0
