@@ -166,8 +166,9 @@ class KSPType(object):
 class KSPNormType(object):
     """KSP norm type.
 
-    Attributes
-    ----------
+    An class modelling an ENUM. The following values are available as
+    attributes.
+
     NONE
         Skips computing the norm, this should generally only be used if
         you are using the Krylov method as a smoother with a fixed
