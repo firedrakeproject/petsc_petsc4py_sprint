@@ -171,11 +171,11 @@ cdef class DM(Object):
 
         Notes
         -----
-        `DM` types are availabe in DMType class.
+        `DM` types are availabe in DM.Type class.
 
         See Also
         --------
-        DMType, petsc.DMSetType
+        DM.Type, petsc.DMSetType
 
         """
         cdef PetscDMType cval = NULL
