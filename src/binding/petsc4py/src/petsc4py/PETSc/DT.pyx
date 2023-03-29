@@ -75,16 +75,16 @@ cdef class Quad(Object):
         CHKERR( PetscQuadratureDestroy(&self.quad) )
         return self
 
-    def getData(self) -> tuple(ndarray, ndarray):
+    def getData(self) -> tuple(ArrayReal, ArrayReal):
         """Return the data defining the `Quad`.
 
         Not collective.
 
         Returns
         -------
-        points : ndarray
+        points : ArrayReal
             The quadrature points.
-        weights : ndarray
+        weights : ArrayReal
             The quadrature weights.
 
         See also
