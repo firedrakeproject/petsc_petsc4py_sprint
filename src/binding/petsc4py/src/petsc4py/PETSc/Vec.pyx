@@ -1906,11 +1906,47 @@ cdef class Vec(Object):
         CHKERR( VecCopy(self.vec, result.vec) )
         return result
 
-    def chop(self, tol):
+    def chop(self, tol: float) -> None:
+        """Set all vector entries less than some tolerance to zero.
+
+        Parameters
+        ----------
+        tol
+            The tolerance below which entries are set to zero.
+
+        See Also
+        --------
+        petsc.VecChop
+
+        """
         cdef PetscReal rval = asReal(tol)
         CHKERR( VecChop(self.vec, rval) )
 
-    def load(self, Viewer viewer):
+    def load(self, Viewer viewer) -> Self:
+        """Load a vector that has been stored in a binary format.
+
+        The vector must have been stored with `Vec.view` with a viewer with
+        type `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
+
+        Collective
+
+        Parameters
+        ----------
+        viewer
+            Binary file viewer, either `Viewer.Type.BINARY` or
+            `Viewer.Type.HDF5`.
+
+        Notes
+        -----
+        Vector type defaults to either `Vec.Type.SEQ` or `Vec.Type.MPI`. To
+        load other types `Vec.setType` or `Vec.setFromOptions` should be
+        called in advance.
+
+        See Also
+        --------
+        Vec.view, petsc.VecLoad
+
+        """
         cdef MPI_Comm comm = MPI_COMM_NULL
         cdef PetscObject obj = <PetscObject>(viewer.vwr)
         if self.vec == NULL:
@@ -1919,64 +1955,237 @@ cdef class Vec(Object):
         CHKERR( VecLoad(self.vec, viewer.vwr) )
         return self
 
-    def equal(self, Vec vec):
+    def equal(self, Vec vec) -> bool:
+        """Return whether the vector is equal to another.
+
+        Collective.
+
+        Parameters
+        ----------
+        vec
+            Vector to compare with.
+
+        Returns
+        -------
+        bool
+            Whether the vectors are equal or not. The vectors are considered
+            equal if they point to the same memory buffer or are bitwise
+            identical with the same local and global layouts. Rounding errors
+            are not taken into account.
+
+        See Also
+        --------
+        petsc.VecEqual
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( VecEqual(self.vec, vec.vec, &flag) )
         return toBool(flag)
 
-    def dot(self, Vec vec):
+    def dot(self, Vec vec) -> ScalarType:
+        """Return the dot product with ``vec``.
+
+        For complex numbers this computes yᴴ·x with ``self`` as x, ``vec``
+        as y and where yᴴ denotes the conjugate transpose of y.
+
+        Use `Vec.tDot` for the indefinite form yᵀ·x where yᵀ denotes the
+        transpose of y.
+
+        Collective
+
+        Parameters
+        ----------
+        vec
+            Vector to compute the dot product with.
+
+        Returns
+        -------
+        ScalarType
+            The dot product.
+
+        See Also
+        --------
+        Vec.dotBegin, Vec.dotEnd, Vec.tDot, petsc.VecDot
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecDot(self.vec, vec.vec, &sval) )
         return toScalar(sval)
 
-    def dotBegin(self, Vec vec):
+    def dotBegin(self, Vec vec) -> None:
+        """Begin computing the dot product.
+
+        This should be paired with a call to `Vec.dotEnd`.
+
+        Parameters
+        ----------
+        vec
+            Vector to compute the dot product with.
+
+        See Also
+        --------
+        Vec.dotEnd, Vec.dot, petsc.VecDotBegin
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecDotBegin(self.vec, vec.vec, &sval) )
 
-    def dotEnd(self, Vec vec):
+    def dotEnd(self, Vec vec) -> ScalarType:
+        """Finish computing the dot product.
+
+        Parameters
+        ----------
+        vec
+            Vector to compute the dot product with.
+
+        Returns
+        -------
+        ScalarType
+            The dot product.
+
+        See Also
+        --------
+        Vec.dotBegin, Vec.dot, petsc.VecDotEnd
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecDotEnd(self.vec, vec.vec, &sval) )
         return toScalar(sval)
 
-    def tDot(self, Vec vec):
+    def tDot(self, Vec vec) -> ScalarType:
+        """Return the indefinite dot product with ``vec``.
+
+        This computes yᵀ·x with ``self`` as x, ``vec``
+        as y and where yᵀ denotes the transpose of y.
+
+        Use `Vec.dot` for the inner product yᴴ·x where yᴴ denotes the
+        conjugate transpose of y.
+
+        Collective
+
+        Parameters
+        ----------
+        vec
+            Vector to compute the indefinite dot product with.
+
+        Returns
+        -------
+        ScalarType
+            The indefinite dot product.
+
+        See Also
+        --------
+        Vec.tDotBegin, Vec.tDotEnd, Vec.dot, petsc.VecTDot
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecTDot(self.vec, vec.vec, &sval) )
         return toScalar(sval)
 
-    def tDotBegin(self, Vec vec):
+    def tDotBegin(self, Vec vec) -> None:
+        """Begin computing the indefinite dot product.
+
+        This should be paired with a call to `Vec.tDotEnd`.
+
+        Parameters
+        ----------
+        vec
+            Vector to compute the indefinite dot product with.
+
+        See Also
+        --------
+        Vec.tDotEnd, Vec.tDot, petsc.VecTDotBegin
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecTDotBegin(self.vec, vec.vec, &sval) )
 
-    def tDotEnd(self, Vec vec):
+    def tDotEnd(self, Vec vec) -> ScalarType:
+        """Finish computing the indefinite dot product.
+
+        Parameters
+        ----------
+        vec
+            Vector to compute the indefinite dot product with.
+
+        Returns
+        -------
+        ScalarType
+            The indefinite dot product.
+
+        See Also
+        --------
+        Vec.tDotBegin, Vec.tDot, petsc.VecTDotEnd
+
+        """
         cdef PetscScalar sval = 0
         CHKERR( VecTDotEnd(self.vec, vec.vec, &sval) )
         return toScalar(sval)
 
     def mDot(self, vecs, out=None):
+        """Not implemented."""
         <void>self; <void>vecs; <void>out; # unused
         raise NotImplementedError
 
     def mDotBegin(self, vecs, out=None):
+        """Not implemented."""
         <void>self; <void>vecs; <void>out; # unused
         raise NotImplementedError
 
     def mDotEnd(self, vecs, out=None):
+        """Not implemented."""
         <void>self; <void>vecs; <void>out; # unused
         raise NotImplementedError
 
     def mtDot(self, vecs, out=None):
+        """Not implemented."""
         <void>self; <void>vecs; <void>out; # unused
         raise NotImplementedError
 
     def mtDotBegin(self, vecs, out=None):
+        """Not implemented."""
         <void>self; <void>vecs; <void>out; # unused
         raise NotImplementedError
 
     def mtDotEnd(self, vecs, out=None):
+        """Not implemented."""
         <void>self; <void>vecs; <void>out; # unused
         raise NotImplementedError
 
-    def norm(self, norm_type=None):
+    def norm(
+        self,
+        norm_type: NormType | int | None = None
+    ) -> float | tuple[float, float]:
+        """Compute the vector norm.
+
+        Parameters
+        ----------
+        norm_type
+            The type of norm requested. Possible values (assuming ``self`` as
+            x) include:
+
+            - `NormType.NORM_1`: Σₙ|xₙ| 
+
+            - `NormType.NORM_2`: √(Σₙ|xₙ|²)
+
+            - `NormType.NORM_INFINITY`: ???
+
+            - `NormType.NORM_1_AND_2`: ???
+
+            If `None`, defaults to `NormType.NORM_2`.
+
+        Returns
+        -------
+        float | tuple[float, float]
+            The computed norm. A 2-tuple is returned if `NormType.NORM_1_AND_2`
+            is specified.
+
+        See Also
+        --------
+        NormType, petsc.VecNorm, petsc.NormType
+
+        """
+
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2
         cdef PetscNormType ntype = PETSC_NORM_2
         if norm_type is not None: ntype = norm_type
