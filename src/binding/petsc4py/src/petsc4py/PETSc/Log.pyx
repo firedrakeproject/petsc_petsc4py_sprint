@@ -595,7 +595,7 @@ cdef class LogEvent:
         Parameters
         ----------
         flag
-            Instruction will either activate or deactivate the event.
+            Activate or deactivate the event.
 
         See Also
         --------
