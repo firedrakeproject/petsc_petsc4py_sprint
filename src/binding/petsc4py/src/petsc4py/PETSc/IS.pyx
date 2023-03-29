@@ -374,7 +374,7 @@ cdef class IS(Object):
         ----------
         nlocal
             The number of indices on this processor in the resulting index set,
-            defaults to `PETSC_DECIDE`.
+            defaults to ``PETSC_DECIDE``.
 
         See Also
         --------
@@ -429,7 +429,7 @@ cdef class IS(Object):
 
         See Also
         --------
-        IS.getLocalSize, IS.getGlobalSize
+        IS.getLocalSize, IS.getSize
 
         """
         cdef PetscInt n = 0, N = 0
@@ -1344,7 +1344,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        dict[int, ArrayInt]
+        dict
             Mapping from neighbouring processor number to an array of shared
             indices (in local numbering).
 
@@ -1373,7 +1373,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        dict[int, ArrayInt]
+        dict
             Mapping from neighbouring processor number to an array of shared
             block indices (in local numbering).
 
@@ -1501,7 +1501,7 @@ cdef class LGMap(Object):
     def applyInverse(
         self,
         indices: Sequence[int],
-        mode: MapMode | str | None = None,
+        mode: GLMapMode | str | None = None,
     ) -> ArrayInt:
         """Compute local numbering from global numbering.
 
@@ -1541,7 +1541,7 @@ cdef class LGMap(Object):
     def applyBlockInverse(
         self,
         indices: Sequence[int],
-        mode: MapMode | str | None = None,
+        mode: GLMapMode | str | None = None,
     ) -> ArrayInt:
         """Compute blocked local numbering from blocked global numbering.
 
