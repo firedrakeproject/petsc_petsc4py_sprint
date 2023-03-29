@@ -168,7 +168,7 @@ cdef class Log:
 
         Returns
         -------
-        wctime : double
+        wctime : float
             Current time.
         
         See Also
