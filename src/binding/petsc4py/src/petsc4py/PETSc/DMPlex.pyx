@@ -507,7 +507,7 @@ cdef class DMPlex(DM):
         cdef PetscInt csize = asInt(size)
         CHKERR( DMPlexSetConeSize(self.dm, cp, csize) )
 
-    def getCone(self, p: int) -> ndarray[int]:
+    def getCone(self, p: int) -> ArrayInt:
         """Return the points on the in-edges for this point in the DAG.
 
         Not collective.
@@ -617,7 +617,7 @@ cdef class DMPlex(DM):
         cdef PetscInt cconeOrientation = asInt(coneOrientation)
         CHKERR( DMPlexInsertConeOrientation(self.dm, cp, cconePos, cconeOrientation) )
 
-    def getConeOrientation(self, p: int) -> ndarray[int]:
+    def getConeOrientation(self, p: int) -> ArrayInt:
         """Return the orientations on the in-edges for this point in the DAG.
 
         Not collective.
@@ -774,7 +774,7 @@ cdef class DMPlex(DM):
         cdef PetscInt ssize = asInt(size)
         CHKERR( DMPlexSetSupportSize(self.dm, cp, ssize) )
 
-    def getSupport(self, p: int) -> ndarray[int]:
+    def getSupport(self, p: int) -> ArrayInt:
         """Return the points on the out-edges for this point in the DAG.
 
         Not collective.
@@ -969,7 +969,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetHeightStratum(self.dm, csvalue, &sStart, &sEnd) )
         return (toInt(sStart), toInt(sEnd))
 
-    def getMeet(self, points: Sequence[int]) -> ndarray[int]:
+    def getMeet(self, points: Sequence[int]) -> ArrayInt:
         """Get an array for the meet of the set of points.
 
         Not collective.
@@ -995,7 +995,7 @@ cdef class DMPlex(DM):
         finally:
             CHKERR( DMPlexRestoreMeet(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
-    def getJoin(self, points: Sequence[int]) -> ndarray[int]:
+    def getJoin(self, points: Sequence[int]) -> ArrayInt:
         """Get an array for the join of the set of points.
 
         Not collective.
@@ -1021,7 +1021,7 @@ cdef class DMPlex(DM):
         finally:
             CHKERR( DMPlexRestoreJoin(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
-    def getFullJoin(self, points: Sequence[int]) -> ndarray[int]:
+    def getFullJoin(self, points: Sequence[int]) -> ArrayInt:
         """Get an array for the join of the set of points.
 
         Not collective.
@@ -1047,7 +1047,7 @@ cdef class DMPlex(DM):
         finally:
             CHKERR( DMPlexRestoreJoin(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
-    def getTransitiveClosure(self, p: int, useCone: bool | None = True) -> tuple[ndarray[int], ndarray[int]]:
+    def getTransitiveClosure(self, p: int, useCone: bool | None = True) -> tuple[ArrayInt, ArrayInt]:
         """Return the points on the transitive closure of the in-edges or out-edges for this point in the DAG.
 
         Not collective.
@@ -1078,7 +1078,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexRestoreTransitiveClosure(self.dm, cp, cuseCone, &numPoints, &points) )
         return out[::2],out[1::2]
 
-    def vecGetClosure(self, Section sec, Vec vec, p: int) -> ndarray:
+    def vecGetClosure(self, Section sec, Vec vec, p: int) -> ArrayScalar:
         """Get an array of the values on the closure of 'point'.
 
         Not collective.
@@ -1106,7 +1106,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexVecRestoreClosure(self.dm, sec.sec, vec.vec, cp, &csize, &cvals) )
         return closure
 
-    def getVecClosure(self, Section sec or None, Vec vec, point: int) -> ndarray:
+    def getVecClosure(self, Section sec or None, Vec vec, point: int) -> ArrayScalar:
         """Get an array of the values on the closure of 'point'.
 
         Not collective.
@@ -1122,7 +1122,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
+        DM, DMPlex, DMPlex.vecRestoreClosure, DMPlex.vecSetClosure, DMPlex.matSetClosure, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1135,7 +1135,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexVecRestoreClosure(self.dm, csec, vec.vec, cp, &csize, &cvals) )
         return closure
 
-    def setVecClosure(self, Section sec or None, Vec vec, point: int, values: Sequence[float], addv: InsertMode | bool | None = None) -> None:
+    def setVecClosure(self, Section sec or None, Vec vec, point: int, values: Sequence[Scalar], addv: InsertMode | bool | None = None) -> None:
         """Set an array of the values on the closure of ``point``.
 
         Not collective.
