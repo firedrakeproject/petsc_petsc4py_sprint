@@ -60,7 +60,7 @@ cdef class Log:
         Parameters
         ----------
         all
-            Wheter to enable extensive logging.
+            Whether to enable extensive logging.
 
         Notes
         -----
