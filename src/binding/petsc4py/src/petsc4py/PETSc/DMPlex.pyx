@@ -1233,71 +1233,57 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def setTriangleOptions(self, opts):
-        """DMPlexTriangleSetOptions - Set the options used for the Triangle mesh generator
+    def setTriangleOptions(self, opts: str) -> None:
+        """Set the options used for the Triangle mesh generator.
 
         Not collective.
 
-        Inputs Parameters:
-        + dm - The `DMPlex` object
-        - opts - The command line options
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTetgenSetOptions`, `DMPlexGenerate`
+        Parameter
+        ---------
+        opts
+            The command line options.
 
         See Also
         --------
-        petsc.DMPlexTriangleSetOptions
+        DM, DMPlex, DMPlex.setTetGenOptions, DMPlex.generate, petsc.DMPlexTriangleSetOptions
 
         """
         cdef const char *copts = NULL
         opts = str2bytes(opts, &copts)
         CHKERR( DMPlexTriangleSetOptions(self.dm, copts) )
 
-    def setTetGenOptions(self, opts):
-        """DMPlexTetgenSetOptions - Set the options used for the Tetgen mesh generator
+    def setTetGenOptions(self, opts: str) -> None:
+        """Set the options used for the Tetgen mesh generator.
 
         Not collective.
 
-        Inputs Parameters:
-        + dm - The `DMPlex` object
-        - opts - The command line options
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTriangleSetOptions`, `DMPlexGenerate`
+        Parameters
+        ----------
+        opts
+            The command line options.
 
         See Also
         --------
-        petsc.DMPlexTetgenSetOptions
+        DM, DMPlex, DMPlex.setTriangleOptions, DMPlex.generate, petsc.DMPlexTetgenSetOptions
 
         """
         cdef const char *copts = NULL
         opts = str2bytes(opts, &copts)
         CHKERR( DMPlexTetgenSetOptions(self.dm, copts) )
 
-    def markBoundaryFaces(self, label, value=None):
-        """DMPlexMarkBoundaryFaces - Mark all faces on the boundary
+    def markBoundaryFaces(self, DMLabel label, value: int | None = None) -> DMLabel:
+        """Mark all faces on the boundary.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The original `DM`
-        val
-            The marker value, or `PETSC_DETERMINE` to use some value in the closure (or 1 if none are found)
-
-        Returns
-        -------
-        label
-            The `DMLabel` marking boundary faces with the given value
-
-        Note:
-        This function will use the point `PetscSF` from the input `DM` to exclude points on the partition boundary from being marked, unless the partition overlap is greater than zero. If you also wish to mark the partition boundary, you can use `DMSetPointSF` to temporarily set it to ``None``, and then reset it to the original object after the call.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLabelCreate`, `DMCreateLabel`
+        value
+            The marker value, or `DETERMINE` or ``None`` to use some value in the closure (or 1 if none are found).
 
         See Also
         --------
-        petsc.DMPlexMarkBoundaryFaces
+        DM, DMPlex, DMLabel.create, DM.createLabel, petsc.DMPlexMarkBoundaryFaces
 
         """
         cdef PetscInt ival = PETSC_DETERMINE
@@ -1310,139 +1296,85 @@ cdef class DMPlex(DM):
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMPlexMarkBoundaryFaces(self.dm, ival, clbl) )
 
-    def labelComplete(self, DMLabel label):
-        """DMPlexLabelComplete - Starting with a label marking points on a surface, we add the transitive closure to the surface
+    def labelComplete(self, DMLabel label) -> None:
+        """Starting with a label marking points on a surface, add the transitive closure to the surface.
 
         Parameters
         ----------
-        dm
-            The `DM`
         label
-            A `DMLabel` marking the surface points
-
-        Returns
-        -------
-        label
-            A `DMLabel` marking all surface points in the transitive closure
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexLabelCohesiveComplete`
+            A `DMLabel` marking the surface points.
 
         See Also
         --------
-        petsc.DMPlexLabelComplete
+        DM, DMPlex, DMPlex.labelCohesiveComplete, petsc.DMPlexLabelComplete
 
         """
         CHKERR( DMPlexLabelComplete(self.dm, label.dmlabel) )
 
-    def labelCohesiveComplete(self, DMLabel label, DMLabel bdlabel, bdvalue, flip, DMPlex subdm):
-        """DMPlexLabelCohesiveComplete - Starting with a label marking points on an internal surface, we add all other mesh pieces
-        to complete the surface
+    def labelCohesiveComplete(self, DMLabel label, DMLabel bdlabel, bdvalue: int, flip: bool, DMPlex subdm) -> None:
+        """Starting with a label marking points on an internal surface, add all other mesh pieces to complete the surface.
 
         Parameters
         ----------
-        dm
-            The `DM`
         label
-            A `DMLabel` marking the surface
-        blabel
-            A `DMLabel` marking the vertices on the boundary which will not be duplicated, or ``None`` to find them automatically
-        bvalue
-            Value of `DMLabel` marking the vertices on the boundary
+            A `DMLabel` marking the surface.
+        bdlabel
+            A `DMLabel` marking the vertices on the boundary which will not be duplicated.
+        bdvalue
+            Value of `DMLabel` marking the vertices on the boundary.
         flip
-            Flag to flip the submesh normal and replace points on the other side
+            Flag to flip the submesh normal and replace points on the other side.
         subdm
-            The `DM` associated with the label, or ``None``
-
-        Returns
-        -------
-        label
-            A `DMLabel` marking all surface points
-
-        Note:
-        The vertices in blabel are called "unsplit" in the terminology from hybrid cell creation.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexConstructCohesiveCells`, `DMPlexLabelComplete`
+            The `DMPlex` associated with the label.
 
         See Also
         --------
-        petsc.DMPlexLabelCohesiveComplete
+        DM, DMPlex, DMPlex.constructCohesiveCells, DMPlex.labelComplete, petsc.DMPlexLabelCohesiveComplete
 
         """
         cdef PetscBool flg = flip
         cdef PetscInt  val = asInt(bdvalue)
         CHKERR( DMPlexLabelCohesiveComplete(self.dm, label.dmlabel, bdlabel.dmlabel, val, flg, subdm.dm) )
 
-    def setAdjacencyUseAnchors(self, useAnchors=True):
-        """DMPlexSetAdjacencyUseAnchors - Define adjacency in the mesh using the point-to-point constraints.
+    def setAdjacencyUseAnchors(self, useAnchors: bool = True) -> None:
+        """Define adjacency in the mesh using the point-to-point constraints.
 
         Parameters
         ----------
-        dm
-            The `DM` object
         useAnchors
-            Flag to use the constraints. If PETSC_TRUE, then constrained points are omitted from DMPlexGetAdjacency(), and their anchor points appear in their place.
-
-        .seealso: `DMPlex`, `DMGetAdjacency`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlex.setAnchors`
+            Flag to use the constraints. If ``True``, then constrained points are omitted from `DMPlex.getAdjacency`, and their anchor points appear in their place.
 
         See Also
         --------
-        petsc.DMPlexSetAdjacencyUseAnchors
+        DMPlex, DM.getAdjacency, DM.setAdjacency, DMPlex.distribute, DMPlex.preallocateOperator, DMPlex.setAnchors, petsc.DMPlexSetAdjacencyUseAnchors
 
         """
         cdef PetscBool flag = useAnchors
         CHKERR( DMPlexSetAdjacencyUseAnchors(self.dm, flag) )
 
-    def getAdjacencyUseAnchors(self):
-        """DMPlexGetAdjacencyUseAnchors - Query whether adjacency in the mesh uses the point-to-point constraints.
-
-        Parameters
-        ----------
-        dm
-            The `DM` object
-
-        Returns
-        -------
-        useAnchors
-            Flag to use the closure. If PETSC_TRUE, then constrained points are omitted from DMPlexGetAdjacency(), and their anchor points appear in their place.
-
-        .seealso: `DMPlex`, `DMPlex.setAdjacencyUseAnchors`, `DMSetAdjacency`, `DMGetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlex.setAnchors`
+    def getAdjacencyUseAnchors(self) -> bool:
+        """Query whether adjacency in the mesh uses the point-to-point constraints.
 
         See Also
         --------
-        petsc.DMPlexGetAdjacencyUseAnchors
+        DMPlex, DMPlex.setAdjacencyUseAnchors, DM.setAdjacency, DM.getAdjacency, DMPlex.distribute, DMPlex.preallocateOperator, DMPlex.setAnchors, petsc.DMPlexGetAdjacencyUseAnchors
 
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( DMPlexGetAdjacencyUseAnchors(self.dm, &flag) )
         return toBool(flag)
 
-    def getAdjacency(self, p):
-        """DMPlexGetAdjacency - Return all points adjacent to the given point
+    def getAdjacency(self, p: int) -> ArrayInt:
+        """Return all points adjacent to the given point.
 
         Parameters
         ----------
-        dm
-            The `DM` object
         p
-            The point
-
-        Returns
-        -------
-        adjSize
-            The maximum size of `adj` if it is non-``None``, or `PETSC_DETERMINE`;
-        on output the number of adjacent points
-        adj
-            Either ``None`` so that the array is allocated, or an existing array with size `adjSize`;
-        on output contains the adjacent points
-
-        Notes:
-        The user must `PetscFree` the `adj` array if it was not passed in.
-
-        .seealso: `DMPlex`, `DMSetAdjacency`, `DMPlexDistribute`, `DMCreateMatrix`, `DMPlexPreallocateOperator`
+            The point.
 
         See Also
         --------
-        petsc.DMPlexGetAdjacency
+        DMPlex, DM.setAdjacency, DMPlex.distribute, DM.createMatrix, DMPlex.preallocateOperator, petsc.DMPlexGetAdjacency
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1456,52 +1388,30 @@ cdef class DMPlex(DM):
         return adjacency
 
     def setPartitioner(self, Partitioner part):
-        """DMPlexSetPartitioner - Set the mesh partitioner
+        """Set the mesh partitioner.
 
-        logically Collective
+        Logically collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
         part
-            The partitioner
-
-        Note:
-        Any existing `PetscPartitioner` will be destroyed.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`,`DMPlexDistribute`, `DMPlex.getPartitioner`, `PetscPartitionerCreate`
+            The partitioner.
 
         See Also
         --------
-        petsc.DMPlexSetPartitioner
+        DM, DMPlex, Partitioner, DMPlex.distribute, DMPlex.getPartitioner, Partitioner.create, petsc.DMPlexSetPartitioner
 
         """
         CHKERR( DMPlexSetPartitioner(self.dm, part.part) )
 
-    def getPartitioner(self):
-        """DMPlexGetPartitioner - Get the mesh partitioner
+    def getPartitioner(self) -> Partitioner:
+        """Return the mesh partitioner.
 
         Not collective.
 
-        Parameters
-        ----------
-        dm
-            The `DM`
-
-        Returns
-        -------
-        part
-            The `PetscPartitioner`
-
-        Note:
-        This gets a borrowed reference, so the user should not destroy this `PetscPartitioner`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`, `PetscSection`, `DMPlexDistribute`, `DMPlex.setPartitioner`, `PetscPartitionerDMPlexPartition`, `PetscPartitionerCreate`
-
         See Also
         --------
-        petsc.DMPlexGetPartitioner
+        DM, DMPlex, Partitioner, Section, DMPlex.distribute, DMPlex.setPartitioner, Partitioner.create, petsc.PetscPartitionerDMPlexPartition, petsc.DMPlexGetPartitioner
 
         """
         cdef Partitioner part = Partitioner()
@@ -1509,29 +1419,33 @@ cdef class DMPlex(DM):
         PetscINCREF(part.obj)
         return part
 
-    def rebalanceSharedPoints(self, entityDepth=0, useInitialGuess=True, parallel=True):
-        """DMPlexRebalanceSharedPoints - Redistribute points in the plex that are shared in order to achieve better balancing. This routine updates the `PointSF` of the `DM` inplace.
+    def rebalanceSharedPoints(self, entityDepth: int | None = 0, useInitialGuess: bool | None = True, parallel: bool | None = True) -> bool:
+        """Redistribute points in the plex that are shared in order to achieve better balancing.
 
-        Input parameters:
-        + dm               - The `DMPlex` object.
-        . entityDepth      - depth of the entity to balance (0 -> balance vertices).
-        . useInitialGuess  - whether to use the current distribution as initial guess (only used by ParMETIS).
-        - parallel         - whether to use ParMETIS and do the partition in parallel or whether to gather the graph onto a single process and use METIS.
+        Parameters
+        ----------
+        entityDepth
+            Depth of the entity to balance (e.g., 0 -> balance vertices).
+        useInitialGuess
+            Whether to use the current distribution as initial guess (only used by ParMETIS).
+        parallel
+            Whether to use ParMETIS and do the partition in parallel or whether to gather the graph onto a single process and use METIS.
 
-        Output parameter:
-        . success          - whether the graph partitioning was successful or not, optional. Unsuccessful simply means no change to the partitioning
+        Returns
+        -------
+        success: bool
+            Whether the graph partitioning was successful or not. Unsuccessful simply means no change to the partitioning.
 
-        Options Database Keys:
-        +  -dm_plex_rebalance_shared_points_parmetis - Use ParMetis instead of Metis for the partitioner
-        .  -dm_plex_rebalance_shared_points_use_initial_guess - Use current partition to bootstrap ParMetis partition
-        .  -dm_plex_rebalance_shared_points_use_mat_partitioning - Use the MatPartitioning object to perform the partition, the prefix for those operations is -dm_plex_rebalance_shared_points_
-        -  -dm_plex_rebalance_shared_points_monitor - Monitor the shared points rebalance process
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexDistribute`, `DMPlexCreateOverlap`
+        Notes
+        -----
+        Pass ``-dm_plex_rebalance_shared_points_parmetis`` to use ParMetis instead of Metis for the partitioner.
+        Pass ``-dm_plex_rebalance_shared_points_use_initial_guess`` to use current partition to bootstrap ParMetis partition.
+        Pass ``-dm_plex_rebalance_shared_points_use_mat_partitioning`` to use the `MatPartitioning` object to perform the partition, the prefix for those operations is ``-dm_plex_rebalance_shared_points_``.
+        Pass ``-dm_plex_rebalance_shared_points_monitor`` to monitor the shared points rebalance process.
 
         See Also
         --------
-        petsc.DMPlexRebalanceSharedPoints
+        DM, DMPlex, DMPlex.distribute, DMPlex.createOverlap, petsc_options, petsc.DMPlexRebalanceSharedPoints
 
         """
         cdef PetscInt centityDepth = asInt(entityDepth)
@@ -1541,36 +1455,24 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexRebalanceSharedPoints(self.dm, centityDepth, cuseInitialGuess, cparallel, &csuccess) )
         return toBool(csuccess)
 
-    def distribute(self, overlap=0):
-        """DMPlexDistribute - Distributes the mesh and any associated sections.
+    def distribute(self, overlap: int | None = 0) -> SF or None:
+        """Distribute the mesh and any associated sections.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The original `DMPlex` object
         overlap
-            The overlap of partitions, 0 is the default
+            The overlap of partitions.
 
         Returns
         -------
-        sf
-            The `PetscSF` used for point distribution, or ``None`` if not needed
-        dmParallel
-            The distributed `DMPlex` object
-
-        Note:
-        If the mesh was not distributed, the output `dmParallel` will be ``None``.
-
-        The user can control the definition of adjacency for the mesh using `DMSetAdjacency`. They should choose the combination appropriate for the function
-        representation on the mesh.
-
-        .seealso: `DMPlex`, `DM`, `DMPlex.create`, `DMSetAdjacency`, `DMPlex.getOverlap`
+        sf : SF or None
+             The `SF` used for point distribution, or ``None`` if not needed.
 
         See Also
         --------
-        petsc.DMPlexDistribute
+        DM, DMPlex, DMPlex.create, DM.setAdjacency, DMPlex.getOverlap, petsc.DMPlexDistribute
 
         """
         cdef PetscDM dmParallel = NULL
