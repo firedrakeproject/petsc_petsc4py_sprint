@@ -972,22 +972,18 @@ cdef class KSP(Object):
         Parameters
         ----------
         side
-            The preconditioning side, where side is one of
-
-            - `PC.Side.LEFT` - left preconditioning (default)
-            - `PC.Side.RIGHT` - right preconditioning
-            - `PC.Side.SYMMETRIC` - symmetric preconditioning
+            The preconditioning side (see `PC.Side`)
 
         Notes
         -----
         Left preconditioning is used by default for most Krylov methods
-        except `KSP.FGMRES` which only supports right preconditioning.
+        except `Type.FGMRES` which only supports right preconditioning.
 
         For methods changing the side of the preconditioner changes the
         norm type that is used, see `KSP.setNormType`.
 
         Symmetric preconditioning is currently available only for the
-        `KSP.QCG` method. Note, however, that symmetric preconditioning
+        `Type.QCG` method. Note, however, that symmetric preconditioning
         can be emulated by using either right or left preconditioning
         and a pre or post processing step.
 
@@ -996,8 +992,8 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.getPCSide, KSP.setNormType, KSP.getNormType,
-        petsc.KSPSetPCSide
+        PC.Side, petsc_options, KSP.getPCSide, KSP.setNormType,
+        KSP.getNormType, petsc.KSPSetPCSide
 
         """
         CHKERR( KSPSetPCSide(self.ksp, side) )
