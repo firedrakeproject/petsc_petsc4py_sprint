@@ -147,15 +147,10 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmInitializeFieldRegister(self.dm) )
 
-    def finalizeFieldRegister(self):
-        """TODO
+    def finalizeFieldRegister(self) -> None:
+        """Finalize the registration of fields to a `DMSwarm`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -164,15 +159,15 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmFinalizeFieldRegister(self.dm) )
 
-    def setLocalSizes(self, nlocal, buffer):
-        """TODO
+    def setLocalSizes(self, nlocal: int, buffer: int) -> Self:
+        """Sets the length of all registered fields on the `DMSwarm`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+nlocal - the length of each registered field
+buffer - the length of the buffer used to efficient dynamic re-sizing
 
         See also
         --------
@@ -184,15 +179,19 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetLocalSizes(self.dm, cnlocal, cbuffer) )
         return self
 
-    def registerField(self, fieldname, blocksize, dtype=ScalarType):
-        """TODO
+    def registerField(self, fieldname, blocksize, dtype=ScalarType): #TODO:
+        """Register a field to a `DMSwarm` with a native PETSc data type.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name to identify this field.
+        blocksize
+            The number of each data type.
+        type
+            A valid PETSc data type (PETSC_CHAR, PETSC_SHORT, PETSC_INT, PETSC_FLOAT, PETSC_REAL, PETSC_LONG).
 
         See also
         --------
@@ -296,14 +295,9 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmVectorDefineField(self.dm, cval) )
 
     def addPoint(self):
-        """TODO
+        """Add space for one new point in the `DMSwarm`.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -312,15 +306,16 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmAddPoint(self.dm) )
 
-    def addNPoints(self, npoints):
-        """TODO
+    def addNPoints(self, npoints: int) -> None:
+        """Add space for a number of new points in the `DMSwarm`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        npoints
+            The number of new points to add.
+
 
         See also
         --------
@@ -330,8 +325,8 @@ cdef class DMSwarm(DM):
         cdef PetscInt cnpoints = asInt(npoints)
         CHKERR( DMSwarmAddNPoints(self.dm, cnpoints) )
 
-    def removePoint(self):
-        """TODO
+    def removePoint(self) -> None:
+        """Remove the last point from the `DMSwarm`.
 
         Not collective.
 
@@ -347,15 +342,15 @@ cdef class DMSwarm(DM):
         """
         CHKERR( DMSwarmRemovePoint(self.dm) )
 
-    def removePointAtIndex(self, index):
-        """TODO
+    def removePointAtIndex(self, index: int) -> None:
+        """Removes a specific point from the DMSWARM
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        idx
+            Index of point to remove
 
         See also
         --------
@@ -414,15 +409,15 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmGetSize(self.dm, &size) )
         return toInt(size)
 
-    def migrate(self, remove_sent_points=False):
-        """TODO
+    def migrate(self, remove_sent_points=False) -> None: #TODO: remove_sent_points = bool | None = False ?
+        """Relocates points defined in the `DMSwarm` to other MPI-ranks.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        remove_sent_points
+            Flag indicating if sent points should be removed from the current MPI-rank.
 
         See also
         --------
@@ -467,14 +462,14 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmCollectViewDestroy(self.dm) )
 
     def setCellDM(self, DM dm):
-        """TODO
+        """Attaches a `DM` to a `DMSwarm`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        dm
+            The `DM` to attach to the `DMSwarm`.
 
         See also
         --------
@@ -500,15 +495,14 @@ cdef class DMSwarm(DM):
         PetscINCREF(dm.obj)
         return dm
 
-    def setType(self, dmswarm_type):
-        """TODO
+    def setType(self, dmswarm_type) -> None:
+        """Set particular flavor of `DMSwarm`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+stype - the DMSWARM type (e.g. DMSWARM_PIC)
 
         See also
         --------
@@ -518,15 +512,17 @@ cdef class DMSwarm(DM):
         cdef PetscDMSwarmType cval = dmswarm_type
         CHKERR( DMSwarmSetType(self.dm, cval) )
 
-    def setPointsUniformCoordinates(self, min, max, npoints, mode=None):
-        """TODO
+    def setPointsUniformCoordinates(self, min, max, npoints, mode=None) -> Self:
+        """Set point coordinates in a `DMSwarm` on a regular (ijk) grid.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+min - minimum coordinate values in the x, y, z directions (array of length dim)
+max - maximum coordinate values in the x, y, z directions (array of length dim)
+npoints - number of points in each spatial direction (array of length dim)
+mode - indicates whether to append points to the swarm (ADD_VALUES), or over-ride existing points (INSERT_VALUES)
 
         See also
         --------
@@ -548,15 +544,17 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetPointsUniformCoordinates(self.dm, cmin, cmax, cnpoints, cmode) )
         return self
 
-    def setPointCoordinates(self, coordinates, redundant=False, mode=None):
-        """TODO
+    def setPointCoordinates(self, coordinates, redundant=False, mode=None) -> None:
+        """Set point coordinates in a `DMSwarm` from a user defined list.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+npoints - the number of points to insert
+coor - the coordinate values
+redundant - if set to PETSC_TRUE, it is assumed that npoints and coor are only valid on rank 0 and should be broadcast to other ranks
+mode - indicates whether to append points to the swarm (ADD_VALUES), or over-ride existing points (INSERT_VALUES)
 
         See also
         --------
@@ -574,15 +572,17 @@ cdef class DMSwarm(DM):
         cdef PetscReal *coords = <PetscReal*> PyArray_DATA(xyz)
         CHKERR( DMSwarmSetPointCoordinates(self.dm, cnpoints, coords, credundant, cmode) )
 
-    def insertPointUsingCellDM(self, layoutType, fill_param):
-        """TODO
+    def insertPointUsingCellDM(self, layoutType: TODO, fill_param: int) -> None:
+        """Insert point coordinates within each cell.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        layout_type
+            Method used to fill each cell with the cell DM.
+        fill_param
+            Parameter controlling how many points per cell are added (the meaning of this parameter is dependent on the layout type).
 
         See also
         --------
@@ -593,15 +593,16 @@ cdef class DMSwarm(DM):
         cdef PetscInt cfill_param = asInt(fill_param)
         CHKERR( DMSwarmInsertPointsUsingCellDM(self.dm, clayoutType, cfill_param) )
 
-    def setPointCoordinatesCellwise(self, coordinates):
-        """TODO
+    def setPointCoordinatesCellwise(self, coordinates) -> None:
+        """Insert point coordinates (defined over the reference cell) within each cell.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+celldm - the cell DM
+npoints - the number of points to insert in each cell
+xi - the coordinates (defined in the local coordinate system for each cell) to insert
 
         See also
         --------
@@ -783,15 +784,17 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSortGetSizes(self.dm, &ncells, &npoints) )
         return (toInt(ncells), toInt(npoints))
 
-    def projectFields(self, fieldnames, reuse=False):
-        """TODO
+    def projectFields(self, fieldnames, reuse=False): #TODO:
+        """Project a set of swarm fields onto the cell `DM`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        nfields - the number of swarm fields to project
+        fieldnames - the textual names of the swarm fields to project
+        fields - an array of Vec’s of length nfields
+        reuse - flag indicating whether the array and contents of fields should be re-used or internally allocated
 
         See also
         --------
