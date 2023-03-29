@@ -1536,11 +1536,10 @@ cdef class Vec(Object):
         CHKERR( VecBoundToCPU(self.vec, &flg) )
         return toBool(flg)
 
-    # FIXME What is the right return type?
     def getCUDAHandle(
         self,
         mode: Literal["rw", "r", "w"] | None = "rw",
-    ) -> Any:
+    ) -> Any:  # FIXME What is the right return type?
         """Return a pointer to the CUDA buffer inside the vector.
 
         The returned pointer should be released using `Vec.restoreCUDAHandle`
@@ -1627,7 +1626,39 @@ cdef class Vec(Object):
         else:
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
 
-    def getHIPHandle(self, mode='rw'):
+    def getHIPHandle(
+        self,
+        mode: Literal["rw", "r", "w"] | None = "rw",
+    ) -> Any:  # FIXME What is the right return type?
+        """Return a pointer to the HIP buffer inside the vector.
+
+        The returned pointer should be released using `Vec.restoreHIPHandle`
+        with the same access mode.
+
+        Not collective.
+
+        Parameters
+        ----------
+        mode
+            Access mode for the vector. Must be read-write (``"rw"``), read
+            (``"r"``) or write (``"w"``). If `None` defaults to ``"rw"``.
+
+        Returns
+        -------
+        Any
+            HIP device pointer.
+
+        Notes
+        -----
+        This method may incur a host-to-device copy if the device data is
+        out of date and ``mode`` is ``"r"`` or ``"rw"``.
+
+        See Also
+        --------
+        Vec.restoreHIPHandle, petsc.VecHIPGetArray
+        petsc.VecHIPGetArrayRead, petsc.VecHIPGetArrayWrite
+
+        """
         cdef PetscScalar *hdl = NULL
         cdef const char *m = NULL
         if mode is not None: mode = str2bytes(mode, &m)
@@ -1641,7 +1672,38 @@ cdef class Vec(Object):
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
         return <Py_uintptr_t>hdl
 
-    def restoreHIPHandle(self, handle, mode='rw'):
+    def restoreHIPHandle(
+        self,
+        handle: Any,  # FIXME What type hint is appropriate?
+        mode: Literal["rw", "r", "w"] | None = "rw",
+    ) -> None:
+        """Restore a pointer to the HIP buffer inside the vector.
+
+        The pointer should have been obtained by calling `Vec.getHIPHandle`
+        with the same access mode.
+
+        Not collective.
+
+        Parameters
+        ----------
+        handle
+            HIP device pointer.
+        mode
+            Access mode for the vector. Must be read-write (``"rw"``), read
+            (``"r"``) or write (``"w"``). If `None` defaults to ``"rw"``.
+
+        Notes
+        -----
+        This method will mark the host data as out of date if ``mode`` is
+        ``"w"`` or ``"rw"``, resulting in a host-to-device copy the next time
+        data is accessed on the host.
+
+        See Also
+        --------
+        Vec.getHIPHandle, petsc.VecHIPRestoreArray
+        petsc.VecHIPRestoreArrayRead, petsc.VecHIPRestoreArrayWrite
+
+        """
         cdef PetscScalar *hdl = <PetscScalar*>(<Py_uintptr_t>handle)
         cdef const char *m = NULL
         if mode is not None: mode = str2bytes(mode, &m)
@@ -1654,47 +1716,99 @@ cdef class Vec(Object):
         else:
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
 
-    def getOffloadMask(self):
-        """
-        Returns :class:`int` of the Vec's PetscOffloadMask enum value.
+    def getOffloadMask(self) -> int:
+        """Return the offloading status of the vector.
+
+        Not collective.
+
+        Returns
+        -------
+        int
+            Enum value from `petsc.PetscOffloadMask` describing the offloading
+            status. Common values include:
+            - 1: ``PETSC_OFFLOAD_CPU`` - CPU has valid entries
+            - 2: ``PETSC_OFFLOAD_GPU`` - GPU has valid entries
+            - 3: ``PETSC_OFFLOAD_BOTH`` - both CPU and GPU have valid entries
+
+        See Also
+        --------
+        petsc.VecGetOffloadMask, petsc.PetscOffloadMask
+
         """
         cdef PetscOffloadMask mask
         CHKERR( VecGetOffloadMask(self.vec, &mask) )
         return mask
 
-    def getCLContextHandle(self):
-        """
-        Returns a Vec's CL Context as :class:`int`.
+    def getCLContextHandle(self) -> int:
+        """Return the OpenCL context associated with the vector.
 
-        To interface with :mod:`pyopencl` refer
-        :meth:`pyopencl.Context.from_int_ptr`
+        Not collective.
+
+        Returns
+        -------
+        int
+            Pointer to underlying CL context. This can be used with
+            `pyopencl` through `pyopencl.Context.from_int_ptr`.
+
+        See Also
+        --------
+        Vec.getCLQueueHandle, petsc.VecViennaCLGetCLContext
+
         """
         cdef Py_uintptr_t ctxhdl = 0
         CHKERR( VecViennaCLGetCLContext(self.vec, &ctxhdl) )
         return ctxhdl
 
-    def getCLQueueHandle(self):
-        """
-        Returns a Vec's CL Context as :class:`int`.
+    def getCLQueueHandle(self) -> int:
+        """Return the OpenCL command queue associated with the vector.
 
-        To interface with :mod:`pyopencl` refer
-        :meth:`pyopencl.Context.from_int_ptr`
+        Not collective.
+
+        Returns
+        -------
+        int
+            Pointer to underlying CL command queue. This can be used with
+            `pyopencl` through `pyopencl.Context.from_int_ptr`.
+
+        See Also
+        --------
+        Vec.getCLContextHandle, petsc.VecViennaCLGetCLQueue
+
         """
         cdef Py_uintptr_t queuehdl = 0
         CHKERR( VecViennaCLGetCLQueue(self.vec, &queuehdl) )
         return queuehdl
 
-    def getCLMemHandle(self, mode='rw'):
-        """
-        Returns a Vec's CL buffer as :class:`int`.
+    def getCLMemHandle(
+        self,
+        mode: Literal["rw", "r", "w"] = "rw",
+    ) -> int:
+        """Return the OpenCL buffer associated with the vector.
 
-        To interface with :mod:`pyopencl` refer
-        :meth:`pyopencl.MemoryObject.from_int_ptr`.
+        Not collective.
 
-        :arg mode: An instance of class:`str` denoting the intended access
-            usage to the CL buffer. Can be one of 'r'(read-only), 'w'
-            (write-only) or 'rw' (read-write). See also
-            :meth:`Vec.restoreCLMemHandle`.
+        Parameters
+        ----------
+        mode
+            Access mode for the vector. Must be read-write (``"rw"``), read
+            (``"r"``) or write (``"w"``).
+
+        Returns
+        -------
+        int
+            Pointer to the device buffer. This can be used with
+            `pyopencl` through `pyopencl.Context.from_int_ptr`.
+
+        Notes
+        -----
+        This method may incur a host-to-device copy if the device data is
+        out of date and ``mode`` is ``"r"`` or ``"rw"``.
+
+        See Also
+        --------
+        Vec.restoreCLMemHandle, petsc.VecViennaCLGetCLMem
+        petsc.VecViennaCLGetCLMemRead, petsc.VecViennaCLGetCLMemWrite
+
         """
         cdef Py_uintptr_t memhdl = 0
         cdef const char *m = NULL
@@ -1709,14 +1823,48 @@ cdef class Vec(Object):
             raise ValueError("Invalid mode: expected 'r', 'w' or 'rw'")
         return memhdl
 
-    def restoreCLMemHandle(self):
-        """
-        To be called after accessing a Vec's cl_mem in 'w' or 'rw' modes.
-        See also :meth:`Vec.getCLMemHandle`.
+    def restoreCLMemHandle(self) -> None:
+        """Restore a pointer to the OpenCL buffer inside the vector.
+
+        This method only needs to be called after accessing the buffer
+        (with `Vec.getCLMemHandle`) with ``"w"`` or ``"rw"`` modes.
+
+        Not collective.
+
+        Notes
+        -----
+        This method will mark the host data as out of date and will cause 
+        a host-to-device copy the next time data is accessed on the host.
+
+        See Also
+        --------
+        Vec.getCLMemHandle, petsc.VecViennaCLRestoreCLMemWrite
+
         """
         CHKERR( VecViennaCLRestoreCLMemWrite(self.vec) )
 
-    def duplicate(self, array=None):
+    def duplicate(self, array: Sequence[ScalarType] | None = None) -> Vec:
+        """Create a new vector with the same type, optionally with data.
+
+        Collective.
+
+        Parameters
+        ----------
+        array
+            Values to store in the new vector. The size must match the local
+            size of the current vector. If not provided then the new vector
+            will be empty.
+
+        Notes
+        -----
+        This method will *not* copy the vector entries to the new vector. If
+        ``array`` is provided then these values will be *copied*.
+
+        See Also
+        --------
+        Vec.copy, petsc.VecDuplicate
+
+        """
         cdef Vec vec = type(self)()
         CHKERR( VecDuplicate(self.vec, &vec.vec) )
         # duplicate tensor context
@@ -1727,7 +1875,30 @@ cdef class Vec(Object):
             vec_setarray(vec, array)
         return vec
 
-    def copy(self, Vec result=None):
+    def copy(self, Vec result=None) -> Vec:
+        """Return a copy of the vector.
+
+        This operation copies vector entries to the new vector.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        result
+            Target vector for the copy. If `None` then a new vector is
+            allocated with `Vec.duplicate`.
+
+        Returns
+        -------
+        Vec
+            The new vector. If ``result`` is not `None` then it will be
+            returned.
+
+        See Also
+        --------
+        Vec.duplicate, petsc.VecCopy
+
+        """
         if result is None:
             result = type(self)()
         if result.vec == NULL:
