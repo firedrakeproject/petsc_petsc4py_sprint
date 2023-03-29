@@ -2164,11 +2164,11 @@ cdef class Vec(Object):
             The type of norm requested. Possible values (assuming ``self`` as
             x) include:
 
-            - `NormType.NORM_1`: Σₙ|xₙ| 
+            - `NormType.NORM_1`    Σₙ |xₙ| 
 
-            - `NormType.NORM_2`: √(Σₙ|xₙ|²)
+            - `NormType.NORM_2`    √(Σₙ |xₙ|²)
 
-            - `NormType.NORM_INFINITY`: ???
+            - `NormType.NORM_INFINITY`    maxₙ |xₙ| 
 
             - `NormType.NORM_1_AND_2`: ???
 
