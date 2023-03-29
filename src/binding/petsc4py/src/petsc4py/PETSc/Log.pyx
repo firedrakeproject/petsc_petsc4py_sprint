@@ -79,7 +79,7 @@ cdef class Log:
 
     @classmethod
     def view(cls, Viewer viewer=None) -> None:
-        """Print a summary of the logging.
+        """Print the log.
 
         Collective.
 
