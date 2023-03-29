@@ -83,16 +83,16 @@ ArrayScalar = NDArray[Scalar]
 # --- KSP ---
 
 KSPRHSFunction = Callable[[KSP, Vec], None]
-"""`KSP` right hand side function callback."""
+"""`PETSc.KSP` right hand side function callback."""
 
 KSPOperatorsFunction = Callable[[KSP, Mat, Mat], None]
-"""`KSP` operators function callback."""
+"""`PETSc.KSP` operators function callback."""
 
 KSPConvergenceTestFunction = Callable[[KSP, int, float, KSP.ConvergedReason], None]
-"""`KSP` convergence test callback."""
+"""`PETSc.KSP` convergence test callback."""
 
 KSPMonitorFunction = Callable[[KSP, int, float], None]
-"""`KSP` monitor callback."""
+"""`PETSc.KSP` monitor callback."""
 
 # --- SNES ---
 
