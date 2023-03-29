@@ -248,7 +248,13 @@ def _monkey_patch_returns():
     @functools.wraps(NumpyDocstring._parse_returns_section)
     def wrapper(*args, **kwargs):
         out = _parse_returns_section(*args, **kwargs)
-        return [line.replace(":class:", ":any:") for line in out]
+        def fixup(line):
+            for symbol in ["ArrayInt", "ArrayReal", "ArrayScalar"]:
+                line = line.replace(f":class:`{symbol}`", f":any:`{symbol}`")
+            return line
+
+        return [fixup(line) for line in out]
+
 
     NumpyDocstring._parse_returns_section = wrapper
 
