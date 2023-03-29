@@ -1,6 +1,7 @@
 # --------------------------------------------------------------------
 
 class PCType(object):
+    """The preconditioner method."""
     NONE               = S_(PCNONE)
     JACOBI             = S_(PCJACOBI)
     SOR                = S_(PCSOR)
@@ -53,6 +54,7 @@ class PCType(object):
     H2OPUS             = S_(PCH2OPUS)
 
 class PCSide(object):
+    """The manner in which the preconditioner is applied."""
     # native
     LEFT      = PC_LEFT
     RIGHT     = PC_RIGHT
@@ -63,33 +65,39 @@ class PCSide(object):
     S = SYMMETRIC
 
 class PCASMType(object):
+    """The *ASM* subtype."""
     NONE        = PC_ASM_NONE
     BASIC       = PC_ASM_BASIC
     RESTRICT    = PC_ASM_RESTRICT
     INTERPOLATE = PC_ASM_INTERPOLATE
 
 class PCGASMType(object):
+    """The *GASM* subtype."""
     NONE        = PC_GASM_NONE
     BASIC       = PC_GASM_BASIC
     RESTRICT    = PC_GASM_RESTRICT
     INTERPOLATE = PC_GASM_INTERPOLATE
 
 class PCMGType(object):
+    """The *MG* subtype."""
     MULTIPLICATIVE = PC_MG_MULTIPLICATIVE
     ADDITIVE       = PC_MG_ADDITIVE
     FULL           = PC_MG_FULL
     KASKADE        = PC_MG_KASKADE
 
 class PCMGCycleType(object):
+    """The *MG* cycle type."""
     V = PC_MG_CYCLE_V
     W = PC_MG_CYCLE_W
 
 class PCGAMGType(object):
+    """The *GAMG* subtype."""
     AGG       = S_(PCGAMGAGG)
     GEO       = S_(PCGAMGGEO)
     CLASSICAL = S_(PCGAMGCLASSICAL)
 
 class PCCompositeType(object):
+    """The composite type."""
     ADDITIVE                 = PC_COMPOSITE_ADDITIVE
     MULTIPLICATIVE           = PC_COMPOSITE_MULTIPLICATIVE
     SYMMETRIC_MULTIPLICATIVE = PC_COMPOSITE_SYMMETRIC_MULTIPLICATIVE
@@ -97,6 +105,7 @@ class PCCompositeType(object):
     SCHUR                    = PC_COMPOSITE_SCHUR
 
 class PCFieldSplitSchurPreType(object):
+    """The field split Schur subtype."""
     SELF                     = PC_FIELDSPLIT_SCHUR_PRE_SELF
     SELFP                    = PC_FIELDSPLIT_SCHUR_PRE_SELFP
     A11                      = PC_FIELDSPLIT_SCHUR_PRE_A11
@@ -104,12 +113,14 @@ class PCFieldSplitSchurPreType(object):
     FULL                     = PC_FIELDSPLIT_SCHUR_PRE_FULL
 
 class PCFieldSplitSchurFactType(object):
+    """The field split Schur factorization type."""
     DIAG                     = PC_FIELDSPLIT_SCHUR_FACT_DIAG
     LOWER                    = PC_FIELDSPLIT_SCHUR_FACT_LOWER
     UPPER                    = PC_FIELDSPLIT_SCHUR_FACT_UPPER
     FULL                     = PC_FIELDSPLIT_SCHUR_FACT_FULL
 
 class PCPatchConstructType(object):
+    """The patch construction type."""
     STAR                     = PC_PATCH_STAR
     VANKA                    = PC_PATCH_VANKA
     PARDECOMP                = PC_PATCH_PARDECOMP
@@ -117,11 +128,13 @@ class PCPatchConstructType(object):
     PYTHON                   = PC_PATCH_PYTHON
 
 class PCHPDDMCoarseCorrectionType(object):
+    """The *HPDDM* coarse correction type."""
     DEFLATED                 = PC_HPDDM_COARSE_CORRECTION_DEFLATED
     ADDITIVE                 = PC_HPDDM_COARSE_CORRECTION_ADDITIVE
     BALANCED                 = PC_HPDDM_COARSE_CORRECTION_BALANCED
 
 class PCDeflationSpaceType(object):
+    """The deflation space subtype."""
     HAAR                     = PC_DEFLATION_SPACE_HAAR
     DB2                      = PC_DEFLATION_SPACE_DB2
     DB4                      = PC_DEFLATION_SPACE_DB4
@@ -133,6 +146,7 @@ class PCDeflationSpaceType(object):
     USER                     = PC_DEFLATION_SPACE_USER
 
 class PCFailedReason(object):
+    """The reason the preconditioner has failed."""
     SETUP_ERROR              = PC_SETUP_ERROR
     NOERROR                  = PC_NOERROR
     FACTOR_STRUCT_ZEROPIVOT  = PC_FACTOR_STRUCT_ZEROPIVOT
@@ -144,6 +158,25 @@ class PCFailedReason(object):
 # --------------------------------------------------------------------
 
 cdef class PC(Object):
+    """Preconditioners.
+    
+    `PC` is described in the `PETSc manual <petsc:sec_ksppc>`.
+    Calling the `PC` with a vector as an argument will `apply` the
+    preconditioner as shown in the example below.
+
+    Examples
+    --------
+    >>> from petsc4py import PETSc
+    >>> v = PETSc.Vec().createWithArray([1,2])
+    >>> m = PETSc.Mat().createDense(2,array=[[1,0],[0,1]])
+    >>> pc = PETSc.PC().create()
+    >>> pc.setOperators(m)
+    >>> u = pc(v) # Vec u is created internally, can also be passed as second argument
+
+    See Also
+    --------
+    petsc.PC
+    """
 
     Type = PCType
     Side = PCSide
@@ -175,123 +208,436 @@ cdef class PC(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
+        """View the `PC` object.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            The visualization context.
+
+        See Also
+        --------
+        petsc.PCView
+        """        
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( PCView(self.pc, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the `PC` that was created with `create`.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.PCDestroy
+        """
         CHKERR( PCDestroy(&self.pc) )
         self.pc = NULL
         return self
 
-    def create(self, comm=None):
+    def create(self, comm=None) -> Self:
+        """Create an empty `PC`. 
+        
+        Collective. The default preconditioner for sparse matrices is `ILU` or
+        `ICC` with 0 fill on one process and block Jacobi (`BJACOBI`) with `ILU`
+        or `ICC` in parallel. For dense matrices it is always `None`.
+
+        Parameters
+        ----------
+        comm
+            The communicator or None for `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        destroy, petsc.PCCreate
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscPC newpc = NULL
         CHKERR( PCCreate(ccomm, &newpc) )
         PetscCLEAR(self.obj); self.pc = newpc
         return self
 
-    def setType(self, pc_type):
+    def setType(self, pc_type: Type | str) -> None:
+        """Set the preconditioner type.
+
+        Collective.
+
+        Parameters
+        ----------
+        pc_type
+            The preconditioner type.
+
+        See Also
+        --------
+        petsc_options, getType, petsc.TSSetType
+        """
         cdef PetscPCType cval = NULL
         pc_type = str2bytes(pc_type, &cval)
         CHKERR( PCSetType(self.pc, cval) )
 
-    def getType(self):
+    def getType(self) -> str:
+        """Return the preconditioner type.
+        
+        Not collective.
+
+        See Also
+        --------
+        setType, petsc.PCGetType
+        """
         cdef PetscPCType cval = NULL
         CHKERR( PCGetType(self.pc, &cval) )
         return bytes2str(cval)
 
-    def setOptionsPrefix(self, prefix):
+    def setOptionsPrefix(self, prefix: str) -> None:
+        """Set the prefix used for all the `PC` options.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        prefix
+            The prefix to prepend to all option names.
+
+        See Also
+        --------
+        petsc_options, petsc.PCSetOptionsPrefix
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( PCSetOptionsPrefix(self.pc, cval) )
 
-    def getOptionsPrefix(self):
+    def getOptionsPrefix(self) -> str:
+        """Return the prefix used for all the `PC` options.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_options, petsc.PCGetOptionsPrefix
+        """
         cdef const char *cval = NULL
         CHKERR( PCGetOptionsPrefix(self.pc, &cval) )
         return bytes2str(cval)
 
-    def appendOptionsPrefix(self, prefix):
+    def appendOptionsPrefix(self, prefix: str) -> None:
+        """Append to the prefix used for all the `PC` options.
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        prefix
+            The prefix to append to the current prefix.
+
+        See Also
+        --------
+        petsc_options, petsc.PCAppendOptionsPrefix
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( PCAppendOptionsPrefix(self.pc, cval) )
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
+        """Set various `PC` parameters from user options.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_options, petsc.PCSetFromOptions
+        """
         CHKERR( PCSetFromOptions(self.pc) )
 
-    def setOperators(self, Mat A=None, Mat P=None):
+    def setOperators(self, Mat A=None, Mat P=None) -> None:
+        """Sets the matrices associated with the linear system.
+
+        Logically collective. Passing `None` for ``A`` or ``P`` removes the
+        matrix that is currently used. PETSc does not reset the matrix entries
+        of either ``A`` or ``P`` to zero after a linear solve; the user is
+        completely responsible for matrix assembly. See `Mat.zeroEntries` to
+        zero all elements of a matrix.
+
+        Parameters
+        ----------
+        A
+            the matrix which defines the linear system
+        P
+            the matrix to be used in constructing the preconditioner, usually
+            the same as ``A``
+        
+        See Also
+        --------
+        petsc.PCSetOperators
+        """
         cdef PetscMat amat=NULL
         if A is not None: amat = A.mat
         cdef PetscMat pmat=amat
         if P is not None: pmat = P.mat
         CHKERR( PCSetOperators(self.pc, amat, pmat) )
 
-    def getOperators(self):
+    def getOperators(self) -> tuple[Mat,Mat]:
+        """Return the matrices associated with a linear system.
+
+        Not collective.
+
+        See Also
+        --------
+        setOperators, petsc.PCGetOperators
+        """
         cdef Mat A = Mat(), P = Mat()
         CHKERR( PCGetOperators(self.pc, &A.mat, &P.mat) )
         PetscINCREF(A.obj)
         PetscINCREF(P.obj)
         return (A, P)
 
-    def setUseAmat(self, flag):
+    def setUseAmat(self, flag: bool) -> None:
+        """Set to indicate to apply `PC` to ``A`` and not ``P``. 
+
+        Logically collective. Sets a flag to indicate that when the
+        preconditioner needs to apply (part of) the operator during the
+        preconditioning process, it applies to ``A`` provided to
+        `TS.setRHSJacobian`, `TS.setIJacobian`, `SNES.setJacobian`,
+        `KSP.setOperators` or `PC.setOperators` not the ``P``.
+
+        Parameter
+        ---------
+        flag
+            Set True to use ``A`` and False to use ``P``.
+
+        See Also
+        --------
+        setOperators, petsc.PCSetUseAmat
+        """
         cdef PetscBool cflag = PETSC_FALSE
         if flag:
             cflag = PETSC_TRUE
         CHKERR( PCSetUseAmat(self.pc, cflag) )
 
-    def getUseAmat(self):
+    def getUseAmat(self) -> bool:
+        """Return the flag to indicate if `PC` is applied to ``A`` or ``P``.
+
+        Logically collective.
+
+        Returns
+        -------
+        flag : bool
+            True if ``A`` is used and False if ``P``.
+
+        See Also
+        --------
+        setUseAmat, petsc.PCGetUseAmat
+        """
         cdef PetscBool cflag = PETSC_FALSE
         CHKERR( PCGetUseAmat(self.pc, &cflag) )
         return toBool(cflag)
 
-    def setReusePreconditioner(self, flag):
+    def setReusePreconditioner(self, flag: bool) -> None:
+        """Set to indicate the preconditioner is to be reused.
+
+        Logically collective. Normally if the ``A`` matrix inside a `PC`
+        changes, the `PC` automatically updates itself using information from
+        the changed matrix. Enable this option prevents this.
+
+        Parameters
+        ----------
+        flag
+            Set to `True` to use the reuse the current preconditioner and
+            `False` to recompute on changes to the matrix.
+
+        See Also
+        --------
+        setOperators, petsc.PCSetReusePreconditioner
+        """
         cdef PetscBool cflag = PETSC_FALSE
         if flag:
             cflag = PETSC_TRUE
         CHKERR( PCSetReusePreconditioner(self.pc, cflag) )
 
-    def setFailedReason(self, reason):
+    def setFailedReason(self, reason: FailedReason | str) ->  None:
+        """Set the reason the `PC` terminated.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        reason
+            the reason the `PC` terminated
+
+        See Also
+        --------
+        petsc.PCSetFailedReason
+        """
         cdef PetscPCFailedReason val = reason
         CHKERR( PCSetFailedReason(self.pc, val) )
 
-    def getFailedReason(self):
+    def getFailedReason(self) -> FailedReason:
+        """Return the reason the `PC` terminated.
+
+        Logically collective. This is the maximum over reason over all ranks in
+        the `PC` communicator.
+
+        See Also
+        --------
+        petsc.PCGetFailedReason
+        """
         cdef PetscPCFailedReason reason = PC_NOERROR
         CHKERR( PCGetFailedReason(self.pc, &reason) )
         return reason
 
-    def getFailedReasonRank(self):
+    def getFailedReasonRank(self) -> FailedReason:
+        """Return the reason the `PC` terminated on this rank.
+
+        Not collective. Different ranks may have different reasons.
+
+        See Also
+        --------
+        getFailedReason, petsc.PCGetFailedReasonRank
+        """
         cdef PetscPCFailedReason reason = PC_NOERROR
         CHKERR( PCGetFailedReasonRank(self.pc, &reason) )
         return reason
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Set up the internal data structures for the `PC`.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.PCSetUp
+        """
         CHKERR( PCSetUp(self.pc) )
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the `PC`, removing any allocated vectors and matrices.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.PCReset
+        """        
         CHKERR( PCReset(self.pc) )
 
-    def setUpOnBlocks(self):
+    def setUpOnBlocks(self) -> None:
+        """Set up the `PC` for each block.
+
+        Collective. For nested preconditioners such as `BJACOBI`, `setUp` is not
+        called on each sub-`KSP` when `setUp` is called on the outer `PC`. This
+        routine ensures it is called.
+
+        See Also
+        --------
+        setUp, petsc.PCSetUpOnBlocks
+        """
         CHKERR( PCSetUpOnBlocks(self.pc) )
 
-    def apply(self, Vec x, Vec y):
+    def apply(self, Vec x, Vec y) -> None:
+        """Apply the `PC` to a vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+            The input vector.
+        y
+            The output vector, cannot be the same as ``x``.
+
+        See also
+        --------
+        petsc.PCApply
+        """
         CHKERR( PCApply(self.pc, x.vec, y.vec) )
 
-    def matApply(self, Mat x, Mat y):
+    def matApply(self, Mat x, Mat y) -> None:
+        """Apply the `PC` to many vectors stored as `Mat.Type.DENSE`.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+            The input matrix.
+        y
+            The output matrix, cannot be the same as ``x``.
+
+        See also
+        --------
+        petsc.PCMatApply, petsc.PCApply      
+        """
         CHKERR( PCMatApply(self.pc, x.mat, y.mat) )
 
-    def applyTranspose(self, Vec x, Vec y):
+    def applyTranspose(self, Vec x, Vec y) -> None:
+        """Apply the transpose of the `PC` to a vector.
+
+        Collective. For complex numbers this applies the non-Hermitian
+        transpose.
+
+        Parameters
+        ----------
+        x
+            The input vector.
+        y
+            The output vector, cannot be the same as ``x``.
+
+        See also
+        --------
+        petsc.PCApply
+        """
         CHKERR( PCApplyTranspose(self.pc, x.vec, y.vec) )
 
-    def applySymmetricLeft(self, Vec x, Vec y):
+    def applySymmetricLeft(self, Vec x, Vec y) -> None:
+        """Apply the left part of a symmetric `PC` to a vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+            The input vector.
+        y
+            The output vector, cannot be the same as ``x``.
+
+        See also
+        --------
+        petsc.PCApplySymmetricLeft
+        """
         CHKERR( PCApplySymmetricLeft(self.pc, x.vec, y.vec) )
 
-    def applySymmetricRight(self, Vec x, Vec y):
+    def applySymmetricRight(self, Vec x, Vec y) -> None:
+        """Apply the right part of a symmetric `PC` to a vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+            The input vector.
+        y
+            The output vector, cannot be the same as ``x``.
+
+        See also
+        --------
+        petsc.PCApplySymmetricRight
+        """
         CHKERR( PCApplySymmetricRight(self.pc, x.vec, y.vec) )
 
     # --- discretization space ---
 
-    def getDM(self):
+    def getDM(self) -> DM:
+        """Return the `DM` associated with the `PC`.
+
+        Not collective. 
+
+        See Also
+        --------
+        petsc.PCGetDM
+        """
         cdef PetscDM newdm = NULL
         CHKERR( PCGetDM(self.pc, &newdm) )
         cdef DM dm = subtype_DM(newdm)()
@@ -299,10 +645,36 @@ cdef class PC(Object):
         PetscINCREF(dm.obj)
         return dm
 
-    def setDM(self, DM dm):
+    def setDM(self, DM dm) -> None:
+        """Set the `DM` that may be used by some preconditioners.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        dm
+            The `DM` object.
+
+        See Also
+        --------
+        petsc.PCSetDM
+        """        
         CHKERR( PCSetDM(self.pc, dm.dm) )
 
-    def setCoordinates(self, coordinates):
+    def setCoordinates(self, coordinates: Sequence[Sequence[float]]) -> None:
+        """Set the coordinates for the nodes on the local process.
+
+        Collective.
+
+        Parameters
+        ----------
+        coordinates
+            The two dimensional coordinate array.
+
+        See Also
+        --------
+        petsc.PCSetCoordinates
+        """
         cdef ndarray xyz = iarray(coordinates, NPY_PETSC_REAL)
         if PyArray_ISFORTRAN(xyz): xyz = PyArray_Copy(xyz)
         if PyArray_NDIM(xyz) != 2: raise ValueError(
@@ -315,7 +687,23 @@ cdef class PC(Object):
 
     # --- Python ---
 
-    def createPython(self, context=None, comm=None):
+    def createPython(self, context: Any = None, comm: Comm | None = None) -> Self:
+        """Create a preconditioner of Python type.
+
+        Collective.
+
+        Parameters
+        ----------
+        context
+            An instance of the Python class implementing the required methods.
+        comm
+            The communicator associated with the object. Defaults to
+            `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc_python_pc, setType, setPythonContext, PC.Type.PYTHON
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscPC newpc = NULL
         CHKERR( PCCreate(ccomm, &newpc) )
@@ -324,21 +712,54 @@ cdef class PC(Object):
         CHKERR( PCPythonSetContext(self.pc, <void*>context) )
         return self
 
-    def setPythonContext(self, context):
+    def setPythonContext(self, context: Any) -> None:
+        """Set the instance of the Python class implementing the required Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_pc, getPythonContext
+        """
         CHKERR( PCPythonSetContext(self.pc, <void*>context) )
 
-    def getPythonContext(self):
+    def getPythonContext(self) -> Any:
+        """Return the instance of the Python class implementing the required Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_pc, setPythonContext
+        """
         cdef void *context = NULL
         CHKERR( PCPythonGetContext(self.pc, &context) )
         if context == NULL: return None
         else: return <object> context
 
-    def setPythonType(self, py_type):
+    def setPythonType(self, py_type: str) -> None:
+        """Set the fully qualified Python name of the class to be used.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_python_pc, setPythonContext, getPythonType, petsc.PCPythonSetType
+
+        """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
         CHKERR( PCPythonSetType(self.pc, cval) )
 
-    def getPythonType(self):
+    def getPythonType(self) -> str:
+        """Return the fully qualified Python name of the class used by the `PC`.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_pc, setPythonContext, setPythonType, petsc.PCPythonGetType
+        """
         cdef const char *cval = NULL
         CHKERR( PCPythonGetType(self.pc, &cval) )
         return bytes2str(cval)

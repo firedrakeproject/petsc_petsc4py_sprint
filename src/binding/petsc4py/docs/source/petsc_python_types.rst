@@ -8,6 +8,11 @@ PETSc Python matrix type
 PETSc Python linear solver type
 ===============================
 
+.. _petsc_python_pc:
+
+PETSc Python preconditioner type
+================================
+
 .. _petsc_python_snes:
 
 PETSc Python nonlinear solver type
