@@ -214,7 +214,7 @@ cdef class DMPlex(DM):
         Use -dm_plex_create_ prefix to pass options to the internal PetscViewer, e.g.
         $ -dm_plex_create_viewer_hdf5_collective
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreateFromDAG`, `DMPlexCreateFromCellListPetsc`, `DMPlexCreate`, `PetscObjectSetName`, `DMView`, `DMLoad`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreateFromDAG`, `DMPlexCreateFromCellListPetsc`, `DMPlex.create`, `PetscObjectSetName`, `DMView`, `DMLoad`
 
         See Also
         --------
@@ -251,7 +251,7 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexCreateCGNS`, `DMPlexCreateExodus`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.create`, `DMPlexCreateCGNS`, `DMPlexCreateExodus`
 
         See Also
         --------
@@ -412,7 +412,7 @@ cdef class DMPlex(DM):
         subdm
             The surface mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSubpointMap`, `DMPlexCreateSubmesh`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getSubpointMap`, `DMPlexCreateSubmesh`
 
         See Also
         --------
@@ -507,7 +507,7 @@ cdef class DMPlex(DM):
         cdef PetscInt csize = asInt(size)
         CHKERR( DMPlexSetConeSize(self.dm, cp, csize) )
 
-    def getCone(self, p: int) -> ndarray:
+    def getCone(self, p: int) -> ndarray[int]:
         """Return the points on the in-edges for this point in the DAG.
 
         Not collective.
@@ -617,7 +617,7 @@ cdef class DMPlex(DM):
         cdef PetscInt cconeOrientation = asInt(coneOrientation)
         CHKERR( DMPlexInsertConeOrientation(self.dm, cp, cconePos, cconeOrientation) )
 
-    def getConeOrientation(self, p: int) -> ndarray:
+    def getConeOrientation(self, p: int) -> ndarray[int]:
         """Return the orientations on the in-edges for this point in the DAG.
 
         Not collective.
@@ -671,7 +671,7 @@ cdef class DMPlex(DM):
         assert norie == ncone
         CHKERR( DMPlexSetConeOrientation(self.dm, cp, iorie) )
 
-    def setCellType(self, p: int, ctype: DMPolytopeType) -> None:
+    def setCellType(self, p: int, ctype: DM.DMPolytopeType) -> None:
         """Set the polytope type of a given cell.
 
         Not collective.
@@ -692,28 +692,19 @@ cdef class DMPlex(DM):
         cdef PetscDMPolytopeType val = ctype
         CHKERR( DMPlexSetCellType(self.dm, cp, val) )
 
-    def getCellType(self, p):
-        """DMPlexGetCellType - Get the polytope type of a given cell
+    def getCellType(self, p: int) -> int:
+        """Get the polytope type of a given cell.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        cell
-            The cell
-
-        Returns
-        -------
-        celltype
-            The polytope type of the cell
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPolytopeType`, `DMPlexGetCellTypeLabel`, `DMPlexGetDepthLabel`, `DMPlexGetDepth`
+        p
+            The cell.
 
         See Also
         --------
-        petsc.DMPlexGetCellType
+        `DM`, `DMPlex`, `DMPolytopeType`, `DMPlex.getCellTypeLabel`, `DMPlex.getDepthLabel`, `DMPlex.getDepth`, petsc.DMPlexGetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -721,30 +712,14 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetCellType(self.dm, cp, &ctype) )
         return toInt(ctype)
 
-    def getCellTypeLabel(self):
-        """DMPlexGetCellTypeLabel - Get the `DMLabel` recording the polytope type of each cell
+    def getCellTypeLabel(self) -> DMLabel:
+        """Get the `DMLabel` recording the polytope type of each cell.
 
         Not collective.
 
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        celltypeLabel
-            The `DMLabel` recording cell polytope type
-
-        Note:
-        This function will trigger automatica computation of cell types. This can be disabled by calling
-        `DMCreateLabel`(dm, "celltype") beforehand.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellType`, `DMPlexGetDepthLabel`, `DMCreateLabel`
-
         See Also
         --------
-        petsc.DMPlexGetCellTypeLabel
+        `DM`, `DMPlex`, `DMPlex.getCellType`, `DMPlex.getDepthLabel`, `DM.createLabel`, petsc.DMPlexGetCellTypeLabel
 
         """
         cdef DMLabel label = DMLabel()
@@ -752,28 +727,19 @@ cdef class DMPlex(DM):
         PetscINCREF(label.obj)
         return label
 
-    def getSupportSize(self, p):
-        """DMPlexGetSupportSize - Return the number of out-edges for this point in the DAG
+    def getSupportSize(self, p: int) -> int:
+        """Return the number of out-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-
-        Returns
-        -------
-        size
-            The support size for point `p`
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetConeSize`, `DMPlexSetChart`, `DMPlexGetConeSize`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
 
         See Also
         --------
-        petsc.DMPlexGetSupportSize
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setConeSize`, `DMPlex.setChart`, `DMPlex.getConeSize`, petsc.DMPlexGetSupportSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -784,28 +750,21 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetSupportSize(self.dm, cp, &ssize) )
         return toInt(ssize)
 
-    def setSupportSize(self, p, size):
-        """DMPlexSetSupportSize - Set the number of out-edges for this point in the DAG
+    def setSupportSize(self, p: int, size: int) -> None:
+        """Set the number of out-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
         size
-            The support size for point `p`
-
-        Note:
-        This should be called after `DMPlexSetChart`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexGetSupportSize`, `DMPlexSetChart`
+            The support size for point ``p``.
 
         See Also
         --------
-        petsc.DMPlexSetSupportSize
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getSupportSize`, `DMPlex.setChart`, petsc.DMPlexSetSupportSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -815,32 +774,19 @@ cdef class DMPlex(DM):
         cdef PetscInt ssize = asInt(size)
         CHKERR( DMPlexSetSupportSize(self.dm, cp, ssize) )
 
-    def getSupport(self, p):
-        """DMPlexGetSupport - Return the points on the out-edges for this point in the DAG
+    def getSupport(self, p: int) -> ndarray[int]:
+        """Return the points on the out-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-
-        Returns
-        -------
-        support
-            An array of points which are on the out-edges for point `p`
-
-        Fortran Note:
-        You must also call `DMPlexRestoreSupport` after you finish using the returned array.
-        `DMPlexRestoreSupport` is not needed/available in C.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSupportSize`, `DMPlexSetSupport`, `DMPlexGetCone`, `DMPlexSetChart`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
 
         See Also
         --------
-        petsc.DMPlexGetSupport
+        `DM`, `DMPlex`, `DMPlex.getSupportSize`, `DMPlex.setSupport`, `DMPlex.getCone`, `DMPlex.setChart`, petsc.DMPlexGetSupport
 
         """
         cdef PetscInt cp = asInt(p)
@@ -853,28 +799,21 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetSupport(self.dm, cp, &isupp) )
         return array_i(nsupp, isupp)
 
-    def setSupport(self, p, supp):
-        """DMPlexSetSupport - Set the points on the out-edges for this point in the DAG, that is the list of points that this point covers
+    def setSupport(self, p: int, supp: Sequence[int]) -> None:
+        """Set the points on the out-edges for this point in the DAG, that is the list of points that this point covers.
 
         Not collective.
 
         Parameters
         ----------
-        mesh
-            The `DMPlex`
         p
-            The point, which must lie in the chart set with `DMPlexSetChart`
-        support
-            An array of points which are on the out-edges for point `p`
-
-        Note:
-        This should be called after all calls to `DMPlexSetSupportSize` and `DMSetUp`.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexSetCone`, `DMPlexSetConeSize`, `DMPlexCreate`, `DMPlexGetSupport`, `DMPlexSetChart`, `DMPlexSetSupportSize`, `DMSetUp`
+            The point, which must lie in the chart set with `DMPlex.setChart`.
+        supp
+            An array of points which are on the out-edges for point ``p``.
 
         See Also
         --------
-        petsc.DMPlexSetSupport
+        `DM`, `DMPlex`, `DMPlex.setCone`, `DMPlex.setConeSize`, `DMPlex.create`, `DMPlex.getSupport`, `DMPlex.setChart`, `DMPlex.setSupportSize`, `DM.setUp`, petsc.DMPlexSetSupport
 
         """
         cdef PetscInt cp = asInt(p)
@@ -887,118 +826,63 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexSetSupportSize(self.dm, cp, nsupp) )
         CHKERR( DMPlexSetSupport(self.dm, cp, isupp) )
 
-    def getMaxSizes(self):
-        """DMPlexGetMaxSizes - Return the maximum number of in-edges (cone) and out-edges (support) for any point in the DAG
+    def getMaxSizes(self) -> tuple[int, int]:
+        """Return the maximum number of in-edges (cone) and out-edges (support) for any point in the DAG.
 
         Not collective.
 
-        Parameters
-        ----------
-        mesh
-            The `DMPlex`
-
-        Returns
-        -------
-        maxConeSize
-            The maximum number of in-edges
-        maxSupportSize
-            The maximum number of out-edges
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetConeSize`, `DMPlexSetChart`
-
         See Also
         --------
-        petsc.DMPlexGetMaxSizes
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setConeSize`, `DMPlex.setChart`, petsc.DMPlexGetMaxSizes
 
         """
         cdef PetscInt maxConeSize = 0, maxSupportSize = 0
         CHKERR( DMPlexGetMaxSizes(self.dm, &maxConeSize, &maxSupportSize) )
         return toInt(maxConeSize), toInt(maxSupportSize)
 
-    def symmetrize(self):
-        """DMPlexSymmetrize - Create support (out-edge) information from cone (in-edge) information
+    def symmetrize(self) -> None:
+        """Create support (out-edge) information from cone (in-edge) information.
 
         Not collective.
 
-        Parameters
-        ----------
-        mesh
-            The `DMPlex`
-
-        Note:
-        This should be called after all calls to `DMPlexSetCone`
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSetChart`, `DMPlexSetConeSize`, `DMPlexSetCone`
-
         See Also
         --------
-        petsc.DMPlexSymmetrize
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DMPlex.setCone`, petsc.DMPlexSymmetrize
 
         """
         CHKERR( DMPlexSymmetrize(self.dm) )
 
-    def stratify(self):
-        """DMPlexStratify - The DAG for most topologies is a graded poset (https://en.wikipedia.org/wiki/Graded_poset), and
+    def stratify(self) -> None:
+        """The DAG for most topologies is a graded poset (https://en.wikipedia.org/wiki/Graded_poset), and
         can be illustrated by a Hasse Diagram (https://en.wikipedia.org/wiki/Hasse_diagram). The strata group all points of the
         same grade, and this function calculates the strata. This grade can be seen as the height (or depth) of the point in
         the DAG.
 
         Collective.
 
-        Parameters
-        ----------
-        mesh
-            The `DMPlex`
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMPlexSymmetrize`, `DMPlexComputeCellTypes`
-
         See Also
         --------
-        petsc.DMPlexStratify
+        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.symmetrize`, `DMPlex.computeCellTypes`, petsc.DMPlexStratify
 
         """
         CHKERR( DMPlexStratify(self.dm) )
 
-    def orient(self):
-        """DMPlexOrient - Give a consistent orientation to the input mesh
-
-        Parameters
-        ----------
-        dm
-            The `DM`
-
-        Note:
-        The orientation data for the `DM` are change in-place.
-
-        This routine will fail for non-orientable surfaces, such as the Moebius strip.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMCreate`, `DMPlex`
+    def orient(self) -> None:
+        """Give a consistent orientation to the input mesh.
 
         See Also
         --------
-        petsc.DMPlexOrient
+        `DM`, `DMPlex`, `DM.create`, petsc.DMPlexOrient
 
         """
         CHKERR( DMPlexOrient(self.dm) )
 
-    def getCellNumbering(self):
-        """DMPlexGetCellNumbering - Get a global cell numbering for all cells on this process
-
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        globalCellNumbers
-            Global cell numbers for all cells on this process
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetVertexNumbering`
+    def getCellNumbering(self) -> IS:
+        """Get a global cell numbering for all cells on this process.
 
         See Also
         --------
-        petsc.DMPlexGetCellNumbering
+        `DM`, `DMPlex`, `DMPlex.getVertexNumbering`, petsc.DMPlexGetCellNumbering
 
         """
         cdef IS iset = IS()
@@ -1006,24 +890,12 @@ cdef class DMPlex(DM):
         PetscINCREF(iset.obj)
         return iset
 
-    def getVertexNumbering(self):
-        """DMPlexGetVertexNumbering - Get a global vertex numbering for all vertices on this process
-
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        globalVertexNumbers
-            Global vertex numbers for all vertices on this process
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellNumbering`
+    def getVertexNumbering(self) -> IS:
+        """Get a global vertex numbering for all vertices on this process.
 
         See Also
         --------
-        petsc.DMPlexGetVertexNumbering
+        `DM`, `DMPlex`, `DMPlex.getCellNumbering`, petsc.DMPlexGetVertexNumbering
 
         """
         cdef IS iset = IS()
@@ -1031,159 +903,85 @@ cdef class DMPlex(DM):
         PetscINCREF(iset.obj)
         return iset
 
-    def createPointNumbering(self):
-        """DMPlexCreatePointNumbering - Create a global numbering for all points.
+    def createPointNumbering(self) -> IS:
+        """Create a global numbering for all points.
 
         Collective.
 
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        globalPointNumbers
-            Global numbers for all points on this process
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetCellNumbering`
-
         See Also
         --------
-        petsc.DMPlexCreatePointNumbering
+        `DM`, `DMPlex`, `DMPlex.getCellNumbering`, petsc.DMPlexCreatePointNumbering
 
         """
         cdef IS iset = IS()
         CHKERR( DMPlexCreatePointNumbering(self.dm, &iset.iset) )
         return iset
 
-    def getDepth(self):
-        """DMPlexGetDepth - Get the depth of the DAG representing this mesh
+    def getDepth(self) -> int:
+        """Get the depth of the DAG representing this mesh.
 
         Not collective.
 
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        depth
-            The number of strata (breadth first levels) in the DAG
-
-        Notes:
-        This returns maximum of point depths over all points, i.e. maximum value of the label returned by `DMPlexGetDepthLabel`.
-
-        The point depth is described more in detail in `DMPlexGetDepthStratum`.
-
-        An empty mesh gives -1.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetDepthLabel`, `DMPlexGetDepthStratum`, `DMPlexGetPointDepth`, `DMPlexSymmetrize`
-
         See Also
         --------
-        petsc.DMPlexGetDepth
+        `DM`, `DMPlex`, `DMPlex.getDepthLabel`, `DMPlex.getDepthStratum`, `DMPlex.getPointDepth`, `DMPlex.symmetrize`, petsc.DMPlexGetDepth
 
         """
         cdef PetscInt depth = 0
         CHKERR( DMPlexGetDepth(self.dm,&depth) )
         return toInt(depth)
 
-    def getDepthStratum(self, svalue):
-        """DMPlexGetDepthStratum - Get the bounds [`start`, `end`) for all points at a certain depth.
+    def getDepthStratum(self, svalue: int) -> tuple[int, int]:
+        """Get the bounds [``start``, ``end``) for all points at a certain depth.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        depth
+        svalue
             The requested depth
-
-        Returns
-        -------
-        start
-            The first point at this `depth`
-        end
-            One beyond the last point at this `depth`
-
-        Notes:
-        Depth indexing is related to topological dimension.  Depth stratum 0 contains the lowest topological dimension points,
-        often "vertices".  If the mesh is "interpolated" (see `DMPlexInterpolate`), then depth stratum 1 contains the next
-        higher dimension, e.g., "edges".
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetHeightStratum`, `DMPlexGetDepth`, `DMPlexGetDepthLabel`, `DMPlexGetPointDepth`, `DMPlexSymmetrize`, `DMPlexInterpolate`
 
         See Also
         --------
-        petsc.DMPlexGetDepthStratum
+        `DM`, `DMPlex`, `DMPlex.getHeightStratum`, `DMPlex.getDepth`, `DMPlex.getDepthLabel`, `DMPlex.getPointDepth`, `DMPlex.symmetrize`, `DMPlex.interpolate`, petsc.DMPlexGetDepthStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
         CHKERR( DMPlexGetDepthStratum(self.dm, csvalue, &sStart, &sEnd) )
         return (toInt(sStart), toInt(sEnd))
 
-    def getHeightStratum(self, svalue):
-        """DMPlexGetHeightStratum - Get the bounds [`start`, `end`) for all points at a certain height.
+    def getHeightStratum(self, svalue: int) -> tuple[int, int]:
+        """Get the bounds [``start``, ``end``) for all points at a certain height.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        height
+        svalue
             The requested height
-
-        Returns
-        -------
-        start
-            The first point at this `height`
-        end
-            One beyond the last point at this `height`
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetDepthStratum`, `DMPlexGetDepth`, `DMPlexGetPointHeight`
 
         See Also
         --------
-        petsc.DMPlexGetHeightStratum
+        `DM`, `DMPlex`, `DMPlex.getDepthStratum`, `DMPlex.getDepth`, `DMPlex.getPointHeight`, petsc.DMPlexGetHeightStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
         CHKERR( DMPlexGetHeightStratum(self.dm, csvalue, &sStart, &sEnd) )
         return (toInt(sStart), toInt(sEnd))
 
-    def getMeet(self, points):
-        """DMPlexRestoreMeet - Restore an array for the meet of the set of points
+    def getMeet(self, points: Sequence[int]) -> ndarray[int]:
+        """Get an array for the meet of the set of points.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        numPoints
-            The number of input points for the meet
         points
-            The input points
-
-        Returns
-        -------
-        numCoveredPoints
-            The number of points in the meet
-        coveredPoints
-            The points in the meet
-
-        Fortran Note:
-        The `numCoveredPoints` argument is not present in the Fortran binding since it is internal to the array.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetMeet`, `DMPlexGetFullMeet`, `DMPlexGetJoin`
+            The input points.
 
         See Also
         --------
-        petsc.DMPlexRestoreMeet
+        `DM`, `DMPLEX`, `DMPlex.restoreMeet`, `DMPlex.getJoin`, petsc.DMPlexGetMeet
 
         """
         cdef PetscInt  numPoints = 0
@@ -1197,35 +995,19 @@ cdef class DMPlex(DM):
         finally:
             CHKERR( DMPlexRestoreMeet(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
-    def getJoin(self, points):
-        """DMPlexRestoreJoin - Restore an array for the join of the set of points
+    def getJoin(self, points: Sequence[int]) -> ndarray[int]:
+        """Get an array for the join of the set of points.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        numPoints
-            The number of input points for the join
         points
-            The input points
-
-        Returns
-        -------
-        numCoveredPoints
-            The number of points in the join
-        coveredPoints
-            The points in the join
-
-        Fortran Note:
-        The `numCoveredPoints` argument is not present in the Fortran binding since it is internal to the array.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetJoin`, `DMPlexGetFullJoin`, `DMPlexGetMeet`
+            The input points.
 
         See Also
         --------
-        petsc.DMPlexRestoreJoin
+        `DM`, `DMPLEX`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1239,35 +1021,19 @@ cdef class DMPlex(DM):
         finally:
             CHKERR( DMPlexRestoreJoin(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
-    def getFullJoin(self, points):
-        """DMPlexRestoreJoin - Restore an array for the join of the set of points
+    def getFullJoin(self, points: Sequence[int]) -> ndarray[int]:
+        """Get an array for the join of the set of points.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        numPoints
-            The number of input points for the join
         points
-            The input points
-
-        Returns
-        -------
-        numCoveredPoints
-            The number of points in the join
-        coveredPoints
-            The points in the join
-
-        Fortran Note:
-        The `numCoveredPoints` argument is not present in the Fortran binding since it is internal to the array.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetJoin`, `DMPlexGetFullJoin`, `DMPlexGetMeet`
+            The input points.
 
         See Also
         --------
-        petsc.DMPlexRestoreJoin
+        `DM`, `DMPLEX`, `DMPlex.getJoin`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetFullJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1302,7 +1068,7 @@ cdef class DMPlex(DM):
         Note:
         If not using internal storage (points is not ``None`` on input), this call is unnecessary
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetTransitiveClosure`, `DMPlexCreate`, `DMPlexSetCone`, `DMPlexSetChart`, `DMPlexGetCone`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getTransitiveClosure`, `DMPlex.create`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.getCone`
 
         See Also
         --------
@@ -1500,7 +1266,7 @@ cdef class DMPlex(DM):
         +  -dm_plex_generate <name> - package to generate mesh, for example, triangle, ctetgen or tetgen
         -  -dm_generator <name> - package to generate mesh, for example, triangle, ctetgen or tetgen
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `DMRefine`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.create`, `DMRefine`
 
         See Also
         --------
@@ -1664,7 +1430,7 @@ cdef class DMPlex(DM):
         useAnchors
             Flag to use the constraints. If PETSC_TRUE, then constrained points are omitted from DMPlexGetAdjacency(), and their anchor points appear in their place.
 
-        .seealso: `DMPlex`, `DMGetAdjacency`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlexSetAnchors`
+        .seealso: `DMPlex`, `DMGetAdjacency`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlex.setAnchors`
 
         See Also
         --------
@@ -1687,7 +1453,7 @@ cdef class DMPlex(DM):
         useAnchors
             Flag to use the closure. If PETSC_TRUE, then constrained points are omitted from DMPlexGetAdjacency(), and their anchor points appear in their place.
 
-        .seealso: `DMPlex`, `DMPlexSetAdjacencyUseAnchors`, `DMSetAdjacency`, `DMGetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlexSetAnchors`
+        .seealso: `DMPlex`, `DMPlex.setAdjacencyUseAnchors`, `DMSetAdjacency`, `DMGetAdjacency`, `DMPlexDistribute`, `DMPlexPreallocateOperator`, `DMPlex.setAnchors`
 
         See Also
         --------
@@ -1752,7 +1518,7 @@ cdef class DMPlex(DM):
         Note:
         Any existing `PetscPartitioner` will be destroyed.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`,`DMPlexDistribute`, `DMPlexGetPartitioner`, `PetscPartitionerCreate`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`,`DMPlexDistribute`, `DMPlex.getPartitioner`, `PetscPartitionerCreate`
 
         See Also
         --------
@@ -1779,7 +1545,7 @@ cdef class DMPlex(DM):
         Note:
         This gets a borrowed reference, so the user should not destroy this `PetscPartitioner`.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`, `PetscSection`, `DMPlexDistribute`, `DMPlexSetPartitioner`, `PetscPartitionerDMPlexPartition`, `PetscPartitionerCreate`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscPartitioner`, `PetscSection`, `DMPlexDistribute`, `DMPlex.setPartitioner`, `PetscPartitionerDMPlexPartition`, `PetscPartitionerCreate`
 
         See Also
         --------
@@ -1848,7 +1614,7 @@ cdef class DMPlex(DM):
         The user can control the definition of adjacency for the mesh using `DMSetAdjacency`. They should choose the combination appropriate for the function
         representation on the mesh.
 
-        .seealso: `DMPlex`, `DM`, `DMPlexCreate`, `DMSetAdjacency`, `DMPlexGetOverlap`
+        .seealso: `DMPlex`, `DM`, `DMPlex.create`, `DMSetAdjacency`, `DMPlex.getOverlap`
 
         See Also
         --------
@@ -1894,7 +1660,7 @@ cdef class DMPlex(DM):
         The user can control the definition of adjacency for the mesh using `DMSetAdjacency`. They should choose the combination appropriate for the function
         representation on the mesh.
 
-        .seealso: `DMPlex`, `PetscSF`, `DM`, `DMPlexCreate`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexCreateOverlapLabel`, `DMPlexGetOverlap`
+        .seealso: `DMPlex`, `PetscSF`, `DM`, `DMPlex.create`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexCreateOverlapLabel`, `DMPlex.getOverlap`
 
         See Also
         --------
@@ -1929,7 +1695,7 @@ cdef class DMPlex(DM):
         This involves `MPI_Allreduce` with one integer.
         The result is currently not stashed so every call to this routine involves this global communication.
 
-        .seealso: `DMPlex`, `DMPlex`, `DMPlexDistribute`, `DMPlexGetOverlap`, `DMPlexIsInterpolated`
+        .seealso: `DMPlex`, `DMPlex`, `DMPlexDistribute`, `DMPlex.getOverlap`, `DMPlexIsInterpolated`
 
         See Also
         --------
@@ -1957,7 +1723,7 @@ cdef class DMPlex(DM):
         This just gives the first range of cells found. If the mesh has several cell types, it will only give the first.
         If the mesh has no cells, this returns ``False``.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSimplexOrBoxCells`, `DMPlexGetCellType`, `DMPlexGetHeightStratum`, `DMPolytopeTypeGetNumVertices`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getSimplexOrBoxCells`, `DMPlex.getCellType`, `DMPlex.getHeightStratum`, `DMPolytopeTypeGetNumVertices`
 
         See Also
         --------
@@ -2092,7 +1858,7 @@ cdef class DMPlex(DM):
         This just gives the first range of cells found. If the mesh has several cell types, it will only give the first.
         If the mesh has no cells, this returns ``False``.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetSimplexOrBoxCells`, `DMPlexGetCellType`, `DMPlexGetHeightStratum`, `DMPolytopeTypeGetNumVertices`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getSimplexOrBoxCells`, `DMPlex.getCellType`, `DMPlex.getHeightStratum`, `DMPolytopeTypeGetNumVertices`
 
         See Also
         --------
@@ -2247,7 +2013,7 @@ cdef class DMPlex(DM):
         fpointIS
             The `IS` of all the fine points which exist in the original coarse mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `IS`, `DMRefine`, `DMPlexSetRefinementUniform`, `DMPlexGetSubpointIS`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `IS`, `DMRefine`, `DMPlex.setRefinementUniform`, `DMPlex.getSubpointIS`
 
         See Also
         --------
@@ -2291,7 +2057,7 @@ cdef class DMPlex(DM):
         section
             The `PetscSection` object
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreate`, `PetscSectionCreate`, `PetscSectionSetPermutation`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.create`, `PetscSectionCreate`, `PetscSectionSetPermutation`
 
         See Also
         --------
@@ -2360,7 +2126,7 @@ cdef class DMPlex(DM):
         end
             end of point data
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointLocalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointLocalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
 
         See Also
         --------
@@ -2396,7 +2162,7 @@ cdef class DMPlex(DM):
         Note:
         This is a half open interval [start, end)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointLocal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointLocal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
 
         See Also
         --------
@@ -2431,7 +2197,7 @@ cdef class DMPlex(DM):
         Note:
         This is a half open interval [start, end)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointGlobalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlexGetPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointGlobalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlex.getPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
 
         See Also
         --------
@@ -2467,7 +2233,7 @@ cdef class DMPlex(DM):
         Note:
         This is a half open interval [start, end)
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexGetPointGlobal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlexGetPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointGlobal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlex.getPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
 
         See Also
         --------
@@ -2517,7 +2283,7 @@ cdef class DMPlex(DM):
         refinementUniform
             The flag for uniform refinement
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexGetRefinementUniform`, `DMPlexGetRefinementLimit`, `DMPlexSetRefinementLimit`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.getRefinementUniform`, `DMPlex.getRefinementLimit`, `DMPlex.setRefinementLimit`
 
         See Also
         --------
@@ -2540,7 +2306,7 @@ cdef class DMPlex(DM):
         refinementUniform
             The flag for uniform refinement
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexSetRefinementUniform`, `DMPlexGetRefinementLimit`, `DMPlexSetRefinementLimit`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.setRefinementUniform`, `DMPlex.getRefinementLimit`, `DMPlex.setRefinementLimit`
 
         See Also
         --------
@@ -2561,7 +2327,7 @@ cdef class DMPlex(DM):
         refinementLimit
             The maximum cell volume in the refined mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexGetRefinementLimit`, `DMPlexGetRefinementUniform`, `DMPlexSetRefinementUniform`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.getRefinementLimit`, `DMPlex.getRefinementUniform`, `DMPlex.setRefinementUniform`
 
         See Also
         --------
@@ -2584,7 +2350,7 @@ cdef class DMPlex(DM):
         refinementLimit
             The maximum cell volume in the refined mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlexSetRefinementLimit`, `DMPlexGetRefinementUniform`, `DMPlexSetRefinementUniform`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.setRefinementLimit`, `DMPlex.getRefinementUniform`, `DMPlex.setRefinementUniform`
 
         See Also
         --------
