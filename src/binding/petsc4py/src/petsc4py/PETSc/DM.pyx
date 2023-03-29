@@ -355,7 +355,7 @@ cdef class DM(Object):
     def setUp(self) -> Self:
         """Set the data structure.
 
-        Collective
+        Collective.
 
         See Also
         --------
@@ -378,13 +378,13 @@ cdef class DM(Object):
     def setBasicAdjacency(self, useCone: bool, useClosure: bool) -> None:
         """Set the flags for determining the variable influence.
 
-        Not Collective
+        Not Collective.
 
         Parameters
         ----------
-        useCone : bool
+        bool
             If True, the variable influence is set, starting with the cone operation.
-        useClosure : bool
+        bool
             If True, the variable influence is set using transitive closure.
 
         See Also
@@ -397,6 +397,22 @@ cdef class DM(Object):
         CHKERR( DMSetBasicAdjacency(self.dm, uC, uCl) )
 
     def getBasicAdjacency(self):
+        """Get the flags that determine the variable influence.
+
+        Not collective.
+
+        Returns
+        -------
+        toBool(uC) : bool
+            This flag provides the variable influence starting with the cone operation if True.
+        toBool(uCl) : bool
+            This flag provides the variable influence using transitive closure.
+
+        See Also
+        --------
+        petsc.DMGetBasicAdjacency
+
+        """
         cdef PetscBool uC  = PETSC_FALSE
         cdef PetscBool uCl = PETSC_FALSE
         CHKERR( DMGetBasicAdjacency(self.dm, &uC, &uCl) )
