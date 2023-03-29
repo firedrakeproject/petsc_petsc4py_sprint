@@ -629,7 +629,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPolytopeType.composeOrientation`, `DMPolytopeType.composeOrientationInv`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setCone`, `DMPlex.setChart`, petsc.DMPlexGetConeOrientation
+        `DM`, `DMPlex`, `DM.DMPolytopeType.composeOrientation`, `DM.DMPolytopeType.composeOrientationInv`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setCone`, `DMPlex.setChart`, petsc.DMPlexGetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -671,7 +671,7 @@ cdef class DMPlex(DM):
         assert norie == ncone
         CHKERR( DMPlexSetConeOrientation(self.dm, cp, iorie) )
 
-    def setCellType(self, p: int, ctype: DM.DMPolytopeType) -> None:
+    def setCellType(self, p: int, ctype: DMPolytopeType) -> None:
         """Set the polytope type of a given cell.
 
         Not collective.
@@ -981,7 +981,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPLEX`, `DMPlex.restoreMeet`, `DMPlex.getJoin`, petsc.DMPlexGetMeet
+        `DM`, `DMPlex`, `DMPlex.restoreMeet`, `DMPlex.getJoin`, petsc.DMPlexGetMeet
 
         """
         cdef PetscInt  numPoints = 0
@@ -1007,7 +1007,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPLEX`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetJoin
+        `DM`, `DMPlex`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1033,7 +1033,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPLEX`, `DMPlex.getJoin`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetFullJoin
+        `DM`, `DMPlex`, `DMPlex.getJoin`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetFullJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1061,7 +1061,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPLEX`, `DMPlex.restoreTransitiveClosure`, `DMPlex.create`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.getCone`, petsc.DMPlexGetTransitiveClosure
+        `DM`, `DMPlex`, `DMPlex.restoreTransitiveClosure`, `DMPlex.create`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.getCone`, petsc.DMPlexGetTransitiveClosure
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1078,7 +1078,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexRestoreTransitiveClosure(self.dm, cp, cuseCone, &numPoints, &points) )
         return out[::2],out[1::2]
 
-    def vecGetClosure(self, Section sec, Vec vec, p: int) -> ndarray[Scalar]:
+    def vecGetClosure(self, Section sec, Vec vec, p: int) -> ndarray:
         """Get an array of the values on the closure of 'point'.
 
         Not collective.
@@ -1094,7 +1094,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPLEX`, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
+        `DM`, `DMPlex`, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscInt cp = asInt(p), csize = 0
@@ -1106,37 +1106,23 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexVecRestoreClosure(self.dm, sec.sec, vec.vec, cp, &csize, &cvals) )
         return closure
 
-    def getVecClosure(self, Section sec or None, Vec vec, point):
-        """DMPlexVecRestoreClosure - Restore the array of the values on the closure of 'point'
+    def getVecClosure(self, Section sec or None, Vec vec, point: int) -> ndarray:
+        """Get an array of the values on the closure of 'point'.
 
-        Not collective
+        Not collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
-        section
-            The section describing the layout in `v`, or ``None`` to use the default section
-        v
-            The local vector
+        sec
+            The `Section` describing the layout in ``vec`` or ``None`` to use the default section.
+        vec
+            The local vector.
         point
-            The point in the `DM`
-        csize
-            The number of values in the closure, or ``None``
-        values
-            The array of values, which is a borrowed array and should not be freed
-
-        Note:
-        The array values are discarded and not copied back into `v`. In order to copy values back to `v`, use `DMPlexVecSetClosure`
-
-        Fortran Note:
-        The `csize` argument is not present in the Fortran binding since it is internal to the array.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexVecGetClosure`, `DMPlexVecSetClosure`, `DMPlexMatSetClosure`
+            The point in the `DMPlex`.
 
         See Also
         --------
-        petsc.DMPlexVecRestoreClosure
+        `DM`, `DMPlex`, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1149,32 +1135,27 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexVecRestoreClosure(self.dm, csec, vec.vec, cp, &csize, &cvals) )
         return closure
 
-    def setVecClosure(self, Section sec or None, Vec vec, point, values, addv=None):
-        """DMPlexVecSetClosure - Set an array of the values on the closure of `point`
+    def setVecClosure(self, Section sec or None, Vec vec, point: int, values: Sequence[float], addv: InsertMode | bool | None = None) -> None:
+        """Set an array of the values on the closure of ``point``.
 
-        Not collective
+        Not collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
-        section
-            The section describing the layout in `v`, or ``None`` to use the default section
-        v
-            The local vector
+        sec
+            The section describing the layout in ``vec``, or ``None`` to use the default section.
+        vec
+            The local vector.
         point
-            The point in the `DM`
+            The point in the `DMPlex`.
         values
-            The array of values
+            The array of values.
         mode
-            The insert mode. One of `INSERT_ALL_VALUES`, `ADD_ALL_VALUES`, `INSERT_VALUES`, `ADD_VALUES`, `INSERT_BC_VALUES`, and `ADD_BC_VALUES`,
-        where `INSERT_ALL_VALUES` and `ADD_ALL_VALUES` also overwrite boundary conditions.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexVecGetClosure`, `DMPlexMatSetClosure`
+            The insert mode `InsertMode`, or ``True`` for `InsertMode.ADD_VALUES`, ``False`` for `InsertMode.INSERT_VALUES`, and ``None`` for `InsertMode.INSERT_VALUES`.
 
         See Also
         --------
-        petsc.DMPlexVecSetClosure
+        DM, DMPlex, DMPlex.vecGetClosure, DMPlex.matSetClosure, petsc.DMPlexVecSetClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
