@@ -84,7 +84,7 @@ cdef class SF(Object):
         return self
 
     def setType(self, sf_type: Type | str) -> None:
-        """Set the communication implementation.
+        """Set the type of the star forest.
 
         Collective.
 
@@ -103,7 +103,7 @@ cdef class SF(Object):
         CHKERR( PetscSFSetType(self.sf, cval) )
 
     def getType(self) -> str:
-        """Return the type name of the communication implementation.
+        """Return the type name of the star forest.
 
         Collective.
 
@@ -155,9 +155,9 @@ cdef class SF(Object):
     #
 
     def getGraph(self) -> tuple[int, ArrayInt, ArrayInt]:
-        """Return graph.
+        """Return star forest graph.
 
-        *nleaves* can be determined from the size of *ilocal*.
+        The number of leaves can be determined from the size of *ilocal*.
 
         Not collective.
 
@@ -190,10 +190,10 @@ cdef class SF(Object):
         return toInt(nroots), local, remote
 
     def setGraph(self, nroots: int, local: Sequence[int], remote: Sequence[int]) -> None:
-        """Set graph.
+        """Set star forest graph.
 
-        The *nleaves* argument is determined from the size of local and/or
-        remote.
+        The number of leaves argument can be determined from the size of
+        *local* and/or *remote*.
 
         Collective.
 
@@ -266,7 +266,7 @@ cdef class SF(Object):
         """Create the inverse map.
 
         Create the inverse map given a PetscSF in which all vertices have
-        degree ``1``.
+        degree 1.
 
         Collective.
 
@@ -280,7 +280,7 @@ cdef class SF(Object):
         return sf
 
     def computeDegree(self) -> ArrayInt:
-        """Compute the degree for each root vertex.
+        """Compute and return the degree of each root vertex.
 
         Collective.
 
@@ -416,7 +416,7 @@ cdef class SF(Object):
     def compose(self, SF sf) -> SF:
         """Compose a new `SF`.
 
-        Puts the ``sf`` under this object in a top (roots) down (leaves) view.
+        Puts the *sf* under this object in a top (roots) down (leaves) view.
 
         Collective.
 
@@ -647,7 +647,7 @@ cdef class SF(Object):
         """Begin fetch and update operation.
 
         This operation fetches values from root and updates atomically
-        by applying operation using the leaf value.
+        by applying an operation using the leaf value.
 
         This call has to be completed with `fetchAndOpEnd`.
 
@@ -715,7 +715,3 @@ cdef class SF(Object):
 del SFType
 
 # --------------------------------------------------------------------
-
-# TODO: remove
-cdef Datatype
-cdef Op

@@ -50,3 +50,8 @@ cdef TAOResidualFunction
 cdef TAOJacobianResidualFunction
 cdef TAOVariableBoundsFunction
 cdef TAOConstraintsFunction
+
+# --- MPI ---
+cdef Datatype
+cdef Op
+
