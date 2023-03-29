@@ -999,24 +999,23 @@ cdef class KSP(Object):
 
         Parameters
         ----------
-            normtype
-                one of
-                - `KSP.NormType.NONE` - skips computing the norm, this
-                    should generally only be used if you are using the
-                    Krylov method as a smoother with a fixed small
-                    number of iterations. Implicitly sets
-                    `KSP.convergedSkip` as KSP convergence test. Note
-                    that certain algorithms such as `KSP.GMRES` ALWAYS
-                    require the norm calculation, for these methods the
-                    norms are still computed, they are just not used in
-                    the convergence test.
-                - `KSP.NormType.PRECONDITIONED` - the default for left
-                    preconditioned solves, uses the l₂ norm of the
-                    preconditioned residual P⁻¹(b - Ax)
-                - `KSP.NormType.UNPRECONDITIONED` - uses the l₂ norm of
-                    the true b - Ax residual.
-                - `KSP.NormType.NATURAL` - supported  by `KSP.CG`,
-                    `KSP.CR`, `KSP.CGNE`, `KSP.CGS`.
+        normtype
+            one of
+            - `KSP.NormType.NONE` - skips computing the norm, this
+                should generally only be used if you are using the
+                Krylov method as a smoother with a fixed small number
+                of iterations. Implicitly sets `KSP.convergedSkip` as
+                KSP convergence test. Note that certain algorithms such
+                as `KSP.GMRES` ALWAYS require the norm calculation, for
+                these methods the norms are still computed, they are
+                just not used in the convergence test.
+            - `KSP.NormType.PRECONDITIONED` - the default for left
+                preconditioned solves, uses the l₂ norm of the
+                preconditioned residual P⁻¹(b - Ax)
+            - `KSP.NormType.UNPRECONDITIONED` - uses the l₂ norm of the
+                true b - Ax residual.
+            - `KSP.NormType.NATURAL` - supported  by `KSP.CG`, `KSP.CR`,
+                `KSP.CGNE`, `KSP.CGS`.
 
         Notes
         -----
