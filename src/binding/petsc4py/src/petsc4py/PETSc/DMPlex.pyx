@@ -97,17 +97,17 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         faces
-            Number of faces per dimension, or ``None`` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D.
+            Number of faces per dimension, or `None` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D.
         lower
             The lower left corner, defaults to (0, 0, 0).
         upper
             The upper right corner, defaults to (1, 1, 1).
         simplex
-            ``True`` for simplices, ``False`` for tensor cells, defaults to ``True``.
+            `True` for simplices, `False` for tensor cells, defaults to `True`.
         periodic
-            The boundary type for the X,Y,Z direction, or ``None`` for `DM_BOUNDARY_NONE`, defaults to ``False``.
+            The boundary type for the X,Y,Z direction, or `None` for `DM_BOUNDARY_NONE`, defaults to `False`.
         interpolate
-            Flag to create intermediate mesh pieces (edges, faces), defaults to ``True``.
+            Flag to create intermediate mesh pieces (edges, faces), defaults to `True`.
         comm
             The communicator for the `DMPlex` object.
 
@@ -150,11 +150,11 @@ cdef class DMPlex(DM):
         dim
             The spatial dimension of the box, so the resulting mesh is has dimension `dim`-1
         faces
-            Number of faces per dimension, or ``None`` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D
+            Number of faces per dimension, or `None` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D
         lower
-            The lower left corner, or ``None`` for (0, 0, 0)
+            The lower left corner, or `None` for (0, 0, 0)
         upper
-            The upper right corner, or ``None`` for (1, 1, 1)
+            The upper right corner, or `None` for (1, 1, 1)
         interpolate
             Flag to create intermediate mesh pieces (edges, faces)
 
@@ -214,7 +214,7 @@ cdef class DMPlex(DM):
         Use -dm_plex_create_ prefix to pass options to the internal PetscViewer, e.g.
         $ -dm_plex_create_viewer_hdf5_collective
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreateFromDAG`, `DMPlexCreateFromCellListPetsc`, `DMPlex.create`, `PetscObjectSetName`, `DMView`, `DMLoad`
+        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreateFromDAG`, DMPlex.createFromCellList, `DMPlex.create`, `PetscObjectSetName`, `DMView`, `DMLoad`
 
         See Also
         --------
@@ -403,7 +403,7 @@ cdef class DMPlex(DM):
         hasLagrange
             The mesh has Lagrange unknowns in the cohesive cells
         label
-            A label name, or ``None``
+            A label name, or `None`
         value
             A label value
 
@@ -544,7 +544,7 @@ cdef class DMPlex(DM):
         cone
             An array of points which are on the in-edges for point ``p``.
         orientation
-            An array of orientations, defaults to ``None``.
+            An array of orientations, defaults to `None`.
 
         See Also
         --------
@@ -1057,7 +1057,7 @@ cdef class DMPlex(DM):
         p
             The mesh point.
         useCone
-            ``True`` for the closure, otherwise return the star, defaults to ``True``.
+            `True` for the closure, otherwise return the star, defaults to `True`.
 
         See Also
         --------
@@ -1114,7 +1114,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         sec
-            The `Section` describing the layout in ``vec`` or ``None`` to use the default section.
+            The `Section` describing the layout in ``vec`` or `None` to use the default section.
         vec
             The local vector.
         point
@@ -1143,7 +1143,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         sec
-            The section describing the layout in ``vec``, or ``None`` to use the default section.
+            The section describing the layout in ``vec``, or `None` to use the default section.
         vec
             The local vector.
         point
@@ -1151,7 +1151,7 @@ cdef class DMPlex(DM):
         values
             The array of values.
         mode
-            The insert mode `InsertMode` (`InsertMode.INSERT_ALL_VALUES`, `InsertMode.ADD_ALL_VALUES`, `InsertMode.INSERT_VALUES`, `InsertMode.ADD_VALUES`, `InsertMode.INSERT_BC_VALUES`, and `InsertMode.ADD_BC_VALUES`, where `InsertMode.INSERT_ALL_VALUES` and `InsertMode.ADD_ALL_VALUES` also overwrite boundary conditions), or ``True`` for `InsertMode.ADD_VALUES`, ``False`` for `InsertMode.INSERT_VALUES`, and ``None`` for `InsertMode.INSERT_VALUES`.
+            The insert mode `InsertMode` (`InsertMode.INSERT_ALL_VALUES`, `InsertMode.ADD_ALL_VALUES`, `InsertMode.INSERT_VALUES`, `InsertMode.ADD_VALUES`, `InsertMode.INSERT_BC_VALUES`, and `InsertMode.ADD_BC_VALUES`, where `InsertMode.INSERT_ALL_VALUES` and `InsertMode.ADD_ALL_VALUES` also overwrite boundary conditions), or `True` for `InsertMode.ADD_VALUES`, `False` for `InsertMode.INSERT_VALUES`, and `None` for `InsertMode.INSERT_VALUES`.
 
         See Also
         --------
@@ -1175,9 +1175,9 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         sec
-            The section describing the layout in ``mat``, or ``None`` to use the default section.
+            The section describing the layout in ``mat``, or `None` to use the default section.
         gsec
-            The section describing the layout in ``mat``, or ``None`` to use the default global section.
+            The section describing the layout in ``mat``, or `None` to use the default global section.
         mat
             The matrix.
         point
@@ -1185,7 +1185,7 @@ cdef class DMPlex(DM):
         values
             The array of values.
         mode
-            The insert mode `InsertMode`, or ``True`` for `InsertMode.ADD_VALUES`, ``False`` for `InsertMode.INSERT_VALUES`, and ``None`` for `InsertMode.INSERT_VALUES`. `InsertMode.INSERT_ALL_VALUES` and `InsertMode.ADD_ALL_VALUES` also overwrite boundary conditions.
+            The insert mode `InsertMode`, or `True` for `InsertMode.ADD_VALUES`, `False` for `InsertMode.INSERT_VALUES`, and `None` for `InsertMode.INSERT_VALUES`. `InsertMode.INSERT_ALL_VALUES` and `InsertMode.ADD_ALL_VALUES` also overwrite boundary conditions.
 
         See Also
         --------
@@ -1279,7 +1279,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         value
-            The marker value, or `DETERMINE` or ``None`` to use some value in the closure (or 1 if none are found).
+            The marker value, or `DETERMINE` or `None` to use some value in the closure (or 1 if none are found).
 
         See Also
         --------
@@ -1342,7 +1342,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         useAnchors
-            Flag to use the constraints. If ``True``, then constrained points are omitted from `DMPlex.getAdjacency`, and their anchor points appear in their place.
+            Flag to use the constraints. If `True`, then constrained points are omitted from `DMPlex.getAdjacency`, and their anchor points appear in their place.
 
         See Also
         --------
@@ -1468,7 +1468,7 @@ cdef class DMPlex(DM):
         Returns
         -------
         sf : SF or None
-             The `SF` used for point distribution, or ``None`` if not needed.
+             The `SF` used for point distribution, or `None` if not distributed.
 
         See Also
         --------
@@ -1483,42 +1483,31 @@ cdef class DMPlex(DM):
             PetscCLEAR(self.obj); self.dm = dmParallel
             return sf
 
-    def distributeOverlap(self, overlap=0):
-        """DMPlexDistributeOverlap - Add partition overlap to a distributed non-overlapping `DM`.
+    def distributeOverlap(self, overlap: int | None = 0) -> SF:
+        """Add partition overlap to a distributed non-overlapping `DMPlex`.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The non-overlapping distributed `DMPlex` object
         overlap
-            The overlap of partitions (the same on all ranks)
+            The overlap of partitions (the same on all ranks).
 
         Returns
         -------
-        sf
-            The `PetscSF` used for point distribution
-        dmOverlap
-            The overlapping distributed `DMPlex` object, or ``None``
+        sf: SF
+            The `SF` used for point distribution.
 
-        Options Database Keys:
-        + -dm_plex_overlap_labels <name1,name2,...> - List of overlap label names
-        . -dm_plex_overlap_values <int1,int2,...>   - List of overlap label values
-        . -dm_plex_overlap_exclude_label <name>     - Label used to exclude points from overlap
-        - -dm_plex_overlap_exclude_value <int>      - Label value used to exclude points from overlap
-
-        Notes:
-        If the mesh was not distributed, the return value is ``None``.
-
-        The user can control the definition of adjacency for the mesh using `DMSetAdjacency`. They should choose the combination appropriate for the function
-        representation on the mesh.
-
-        .seealso: `DMPlex`, `PetscSF`, `DM`, `DMPlex.create`, `DMSetAdjacency`, `DMPlexDistribute`, `DMPlexCreateOverlapLabel`, `DMPlex.getOverlap`
+        Notes
+        -----
+        ``-dm_plex_overlap_labels <name1,name2,...>`` sets list of overlap label names.
+        ``-dm_plex_overlap_values <int1,int2,...>`` sets list of overlap label values.
+        ``-dm_plex_overlap_exclude_label <name>`` sets label used to exclude points from overlap.
+        ``-dm_plex_overlap_exclude_value <int>`` sets label value used to exclude points from overlap.
 
         See Also
         --------
-        petsc.DMPlexDistributeOverlap
+        DM, DMPlex, SF, DMPlex.create, DM.setAdjacency, DMPlex.distribute, DMPlex.createOverlapLabel, DMPlex.getOverlap, petsc_options, petsc.DMPlexDistributeOverlap
 
         """
         cdef PetscInt coverlap = asInt(overlap)
@@ -1529,135 +1518,81 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = dmOverlap
         return sf
 
-    def isDistributed(self):
-        """DMPlexIsDistributed - Find out whether this `DM` is distributed, i.e. more than one rank owns some points.
+    def isDistributed(self) -> bool:
+        """Find out whether this `DMPlex` is distributed, i.e. more than one rank owns some points.
 
         Collective.
 
-        Parameters
-        ----------
-        dm
-            The `DM` object
-
-        Returns
-        -------
-        distributed
-            Flag whether the `DM` is distributed
-
-        Notes:
-        This currently finds out whether at least two ranks have any DAG points.
-        This involves `MPI_Allreduce` with one integer.
-        The result is currently not stashed so every call to this routine involves this global communication.
-
-        .seealso: `DMPlex`, `DMPlex`, `DMPlexDistribute`, `DMPlex.getOverlap`, `DMPlexIsInterpolated`
-
         See Also
         --------
-        petsc.DMPlexIsDistributed
+        DM, DMPlex, DMPlex.distribute, DMPlex.getOverlap, DMPlex.isInterpolated, petsc.DMPlexIsDistributed
 
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( DMPlexIsDistributed(self.dm, &flag) )
         return toBool(flag)
 
-    def isSimplex(self):
-        """DMPlexIsSimplex - Is the first cell in this mesh a simplex?
-
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        simplex
-            Flag checking for a simplex
-
-        Note:
-        This just gives the first range of cells found. If the mesh has several cell types, it will only give the first.
-        If the mesh has no cells, this returns ``False``.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getSimplexOrBoxCells`, `DMPlex.getCellType`, `DMPlex.getHeightStratum`, `DMPolytopeTypeGetNumVertices`
+    def isSimplex(self) -> bool:
+        """Is the first cell in this mesh a simplex?
 
         See Also
         --------
-        petsc.DMPlexIsSimplex
+        DM, DMPlex, DMPlex.getSimplexOrBoxCells, DMPlex.getCellType, DMPlex.getHeightStratum, petsc.DMPolytopeTypeGetNumVertices, petsc.DMPlexIsSimplex
 
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( DMPlexIsSimplex(self.dm, &flag) )
         return toBool(flag)
 
-    def distributeGetDefault(self):
-        """DMPlexDistributeGetDefault - Get flag indicating whether the `DM` should be distributed by default
+    def distributeGetDefault(self) -> bool:
+        """Get flag indicating whether the `DM` should be distributed by default.
 
         Not collective.
 
-        Parameters
-        ----------
-        dm
-            The `DM`
-
         Returns
         -------
-        dist
-            Flag for distribution
-
-        .seealso: `DMPlex`, `DM`, `DMPlexDistributeSetDefault`, `DMPlexDistribute`
+        dist: bool
+            Flag indicating whether the `DMPlex` should be distributed by default.
 
         See Also
         --------
-        petsc.DMPlexDistributeGetDefault
+        DM, DMPlex, DMPlex.distributeSetDefault, DMPlex.distribute, petsc.DMPlexDistributeGetDefault
 
         """
         cdef PetscBool dist = PETSC_FALSE
         CHKERR( DMPlexDistributeGetDefault(self.dm, &dist) )
         return toBool(dist)
 
-    def distributeSetDefault(self, flag):
-        """DMPlexDistributeSetDefault - Set flag indicating whether the `DM` should be distributed by default
+    def distributeSetDefault(self, flag: bool) -> None:
+        """Set flag indicating whether the `DMPlex` should be distributed by default.
 
         Logically collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
         dist
-            Flag for distribution
-
-        .seealso: `DMPlex`, `DMPlexDistributeGetDefault`, `DMPlexDistribute`
+            Flag indicating whether the `DMPlex` should be distributed by default.
 
         See Also
         --------
-        petsc.DMPlexDistributeSetDefault
+        DMPlex, DMPlex.distributeGetDefault, DMPlex.distribute, petsc.DMPlexDistributeSetDefault
 
         """
         cdef PetscBool dist = asBool(flag)
         CHKERR( DMPlexDistributeSetDefault(self.dm, dist) )
         return
 
-    def distributionSetName(self, name):
-        """DMPlexDistributionSetName - Set the name of the specific parallel distribution
+    def distributionSetName(self, name: str) -> None:
+        """Set the name of the specific parallel distribution.
 
         Parameters
         ----------
-        dm
-            The `DM`
         name
-            The name of the specific parallel distribution
-
-        Note:
-        If distribution name is set when saving, `DMPlexTopologyView` saves the plex's
-        parallel distribution (i.e., partition, ownership, and local ordering of points) under
-        this name. Conversely, if distribution name is set when loading, `DMPlexTopologyLoad`
-        loads the parallel distribution stored in file under this name.
-
-        .seealso: `DMPlex`, `DMPlexDistributionGetName`, `DMPlexTopologyView`, `DMPlexTopologyLoad`
+            The name of the specific parallel distribution.
 
         See Also
         --------
-        petsc.DMPlexDistributionSetName
+        DMPlex, DMPlex.distributionGetName, DMPlex.topologyView, DMPlex.topologyLoad, petsc.DMPlexDistributionSetName
 
         """
         cdef const char *cname = NULL
@@ -1665,116 +1600,45 @@ cdef class DMPlex(DM):
             name = str2bytes(name, &cname)
         CHKERR( DMPlexDistributionSetName(self.dm, cname) )
 
-    def distributionGetName(self):
-        """DMPlexDistributionGetName - Retrieve the name of the specific parallel distribution
-
-        Parameters
-        ----------
-        dm
-            The `DM`
+    def distributionGetName(self) -> str:
+        """Retrieve the name of the specific parallel distribution.
 
         Returns
         -------
-        name
-            The name of the specific parallel distribution
-
-        Note:
-        If distribution name is set when saving, `DMPlexTopologyView` saves the plex's
-        parallel distribution (i.e., partition, ownership, and local ordering of points) under
-        this name. Conversely, if distribution name is set when loading, `DMPlexTopologyLoad`
-        loads the parallel distribution stored in file under this name.
-
-        .seealso: `DMPlex`, `DMPlexDistributionSetName`, `DMPlexTopologyView`, `DMPlexTopologyLoad`
+        name: str
+            The name of the specific parallel distribution.
 
         See Also
         --------
-        petsc.DMPlexDistributionGetName
+        DMPlex, DMPlex.distributionSetName, DMPlex.topologyView, DMPlex.topologyLoad, petsc.DMPlexDistributionGetName
 
         """
         cdef const char *cname = NULL
         CHKERR( DMPlexDistributionGetName(self.dm, &cname) )
         return bytes2str(cname)
 
-    def isSimplex(self):
-        """DMPlexIsSimplex - Is the first cell in this mesh a simplex?
-
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object
-
-        Returns
-        -------
-        simplex
-            Flag checking for a simplex
-
-        Note:
-        This just gives the first range of cells found. If the mesh has several cell types, it will only give the first.
-        If the mesh has no cells, this returns ``False``.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getSimplexOrBoxCells`, `DMPlex.getCellType`, `DMPlex.getHeightStratum`, `DMPolytopeTypeGetNumVertices`
-
-        See Also
-        --------
-        petsc.DMPlexIsSimplex
-
-        """
-        cdef PetscBool flag = PETSC_FALSE
-        CHKERR( DMPlexIsSimplex(self.dm, &flag) )
-        return toBool(flag)
-
-    def interpolate(self):
-        """DMPlexInterpolate - Take in a cell-vertex mesh and return one with all intermediate faces, edges, etc.
+    def interpolate(self) -> None:
+        """Convert to a mesh with all intermediate faces, edges, etc.
 
         Collective.
 
-        Parameters
-        ----------
-        dm
-            The `DMPlex` object with only cells and vertices
-
-        Returns
-        -------
-        dmInt
-            The complete `DMPlex` object
-
-        Note:
-        Labels and coordinates are copied.
-
-        Developer Note:
-        It sets plex->interpolated = `DMPLEX_INTERPOLATED_FULL`.
-
-        .seealso: `DMPlex`, `DMPlexUninterpolate`, `DMPlexCreateFromCellListPetsc`, `DMPlexCopyCoordinates`
-
         See Also
         --------
-        petsc.DMPlexInterpolate
+        DMPlex, DMPlex.uninterpolate, DMPlex.createFromCellList, DMPlex.copyCoordinates, petsc.DMPlexInterpolate
 
         """
         cdef PetscDM newdm = NULL
         CHKERR( DMPlexInterpolate(self.dm, &newdm) )
         PetscCLEAR(self.obj); self.dm = newdm
 
-    def uninterpolate(self):
-        """DMPlexUninterpolate - Take in a mesh with all intermediate faces, edges, etc. and return a cell-vertex mesh
+    def uninterpolate(self) -> None:
+        """Convert to a mesh with only cells and vertices.
 
         Collective.
 
-        Parameters
-        ----------
-        dm
-            The complete `DMPlex` object
-
-        Returns
-        -------
-        dmUnint
-            The `DMPlex` object with only cells and vertices
-
-        .seealso: `DMPlex`, `DMPlexInterpolate`, `DMPlexCreateFromCellListPetsc`, `DMPlexCopyCoordinates`
-
         See Also
         --------
-        petsc.DMPlexUninterpolate
+        DMPlex, DMPlex.interpolate, DMPlex.createFromCellList, DMPlex.copyCoordinates, petsc.DMPlexUninterpolate
 
         """
         cdef PetscDM newdm = NULL
@@ -2227,7 +2091,7 @@ cdef class DMPlex(DM):
         otype
             type of reordering, see `MatOrderingType`
         label
-            [Optional] Label used to segregate ordering into sets, or ``None``
+            [Optional] Label used to segregate ordering into sets, or `None`
 
         Returns
         -------
@@ -2372,7 +2236,7 @@ cdef class DMPlex(DM):
         dm
             The original `DM`
         labelName
-            The label specifying the boundary faces, or "Face Sets" if this is ``None``
+            The label specifying the boundary faces, or "Face Sets" if this is `None`
 
         Returns
         -------
@@ -3481,7 +3345,7 @@ cdef class DMPlex(DM):
         Returns
         -------
         globalToLocalPointSF
-            The `PetscSF` that pushes points in [0, N) to the associated points in the loaded `DMPlex`, where N is the global number of points; ``None`` if unneeded
+            The `PetscSF` that pushes points in [0, N) to the associated points in the loaded `DMPlex`, where N is the global number of points; `None` if unneeded
 
         .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexCoordinatesLoad`, `DMPlexLabelsLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
         `PetscViewer`, `PetscSF`
@@ -3562,9 +3426,9 @@ cdef class DMPlex(DM):
         Returns
         -------
         globalDofSF
-            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a global `Vec` associated with the `sectiondm`'s global section (``None`` if not needed)
+            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a global `Vec` associated with the `sectiondm`'s global section (`None` if not needed)
         localDofSF
-            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a local `Vec` associated with the `sectiondm`'s local section (``None`` if not needed)
+            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a local `Vec` associated with the `sectiondm`'s local section (`None` if not needed)
 
         .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexCoordinatesLoad`, `DMPlexLabelsLoad`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`, `PetscSectionLoad`, `DMPlexSectionView`, `PetscSF`, `PetscViewer`
 
