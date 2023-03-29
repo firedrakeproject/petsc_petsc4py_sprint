@@ -743,7 +743,7 @@ cdef class Vec(Object):
         return (dltype, devId)
 
     # FIXME Not sure what the return type should be
-    def toDLPack(self, mode: Literal['rw', 'r', 'w'] | None = 'rw') -> Any:
+    def toDLPack(self, mode: Literal["rw", "r", "w"] | None = "rw") -> Any:
         """Return a DLPack `PyCapsule` wrapping the vector data.
 
         Collective.
@@ -751,8 +751,8 @@ cdef class Vec(Object):
         Parameters
         ----------
         mode
-            Access mode for the vector. Must be read-write (``'rw'``), read
-            (``'r'``) or write (``'w'``). If `None` defaults to ``'rw'``.
+            Access mode for the vector. Must be read-write (``"rw"``), read
+            (``"r"``) or write (``"w"``). If `None` defaults to ``"rw"``.
 
         Returns
         -------
@@ -1255,14 +1255,14 @@ cdef class Vec(Object):
         CHKERR( VecGetOwnershipRange(self.vec, &low, &high) )
         return (toInt(low), toInt(high))
 
-    def getOwnershipRanges(self) -> NDArray[int]:
+    def getOwnershipRanges(self) -> ArrayInt:
         """Return the range of indices owned by each process.
 
         Not collective.
 
         Returns
         -------
-        NDArray[int]
+        ArrayInt
             Array with length one greater than the number of communicator
             ranks storing start and end + 1 indices for each process.
 
@@ -1352,22 +1352,117 @@ cdef class Vec(Object):
         else:
             CHKERR( VecRestoreLocalVector(self.vec, lvec.vec) )
 
-    def getBuffer(self, readonly=False):
+    # FIXME Return type should be more specific
+    def getBuffer(self, readonly: bool = False) -> Any:
+        """Return a buffered view of the local portion of the vector.
+
+        Not collective if ``readonly`` is `True`, logically collective
+        otherwise.
+
+        Parameters
+        ----------
+        readonly
+            Whether the vector is only read. If `True` then the vector will
+            preserve cached information.
+
+        Returns
+        -------
+        Any
+            Buffer object wrapping the local portion of the vector data. This
+            can be used either as a context manager providing access as a
+            numpy array or can be passed to array constructors accepting
+            buffered objects such as `numpy.asarray`.
+
+        Examples
+        --------
+        Accessing the data with a context manager:
+
+        >>> vec = PETSc.Vec().createWithArray([1, 2, 3])
+        >>> with vec.getBuffer() as arr:
+        ...     arr
+        array([1., 2., 3.])
+
+        Converting the buffer to an `ndarray`:
+
+        >>> buf = PETSc.Vec().createWithArray([1, 2, 3]).getBuffer()
+        >>> np.asarray(buf)
+        array([1., 2., 3.])
+
+        See Also
+        --------
+        Vec.getArray
+
+        """
         if readonly:
             return vec_getbuffer_r(self)
         else:
             return vec_getbuffer_w(self)
 
-    def getArray(self, readonly=False):
+    def getArray(self, readonly: bool=False) -> NDArray[Scalar]:
+        """Return local portion of the vector as an `ndarray`.
+
+        Not collective if ``readonly`` is `True`, logically collective
+        otherwise.
+
+        Parameters
+        ----------
+        readonly
+            Whether the vector is only read. If `True` then the vector will
+            preserve cached information.
+
+        See Also
+        --------
+        Vec.setArray, Vec.getBuffer
+
+        """
         if readonly:
             return vec_getarray_r(self)
         else:
             return vec_getarray_w(self)
 
-    def setArray(self, array):
+    def setArray(self, array: Sequence[Scalar]) -> None:
+        """Set the local portion of the vector.
+
+        This will fail if ``array`` has a different size to the local portion
+        of the vector.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        array
+            Values to set the local portion of the vector to. These will be
+            copied.
+
+        See Also
+        --------
+        Vec.placeArray
+
+        """
         vec_setarray(self, array)
 
-    def placeArray(self, array):
+    def placeArray(self, array: Sequence[Scalar]) -> None:
+        """Set the local portion of the vector to a provided array.
+
+        This method can be used instead of `Vec.setArray` to avoid copying
+        data.
+
+        The original array can be returned to using `Vec.resetArray`. It is
+        the user's responsibility to free the provided array.
+
+        Not collective.
+
+        Parameters
+        ----------
+        array
+            Data to set as the local portion of the vector. An error will be
+            raised if the size does not match `Vec.getLocalSize`.
+
+        See Also
+        --------
+        Vec.resetArray, Vec.setArray, petsc.VecPlaceArray
+
+        """
         cdef PetscInt nv=0
         cdef PetscInt na=0
         cdef PetscScalar *a = NULL
@@ -1379,7 +1474,29 @@ cdef class Vec(Object):
         CHKERR( VecPlaceArray(self.vec, a) )
         self.set_attr('__placed_array__', array)
 
-    def resetArray(self, force=False):
+    def resetArray(self, force: bool = False) -> ArrayScalar | None:
+        """Reset the vector to use its default array for its elements.
+
+        Not collective.
+
+        Parameters
+        ----------
+        force
+            Force the calling of `petsc.VecResetArray` even if no user array
+            has been placed with `Vec.placeArray`.
+
+        Returns
+        -------
+        ArrayScalar
+            The array previously provided by the user with `Vec.placeArray`.
+            Can be `None` if ``force`` is `True` and no array was placed
+            before.
+
+        See Also
+        --------
+        Vec.placeArray, petsc.VecResetArray
+
+        """
         cdef object array = None
         array = self.get_attr('__placed_array__')
         if array is None and not force: return None
@@ -1387,24 +1504,72 @@ cdef class Vec(Object):
         self.set_attr('__placed_array__', None)
         return array
 
-    def bindToCPU(self, flg):
-        """
-        If *flg* is *True*, all subsequent operations of *self* would be
-        performed on CPU. If *flg* is *False*, all subsequent operations of
-        *self* would be offloaded to the device, provided that the VecType is
-        capable of offloading.
+    def bindToCPU(self, flg: bool) -> None:
+        """Indicate to the vector that it will only be accessed on the CPU.
 
-        :arg flg: An instance of :class:`bool`.
+        Logically collective.
+
+        Parameters
+        ----------
+        flg
+            If `True` then subsequent operations must be performed on the CPU.
+            If `False` then they must all be performed on the device, assuming
+            that the vector type (`Vec.Type`) is capable of offloading.
+
+        See Also
+        --------
+        Vec.boundToCPU, petsc.VecBindToCPU
+
         """
         cdef PetscBool bindFlg = asBool(flg)
         CHKERR( VecBindToCPU(self.vec, bindFlg) )
 
-    def boundToCPU(self):
+    def boundToCPU(self) -> bool:
+        """Return whether the vector has been bound to the CPU.
+
+        See Also
+        --------
+        Vec.bindToCPU, petsc.VecBoundToCPU
+
+        """
         cdef PetscBool flg = PETSC_TRUE
         CHKERR( VecBoundToCPU(self.vec, &flg) )
         return toBool(flg)
 
-    def getCUDAHandle(self, mode='rw'):
+    # FIXME What is the right return type?
+    def getCUDAHandle(
+        self,
+        mode: Literal["rw", "r", "w"] | None = "rw",
+    ) -> Any:
+        """Return a pointer to the CUDA buffer inside the vector.
+
+        The returned pointer should be released using `Vec.restoreCUDAHandle`
+        with the same access mode.
+
+        Not collective.
+
+        Parameters
+        ----------
+        mode
+            Access mode for the vector. Must be read-write (``"rw"``), read
+            (``"r"``) or write (``"w"``). If `None` defaults to ``"rw"``.
+
+        Returns
+        -------
+        Any
+            CUDA device pointer.
+
+        Notes
+        -----
+        This method may incur a host-to-device copy if the device data is
+        out of date and ``mode`` is ``"r"`` or ``"rw"``.
+
+        See Also
+        --------
+        Vec.restoreCUDAHandle, petsc.VecCUDAGetArray
+        petsc.VecCUDAGetArrayRead, petsc.VecCUDAGetArrayWrite
+
+        """
         cdef PetscScalar *hdl = NULL
         cdef const char *m = NULL
         if mode is not None: mode = str2bytes(mode, &m)
@@ -1418,7 +1583,38 @@ cdef class Vec(Object):
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
         return <Py_uintptr_t>hdl
 
-    def restoreCUDAHandle(self, handle, mode='rw'):
+    def restoreCUDAHandle(
+        self,
+        handle: Any,  # FIXME What type hint is appropriate?
+        mode: Literal["rw", "r", "w"] | None = "rw",
+    ) -> None:
+        """Restore a pointer to the CUDA buffer inside the vector.
+
+        The pointer should have been obtained by calling `Vec.getCUDAHandle`
+        with the same access mode.
+
+        Not collective.
+
+        Parameters
+        ----------
+        handle
+            CUDA device pointer.
+        mode
+            Access mode for the vector. Must be read-write (``"rw"``), read
+            (``"r"``) or write (``"w"``). If `None` defaults to ``"rw"``.
+
+        Notes
+        -----
+        This method will mark the host data as out of date if ``mode`` is
+        ``"w"`` or ``"rw"``, resulting in a host-to-device copy the next time
+        data is accessed on the host.
+
+        See Also
+        --------
+        Vec.getCUDAHandle, petsc.VecCUDARestoreArray
+        petsc.VecCUDARestoreArrayRead, petsc.VecCUDARestoreArrayWrite
+
+        """
         cdef PetscScalar *hdl = <PetscScalar*>(<Py_uintptr_t>handle)
         cdef const char *m = NULL
         if mode is not None: mode = str2bytes(mode, &m)
