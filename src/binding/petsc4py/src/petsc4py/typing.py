@@ -2,6 +2,7 @@
 # Contact: dalcinl@gmail.com
 """Typing support."""
 
+from __future__ import annotations
 from typing import (
     Callable,
 )
@@ -18,6 +19,10 @@ from .PETSc import (
 
 __all__ = [
     "Scalar",
+    "ArrayInt",
+    "ArrayReal",
+    "ArrayComplex",
+    "ArrayScalar",
     "TSRHSFunction",
     "TSRHSJacobian",
     "TSRHSJacobianP",
@@ -48,6 +53,7 @@ __all__ = [
     "TAOConstraintsFunction",
 ]
 
+# --- Sys ---
 
 Scalar = float | complex
 """Scalar type.
@@ -56,6 +62,18 @@ Scalars can be either `float` or `complex` (but not both) depending on how
 PETSc was configured (``./configure --with-scalar-type=real|complex``).
 
 """
+
+ArrayInt = NDArray[int]
+"""Array of `int`."""
+
+ArrayReal = NDArray[float]
+"""Array of `float`."""
+
+ArrayComplex = NDArray[complex]
+"""Array of `complex`."""
+
+ArrayScalar = NDArray[Scalar]
+"""Array of `Scalar` numbers."""
 
 # --- TS ---
 
