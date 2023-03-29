@@ -15,6 +15,10 @@ cdef Mapping
 cdef PathLike
 
 cdef Scalar
+cdef ArrayInt
+cdef ArrayReal
+cdef ArrayComplex
+cdef ArrayScalar
 
 # --- TAO ---
 
