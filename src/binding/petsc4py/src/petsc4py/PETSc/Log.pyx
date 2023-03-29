@@ -197,15 +197,15 @@ cdef class Log:
         If no event name is specified it will default to the name of the function.
         
         Usage:
-            @EventDecorator("My Function")
-            def myfunc():
-                ...
+            >>>@EventDecorator("My Function")
+            >>>def myfunc():
+            >>>    ...
 
-            or
+            >>>or
 
-            @EventDecorator()
-            def myfunc():
-                ...
+            >>>@EventDecorator()
+            >>>def myfunc():
+            >>>    ...
         """
         def decorator(func):
             @functools.wraps(func)
