@@ -623,14 +623,9 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceView(self.dualspace, vwr) )
 
     def destroy(self) -> Self:
-        """TODO
+        """Destroy the `DualSpace` object.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -695,7 +690,11 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceSetDM(self.dualspace, dm.dm) )
 
     def getDimension(self) -> int:
-        """Return the dimension of this space, i.e. the number of basis vectors.
+        """Return the dimension of the dual space.
+
+        The dimension of the dual space, i.e. the number of basis functionals.
+
+        Not collective.
 
         See also
         --------
@@ -822,14 +821,14 @@ cdef class DualSpace(Object):
         return array_i(cdim + 1, cndof)
 
     def getFunctional(self, i: int) -> Quad:
-        """TODO
+        """Get the i-th basis functional in the dual space.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        i
+            The basis number.
 
         See also
         --------
