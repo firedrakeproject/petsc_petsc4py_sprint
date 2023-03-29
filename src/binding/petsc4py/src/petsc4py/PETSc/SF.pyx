@@ -16,7 +16,7 @@ cdef class SF(Object):
     """Star Forest object for communication.
 
     SF is used for setting up and managing the communication of certain
-    entries of arrays and Vec between MPI ranks.
+    entries of arrays and `Vec` between MPI ranks.
     """
 
     Type = SFType
@@ -49,7 +49,7 @@ cdef class SF(Object):
         CHKERR( PetscSFView(self.sf, vwr) )
 
     def destroy(self) -> Self:
-        """Destroy star forest.
+        """Destroy the star forest.
 
         Collective.
 
