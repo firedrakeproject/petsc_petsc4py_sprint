@@ -69,14 +69,14 @@ cdef class Space(Object):
         return self
 
     def view(self, Viewer viewer=None) -> None:
-        """TODO
+        """View a `Space`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        viewer
+            The viewer.
 
         See also
         --------
@@ -88,18 +88,13 @@ cdef class Space(Object):
         CHKERR( PetscSpaceView(self.space, vwr) )
 
     def setFromOptions(self) -> None:
-        """TODO
+        """Set parameters in `Space` from the options database.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
-        petsc.PetscSpaceSetFromOptions
+        petsc.PetscSpaceSetFromOptions, petsc_options
 
         """
         CHKERR( PetscSpaceSetFromOptions(self.space) )
@@ -527,20 +522,22 @@ cdef class Space(Object):
         return toInt(cformDegree)
 
     def viewFromOptions(self, name: str, Object obj=None) -> None:
-        """TODO
+        """View a `Space` based on values in the options database.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+A - the PetscSpace object
+obj - Optional object, provides the options prefix
+name - command line option name
 
         See also
         --------
-        petsc.PetscSpaceViewFromOptions
+        petsc.PetscSpaceViewFromOptions, petsc_options
 
         """
+
         cdef const char *cname = NULL
         _ = str2bytes(name, &cname)
         cdef PetscObject  cobj = NULL
@@ -566,14 +563,9 @@ cdef class DualSpace(Object):
         self.dualspace  = NULL
 
     def setUp(self) -> None:
-        """TODO
+        """Construct a basis for a `DualSpace`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -583,14 +575,14 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceSetUp(self.dualspace) )
 
     def create(self, comm: Comm | None = None) -> Self:
-        """TODO
+        """Creates an empty `DualSpace` object. The type can then be set with `setType`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        comm
+            The communicator for the `DualSpace` object.
 
         See also
         --------
@@ -604,14 +596,14 @@ cdef class DualSpace(Object):
         return self
 
     def view(self, Viewer viewer=None) -> None:
-        """TODO
+        """Views a `DualSpace`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        viewer
+            The viewer.
 
         See also
         --------
@@ -636,14 +628,9 @@ cdef class DualSpace(Object):
         return self
 
     def duplicate(self) -> DualSpace:
-        """TODO
+        """Creates a duplicate `DualSpace` object that is not setup.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -654,14 +641,13 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceDuplicate(self.dualspace, &spNew.dualspace) )
 
     def getDM(self) -> DM:
-        """TODO
+        """Get the `DM` representing the reference cell of a `DualSpace`.
+
+        Output Parameter
+dm - The reference cell, that is a DM that consists of a single cell
+
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -750,14 +736,14 @@ cdef class DualSpace(Object):
         return bytes2str(cval)
 
     def setType(self, dualspace_type: DualSpace.Type | str) -> Self:
-        """TODO
+        """Builds a particular `DualSpace` based on its `DualSpaceType`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        name
+            The kind of space
 
         See also
         --------
@@ -961,18 +947,19 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceLagrangeSetTrimmed(self.dualspace, ctrimmed))
 
     def viewFromOptions(self, name: str, Object obj=None) -> None:
-        """TODO
+        """View a `DualSpace` based on values in the options database.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+A - the PetscDualSpace object
+obj - Optional object, provides the options prefix
+name - command line option name
 
         See also
         --------
-        petsc.PetscDualSpaceViewFromOptions
+        petsc.PetscSpaceViewFromOptions, petsc_options
 
         """
         cdef const char *cname = NULL
