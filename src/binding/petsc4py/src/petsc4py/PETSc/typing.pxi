@@ -13,3 +13,40 @@ cdef Sequence
 cdef Mapping
 
 cdef PathLike
+
+cdef Scalar
+cdef ArrayInt
+cdef ArrayReal
+cdef ArrayComplex
+cdef ArrayScalar
+
+# --- TS ---
+
+cdef TSRHSFunction
+cdef TSRHSJacobian
+cdef TSRHSJacobianP
+cdef TSIFunction
+cdef TSIJacobian
+cdef TSIJacobianP
+cdef TSI2Function
+cdef TSI2Jacobian
+cdef TSMonitorFunction
+cdef TSEventHandlerFunction
+cdef TSPostEventFunction
+cdef TSPreStepFunction
+cdef TSPostStepFunction
+
+# --- TAO ---
+
+cdef TAOObjectiveFunction
+cdef TAOGradientFunction
+cdef TAOObjectiveGradientFunction
+cdef TAOHessianFunction
+cdef TAOUpdateFunction
+cdef TAOMonitorFunction
+cdef TAOConvergedFunction
+cdef TAOJacobianFunction
+cdef TAOResidualFunction
+cdef TAOJacobianResidualFunction
+cdef TAOVariableBoundsFunction
+cdef TAOConstraintsFunction
