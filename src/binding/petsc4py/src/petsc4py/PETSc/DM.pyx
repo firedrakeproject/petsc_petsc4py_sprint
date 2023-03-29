@@ -494,14 +494,17 @@ cdef class DM(Object):
 
     #
 
-    def setAuxiliaryVec(self, Vec aux, label=None, value=0, part=0) -> None:
+    def setAuxiliaryVec(self, Vec aux, label: str | None=None, value=0, part=0) -> None:
         """Set an auxiliary vector.
 
         Not Collective.
 
-        Parameters:
+        Parameters
+        ----------
+        aux : Vec
+            This variable holds the auxiliary field data.
+        label : str, 
         
-
         """
         cdef PetscInt cvalue = asInt(value)
         cdef PetscInt cpart = asInt(part)
