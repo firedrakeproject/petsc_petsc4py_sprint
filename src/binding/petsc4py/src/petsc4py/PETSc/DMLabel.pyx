@@ -5,15 +5,10 @@ cdef class DMLabel(Object):
         self.obj = <PetscObject*> &self.dmlabel
         self.dmlabel  = NULL
 
-    def destroy(self):
-        """TODO
+    def destroy(self) -> Self:
+        """Destroy the `DMLabel`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -23,10 +18,10 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelDestroy(&self.dmlabel) )
         return self
 
-    def view(self, Viewer viewer=None):
-        """TODO
+    def view(self, Viewer viewer=None) -> None:
+        """View the label.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -42,15 +37,17 @@ cdef class DMLabel(Object):
         if viewer is not None: vwr = viewer.vwr
         CHKERR( DMLabelView(self.dmlabel, vwr) )
 
-    def create(self, name, comm=None):
-        """TODO
+    def create(self, name: str, comm: Comm | None = None) -> Self:
+        """Create a DMLabel object, which is a multimap.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        name
+            The label name.
+        comm
+            The communicator, usually `PETSC_COMM_SELF`.
 
         See also
         --------
@@ -65,15 +62,10 @@ cdef class DMLabel(Object):
         PetscCLEAR(self.obj); self.dmlabel = newdmlabel
         return self
 
-    def duplicate(self):
-        """TODO
+    def duplicate(self) -> DMLabel:
+        """Duplicates the `DMLabel`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -84,15 +76,10 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelDuplicate(self.dmlabel, &new.dmlabel) )
         return new
 
-    def reset(self):
-        """TODO
+    def reset(self) -> None:
+        """Destroys internal data structures in the `DMLabel`.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -101,15 +88,17 @@ cdef class DMLabel(Object):
         """
         CHKERR( DMLabelReset(self.dmlabel) )
 
-    def insertIS(self, IS iset, value):
-        """TODO
+    def insertIS(self, IS iset, value: int) -> Self:
+        """Set all points in the `IS` to a value.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        iset
+            The point IS.
+        value
+            The point value.
 
         See also
         --------
@@ -120,38 +109,47 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelInsertIS(self.dmlabel, iset.iset, cvalue)  )
         return self
 
-    def setValue(self, point, value):
-        """TODO
+    def setValue(self, point: int, value: int) -> None:
+        """Set the value a label assigns to a point.
+
+        If the value is the same as the label's default value (which is
+        initially -1, and can be changed with `setDefaultValue` to something
+        different), then this function will do nothing.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        point
+            The point.
+        value
+            The point value.
 
         See also
         --------
-        petsc.DMLabelSetValue
+        petsc.DMLabelSetValue, setDefaultValue
 
         """
         cdef PetscInt cpoint = asInt(point)
         cdef PetscInt cvalue = asInt(value)
         CHKERR( DMLabelSetValue(self.dmlabel, cpoint, cvalue) )
 
-    def getValue(self, point):
-        """TODO
+    def getValue(self, point: int) -> int:
+        """Return the value a label assigns to a point.
+
+        If no value was assigned, a default value will be returned
+        The default value, initially -1, can be changed with `setDefaultValue`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        point
+            The point.
 
         See also
         --------
-        petsc.DMLabelGetValue
+        petsc.DMLabelGetValue, setDefaultValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -159,15 +157,13 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGetValue(self.dmlabel, cpoint, &cvalue) )
         return toInt(cvalue)
 
-    def getDefaultValue(self):
-        """TODO
+    def getDefaultValue(self) -> int:
+        """Get the default value returned by `getValue`
+
+        The default value is returned if a point has not been explicitly given
+        a value. When a label is created, it is initialized to -1.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -178,15 +174,18 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGetDefaultValue(self.dmlabel, &cvalue) )
         return toInt(cvalue)
 
-    def setDefaultValue(self, value):
-        """TODO
+    def setDefaultValue(self, value: int) -> None:
+        """Set the default value returned by `getValue`.
+
+        The value is used if a point has not been explicitly given a value.
+        When a label is created, the default value is initialized to -1.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        value
+            The default value.
 
         See also
         --------
@@ -196,15 +195,17 @@ cdef class DMLabel(Object):
         cdef PetscInt cvalue = asInt(value)
         CHKERR( DMLabelSetDefaultValue(self.dmlabel, cvalue) )
 
-    def clearValue(self, point, value):
-        """TODO
+    def clearValue(self, point: int, value: int) -> None:
+        """Clear the value a label assigns to a point.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        point
+            The point.
+        value
+            The point value.
 
         See also
         --------
@@ -215,15 +216,13 @@ cdef class DMLabel(Object):
         cdef PetscInt cvalue = asInt(value)
         CHKERR( DMLabelClearValue(self.dmlabel, cpoint, cvalue) )
 
-    def addStratum(self, value):
-        """TODO
-
-        Not collective.
+    def addStratum(self, value: int) -> None:
+        """Adds a new stratum value in a `DMLabel`.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        value
+            The stratum value.
 
         See also
         --------
@@ -233,15 +232,15 @@ cdef class DMLabel(Object):
         cdef PetscInt cvalue = asInt(value)
         CHKERR( DMLabelAddStratum(self.dmlabel, cvalue) )
 
-    def addStrata(self, strata):
-        """TODO
+    def addStrata(self, strata: Sequence[int]) -> None:
+        """Adds new stratum values in a `DMLabel`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        strata
+            The stratum values.
 
         See also
         --------
@@ -253,15 +252,15 @@ cdef class DMLabel(Object):
         fields = iarray_i(strata, &numStrata, &istrata)
         CHKERR( DMLabelAddStrata(self.dmlabel, numStrata, istrata) )
 
-    def addStrataIS(self, IS iset):
-        """TODO
+    def addStrataIS(self, IS iset) -> None:
+        """Adds new stratum values in a `DMLabel`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        iset
+            Index set with stratum values. TODO:?
 
         See also
         --------
@@ -270,15 +269,10 @@ cdef class DMLabel(Object):
         """
         CHKERR( DMLabelAddStrataIS(self.dmlabel, iset.iset) )
 
-    def getNumValues(self):
-        """TODO
+    def getNumValues(self) -> int:
+        """Get the number of values that the `DMLabel` takes.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -289,15 +283,10 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGetNumValues(self.dmlabel, &numValues) )
         return toInt(numValues)
 
-    def getValueIS(self):
-        """TODO
+    def getValueIS(self) -> IS:
+        """Get an `IS` of all values that the `DMlabel` takes.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -308,15 +297,17 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGetValueIS(self.dmlabel, &iset.iset) )
         return iset
 
-    def stratumHasPoint(self, value, point):
-        """TODO
+    def stratumHasPoint(self, value: int, point: int) -> bool:
+        """Return `True` if the stratum contains a point.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        value
+            The stratum value.
+        point
+            The point.
 
         See also
         --------
@@ -329,15 +320,15 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelStratumHasPoint(self.dmlabel, cvalue, cpoint, &ccontains) )
         return toBool(ccontains)
 
-    def hasStratum(self, value):
-        """TODO
+    def hasStratum(self, value: int) -> bool:
+        """Determine whether points exist with the given value.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        value
+            The stratum value.
 
         See also
         --------
@@ -349,15 +340,15 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelHasStratum(self.dmlabel, cvalue, &cexists) )
         return toBool(cexists)
 
-    def getStratumSize(self, stratum):
-        """TODO
+    def getStratumSize(self, stratum: int) -> int:
+        """Get the size of a stratum.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        stratum
+            The stratum value.
 
         See also
         --------
@@ -366,18 +357,18 @@ cdef class DMLabel(Object):
         """
         cdef PetscInt cstratum = asInt(stratum)
         cdef PetscInt csize = 0
-        CHKERR( DMLabelGetStratumSize(self.dmlabel, stratum, &csize) )
+        CHKERR( DMLabelGetStratumSize(self.dmlabel, cstratum, &csize) )
         return toInt(csize)
 
-    def getStratumIS(self, stratum):
-        """TODO
+    def getStratumIS(self, stratum: int) -> IS:
+        """Get an IS with the stratum points.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        stratum
+            The stratum value.
 
         See also
         --------
@@ -389,15 +380,17 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGetStratumIS(self.dmlabel, cstratum, &iset.iset) )
         return iset
 
-    def setStratumIS(self, stratum, IS iset):
-        """TODO
+    def setStratumIS(self, stratum: int, IS iset) -> None:
+        """Set the stratum points using an `IS`.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        stratum
+            The stratum value.
+        iset
+            The stratum points.
 
         See also
         --------
@@ -407,15 +400,15 @@ cdef class DMLabel(Object):
         cdef PetscInt cstratum = asInt(stratum)
         CHKERR( DMLabelSetStratumIS(self.dmlabel, cstratum, iset.iset) )
 
-    def clearStratum(self, stratum):
-        """TODO
+    def clearStratum(self, stratum: int) -> None:
+        """Remove a stratum.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        stratum
+            The stratum value.
 
         See also
         --------
@@ -425,15 +418,12 @@ cdef class DMLabel(Object):
         cdef PetscInt cstratum = asInt(stratum)
         CHKERR( DMLabelClearStratum(self.dmlabel, cstratum) )
 
-    def computeIndex(self):
-        """TODO
+    def computeIndex(self) -> None:
+        """Create an index structure for membership determination.
+
+        Automatically determines the bounds.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -442,15 +432,17 @@ cdef class DMLabel(Object):
         """
         CHKERR( DMLabelComputeIndex(self.dmlabel) )
 
-    def createIndex(self, pStart: int, pEnd: int):
-        """TODO
+    def createIndex(self, pStart: int, pEnd: int) -> None:
+        """Create an index structure for membership determination.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        pStart
+            The smallest point.
+        pEnd
+            The largest point + 1.
 
         See also
         --------
@@ -460,15 +452,10 @@ cdef class DMLabel(Object):
         cdef PetscInt cpstart = asInt(pStart), cpend = asInt(pEnd)
         CHKERR( DMLabelCreateIndex(self.dmlabel, cpstart, cpend) )
 
-    def destroyIndex(self):
-        """TODO
+    def destroyIndex(self) -> None:
+        """Destroy the index structure.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -477,15 +464,15 @@ cdef class DMLabel(Object):
         """
         CHKERR( DMLabelDestroyIndex(self.dmlabel) )
 
-    def hasValue(self, value):
-        """TODO
+    def hasValue(self, value: int) -> bool:
+        """Determine whether a label assigns the value to any point.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        value
+            The value.
 
         See also
         --------
@@ -497,15 +484,17 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelHasValue(self.dmlabel, cvalue, &cexists) )
         return toBool(cexists)
 
-    def hasPoint(self, point):
-        """TODO
+    def hasPoint(self, point: int) -> bool:
+        """Determine whether a label assigns a value to a point.
+
+        The user must call `CreateIndex` before this function.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        point
+            The point.
 
         See also
         --------
@@ -517,15 +506,12 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelHasPoint(self.dmlabel, cpoint, &cexists) )
         return toBool(cexists)
 
-    def getBounds(self):
-        """TODO
+    def getBounds(self) -> tuple[int, int]:
+        """Return the smallest and largest point in the label.
+
+        The returned values are the smallest point and the largest point + 1.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -536,33 +522,35 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGetBounds(self.dmlabel, &cpstart, &cpend) )
         return toInt(cpstart), toInt(cpend)
 
-    def filter(self, start, end):
-        """TODO
+    def filter(self, start: int, end: int) -> None:
+        """Remove all points outside of [start, end)
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        start
+            The first point kept.
+        end
+            One more than the last point kept.
 
         See also
         --------
         petsc.DMLabelFilter
 
         """
-        cdef PetscInt cstart = 0, cend = 0
+        cdef PetscInt cstart = asInt(start), cend = asInt(end)
         CHKERR( DMLabelFilter(self.dmlabel, cstart, cend) )
 
-    def permute(self, IS permutation):
-        """TODO
+    def permute(self, IS permutation) -> DMLabel:
+        """Create a new label with permuted points.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        permutation
+            The point permutation.
 
         See also
         --------
@@ -573,15 +561,15 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelPermute(self.dmlabel, permutation.iset, &new.dmlabel) )
         return new
 
-    def distribute(self, SF sf):
-        """TODO
+    def distribute(self, SF sf) -> DMLabel:
+        """Create a new label pushed forward over the `SF`.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        sf
+            The map from old to new distribution.
 
         See also
         --------
@@ -592,15 +580,17 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelDistribute(self.dmlabel, sf.sf, &new.dmlabel) )
         return new
 
-    def gather(self, SF sf):
-        """TODO
+    def gather(self, SF sf) -> DMLabel:
+        """Gather all label values from leafs into roots.
 
-        Not collective.
+        This is the inverse operation to `distribute`.
+
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        sf
+            The `SF` communication map.
 
         See also
         --------
@@ -611,15 +601,10 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGather(self.dmlabel, sf.sf, &new.dmlabel) )
         return new
 
-    def convertToSection(self):
-        """TODO
+    def convertToSection(self) -> tuple(Section, IS):
+        """Return a (`Section`, `IS`) tuple that encodes the label.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -631,15 +616,10 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelConvertToSection(self.dmlabel, &section.sec, &iset.iset) )
         return section, iset
 
-    def getNonEmptyStratumValuesIS(self):
-        """TODO
+    def getNonEmptyStratumValuesIS(self) -> IS:
+        """Return an `IS` of all values that the `DMlabel` takes.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
