@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 
 class TSType(object):
-    """The time stepping method begin used."""
+    """The time stepping method."""
     # native
     EULER           = S_(TSEULER)
     BEULER          = S_(TSBEULER)
@@ -33,7 +33,7 @@ class TSType(object):
     RUNGE_KUTTA    = RK
 
 class TSRKType(object):
-    """The *RK* subtype being used."""
+    """The *RK* subtype."""
     RK1FE = S_(TSRK1FE)
     RK2A  = S_(TSRK2A)
     RK2B  = S_(TSRK2B)
@@ -48,7 +48,7 @@ class TSRKType(object):
     RK8VR = S_(TSRK8VR)
 
 class TSARKIMEXType(object):
-    """The *ARKIMEX* subtype being used."""
+    """The *ARKIMEX* subtype."""
     ARKIMEX1BEE   = S_(TSARKIMEX1BEE)
     ARKIMEXA2     = S_(TSARKIMEXA2)
     ARKIMEXL2     = S_(TSARKIMEXL2)
@@ -108,7 +108,9 @@ class TSConvergedReason(object):
 # -----------------------------------------------------------------------------
 
 cdef class TS(Object):
-    """An abstract PETSc object that manages all time-steppers (ODE integrators).
+    """ODE integrator.
+
+    TS is described in the `PETSc manual <petsc:manual/ts>`.
 
     See Also
     --------
@@ -385,7 +387,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        petsc.TSSetOptionsPrefix
+        petsc_options, petsc.TSSetOptionsPrefix
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -416,7 +418,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        petsc.TSAppendOptionsPrefix
+        petsc_options, petsc.TSAppendOptionsPrefix
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -427,7 +429,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        petsc.TSSetFromOptions, ``petsc_options``
+        petsc_options, petsc.TSSetFromOptions
         """
         CHKERR( TSSetFromOptions(self.ts) )
 
