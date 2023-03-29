@@ -1646,34 +1646,27 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
 
     def distributeField(self, SF sf, Section sec, Vec vec,
-                        Section newsec=None, Vec newvec=None):
-        """DMPlexDistributeField - Distribute field data to match a given `PetscSF`, usually the `PetscSF` from mesh distribution
+                        Section newsec=None, Vec newvec=None) -> tuple[Section, Vec]:
+        """Distribute field data to match a given `SF`, usually the `SF` from mesh distribution.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        pointSF
-            The `PetscSF` describing the communication pattern
-        originalSection
-            The `PetscSection` for existing data layout
-        originalVec
-            The existing data in a local vector
-
-        Returns
-        -------
-        newSection
-            The `PetscSF` describing the new data layout
-        newVec
-            The new data in a local vector
-
-        .seealso: `DMPlex`, `DMPlexDistribute`, `DMPlexDistributeFieldIS`, `DMPlexDistributeData`
+        sf
+            The `SF` describing the communication pattern.
+        sec
+            The `Section` for existing data layout.
+        vec
+            The existing data in a local vector.
+        newsec
+            The `PetscSF` describing the new data layout.
+        newvec
+            The new data in a local vector.
 
         See Also
         --------
-        petsc.DMPlexDistributeField
+        DMPlex, DMPlex.distribute, DMPlex.distributeFieldIS, DMPlex.distributeData, petsc.DMPlexDistributeField
 
         """
         cdef MPI_Comm ccomm = MPI_COMM_NULL
@@ -1690,96 +1683,64 @@ cdef class DMPlex(DM):
                                       newsec.sec, newvec.vec))
         return (newsec, newvec)
 
-    def getMinRadius(self):
-        """DMPlexGetMinRadius - Returns the minimum distance from any cell centroid to a face
+    def getMinRadius(self) -> float:
+        """Return the minimum distance from any cell centroid to a face.
 
         Not collective.
 
-        Parameters
-        ----------
-        dm
-            the `DMPlex`
-
-        Returns
-        -------
-        minradius
-            the minimum cell radius
-
-        .seealso: `DMPlex`, `DMGetCoordinates`
-
         See Also
         --------
-        petsc.DMPlexGetMinRadius
+        DMPlex, DM.getCoordinates, petsc.DMPlexGetMinRadius
 
         """
         cdef PetscReal cminradius = 0.
         CHKERR( DMPlexGetMinRadius(self.dm, &cminradius))
         return asReal(cminradius)
 
-    def createCoarsePointIS(self):
-        """DMPlexCreateCoarsePointIS - Creates an `IS` covering the coarse `DM` chart with the fine points as data
+    def createCoarsePointIS(self) -> IS:
+        """Create an `IS` covering the coarse `DMPlex` chart with the fine points as data.
 
         Collective.
 
-        Parameters
-        ----------
-        dm
-            The coarse `DM`
-
         Returns
         -------
-        fpointIS
-            The `IS` of all the fine points which exist in the original coarse mesh
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `IS`, `DMRefine`, `DMPlex.setRefinementUniform`, `DMPlex.getSubpointIS`
+        fpointIS: IS
+            The `IS` of all the fine points which exist in the original coarse mesh.
 
         See Also
         --------
-        petsc.DMPlexCreateCoarsePointIS
+        DM, DMPlex, IS, DM.refine, DMPlex.setRefinementUniform, DMPlex.getSubpointIS, petsc.DMPlexCreateCoarsePointIS
 
         """
         cdef IS fpoint = IS()
         CHKERR( DMPlexCreateCoarsePointIS(self.dm, &fpoint.iset) )
         return fpoint
 
-    def createSection(self, numComp, numDof,
-                      bcField=None, bcComps=None, bcPoints=None,
-                      IS perm=None):
-        """DMPlexCreateSection - Create a `PetscSection` based upon the dof layout specification provided.
+    def createSection(self, numComp: Sequence[int], numDof: Sequence[int],
+                      bcField: Sequence[int] | None = None, bcComps: Sequence[IS] | None = None, bcPoints: Sequence[IS] | None = None,
+                      IS perm=None) -> Section:
+        """Create a `Section` based upon the dof layout specification provided.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
-        label
-            The label indicating the mesh support of each field, or NULL for the whole mesh
         numComp
-            An array of size numFields that holds the number of components for each field
+            An array of size ``numFields`` that holds the number of components for each field.
         numDof
-            An array of size numFields*(dim+1) which holds the number of dof for each field on a mesh piece of dimension d
-        numBC
-            The number of boundary conditions
+            An array of size ``numFields*(dim+1)`` which holds the number of dofs for each field on a mesh piece of dimension ``dim``.
         bcField
-            An array of size numBC giving the field number for each boundary condition
+            An array of size ``numBC`` giving the field number for each boundary condition, where ``numBC`` is the number of boundary conditions.
         bcComps
-            [Optional] An array of size numBC giving an `IS` holding the field components to which each boundary condition applies
+            An array of size ``numBC`` giving an `IS` holding the field components to which each boundary condition applies.
         bcPoints
-            An array of size numBC giving an `IS` holding the `DMPlex` points to which each boundary condition applies
+            An array of size ``numBC`` giving an `IS` holding the `DMPlex` points to which each boundary condition applies.
         perm
-            Optional permutation of the chart, or NULL
-
-        Returns
-        -------
-        section
-            The `PetscSection` object
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.create`, `PetscSectionCreate`, `PetscSectionSetPermutation`
+            Permutation of the chart.
 
         See Also
         --------
-        petsc.DMPlexCreateSection
+        DM, DMPlex, DMPlex.create, Section.create, Section.setPermutation, petsc.DMPlexCreateSection
 
         """
         # topological dimension
@@ -1825,30 +1786,26 @@ cdef class DMPlex(DM):
                                     cperm, &sec.sec) )
         return sec
 
-    def getPointLocal(self, point):
-        """DMPlexGetPointLocal - get location of point data in local `Vec`
+    def getPointLocal(self, point: int) -> tuple[int, int]:
+        """Get location of point data in local `Vec`.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            `DM` defining the topological space
         point
-            topological point
+            The topological point.
 
         Returns
         -------
-        start
-            start of point data
-        end
-            end of point data
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointLocalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
+        start: int
+            Start of point data.
+        end: int
+            End of point data.
 
         See Also
         --------
-        petsc.DMPlexGetPointLocal
+        DM, DMPlex, DMPlex.getPointLocalField, DM.getLocalSection, Section.getOffset, Section.getDof, DMPlex.pointLocalRead, DMPlex.pointLocalRead, `DMPlex.pointLocalRef`, petsc.DMPlexGetPointLocal
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1856,35 +1813,28 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetPointLocal(self.dm, cpoint, &start, &end) )
         return toInt(start), toInt(end)
 
-    def getPointLocalField(self, point, field):
-        """DMPlexGetPointLocalField - get location of point field data in local Vec
+    def getPointLocalField(self, point: int, field: int) -> tuple[int, int]:
+        """Get location of point field data in local `Vec`.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            `DM` defining the topological space
         point
-            topological point
+            The topological point.
         field
-            the field number
+            The field number.
 
         Returns
         -------
-        start
-            start of point data
-        end
-            end of point data
-
-        Note:
-        This is a half open interval [start, end)
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointLocal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointLocalRead`, `DMPlexPointLocalRead`, `DMPlexPointLocalRef`
+        start: int
+            Start of point data.
+        end: int
+            End of point data.
 
         See Also
         --------
-        petsc.DMPlexGetPointLocalField
+        DM, DMPlex, DMPlex.getPointLocal, DM.getLocalSection, Section.getOffset, Petsc.sectionGetDof, DMPlex.pointLocalRead, DMPlex.pointLocalRead, DMPlex.pointLocalRef, petsc.DMPlexGetPointLocalField
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1893,33 +1843,26 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetPointLocalField(self.dm, cpoint, cfield, &start, &end) )
         return toInt(start), toInt(end)
 
-    def getPointGlobal(self, point):
-        """DMPlexGetPointGlobal - get location of point data in global Vec
+    def getPointGlobal(self, point: int) -> tuple[int, int]:
+        """Get location of point data in global `Vec`.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            `DM` defining the topological space
         point
-            topological point
+            The topological point.
 
         Returns
         -------
-        start
-            start of point data; returns -(globalStart+1) if point is not owned
-        end
-            end of point data; returns -(globalEnd+1) if point is not owned
-
-        Note:
-        This is a half open interval [start, end)
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointGlobalField`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlex.getPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
+        start: int
+            Start of point data; returns ``-(globalStart+1)`` if point is not owned.
+        end: int
+            End of point data; returns ``-(globalEnd+1)`` if point is not owned.
 
         See Also
         --------
-        petsc.DMPlexGetPointGlobal
+        DM, DMPlex, DMPlex.getPointGlobalField, DM.getLocalSection, Section.getOffset, Section.getDof, DMPlex.pointGlobalRead, DMPlex.getPointLocal, DMPlex.pointGlobalRead, DMPlex.pointGlobalRef, petsc.DMPlexGetPointGlobal
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1927,35 +1870,28 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetPointGlobal(self.dm, cpoint, &start, &end) )
         return toInt(start), toInt(end)
 
-    def getPointGlobalField(self, point, field):
-        """DMPlexGetPointGlobalField - get location of point field data in global `Vec`
+    def getPointGlobalField(self, point: int, field: int) -> tuple[int, int]:
+        """Get location of point field data in global `Vec`.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            `DM` defining the topological space
         point
-            topological point
+            The topological point.
         field
-            the field number
+            The field number.
 
         Returns
         -------
-        start
-            start of point data; returns -(globalStart+1) if point is not owned
-        end
-            end of point data; returns -(globalEnd+1) if point is not owned
-
-        Note:
-        This is a half open interval [start, end)
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getPointGlobal`, `DMGetLocalSection`, `PetscSectionGetOffset`, `PetscSectionGetDof`, `DMPlexPointGlobalRead`, `DMPlex.getPointLocal`, `DMPlexPointGlobalRead`, `DMPlexPointGlobalRef`
+        start: int
+            Start of point data; returns ``-(globalStart+1)`` if point is not owned.
+        end: int
+            End of point data; returns ``-(globalEnd+1)`` if point is not owned.
 
         See Also
         --------
-        petsc.DMPlexGetPointGlobalField
+        DM, DMPlex, DMPlex.getPointGlobal, DM.getLocalSection, Section.getOffset, Section.getDof, DMPlex.pointGlobalRead, DMPlex.getPointLocal, DMPlex.pointGlobalRead, DMPlex.pointGlobalRef, petsc.DMPlexGetPointGlobalField
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1964,26 +1900,19 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetPointGlobalField(self.dm, cpoint, cfield, &start, &end) )
         return toInt(start), toInt(end)
 
-    def createClosureIndex(self, Section sec or None):
-        """DMPlexCreateClosureIndex - Calculate an index for the given `PetscSection` for the closure operation on the `DM`
+    def createClosureIndex(self, Section sec or None) -> None:
+        """Calculate an index for the given `Section` for the closure operation on the `DMPlex`.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
-        section
-            The section describing the layout in the local vector, or NULL to use the default section
-
-        Note:
-        This should greatly improve the performance of the closure operations, at the cost of additional memory.
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `PetscSection`, `DMPlexVecGetClosure`, `DMPlexVecRestoreClosure`, `DMPlexVecSetClosure`, `DMPlexMatSetClosure`
+        sec
+            The `Section` describing the layout in the local vector, or `None` to use the default section.
 
         See Also
         --------
-        petsc.DMPlexCreateClosureIndex
+        DM, DMPlex, Section, DMPlex.gecGetClosure, DMPlex.vecRestoreClosure, DMPlex.vecSetClosure, DMPlex.matSetClosure, petsc.DMPlexCreateClosureIndex
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1991,118 +1920,85 @@ cdef class DMPlex(DM):
 
     #
 
-    def setRefinementUniform(self, refinementUniform=True):
-        """DMPlexSetRefinementUniform - Set the flag for uniform refinement
+    def setRefinementUniform(self, refinementUniform: bool | None = True) -> None:
+        """Set the flag for uniform refinement.
 
         Parameters
         ----------
-        dm
-            The `DM`
         refinementUniform
-            The flag for uniform refinement
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.getRefinementUniform`, `DMPlex.getRefinementLimit`, `DMPlex.setRefinementLimit`
+            The flag for uniform refinement.
 
         See Also
         --------
-        petsc.DMPlexSetRefinementUniform
+        DM, DMPlex, DM.refine, DMPlex.getRefinementUniform, DMPlex.getRefinementLimit, DMPlex.setRefinementLimit, petsc.DMPlexSetRefinementUniform
 
         """
         cdef PetscBool flag = refinementUniform
         CHKERR( DMPlexSetRefinementUniform(self.dm, flag) )
 
-    def getRefinementUniform(self):
-        """DMPlexGetRefinementUniform - Retrieve the flag for uniform refinement
-
-        Parameters
-        ----------
-        dm
-            The `DM`
+    def getRefinementUniform(self) -> bool:
+        """Retrieve the flag for uniform refinement.
 
         Returns
         -------
-        refinementUniform
-            The flag for uniform refinement
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.setRefinementUniform`, `DMPlex.getRefinementLimit`, `DMPlex.setRefinementLimit`
+        refinementUniform: bool
+            The flag for uniform refinement.
 
         See Also
         --------
-        petsc.DMPlexGetRefinementUniform
+        DM, DMPlex, DM.refine, DMPlex.setRefinementUniform, DMPlex.getRefinementLimit, DMPlex.setRefinementLimit, petsc.DMPlexGetRefinementUniform
 
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( DMPlexGetRefinementUniform(self.dm, &flag) )
         return toBool(flag)
 
-    def setRefinementLimit(self, refinementLimit):
-        """DMPlexSetRefinementLimit - Set the maximum cell volume for refinement
+    def setRefinementLimit(self, refinementLimit: float) -> None:
+        """Set the maximum cell volume for refinement.
 
         Parameters
         ----------
-        dm
-            The `DM`
         refinementLimit
-            The maximum cell volume in the refined mesh
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.getRefinementLimit`, `DMPlex.getRefinementUniform`, `DMPlex.setRefinementUniform`
+            The maximum cell volume in the refined mesh.
 
         See Also
         --------
-        petsc.DMPlexSetRefinementLimit
+        DM, DMPlex, DM.refine, DMPlex.getRefinementLimit, DMPlex.getRefinementUniform, DMPlex.setRefinementUniform, petsc.DMPlexSetRefinementLimit
 
         """
         cdef PetscReal rval = asReal(refinementLimit)
         CHKERR( DMPlexSetRefinementLimit(self.dm, rval) )
 
-    def getRefinementLimit(self):
-        """DMPlexGetRefinementLimit - Retrieve the maximum cell volume for refinement
-
-        Parameters
-        ----------
-        dm
-            The `DM`
-
-        Returns
-        -------
-        refinementLimit
-            The maximum cell volume in the refined mesh
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMRefine`, `DMPlex.setRefinementLimit`, `DMPlex.getRefinementUniform`, `DMPlex.setRefinementUniform`
+    def getRefinementLimit(self) -> float:
+        """Retrieve the maximum cell volume for refinement.
 
         See Also
         --------
-        petsc.DMPlexGetRefinementLimit
+        DM, DMPlex, DM.refine, DMPlex.setRefinementLimit, DMPlex.getRefinementUniform, DMPlex.setRefinementUniform, petsc.DMPlexGetRefinementLimit
 
         """
         cdef PetscReal rval = 0.0
         CHKERR( DMPlexGetRefinementLimit(self.dm, &rval) )
         return toReal(rval)
 
-    def getOrdering(self, otype):
-        """DMPlexGetOrdering - Calculate a reordering of the mesh
+    def getOrdering(self, otype: MatOrderingType) -> IS:
+        """Calculate a reordering of the mesh.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The DMPlex object
         otype
-            type of reordering, see `MatOrderingType`
-        label
-            [Optional] Label used to segregate ordering into sets, or `None`
+            Type of reordering, see `MatOrderingType`.
 
         Returns
         -------
-        perm
-            The point permutation as an `IS`, `perm`[old point number] = new point number
-
-        .seealso: `DMPlex`, `DMPlexPermute`, `MatOrderingType`, `MatGetOrdering`
+        perm: IS
+            The point permutation as an `IS`, ``perm``[old point number] = new point number.
 
         See Also
         --------
-        petsc.DMPlexGetOrdering
+        DMPlex, DMPlex.permute, MatOrderingType, Mat.getOrdering, petsc.DMPlexGetOrdering
 
         """
         cdef PetscMatOrderingType cval = NULL
