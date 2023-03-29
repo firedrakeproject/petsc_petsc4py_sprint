@@ -80,14 +80,14 @@ cdef class Log:
         else:   CHKERR( PetscLogDefaultBegin() )
 
     @classmethod
-    def view(cls, Viewer viewer=None):
+    def view(cls, Viewer viewer=None) -> None:
         """Print a summary of the logging.
 
         Collective.
 
         Parameters
         ----------
-        viewer : an ASCII viewer, optional
+        viewer : None, optional
             Viewer instance. If ``None`` then will default to an instance of
             `Viewer.Type.ASCII`.
         
