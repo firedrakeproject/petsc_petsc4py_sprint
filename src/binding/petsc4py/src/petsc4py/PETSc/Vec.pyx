@@ -1227,12 +1227,50 @@ cdef class Vec(Object):
         CHKERR( VecGetBlockSize(self.vec, &bs) )
         return toInt(bs)
 
-    def getOwnershipRange(self):
+    def getOwnershipRange(self) -> tuple[int, int]:
+        """Return the locally owned range of indices.
+
+        Not collective.
+
+        Returns
+        -------
+        low : int
+            The first local element.
+        high : int
+            One more than the last local element.
+
+        Notes
+        -----
+        This assumes that vectors are laid out with the first ``n1`` elements
+        stored on the first processor, then the next ``n2`` elements stored
+        on the second, etc. For certain parallel layouts this may not be the
+        case in which case this method is not well defined.
+
+        See Also
+        --------
+        Vec.getOwnershipRanges, petsc.VecGetOwnershipRange
+
+        """
         cdef PetscInt low=0, high=0
         CHKERR( VecGetOwnershipRange(self.vec, &low, &high) )
         return (toInt(low), toInt(high))
 
-    def getOwnershipRanges(self):
+    def getOwnershipRanges(self) -> NDArray[int]:
+        """Return the range of indices owned by each process.
+
+        Not collective.
+
+        Returns
+        -------
+        NDArray[int]
+            Array with length one greater than the number of communicator
+            ranks storing start and end + 1 indices for each process.
+
+        See Also
+        --------
+        Vec.getOwnershipRange, petsc.VecGetOwnershipRanges
+
+        """
         cdef const PetscInt *rng = NULL
         CHKERR( VecGetOwnershipRanges(self.vec, &rng) )
         cdef MPI_Comm comm = MPI_COMM_NULL
@@ -1241,18 +1279,74 @@ cdef class Vec(Object):
         CHKERR( <PetscErrorCode>MPI_Comm_size(comm, &size) )
         return array_i(size+1, rng)
 
-    def createLocalVector(self):
+    def createLocalVector(self) -> Vec:
+        """Create a vector storing the local portion of the current vector.
+
+        `Vec.destroy` must be called when this vector is no longer needed.
+
+        Not collective.
+
+        Returns
+        -------
+        Vec
+            The local vector.
+
+        See Also
+        --------
+        Vec.getLocalVector, petsc.VecCreateLocalVector
+
+        """
         lvec = Vec()
         CHKERR( VecCreateLocalVector(self.vec, &lvec.vec) )
         return lvec
 
-    def getLocalVector(self, Vec lvec, readonly=False):
+    def getLocalVector(self, Vec lvec, readonly: bool = False) -> None:
+        """Load the local portion of the vector.
+
+        `Vec.restoreLocalVector` (with the same ``readonly`` value) should
+        be called once the local vector is no longer needed.
+
+        Not collective if ``readonly`` is `True`, collective otherwise.
+
+        Parameters
+        ----------
+        lvec
+            Local vector.
+        readonly
+            Whether the local vector is only read. If `True` then the local
+            vector will preserve cached information.
+
+        See Also
+        --------
+        Vec.createLocalVector, Vec.restoreLocalVector
+        petsc.VecGetLocalVectorRead, petsc.VecGetLocalVector
+
+        """
         if readonly:
             CHKERR( VecGetLocalVectorRead(self.vec, lvec.vec) )
         else:
             CHKERR( VecGetLocalVector(self.vec, lvec.vec) )
 
-    def restoreLocalVector(self, Vec lvec, readonly=False):
+    def restoreLocalVector(self, Vec lvec, readonly: bool = False) -> None:
+        """Unmap a local vector mapping the local portion of the vector.
+
+        Not collective if ``readonly`` is `True`, logically collective otherwise.
+
+        Parameters
+        ----------
+        lvec
+            Local vector. `Vec.getLocalVector` should already have been
+            called with it.
+        readonly
+            Whether the local vector is only read. If `True` then the local
+            vector will preserve cached information.
+
+        See Also
+        --------
+        Vec.createLocalVector, Vec.getLocalVector
+        petsc.VecRestoreLocalVectorRead, petsc.VecRestoreLocalVector
+
+        """
         if readonly:
             CHKERR( VecRestoreLocalVectorRead(self.vec, lvec.vec) )
         else:
