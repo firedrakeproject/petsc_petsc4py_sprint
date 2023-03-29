@@ -42,6 +42,7 @@ PETSc for Python
 
    overview
    tutorial
+   demo/demo
    petsc_options
    petsc_python_types
    reference

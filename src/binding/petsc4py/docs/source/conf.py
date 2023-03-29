@@ -16,6 +16,7 @@ import datetime
 import importlib
 import sphobjinv
 import functools
+import pylit
 from sphinx.ext.napoleon.docstring import NumpyDocstring
 
 sys.path.insert(0, os.path.abspath('.'))
@@ -250,7 +251,6 @@ def _monkey_patch_returns():
         out = _parse_returns_section(*args, **kwargs)
         return [line.replace(":class:", ":any:") for line in out]
 
-
     NumpyDocstring._parse_returns_section = wrapper
 
 
@@ -269,6 +269,51 @@ def _monkey_patch_see_also():
         return [line.replace(":obj:", ":any:") for line in out]
 
     NumpyDocstring._parse_numpydoc_see_also_section = wrapper
+
+
+def _apply_monkey_patches():
+    """Modify Napoleon types after parsing to make references work."""
+    _monkey_patch_returns()
+    _monkey_patch_see_also()
+
+
+_apply_monkey_patches()
+
+
+def _process_demos(*demos):
+    try:
+        os.mkdir("demo")
+    except FileExistsError:
+        pass
+    for demo in demos:
+        try:
+            os.mkdir(os.path.join("demo", os.path.dirname(demo)))
+        except FileExistsError:
+            pass
+        with open(
+            os.path.join(os.pardir, os.pardir, "demo", demo), "r"
+        ) as infile:
+            with open(os.path.join(
+                os.path.join("demo", os.path.splitext(demo)[0] + ".rst")), "w"
+            ) as outfile:
+                converter = pylit.Code2Text(infile)
+                outfile.write(str(converter))
+    with open(os.path.join("demo", "demo.rst"), "w") as demofile:
+        demofile.write("""
+PETSC4py demos
+==============
+
+.. toctree::
+
+""")
+        for demo in demos:
+            demofile.write("    " + os.path.splitext(demo)[0] + "\n")
+        demofile.write("\n")
+
+
+_process_demos(
+    "bratu2d/bratu2d.py"
+)
 
 
 def setup(app):
