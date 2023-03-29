@@ -64,9 +64,9 @@ cdef class Log:
 
         Notes
         -----
-        If `all == True` logging is extensive, which creates large log files and shows the program down.
+        If ``all == True`` logging is extensive, which creates large log files and shows the program down.
 
-        If `all == False`, the default logging functions are used.
+        If ``all == False``, the default logging functions are used.
         This logs flop rates and object creation and should not slow programs down too much. This routine may be called more than once.
 
         See Also
@@ -107,7 +107,7 @@ cdef class Log:
         Parameters
         ----------
         flops
-            Flop counter.
+            The number of flops to log.
 
         See Also
         --------
@@ -126,7 +126,11 @@ cdef class Log:
         Parameters
         ----------
         flops
-            Flop counter.
+            The number of flops to log.
+
+        Notes
+        -----
+        This method exists for backward compatibility.
 
         See Also
         --------
@@ -189,20 +193,6 @@ cdef class Log:
     def EventDecorator(cls, name=None, klass=None):
         """Decorate a function with a `PETSc` event.
 
-        Notes
-        -----
-        If no event name is specified it will default to the name of the function.
-        
-        Usage:
-            >>>@EventDecorator("My Function")
-            >>>def myfunc():
-            >>>    ...
-
-            >>>or
-
-            >>>@EventDecorator()
-            >>>def myfunc():
-            >>>    ...
         """
         def decorator(func):
             @functools.wraps(func)
@@ -221,11 +211,6 @@ cdef class Log:
         """Return whether logging is currently in progress.
         
         Not Collective.
-
-        Returns
-        -------
-        bool
-            Inform if the logging is in progress
 
         See Also
         --------
@@ -331,11 +316,6 @@ cdef class LogStage:
         
         Not Collective.
 
-        Returns
-        -------
-        bool
-            The activity flag for logging.
-
         See Also
         --------
         petsc.PetscLogStageGetActive
@@ -353,7 +333,7 @@ cdef class LogStage:
         Parameters
         ----------
         flag : bool
-            Activate for looging if True, else looging is not activated.
+            Log if True, disable looging if False.
 
         See Also
         --------
