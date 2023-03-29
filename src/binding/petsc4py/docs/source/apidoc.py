@@ -418,6 +418,11 @@ else:
 
 import numpy
 from numpy import dtype, ndarray
+from mpi4py.MPI import (
+    Intracomm,
+    Datatype,
+    Op,
+)
 
 IntType: dtype = ...
 RealType: dtype =  ...
