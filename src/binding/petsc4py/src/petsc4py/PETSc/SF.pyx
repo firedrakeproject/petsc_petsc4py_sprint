@@ -13,7 +13,9 @@ class SFType(object):
 # --------------------------------------------------------------------
 
 cdef class SF(Object):
-    """SF object for setting up and managing the communication of certain
+    """Star Forest object for communication.
+
+    SF is used for setting up and managing the communication of certain
     entries of arrays and Vec between MPI ranks.
     """
 
@@ -81,7 +83,7 @@ cdef class SF(Object):
         PetscCLEAR(self.obj); self.sf = newsf
         return self
 
-    def setType(self, sf_type: SF.Type | str) -> None:
+    def setType(self, sf_type: Type | str) -> None:
         """Set the communication implementation.
 
         Collective.
@@ -154,18 +156,19 @@ cdef class SF(Object):
 
     def getGraph(self) -> tuple[int, ArrayInt, ArrayInt]:
         """Return graph.
-        *nleaves* can be determined from the size of local.
+
+        *nleaves* can be determined from the size of *ilocal*.
 
         Not collective.
 
         Returns
         -------
-        int
+        nroots : int
             Number of root vertices on the current process (these are possible
             targets for other process to attach leaves).
-        ArrayInt
+        ilocal : ArrayInt
             Locations of leaves in leafdata buffers.
-        ArrayInt
+        iremote : ArrayInt
             Remote locations of root vertices for each leaf on the current
             process.
 
@@ -260,7 +263,9 @@ cdef class SF(Object):
         return sf
 
     def createInverse(self) -> SF:
-        """Create the inverse map given a PetscSF in which all vertices have
+        """Create the inverse map.
+
+        Create the inverse map given a PetscSF in which all vertices have
         degree ``1``.
 
         Collective.
@@ -293,7 +298,9 @@ cdef class SF(Object):
         return degree
 
     def createEmbeddedRootSF(self, selected: Sequence[int]) -> SF:
-        """Remove edges from all but the selected roots, does not remap indices.
+        """Remove edges from all but the selected roots.
+
+        Does not remap indices.
 
         Collective.
 
@@ -339,7 +346,7 @@ cdef class SF(Object):
         return sf
 
     def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int] | None, Section leafSection) -> SF:
-        """Create an expanded `SF` of dofs
+        """Create an expanded `SF` of dofs.
 
         Assumes the input `SF` relates points.
 
@@ -372,7 +379,7 @@ cdef class SF(Object):
         return sectionSF
 
     def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ArrayInt, Section]:
-        """Create a new, reorganized `Section` reorganized.
+        """Create a new, reorganized `Section`.
 
         Moves from the root to the leaves of the `SF`.
 
@@ -409,14 +416,14 @@ cdef class SF(Object):
     def compose(self, SF sf) -> SF:
         """Compose a new `SF`.
 
-        Puts the `sf` under `self` in a top (roots) down (leaves) view.
+        Puts the ``sf`` under this object in a top (roots) down (leaves) view.
 
         Collective.
 
         Parameters
         ----------
         sf
-            `SF` to put under `self`.
+            `SF` to put under this object.
 
         See also
         --------
@@ -448,7 +455,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFBcastBegin
+        petsc.PetscSFBcastBegin, petsc.PetscSFBcastEnd
 
         """
 
@@ -475,7 +482,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFBcastEnd
+        petsc.PetscSFBcastEnd, petsc.PetscSFBcastBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -503,7 +510,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFReduceBegin
+        petsc.PetscSFReduceBegin, petsc.PetscSFReduceEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -529,7 +536,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFReduceEnd
+        petsc.PetscSFReduceEnd, petsc.PetscSFReduceBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -541,7 +548,7 @@ cdef class SF(Object):
         """Begin pointwise scatter operation.
 
         Operation is from multi-roots to leaves.
-        This call has to be completed with scatterEnd.
+        This call has to be completed with `scatterEnd`.
 
         Collective.
 
@@ -556,7 +563,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFScatterBegin
+        petsc.PetscSFScatterBegin, petsc.PetscSFScatterEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -579,7 +586,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFScatterEnd
+        petsc.PetscSFScatterEnd, petsc.PetscSFScatterBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -605,7 +612,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFGatherBegin
+        petsc.PetscSFGatherBegin, petsc.PetscSFGatherEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -629,7 +636,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFGatherEnd
+        petsc.PetscSFGatherEnd, petsc.PetscSFGatherBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -663,7 +670,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFFetchAndOpBegin
+        petsc.PetscSFFetchAndOpBegin, petsc.PetscSFFetchAndOpEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -694,7 +701,7 @@ cdef class SF(Object):
 
         See also
         --------
-        petsc.PetscSFFetchAndOpEnd
+        petsc.PetscSFFetchAndOpEnd, petsc.PetscSFFetchAndOpBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
