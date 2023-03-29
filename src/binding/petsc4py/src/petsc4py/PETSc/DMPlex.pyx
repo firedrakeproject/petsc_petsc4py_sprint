@@ -1151,7 +1151,7 @@ cdef class DMPlex(DM):
         values
             The array of values.
         mode
-            The insert mode `InsertMode`, or ``True`` for `InsertMode.ADD_VALUES`, ``False`` for `InsertMode.INSERT_VALUES`, and ``None`` for `InsertMode.INSERT_VALUES`.
+            The insert mode `InsertMode` (`InsertMode.INSERT_ALL_VALUES`, `InsertMode.ADD_ALL_VALUES`, `InsertMode.INSERT_VALUES`, `InsertMode.ADD_VALUES`, `InsertMode.INSERT_BC_VALUES`, and `InsertMode.ADD_BC_VALUES`, where `InsertMode.INSERT_ALL_VALUES` and `InsertMode.ADD_ALL_VALUES` also overwrite boundary conditions), or ``True`` for `InsertMode.ADD_VALUES`, ``False`` for `InsertMode.INSERT_VALUES`, and ``None`` for `InsertMode.INSERT_VALUES`.
 
         See Also
         --------
@@ -1167,33 +1167,29 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexVecSetClosure(self.dm, csec, vec.vec, cp, cvals, im) )
 
     def setMatClosure(self, Section sec or None, Section gsec or None,
-                      Mat mat, point, values, addv=None):
-        """DMPlexMatSetClosure - Set an array of the values on the closure of 'point'
+                      Mat mat, point: int, values: Sequence[Scalar], addv: InsertMode | bool | None = None) -> None:
+        """Set an array of the values on the closure of ``point``.
 
-        Not collective
+        Not collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
-        section
-            The section describing the layout in `v`, or ``None`` to use the default section
-        globalSection
-            The section describing the layout in `v`, or ``None`` to use the default global section
-        A
-            The matrix
+        sec
+            The section describing the layout in ``mat``, or ``None`` to use the default section.
+        gsec
+            The section describing the layout in ``mat``, or ``None`` to use the default global section.
+        mat
+            The matrix.
         point
-            The point in the `DM`
+            The point in the `DMPlex`.
         values
-            The array of values
+            The array of values.
         mode
-            The insert mode, where `INSERT_ALL_VALUES` and `ADD_ALL_VALUES` also overwrite boundary conditions
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexMatSetClosureGeneral`, `DMPlexVecGetClosure`, `DMPlexVecSetClosure`
+            The insert mode `InsertMode`, or ``True`` for `InsertMode.ADD_VALUES`, ``False`` for `InsertMode.INSERT_VALUES`, and ``None`` for `InsertMode.INSERT_VALUES`. `InsertMode.INSERT_ALL_VALUES` and `InsertMode.ADD_ALL_VALUES` also overwrite boundary conditions.
 
         See Also
         --------
-        petsc.DMPlexMatSetClosure
+        DM, DMPlex, DMPlex.matSetClosureGeneral, DMPlex.vecGetClosure, DMPlex.vecSetClosure, petsc.DMPlexMatSetClosure
 
         """
         cdef PetscSection csec  =  sec.sec if  sec is not None else NULL
@@ -1205,34 +1201,28 @@ cdef class DMPlex(DM):
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMPlexMatSetClosure(self.dm, csec, cgsec, mat.mat, cp, cvals, im) )
 
-    def generate(self, DMPlex boundary, name=None, interpolate=True):
-        """DMPlexGenerate - Generates a mesh.
+    def generate(self, DMPlex boundary, name: str | None = None, interpolate: bool | None = True) -> Self:
+        """Generates a mesh.
 
         Not collective.
 
         Parameters
         ----------
         boundary
-            The `DMPlex` boundary object
+            The `DMPlex` boundary object.
         name
-            The mesh generation package name
+            The mesh generation package name.
         interpolate
-            Flag to create intermediate mesh elements
+            Flag to create intermediate mesh elements.
 
-        Returns
-        -------
-        mesh
-            The `DMPlex` object
-
-        Options Database Keys:
-        +  -dm_plex_generate <name> - package to generate mesh, for example, triangle, ctetgen or tetgen
-        -  -dm_generator <name> - package to generate mesh, for example, triangle, ctetgen or tetgen
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.create`, `DMRefine`
+        Notes
+        -----
+        ``-dm_plex_generate <name>`` sets package to generate mesh, for example, triangle, ctetgen or tetgen.
+        ``-dm_generator <name>`` sets package to generate mesh, for example, triangle, ctetgen or tetgen.
 
         See Also
         --------
-        petsc.DMPlexGenerate
+        DM, DMPlex, DMPlex.create, DM.refine, petsc_options, petsc.DMPlexGenerate
 
         """
         cdef PetscBool interp = interpolate
