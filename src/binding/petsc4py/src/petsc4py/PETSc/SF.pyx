@@ -152,7 +152,7 @@ cdef class SF(Object):
 
     #
 
-    def getGraph(self) -> tuple[int, ndarray, ndarray]:
+    def getGraph(self) -> tuple[int, ArrayInt, ArrayInt]:
         """Return graph.
         *nleaves* can be determined from the size of local.
 
@@ -163,9 +163,9 @@ cdef class SF(Object):
         int
             Number of root vertices on the current process (these are possible
             targets for other process to attach leaves).
-        ndarray
+        ArrayInt
             Locations of leaves in leafdata buffers.
-        ndarray
+        ArrayInt
             Remote locations of root vertices for each leaf on the current
             process.
 
@@ -274,7 +274,7 @@ cdef class SF(Object):
         CHKERR( PetscSFCreateInverseSF(self.sf, &sf.sf) )
         return sf
 
-    def computeDegree(self) -> ndarray:
+    def computeDegree(self) -> ArrayInt:
         """Compute the degree for each root vertex.
 
         Collective.
@@ -371,7 +371,7 @@ cdef class SF(Object):
                                        leafSection.sec, &sectionSF.sf) )
         return sectionSF
 
-    def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ndarray, Section]:
+    def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ArrayInt, Section]:
         """Create a new, reorganized `Section` reorganized.
 
         Moves from the root to the leaves of the `SF`.
