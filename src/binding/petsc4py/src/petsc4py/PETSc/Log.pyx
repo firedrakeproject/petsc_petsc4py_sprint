@@ -53,7 +53,7 @@ cdef class Log:
 
     @classmethod
     def begin(cls, all: bool = False):
-        """Turn on the logging of the objects and events.
+        """Turn on logging of objects and events.
 
         Logically Collective.
 
