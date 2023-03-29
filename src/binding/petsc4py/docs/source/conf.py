@@ -64,10 +64,13 @@ needs_sphinx = '5.0.0'
 
 default_role = 'any'
 
+pygments_style = 'tango'
+
 nitpicky = True
 nitpick_ignore = [
     ('envvar', 'NUMPY_INCLUDE'),
     ('py:class', 'ndarray'),  # FIXME
+    ('py:class', 'typing_extensions.Self')
 ]
 nitpick_ignore_regex = [
     (r'c:.*', r'MPI_.*'),
@@ -195,6 +198,33 @@ def _patch_domain_python():
 
 def _setup_autodoc(app):
     from sphinx.ext import autodoc
+    from sphinx.util import inspect
+    from sphinx.util import typing
+
+    #
+
+    def stringify_annotation(annotation, mode='fully-qualified-except-typing'):
+        qualname = getattr(annotation, '__qualname__', '')
+        module = getattr(annotation, '__module__', '')
+        args = getattr(annotation, '__args__', None)
+        if module == 'builtins' and qualname and args is not None:
+            args = ', '.join(stringify_annotation(a, mode) for a in args)
+            return f'{qualname}[{args}]'
+        return stringify_annotation_orig(annotation, mode)
+
+    try:
+        stringify_annotation_orig = typing.stringify_annotation
+        inspect.stringify_annotation = stringify_annotation
+        typing.stringify_annotation = stringify_annotation
+        autodoc.stringify_annotation = stringify_annotation
+        autodoc.typehints.stringify_annotation = stringify_annotation
+    except AttributeError:
+        stringify_annotation_orig = typing.stringify
+        inspect.stringify_annotation = stringify_annotation
+        typing.stringify = stringify_annotation
+        autodoc.stringify_typehint = stringify_annotation
+
+    #
 
     class ClassDocumenterMixin:
 
