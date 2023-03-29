@@ -376,7 +376,7 @@ cdef class LogStage:
     #
 
     def getVisible(self) -> bool:
-       """Return whether the stage is visible.
+        """Return whether the stage is visible.
 
         Not Collective.
 
