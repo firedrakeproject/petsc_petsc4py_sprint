@@ -39,8 +39,10 @@ cdef TAOConstraintsFunction
 
 cdef TSRHSFunction
 cdef TSRHSJacobian
+cdef TSRHSJacobianP
 cdef TSIFunction
 cdef TSIJacobian
+cdef TSIJacobianP
 cdef TSI2Function
 cdef TSI2Jacobian
 cdef TSMonitorFunction

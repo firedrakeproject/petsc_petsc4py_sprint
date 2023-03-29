@@ -2235,8 +2235,27 @@ cdef class TS(Object):
             vm = [ref_Vec(vecm[i]) for i from 0 <= i < n]
         return (vl, vm)
 
-    def setRHSJacobianP(self, jacobianp, Mat A=None, args=None, kargs=None) -> None:
-        """
+    def setRHSJacobianP(
+        self, 
+        jacobianp: TSRHSJacobianP, 
+        Mat A=None, 
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None) -> None:
+        """Set the function that computes the Jacobian with respect to the parameters.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        jacobianp
+            The user-defined function.
+        A
+            The matrix into which the Jacobian will be computed.
+        args
+            Additional posititional arguments for ``jacobianp``.
+        kargs
+            Additional keyword arguments for ``jacobianp``.
+        
         See Also
         --------
         petsc.TSSetRHSJacobianP
@@ -2253,7 +2272,13 @@ cdef class TS(Object):
             CHKERR( TSSetRHSJacobianP(self.ts, Amat, NULL, NULL) )
 
     def createQuadratureTS(self, forward=True) -> TS:
-        """
+        """Create a sub `TS` that evaluates integrals over time.
+
+        Parameters
+        ----------
+        forward
+            Enable to evaluate forward in time.
+
         See Also
         --------
         petsc.TSCreateQuadratureTS
@@ -2265,7 +2290,15 @@ cdef class TS(Object):
         return qts
 
     def getQuadratureTS(self) -> tuple[bool, TS]:
-        """
+        """Return the sub `TS` that evaluates integrals over time.
+
+        Returns
+        -------
+        forward
+            True if evaluating the integral forward in time
+        qts
+            The sub `TS`
+
         See Also
         --------
         petsc.TSGetQuadratureTS
@@ -2276,8 +2309,25 @@ cdef class TS(Object):
         PetscINCREF(qts.obj)
         return (toBool(fwd), qts)
 
-    def setRHSJacobianP(self, rhsjacobianp, Mat A=None, args=None, kargs=None) -> None:
-        """
+    def setRHSJacobianP(
+        self, 
+        rhsjacobianp: TSRHSJacobianP, 
+        Mat A=None, 
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None) -> None:
+        """Set the function that computes the Jacobian with respect to the parameters.
+
+        Parameters
+        ----------
+        rhsjacobianp
+            The function to compute the Jacobian
+        A
+            The JacobianP matrix
+        args
+            Additional posititional arguments for ``rhsjacobianp``.
+        kargs
+            Additional keyword arguments for ``rhsjacobianp``.
+        
         See Also
         --------
         petsc.TSSetRHSJacobianP
