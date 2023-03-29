@@ -64,12 +64,9 @@ cdef class Log:
 
         Notes
         -----
-        if all=True, an extensive logging is provided, which 
-        creates large log files and shows the program down.
+        if all=True, an extensive logging is provided, which creates large log files and shows the program down.
         if all=False, the default logging functions are used.
-        This logs flop rates and object creation and should 
-        not slow programs down too much. This routine may be 
-        called more than once.
+        This logs flop rates and object creation and should not slow programs down too much. This routine may be called more than once.
 
         See Also
         --------
@@ -88,8 +85,7 @@ cdef class Log:
         Parameters
         ----------
         viewer : None, optional
-            Viewer instance. If ``None`` then will default to an instance of
-            `Viewer.Type.ASCII`.
+            Viewer instance. If ``None`` then will default to an instance of `Viewer.Type.ASCII`.
         
         See Also
         --------
@@ -141,8 +137,7 @@ cdef class Log:
 
     @classmethod
     def getFlops(cls) -> float:
-        """Return the number of flops used on this 
-            processor since the program began.
+        """Return the number of flops used on this processor since the program began.
 
         Not Collective.
 
@@ -262,23 +257,23 @@ cdef class LogStage:
     #
 
     def push(self) -> None:
-        """Push a stage on the logging stack. 
-            Events started and stopped until 
-            PetscLogStagePop will be associated 
-            with the stage
+        """Push a stage on the logging stack.
 
         Not Collective.
 
+        Notes
+        -----
+        Events started and stopped until LogStage.PetscLogStagePop will be associated with the stage.
+
         See Also
         --------
-        petsc.PetscLogStagePush
+        LogStage.PetscLogStagePop, petsc.PetscLogStagePush
 
         """
         CHKERR( PetscLogStagePush(self.id) )
 
     def pop(self) -> None:
-        """Pop a stage on the logging stack that was 
-            pushed.
+        """Pop a stage on the logging stack that was pushed.
 
         Not Collective.
 
@@ -627,8 +622,7 @@ cdef class LogEvent:
         Parameters
         ----------
         flag : bool
-            Active (if True) or deactivate (if False) the
-            logging of all events.
+            Active (if True) or deactivate (if False) the logging of all events.
         
         See Also
         --------
@@ -647,9 +641,8 @@ cdef class LogEvent:
 
     #
 
-    def getPerfInfo(self, stage: int | None = None):
-        """Get the performance information about the given event
-            in the given event.   
+    def getPerfInfo(self, stage: int | None = None) -> dict:
+        """Get the performance information about the given event in the given event.   
 
         Parameters
         ----------
@@ -658,7 +651,7 @@ cdef class LogEvent:
 
         Returns
         -------
-        info : PetscEventPerfInfo
+        info : dict
             This structure is filled with the performance information.
         
         See Also
