@@ -1047,32 +1047,21 @@ cdef class DMPlex(DM):
         finally:
             CHKERR( DMPlexRestoreJoin(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
-    def getTransitiveClosure(self, p, useCone=True):
-        """DMPlexRestoreTransitiveClosure - Restore the array of points on the transitive closure of the in-edges or out-edges for this point in the DAG
+    def getTransitiveClosure(self, p: int, useCone: bool | None = True) -> tuple[ndarray[int], ndarray[int]]:
+        """Return the points on the transitive closure of the in-edges or out-edges for this point in the DAG.
 
         Not collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex`
         p
-            The mesh point
+            The mesh point.
         useCone
-            ``True`` for the closure, otherwise return the star
-        numPoints
-            The number of points in the closure, so points[] is of size 2*`numPoints`
-        points
-            The points and point orientations, interleaved as pairs [p0, o0, p1, o1, ...]
-
-        Note:
-        If not using internal storage (points is not ``None`` on input), this call is unnecessary
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getTransitiveClosure`, `DMPlex.create`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.getCone`
+            ``True`` for the closure, otherwise return the star, defaults to ``True``.
 
         See Also
         --------
-        petsc.DMPlexRestoreTransitiveClosure
+        `DM`, `DMPLEX`, `DMPlex.restoreTransitiveClosure`, `DMPlex.create`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.getCone`, petsc.DMPlexGetTransitiveClosure
 
         """
         cdef PetscInt cp = asInt(p)
