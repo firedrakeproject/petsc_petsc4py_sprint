@@ -91,17 +91,12 @@ cdef class DM(Object):
         Parameters
         ----------
         viewer
-            Viewer used to display the DM, either 
-            `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
+            Viewer used to display the DM, either `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
         
         Notes
         -----
-        On using `Viewer.Type.HDF5` format, one can save 
-        multiple `DMPLEX` meshes in a single HDF5 files.
-        This in turn requires one to name the `DMPLEX` object 
-        with petsc4py.Object.setName before saving it with
-        DM.view and before loading it with DM.load for 
-        identification of the mesh object.
+        On using `Viewer.Type.HDF5` format, one can save  multiple `DMPLEX` meshes in a single HDF5 files.
+        This in turn requires one to name the `DMPLEX` object with petsc4py.Object.setName before saving it with DM.view and before loading it with DM.load for identification of the mesh object.
 
         See Also
         --------
@@ -145,14 +140,14 @@ cdef class DM(Object):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def clone(self):
+    def clone(self) -> DM:
         """Clone a `DM`.
 
         Collective.
 
         Returns
         -------
-        dm 
+        DM
             Object dm created by cloning from an original dm.
         
         See Also
@@ -164,14 +159,14 @@ cdef class DM(Object):
         CHKERR( DMClone(self.dm, &dm.dm) )
         return dm
 
-    def setType(self, dm_type) -> None:
+    def setType(self, dm_type: str) -> None:
         """Set a `DM`.
 
         Collective.
 
         Parameters
         ----------
-        dm_type
+        dm_type : str
             Set the `DM` type.
 
         Notes
@@ -234,8 +229,7 @@ cdef class DM(Object):
         CHKERR( DMSetDimension(self.dm, cdim) )
 
     def getCoordinateDim(self) -> int:
-        """Get the dimension of embedding space for 
-        coordinates values.
+        """Get the dimension of embedding space for coordinates values.
 
         Not Collective.
 
@@ -249,14 +243,13 @@ cdef class DM(Object):
         return toInt(dim)
 
     def setCoordinateDim(self, dim: int) -> None:
-        """Set the dimension of embedding space for 
-        coordinates values.
+        """Set the dimension of embedding space for coordinates values.
 
         Not Collective.
 
         Parameters
         ----------
-        dim
+        dim :  int
             The embedding dimension.
 
         See Also
@@ -274,7 +267,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        prefix 
+        prefix : str
             The prefix to prepend by searching through
             the options database.
 
@@ -309,7 +302,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        prefix 
+        prefix : str
             The string to append to the current prefix.
 
         See Also
@@ -328,9 +321,8 @@ cdef class DM(Object):
 
         Notes
         -----
-        Options database is available to set up a specific 
-        configuration, e.g., ``-dm_vec_type`` sets the type
-        of vector to create inside of the `DM`.
+        Options database is available to set up a specific configuration.
+        For instance, ``-dm_vec_type`` sets the type of vector to create inside of the `DM`.
 
         See Also
         --------
@@ -346,9 +338,9 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        name
+        name : str
             Option string that is used to activate the viewing.
-        obj
+        obj : Object
             Object provides the prefix for the options database.
 
         """
