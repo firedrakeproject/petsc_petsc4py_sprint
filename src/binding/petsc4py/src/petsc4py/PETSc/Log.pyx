@@ -178,7 +178,7 @@ cdef class Log:
 
     @classmethod
     def getCPUTime(cls) -> float:
-        """Get the CPU time.
+        """Return the CPU time.
 
         """
         cdef PetscLogDouble cputime=0
