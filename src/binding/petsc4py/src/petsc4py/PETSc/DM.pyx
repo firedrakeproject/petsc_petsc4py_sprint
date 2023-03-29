@@ -457,7 +457,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMGetAdjacency
-        
+
         """
         cdef PetscInt  f   = asInt(field)
         cdef PetscBool uC  = PETSC_FALSE
@@ -467,7 +467,23 @@ cdef class DM(Object):
 
     #
 
-    def createSubDM(self, fields):
+    def createSubDM(self, fields: Sequence[int]):
+        """Creates an `Is` and `DM` encapsuling a subproblem.
+       
+        Not collective.
+
+        Returns
+        -------
+        iset : IS
+            The global indices for all the degrees of freedom.
+        subdm : DM
+            The `DM` for the subproblem.
+
+        See Also
+        --------
+        petsc.DMCreateSubDM
+
+        """
         cdef IS iset = IS()
         cdef DM subdm = DM()
         cdef PetscInt *ifields = NULL
@@ -479,6 +495,14 @@ cdef class DM(Object):
     #
 
     def setAuxiliaryVec(self, Vec aux, label=None, value=0, part=0) -> None:
+        """Set an auxiliary vector.
+
+        Not Collective.
+
+        Parameters:
+        
+
+        """
         cdef PetscInt cvalue = asInt(value)
         cdef PetscInt cpart = asInt(part)
         cdef const char *cval = NULL
