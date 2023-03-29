@@ -1,17 +1,119 @@
 # --------------------------------------------------------------------
 
 class KSPType(object):
-    """Docstring
+    """KSP Type.
 
     Notes
     -----
     `KSP Type <https://petsc.org/release/docs/manualpages/KSP/KSPType/>`__
-
+    `KSP Type table <https://petsc.org/release/docs/manual/ksp/#tab-kspdefaults>`__
+    `Pieplined KSP methods <https://petsc.org/release/docs/manual/ksp/#sec-pipelineksp>`__
+    `Flexible KSP methods <https://petsc.org/release/docs/manual/ksp/#sec-flexibleksp>`__
     See Also
     --------
-    petsc.KSP
+    petsc_options, petsc.KSP
 
     """
+    # Attributes
+    # ----------
+    # RICHARDSON
+    #   The preconditioned Richardson iterative method
+    #   `petsc.KSPRICHARDSON`.
+    # CHEBYSHEV
+    #   The preconditioned Chebyshev iterative method.
+    #   `petsc.CHEBYSHEV`.
+    # CG
+    #   The Preconditioned Conjugate Gradient (PCG) iterative method.
+    #   `petsc.CG`
+    # GROPPCG
+    #   A pipelined conjugate gradient method (Gropp).
+    #    `petsc.KSPGROPPCG`
+    # PIPECG
+    #   A pipelined conjugate gradient method.
+    #   `petsc.KSPPIPECG`
+    # PIPECGRR
+    #   Pipelined Conjugate Gradients with Residual Replacement.
+    #   `petsc.KSPPIPECGRR`
+    # PIPELCG
+    #   Deep pipelined (length l) Conjugate Gradient method.
+    #   `petsc.KSPPIPELCG`
+    # PIPEPRCG
+    #   Pipelined predict-and-recompute conjugate gradient method.
+    #   `petsc.KSPPIPEPRCG`
+    # PIPECG2
+    #   Pipelined conjugate gradient method with a single non-blocking
+    #   reduction per two iterations. `petsc.KSPPIPECG2`
+    # CGNE
+    #   Applies the preconditioned conjugate gradient method to the
+    #   normal equations without explicitly forming AᵀA. `petsc.KSPCGNE`
+    # NASH
+    #   Conjugate gradient method subject to a constraint
+    #   on the solution norm. `petsc.KSPNASH`
+    # STCG
+    #   Code to run conjugate gradient method subject to a constraint
+    #   on the solution norm. `petsc.KSPSTCG`
+    # GLTR
+    #   Code to run conjugate gradient method subject to a constraint
+    #   on the solution norm. `petsc.KSPGLTR`
+    # FCG
+    #   Implements the Flexible Conjugate Gradient method (FCG).
+    #   Unlike most KSP methods this allows the preconditioner to be
+    #   nonlinear. `petsc.KSPFCG`
+    # PIPEFCG
+    #   Implements a Pipelined, Flexible Conjugate Gradient method.
+    #   `petsc.KSPPIPEFCG`
+    # GMRES
+    #   Implements the Generalized Minimal Residual method with restart.
+    #   `petsc.KSPGMRES`
+    # PIPEFGMRES
+    #   Implements the Pipelined (1-stage) Flexible Generalized Minimal
+    #   Residual method. `petsc.KSPPIPEFGMRES`
+    # FGMRES
+    #   Implements the Flexible Generalized Minimal Residual method.
+    #   `petsc.KSPFGMRES`
+    # LGMRES
+    #   Augments the standard GMRES approximation space with
+    #   approximations to the error from previous restart cycles.
+    #   `petsc.LGMRES`
+    # DGMRES
+    #   Implements the deflated GMRES.
+    #   In this implementation, the adaptive strategy allows to switch
+    #   to the deflated GMRES when the stagnation occurs.
+    #   `petsc.KSPDGMRES`
+    # PGMRES
+    #   Implements the Pipelined Generalized Minimal Residual method.
+    #   `petsc.KSPPGMRES`
+    # TCQMR
+    #   A variant of QMR (quasi minimal residual).
+    #   `petsc.KSPTCQMR`
+    # BCGS
+    #   Implements the BiCGStab (Stabilized version of Biconjugate
+    #   Gradient) method. `petsc.KSPBCGS`
+    # IBCGS
+    # QMRCGS
+    # FBCGS
+    # FBCGSR
+    # BCGSL
+    # PIPEBCGS
+    # CGS
+    # TFQMR
+    # CR
+    # PIPECR
+    # LSQR
+    # PREONLY
+    # NONE
+    # QCG
+    # BICG
+    # MINRES
+    # SYMMLQ
+    # LCD
+    # PYTHON
+    # GCR
+    # PIPEGCR
+    # TSIRM
+    # CGLS
+    # FETIDP
+    # HPDDM
     RICHARDSON = S_(KSPRICHARDSON)
     CHEBYSHEV  = S_(KSPCHEBYSHEV)
     CG         = S_(KSPCG)
