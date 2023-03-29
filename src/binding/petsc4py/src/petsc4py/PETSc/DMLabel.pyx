@@ -120,8 +120,8 @@ cdef class DMLabel(Object):
     def computeIndex(self):
         CHKERR( DMLabelComputeIndex(self.dmlabel) )
     
-    def createIndex(self, pStart, pEnd):
-        cdef PetscInt cpstart = 0, cpend = 0
+    def createIndex(self, pStart: int, pEnd: int):
+        cdef PetscInt cpstart = asInt(pStart), cpend = asInt(pEnd)
         CHKERR( DMLabelCreateIndex(self.dmlabel, cpstart, cpend) )
     
     def destroyIndex(self):
