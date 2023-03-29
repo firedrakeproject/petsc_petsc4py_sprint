@@ -55,7 +55,7 @@ cdef class Log:
     def begin(cls, all: bool = False):
         """Turn on the logging of the objects and events.
 
-        Logically Collective on `PETSC_COMM_WORLD`.
+        Logically Collective.
 
         Parameters
         ----------
