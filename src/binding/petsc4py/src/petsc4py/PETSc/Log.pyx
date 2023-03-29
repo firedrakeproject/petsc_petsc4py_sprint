@@ -263,11 +263,11 @@ cdef class LogStage:
 
         Notes
         -----
-        Events started and stopped until PetscLogStagePop will be associated with the stage.
+        Events started and stopped until LogStage.pop will be associated with the stage.
 
         See Also
         --------
-        LogStage.PetscLogStagePop, petsc.PetscLogStagePush
+        LogStage.pop, petsc.PetscLogStagePush
 
         """
         CHKERR( PetscLogStagePush(self.id) )
