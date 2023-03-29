@@ -583,7 +583,7 @@ cdef class DM(Object):
 
     #
 
-    def getBlockSize(self)
+    def getBlockSize(self):
         cdef PetscInt bs = 1
         CHKERR( DMGetBlockSize(self.dm, &bs) )
         return toInt(bs)
