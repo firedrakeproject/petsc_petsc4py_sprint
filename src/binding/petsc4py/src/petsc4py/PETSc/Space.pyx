@@ -801,7 +801,7 @@ cdef class DualSpace(Object):
         cdef PetscInt corder = asInt(order)
         CHKERR( PetscDualSpaceSetOrder(self.dualspace, corder) )
 
-    def getNumDof(self) -> ndarray:
+    def getNumDof(self) -> ArrayInt:
         """Get the number of degrees of freedom for each spatial dimension.
 
         Not collective.
