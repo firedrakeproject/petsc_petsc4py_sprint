@@ -1,12 +1,15 @@
 # --------------------------------------------------------------------
 
 class KSPType(object):
-    """
+    """Docstring
+
+    Notes
+    -----
+    `https://petsc.org/release/docs/manualpages/KSP/KSPType/`__
 
     See Also
     --------
     petsc.KSP
-    resolves to `https://petsc.org/release/docs/manualpages/KSP/KSPType/`__
 
     """
     RICHARDSON = S_(KSPRICHARDSON)
@@ -156,18 +159,18 @@ cdef class KSP(Object):
         See `petsc.KSPType` for available methods (for instance, `KSP.CG` or
         `KSP.GMRES`).
 
-        Normally, it is best to use the `KSP.SetFromOptions` command
+        Normally, it is best to use the `KSP.setFromOptions` command
         and then set the KSP type from the options database rather than
         by using this routine. Using the options database provides the
         user with maximum flexibility in evaluating the many different
-        Krylov methods. The `KSP.SetType` routine is provided for those
-        situations where it is necessary to set the iterative solver
-        independently of the command line or options database. This
-        might be the case, for example, when the choice of iterative
-        solver changes during the execution of the program, and the
-        user's application is taking responsibility for choosing the
-        appropriate method. In other words, this routine is not for
-        beginners.
+        Krylov methods. The ``KSP.setType`` routine is provided for
+        those situations where it is necessary to set the iterative
+        solver independently of the command line or options database.
+        This might be the case, for example, when the choice of
+        iterative solver changes during the execution of the program,
+        and the user's application is taking responsibility for
+        choosing the appropriate method. In other words, this routine
+        is not for beginners.
 
         See also
         --------
@@ -274,7 +277,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        This routine must be called before `KSP.SetUp` if the user is
+        This routine must be called before `KSP.setUp` if the user is
         to be allowed to set the Krylov type.
 
         See also
@@ -403,7 +406,7 @@ cdef class KSP(Object):
 
     def setComputeRHS(
         self,
-        rhs: KSPComputeRHSFunction,
+        rhs: KSPRHSFunction,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None
     ) -> None:
@@ -438,7 +441,7 @@ cdef class KSP(Object):
 
     def setComputeOperators(
         self,
-        operators: KSPComputeOperatorsFunction,
+        operators: KSPOperatorsFunction,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None
     ) -> None:
@@ -468,12 +471,12 @@ cdef class KSP(Object):
 
         To reuse the same preconditioner for the next `KSP.solve` and
         not compute a new one based on the most recently computed
-        matrix call `KSP.setReusePreconditioner`.
+        matrix call `petsc.KSPSetReusePreconditioner`.
 
         See also
         --------
-        KSP, KSP.solve, KSP.setOperators, KSP.setReusePreconditioner,
-        petsc.KSPSetComputeOperators
+        KSP, KSP.solve, KSP.setOperators, petsc.KSPSetComputeOperators,
+        petsc.KSPSetReusePreconditioner
 
         """
         if args  is None: args  = ()
@@ -612,21 +615,21 @@ cdef class KSP(Object):
             (possibly preconditioned) residual norm.
         dtol
             The divergence tolerance, amount (possibly preconditioned)
-            residual norm can increase before `KSP.convergedDefault`
-            concludes that the method is diverging.
+            residual norm can increase before
+            `petsc.KSPConvergedDefault` concludes that the method is
+            diverging.
         max_it
             Maximum number of iterations to use.
 
         Notes
         -----
-        Use `PETSC_DEFAULT` to retain the default value of any of the
+        Use ``None`` to retain the default value of any of the
         tolerances.
 
         See also
         --------
-        petsc_options, KSP.getTolerances, KSP.convergedDefault,
-        KSP.setConvergenceTest, petsc.KSPsetTolerances
-
+        petsc_options, KSP.getTolerances, KSP.setConvergenceTest,
+        petsc.KSPSetTolerances, petsc.KSPConvergedDefault,
 
         """
         cdef PetscReal crtol, catol, cdivtol
@@ -691,9 +694,9 @@ cdef class KSP(Object):
         Must be called after the KSP type has been set so put this
         after a call to `KSP.setType`, or `KSP.setFromOptions`.
 
-        The default convergence test, `KSP.convergedDefault`, aborts if
-        the residual grows to more than 10000 times the initial
-        residual.
+        The default convergence test, `petsc.KSPConvergedDefault`,
+        aborts if the residual grows to more than 10000 times the
+        initial residual.
 
         The default is a combination of relative and absolute
         tolerances. The residual value that is tested may be an
@@ -706,9 +709,8 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.convergedDefault, KSP.getConvergenceContext, KSP.setTolerances,
-        KSP.getConvergenceTest, KSP.getAndClearConvergenceTest,
-        petsc.KSPSetConvergenceTest
+        KSP.setTolerances, KSP.getConvergenceTest,
+        petsc.KSPSetConvergenceTest, petsc.KSPConvergedDefault
 
         """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
@@ -739,9 +741,9 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.convergedDefault, KSP.getConvergenceContext, KSP.setTolerances,
-        KSP.getConvergenceTest, KSP.getAndClearConvergenceTest,
-        petsc.KSPGetConvergenceTest
+        KSP.setTolerances, KSP.setConvergenceTest,
+        petsc.KSPGetConvergenceTest, petsc.KSPConvergedDefault
+
         """
         return self.get_attr('__converged__')
 
@@ -797,7 +799,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.getResidualHistory, petsc.KSPSetResidualHistory
+        KSP.getConvergenceHistory, petsc.KSPSetResidualHistory
 
         """
         cdef PetscReal *data = NULL
@@ -818,7 +820,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setResidualHistory, petsc.KSPGetResidualHistory
+        KSP.setConvergenceHistory, petsc.KSPGetResidualHistory
 
         """
         cdef const PetscReal *data = NULL
@@ -834,11 +836,10 @@ cdef class KSP(Object):
         rnorm
             Residual norm to be added to convergence history.
 
-        See also
-        --------
-        petsc.KSPLogResidualHistory
-
         """
+        # Note that no dosumentation exists for the PETSc function
+        # `KSPLogResidualHistory`
+        # as of 29/03/2023
         cdef PetscReal rval = asReal(rnorm)
         CHKERR( KSPLogResidualHistory(self.ksp, rval) )
 
@@ -870,17 +871,17 @@ cdef class KSP(Object):
         The default is to do nothing. To print the residual, or
         preconditioned residual if
         ``KSP.setNormType(KSP.NORM_PRECONDITIONED)`` was called, use
-        `KSP.monitorResidual` as the monitoring routine, with a
-        `PETS.Viewer.ASCII` as the context.
+        `KSP.monitor` as the monitoring routine, with a
+        `PETSc.Viewer.ASCII` as the context.
 
         Several different monitoring routines may be set by calling
-        `KSP.monitorSet` multiple times; all will be called in the order
+        `KSP.setMonitor` multiple times; all will be called in the order
         in which they were set.
 
         See also
         --------
-        petsc_options, KSP.getResidual ,KSP.monitorResidual,
-        KSP.monitorCancel, petsc.KSPMonitorSet
+        petsc_options, KSP.getMonitor ,KSP.monitor, KSP.monitorCancel,
+        petsc.KSPMonitorSet
 
         """
         if monitor is None: return
@@ -900,8 +901,8 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.setResidual, KSP.monitorResidual,
-        KSP.monitorCancel, petsc.KSPGetMonitor
+        petsc_options, KSP.setMonitor, KSP.monitor,
+        KSP.monitorCancel, petsc.KSPGetMonitorContext
 
         """
         return self.get_attr('__monitor__')
@@ -913,8 +914,8 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.getResidual, KSP.setResidual,
-        KSP.monitorResidual, petsc.KSPMonitorCancel
+        petsc_options, KSP.getMonitor, KSP.setMonitor, KSP.monitor,
+        petsc.KSPMonitorCancel
 
         """
         CHKERR( KSPMonitorCancel(self.ksp) )
@@ -952,6 +953,7 @@ cdef class KSP(Object):
         ----------
         side
             The preconditioning side, where side is one of
+
             - `PC.Side.LEFT` - left preconditioning (default)
             - `PC.Side.RIGHT` - right preconditioning
             - `PC.Side.SYMMETRIC` - symmetric preconditioning
@@ -1001,21 +1003,22 @@ cdef class KSP(Object):
         ----------
         normtype
             one of
+
             - `KSP.NormType.NONE` - skips computing the norm, this
-                should generally only be used if you are using the
-                Krylov method as a smoother with a fixed small number
-                of iterations. Implicitly sets `KSP.convergedSkip` as
-                KSP convergence test. Note that certain algorithms such
-                as `KSP.GMRES` ALWAYS require the norm calculation, for
-                these methods the norms are still computed, they are
-                just not used in the convergence test.
+              should generally only be used if you are using the Krylov
+              method as a smoother with a fixed small number of
+              iterations. Implicitly sets `petsc.KSPConvergedSkip` as
+              KSP convergence test. Note that certain algorithms such
+              as `KSP.GMRES` ALWAYS require the norm calculation, for
+              these methods the norms are still computed, they are just
+              not used in the convergence test.
             - `KSP.NormType.PRECONDITIONED` - the default for left
-                preconditioned solves, uses the l₂ norm of the
-                preconditioned residual P⁻¹(b - Ax)
+              preconditioned solves, uses the l₂ norm of the
+              preconditioned residual P⁻¹(b - Ax)
             - `KSP.NormType.UNPRECONDITIONED` - uses the l₂ norm of the
-                true b - Ax residual.
+              true b - Ax residual.
             - `KSP.NormType.NATURAL` - supported  by `KSP.CG`, `KSP.CR`,
-                `KSP.CGNE`, `KSP.CGS`.
+              `KSP.CGNE`, `KSP.CGS`.
 
         Notes
         -----
@@ -1028,8 +1031,9 @@ cdef class KSP(Object):
         See also
         --------
         petsc_options, KSP.setUp, KSP.solve, KSP.destroy,
-        KSP.convergedSkip, KSP.setCheckNormIteration, KSP.setPCSide,
-        KSP.getPCSide, KSP.normType, petsc.KSPSetNormType
+        KSP.setPCSide, KSP.getPCSide, KSP.NormType,
+        petsc.KSPSetNormType, petsc.KSPConvergedSkip,
+        petsc.KSPSetCheckNormIteration
 
         """
         CHKERR( KSPSetNormType(self.ksp, normtype) )
@@ -1041,8 +1045,8 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.NormType, KSP.setNormType, KSP.convergedSkip,
-        petsc.KSPGetNormType
+        KSP.NormType, KSP.setNormType,
+        petsc.KSPGetNormType, petsc.KSPConvergedSkip
 
         """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE

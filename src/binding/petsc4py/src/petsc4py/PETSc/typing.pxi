@@ -22,8 +22,8 @@ cdef ArrayScalar
 
 # --- KSP ---
 
-cdef KSPComputeRHSFunction
-cdef KSPComputeOperatorsFunction
+cdef KSPRHSFunction
+cdef KSPOperatorsFunction
 cdef KSPConvergenceTestFunction
 cdef KSPMonitorFunction
 
