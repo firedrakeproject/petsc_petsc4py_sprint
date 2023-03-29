@@ -30,6 +30,20 @@ cdef class DMSwarm(DM):
     PICLayoutType = DMSwarmPICLayoutType
 
     def create(self, comm=None):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscDM newdm = NULL
         CHKERR( DMCreate(ccomm, &newdm) )
@@ -38,6 +52,20 @@ cdef class DMSwarm(DM):
         return self
 
     def createGlobalVectorFromField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef Vec vg = Vec()
         fieldname = str2bytes(fieldname, &cfieldname)
@@ -45,12 +73,40 @@ cdef class DMSwarm(DM):
         return vg
 
     def destroyGlobalVectorFromField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef PetscVec vec = NULL
         fieldname = str2bytes(fieldname, &cfieldname)
         CHKERR( DMSwarmDestroyGlobalVectorFromField(self.dm, cfieldname, &vec) )
 
     def createLocalVectorFromField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef Vec vl = Vec()
         fieldname = str2bytes(fieldname, &cfieldname)
@@ -58,24 +114,94 @@ cdef class DMSwarm(DM):
         return vl
 
     def destroyLocalVectorFromField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef PetscVec vec
         fieldname = str2bytes(fieldname, &cfieldname)
         CHKERR( DMSwarmDestroyLocalVectorFromField(self.dm, cfieldname, &vec) )
 
     def initializeFieldRegister(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmInitializeFieldRegister(self.dm) )
 
     def finalizeFieldRegister(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmFinalizeFieldRegister(self.dm) )
 
     def setLocalSizes(self, nlocal, buffer):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt cnlocal = asInt(nlocal)
         cdef PetscInt cbuffer = asInt(buffer)
         CHKERR( DMSwarmSetLocalSizes(self.dm, cnlocal, cbuffer) )
         return self
 
     def registerField(self, fieldname, blocksize, dtype=ScalarType):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef PetscInt cblocksize = asInt(blocksize)
         cdef PetscDataType ctype  = PETSC_DATATYPE_UNKNOWN
@@ -88,6 +214,20 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmRegisterPetscDatatypeField(self.dm, cfieldname, cblocksize, ctype) )
 
     def getField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef PetscInt blocksize = 0
         cdef PetscDataType ctype = PETSC_DATATYPE_UNKNOWN
@@ -106,6 +246,20 @@ cdef class DMSwarm(DM):
         return <object> PyArray_SimpleNewFromData(1, &s, typenum, data)
 
     def restoreField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cfieldname = NULL
         cdef PetscInt blocksize = 0
         cdef PetscDataType ctype = PETSC_DATATYPE_UNKNOWN
@@ -113,53 +267,235 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmRestoreField(self.dm, cfieldname, &blocksize, &ctype, <void**> 0) )
 
     def vectorDefineField(self, fieldname):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cval = NULL
         fieldname = str2bytes(fieldname, &cval)
         CHKERR( DMSwarmVectorDefineField(self.dm, cval) )
 
     def addPoint(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmAddPoint(self.dm) )
 
     def addNPoints(self, npoints):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt cnpoints = asInt(npoints)
         CHKERR( DMSwarmAddNPoints(self.dm, cnpoints) )
 
     def removePoint(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmRemovePoint(self.dm) )
 
     def removePointAtIndex(self, index):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt cindex = asInt(index)
         CHKERR( DMSwarmRemovePointAtIndex(self.dm, cindex) )
 
     def copyPoint(self, pi, pj):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt cpi = asInt(pi)
         cdef PetscInt cpj = asInt(pj)
         CHKERR( DMSwarmCopyPoint(self.dm, cpi, cpj) )
 
     def getLocalSize(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt size = asInt(0)
         CHKERR( DMSwarmGetLocalSize(self.dm, &size) )
         return toInt(size)
 
     def getSize(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt size = asInt(0)
         CHKERR( DMSwarmGetSize(self.dm, &size) )
         return toInt(size)
 
     def migrate(self, remove_sent_points=False):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscBool remove_pts = asBool(remove_sent_points)
         CHKERR( DMSwarmMigrate(self.dm, remove_pts) )
 
     def collectViewCreate(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmCollectViewCreate(self.dm) )
 
     def collectViewDestroy(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmCollectViewDestroy(self.dm) )
 
     def setCellDM(self, DM dm):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmSetCellDM(self.dm, dm.dm) )
 
     def getCellDM(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscDM newdm = NULL
         CHKERR( DMSwarmGetCellDM(self.dm, &newdm) )
         cdef DM dm = subtype_DM(newdm)()
@@ -168,10 +504,38 @@ cdef class DMSwarm(DM):
         return dm
 
     def setType(self, dmswarm_type):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscDMSwarmType cval = dmswarm_type
         CHKERR( DMSwarmSetType(self.dm, cval) )
 
     def setPointsUniformCoordinates(self, min, max, npoints, mode=None):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt dim = asInt(0)
         CHKERR( DMGetDimension(self.dm, &dim) )
         cdef PetscReal cmin[3]
@@ -188,6 +552,20 @@ cdef class DMSwarm(DM):
         return self
 
     def setPointCoordinates(self, coordinates, redundant=False, mode=None):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef ndarray xyz = iarray(coordinates, NPY_PETSC_REAL)
         if PyArray_ISFORTRAN(xyz): xyz = PyArray_Copy(xyz)
         if PyArray_NDIM(xyz) != 2: raise ValueError(
@@ -200,11 +578,39 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetPointCoordinates(self.dm, cnpoints, coords, credundant, cmode) )
 
     def insertPointUsingCellDM(self, layoutType, fill_param):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscDMSwarmPICLayoutType clayoutType = layoutType
         cdef PetscInt cfill_param = asInt(fill_param)
         CHKERR( DMSwarmInsertPointsUsingCellDM(self.dm, clayoutType, cfill_param) )
 
     def setPointCoordinatesCellwise(self, coordinates):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef ndarray xyz = iarray(coordinates, NPY_PETSC_REAL)
         if PyArray_ISFORTRAN(xyz): xyz = PyArray_Copy(xyz)
         if PyArray_NDIM(xyz) != 2: raise ValueError(
@@ -215,6 +621,20 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetPointCoordinatesCellwise(self.dm, cnpoints, coords) )
 
     def viewFieldsXDMF(self, filename, fieldnames):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cval = NULL
         cdef const char *cfilename = NULL
         filename = str2bytes(filename, &cfilename)
@@ -228,17 +648,73 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmViewFieldsXDMF(self.dm, cfilename, cnfields, cfieldnames ) )
 
     def viewXDMF(self, filename):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef const char *cval = NULL
         filename = str2bytes(filename, &cval)
         CHKERR( DMSwarmViewXDMF(self.dm, cval) )
 
     def sortGetAccess(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmSortGetAccess(self.dm) )
 
     def sortRestoreAccess(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMSwarmSortRestoreAccess(self.dm) )
 
     def sortGetPointsPerCell(self, e):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt ce = asInt(e)
         cdef PetscInt cnpoints = asInt(0)
         cdef PetscInt *cpidlist = NULL
@@ -249,23 +725,79 @@ cdef class DMSwarm(DM):
         return pidlist
 
     def sortGetNumberOfPointsPerCell(self, e):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt ce = asInt(e)
         cdef PetscInt npoints = asInt(0)
         CHKERR( DMSwarmSortGetNumberOfPointsPerCell(self.dm, ce, &npoints) )
         return toInt(npoints)
 
     def sortGetIsValid(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscBool isValid = asBool(False)
         CHKERR( DMSwarmSortGetIsValid(self.dm, &isValid) )
         return toBool(isValid)
 
     def sortGetSizes(self):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscInt ncells = asInt(0)
         cdef PetscInt npoints = asInt(0)
         CHKERR( DMSwarmSortGetSizes(self.dm, &ncells, &npoints) )
         return (toInt(ncells), toInt(npoints))
 
     def projectFields(self, fieldnames, reuse=False):
+        """TODO
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscBool creuse = asBool(reuse)
         cdef const char *cval = NULL
         cdef PetscInt cnfields = <PetscInt> len(fieldnames)
