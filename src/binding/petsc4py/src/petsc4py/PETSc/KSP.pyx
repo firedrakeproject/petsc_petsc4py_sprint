@@ -943,7 +943,7 @@ cdef class KSP(Object):
 
     # --- customization ---
 
-    def setPCSide(self, PC.Side side) -> None:
+    def setPCSide(self, side: PC.Side) -> None:
         """Sets the preconditioning side.
 
         Logically collective.
@@ -994,7 +994,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetPCSide(self.ksp, &side) )
         return side
 
-    def setNormType(self, KSP.NormType normtype) -> None:
+    def setNormType(self, normtype: KSP.NormType) -> None:
         """Sets the norm that is used for convergence testing.
 
         Parameters
