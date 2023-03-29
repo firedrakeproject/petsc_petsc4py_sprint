@@ -100,7 +100,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        Dm.view, DM.load, Object.setName, petsc.DMLoad
+        DM.view, DM.load, Object.setName, petsc.DMLoad
 
         """
         CHKERR( DMLoad(self.dm, viewer.vwr) )
@@ -343,6 +343,9 @@ cdef class DM(Object):
         obj : Object
             Object provides the prefix for the options database.
 
+        See Also
+        --------
+        petsc.DMViewFromOptions
         """
         cdef const char *cname = NULL
         _ = str2bytes(name, &cname)
@@ -350,7 +353,16 @@ cdef class DM(Object):
         if obj is not None: cobj = obj.obj[0]
         CHKERR( DMViewFromOptions(self.dm, cobj, cname) )
 
-    def setUp(self):
+    def setUp(self) -> Self:
+        """Set the data structure.
+
+        Collective
+
+        See Also
+        --------
+        petsc.DMSetUp
+        
+        """
         CHKERR( DMSetUp(self.dm) )
         return self
 
