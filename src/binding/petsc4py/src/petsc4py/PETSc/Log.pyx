@@ -65,7 +65,8 @@ cdef class Log:
         Notes
         -----
         If `all == True` logging is extensive, which creates large log files and shows the program down.
-        if all=False, the default logging functions are used.
+
+        If `all == False`, the default logging functions are used.
         This logs flop rates and object creation and should not slow programs down too much. This routine may be called more than once.
 
         See Also
