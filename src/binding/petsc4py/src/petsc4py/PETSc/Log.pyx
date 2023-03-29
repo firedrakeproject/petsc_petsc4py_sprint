@@ -100,7 +100,7 @@ cdef class Log:
 
     @classmethod
     def logFlops(cls, flops: float) -> None:
-        """Add floating point operations to global counter.
+        """Add floating point operations to the global counter.
 
         Not Collective.
 
