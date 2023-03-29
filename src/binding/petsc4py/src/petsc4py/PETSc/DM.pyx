@@ -175,7 +175,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        DMtype, petsc.DMSetType
+        DMType, petsc.DMSetType
 
         """
         cdef PetscDMType cval = NULL
@@ -295,8 +295,7 @@ cdef class DM(Object):
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix: str) -> None:
-        """Append an additional string to an already 
-        existing prefix.
+        """Append an additional string to an already existing prefix.
 
         Logically Collective.
 
@@ -376,7 +375,23 @@ cdef class DM(Object):
 
     #
 
-    def setBasicAdjacency(self, useCone, useClosure):
+    def setBasicAdjacency(self, useCone: bool, useClosure: bool) -> None:
+        """Set the flags for determining the variable influence.
+
+        Not Collective
+
+        Parameters
+        ----------
+        useCone : bool
+            If True, the variable influence is set, starting with the cone operation.
+        useClosure : bool
+            If True, the variable influence is set using transitive closure.
+
+        See Also
+        --------
+        petsc.DMSetBasicAdjacency
+
+        """
         cdef PetscBool uC  = useCone
         cdef PetscBool uCl = useClosure
         CHKERR( DMSetBasicAdjacency(self.dm, uC, uCl) )
