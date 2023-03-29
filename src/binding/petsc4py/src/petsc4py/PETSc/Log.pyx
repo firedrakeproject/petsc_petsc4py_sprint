@@ -218,7 +218,7 @@ cdef class Log:
 
     @classmethod
     def isActive(cls) -> bool:
-        """Check if logging is currently in progress.
+        """Return whether logging is currently in progress.
         
         Not Collective.
 
