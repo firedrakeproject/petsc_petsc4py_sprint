@@ -148,6 +148,7 @@ cdef class Log:
 
         Returns
         -------
+        cflops
             Number of floating point operations.
 
         See Also
