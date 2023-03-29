@@ -1,6 +1,7 @@
 # -----------------------------------------------------------------------------
 
 class TSType(object):
+    """The time stepping method begin used."""
     # native
     EULER           = S_(TSEULER)
     BEULER          = S_(TSBEULER)
@@ -32,6 +33,7 @@ class TSType(object):
     RUNGE_KUTTA    = RK
 
 class TSRKType(object):
+    """The *RK* subtype being used."""
     RK1FE = S_(TSRK1FE)
     RK2A  = S_(TSRK2A)
     RK2B  = S_(TSRK2B)
@@ -46,6 +48,7 @@ class TSRKType(object):
     RK8VR = S_(TSRK8VR)
 
 class TSARKIMEXType(object):
+    """The *ARKIMEX* subtype being used."""
     ARKIMEX1BEE   = S_(TSARKIMEX1BEE)
     ARKIMEXA2     = S_(TSARKIMEXA2)
     ARKIMEXL2     = S_(TSARKIMEXL2)
@@ -61,10 +64,12 @@ class TSARKIMEXType(object):
     ARKIMEX5      = S_(TSARKIMEX5)
 
 class TSProblemType(object):
+    """Distinguishes linear and nonlinear problems."""
     LINEAR    = TS_LINEAR
     NONLINEAR = TS_NONLINEAR
 
 class TSEquationType(object):
+    """Distinguishes among types of explicit and implicit equations."""
     UNSPECIFIED               = TS_EQ_UNSPECIFIED
     EXPLICIT                  = TS_EQ_EXPLICIT
     ODE_EXPLICIT              = TS_EQ_ODE_EXPLICIT
@@ -80,24 +85,14 @@ class TSEquationType(object):
     DAE_IMPLICIT_INDEXHI      = TS_EQ_DAE_IMPLICIT_INDEXHI
 
 class TSExactFinalTime(object):
-    """
-    Attributes
-    ----------
-    UNSPECIFIED
-        No final time option has been set.
-    STEPOVER
-        Take the full time step once final time has been exceed.
-    INTERPOLATE
-        Interpolate back to the final time.
-    MATCHSTEP
-        Adapt the final time step size to match the final time.
-    """
+    """The method for ending time stepping."""
     UNSPECIFIED = TS_EXACTFINALTIME_UNSPECIFIED
     STEPOVER    = TS_EXACTFINALTIME_STEPOVER
     INTERPOLATE = TS_EXACTFINALTIME_INTERPOLATE
     MATCHSTEP   = TS_EXACTFINALTIME_MATCHSTEP
 
 class TSConvergedReason(object):
+    """The reason the time step is converging."""
     # iterating
     CONVERGED_ITERATING      = TS_CONVERGED_ITERATING
     ITERATING                = TS_CONVERGED_ITERATING
@@ -117,7 +112,7 @@ cdef class TS(Object):
 
     See Also
     --------
-    `TS`
+    petsc.TS
     """
     Type = TSType
     RKType = TSRKType
@@ -204,14 +199,9 @@ cdef class TS(Object):
         return self
 
     def clone(self) -> TS:
-        """Clone a `TS` object.
+        """Return a shallow clone of the `TS` object.
 
-        Collective. Creates a shallow copy of the `TS`.
-
-        Returns
-        -------
-        ts
-            The cloned `TS` object.
+        Collective.
 
         See Also
         --------
@@ -221,12 +211,12 @@ cdef class TS(Object):
         CHKERR( TSClone(self.ts, &ts.ts) )
         return ts
 
-    def setType(self, ts_type: TS.Type | str) -> None:
+    def setType(self, ts_type: Type | str) -> None:
         """Set the method to be used as the `TS` solver.
 
         Parameters
         ----------
-        ts_type : TS.Type
+        ts_type
             The solver type.
 
         Notes
@@ -241,17 +231,17 @@ cdef class TS(Object):
         ts_type = str2bytes(ts_type, &cval)
         CHKERR( TSSetType(self.ts, cval) )
 
-    def setRKType(self, ts_type: TS.RKType | str) -> None:
-        """Set the type of the `TSRK` scheme.
+    def setRKType(self, ts_type: RKType | str) -> None:
+        """Set the type of the *Runge-Kutta* scheme.
 
         Parameters
         ----------
         ts_type
-            the type of `TSRK` scheme.
+            The type of scheme.
 
         Notes
         -----
-            ``-ts_rk_type`` sets `TSRK` scheme type from the commandline.
+            ``-ts_rk_type`` sets scheme type from the commandline.
 
         See Also
         --------
@@ -261,17 +251,17 @@ cdef class TS(Object):
         ts_type = str2bytes(ts_type, &cval)
         CHKERR( TSRKSetType(self.ts, cval) )
 
-    def setARKIMEXType(self, ts_type: TS.ARKIMEXType | str) -> None:
-        """Set the type of `TSARKIMEX` scheme.
+    def setARKIMEXType(self, ts_type: ARKIMEXType | str) -> None:
+        """Set the type of `Type.ARKIMEX` scheme.
 
         Parameters
         ----------
         ts_type
-            The type of `TSARKIMEX` scheme.
+            The type of `Type.ARKIMEX` scheme.
 
         Notes
         -----
-            ``-ts_arkimex_type`` sets TSARKIMEX scheme type from the commandline.
+            ``-ts_arkimex_type`` sets scheme type from the commandline.
 
         See Also
         --------
@@ -308,7 +298,7 @@ cdef class TS(Object):
         return bytes2str(cval)
 
     def getRKType(self) -> str:
-        """Return the `TSRK` scheme.
+        """Return the `Type.RK` scheme.
         
         See Also
         --------
@@ -319,7 +309,7 @@ cdef class TS(Object):
         return bytes2str(cval)
 
     def getARKIMEXType(self) -> str:
-        """Return the `TSARKIMEX` scheme.
+        """Return the `Type.ARKIMEX` scheme.
         
         See Also
         --------
@@ -329,7 +319,7 @@ cdef class TS(Object):
         CHKERR( TSARKIMEXGetType(self.ts, &cval) )
         return bytes2str(cval)
 
-    def setProblemType(self, ptype: TS.ProblemType) -> None:
+    def setProblemType(self, ptype: ProblemType) -> None:
         """Set the type of problem to be solved.
         
         Parameters
@@ -343,7 +333,7 @@ cdef class TS(Object):
         """
         CHKERR( TSSetProblemType(self.ts, ptype) )
 
-    def getProblemType(self) -> TS.ProblemType:
+    def getProblemType(self) -> ProblemType:
         """Return the type of problem to be solved.
 
         See Also
@@ -354,7 +344,7 @@ cdef class TS(Object):
         CHKERR( TSGetProblemType(self.ts, &ptype) )
         return ptype
 
-    def setEquationType(self, eqtype: TS.EquationType) -> None:
+    def setEquationType(self, eqtype: EquationType) -> None:
         """Set the type of the equation that `TS` is solving.
 
         Not collective.
@@ -370,7 +360,7 @@ cdef class TS(Object):
         """
         CHKERR( TSSetEquationType(self.ts, eqtype) )
 
-    def getEquationType(self) -> TS.EquationType:
+    def getEquationType(self) -> EquationType:
         """Get the type of the equation that `TS` is solving.
 
         See Also
@@ -553,7 +543,7 @@ cdef class TS(Object):
         cdef PetscReal time = asReal(t)
         CHKERR( TSComputeRHSFunction(self.ts, time, x.vec, f.vec) )
 
-    def computeRHSFunctionLinear(self, t, Vec x, Vec f) -> None:
+    def computeRHSFunctionLinear(self, t: float, Vec x, Vec f) -> None:
         """Evaluate the right-hand-side via the user-provided Jacobian.
 
         Parameters
@@ -572,7 +562,7 @@ cdef class TS(Object):
         cdef PetscReal time = asReal(t)
         CHKERR( TSComputeRHSFunctionLinear(self.ts, time, x.vec, f.vec, NULL) )
 
-    def computeRHSJacobian(self, t, Vec x, Mat J, Mat P=None) -> None:
+    def computeRHSJacobian(self, t: float, Vec x, Mat J, Mat P=None) -> None:
         """Compute the Jacobian matrix that has been set with `setRHSJacobian`.
 
         Collective.
@@ -597,7 +587,7 @@ cdef class TS(Object):
         if P is not None: pmat = P.mat
         CHKERR( TSComputeRHSJacobian(self.ts, time, x.vec, jmat, pmat) )
 
-    def computeRHSJacobianConstant(self, t, Vec x, Mat J, Mat P=None) -> None:
+    def computeRHSJacobianConstant(self, t: float, Vec x, Mat J, Mat P=None) -> None:
         """Reuse a Jacobian that is time-independent.
 
         Collective.
@@ -774,7 +764,7 @@ cdef class TS(Object):
             CHKERR( TSSetIJacobianP(self.ts, Jmat, NULL, NULL) )
 
     def computeIFunction(self,
-                         t, Vec x, Vec xdot,
+                         t: float, Vec x, Vec xdot,
                          Vec f, imex: bool=False) -> None:
         """Evaluate the DAE residual written in implicit form.
 
@@ -803,8 +793,8 @@ cdef class TS(Object):
                                    f.vec, bval) )
 
     def computeIJacobian(self,
-                         t, Vec x, Vec xdot, a: float,
-                         Mat J, Mat P=None, imex=False) -> None:
+                         t: float, Vec x, Vec xdot, a: float,
+                         Mat J, Mat P=None, imex: bool=False) -> None:
         """Evaluate the Jacobian of the DAE.
 
         Collective. If ``F(t,U,Udot)=0`` is the DAE, the required Jacobian is
@@ -840,8 +830,8 @@ cdef class TS(Object):
                                    jmat, pmat, bval) )
 
     def computeIJacobianP(self,
-                         t, Vec x, Vec xdot, a,
-                         Mat J, imex=False) -> None:
+                         t: float, Vec x, Vec xdot, a: float,
+                         Mat J, imex: bool=False) -> None:
         """Evaluate the Jacobian with respect to parameters.
 
         Collective.
@@ -993,7 +983,7 @@ cdef class TS(Object):
             The state vector.
         xdot
             The time derivative of the state vector.
-        xdotxdot
+        xdotdot
             The second time derivative of the state vector.
         f
             The vector into which the residual is stored.
@@ -1018,9 +1008,7 @@ cdef class TS(Object):
         Mat P=None) -> None:
         """Evaluate the Jacobian of the DAE.
 
-        If ``F(t,U,V,A)=0`` is the DAE, the required Jacobian is ``dF/dU + v dF/dV + a dF/dA``.
-
-        Collective.
+        Collective. If ``F(t,U,V,A)=0`` is the DAE, the required Jacobian is ``dF/dU + v dF/dV + a dF/dA``.
 
         Parameters
         ----------
@@ -1030,7 +1018,7 @@ cdef class TS(Object):
             The state vector.
         xdot
             The time derivative of the state vector.
-        xdotxdot
+        xdotdot
             The second time derivative of the state vector.
         v
             The shift to apply to the first derivative.
@@ -1163,7 +1151,7 @@ cdef class TS(Object):
         Collective. The solution will be computed and stored for each time
         requested in the span. The times must be all increasing and correspond
         to the intermediate points for time integration.
-        `TS_EXACTFINALTIME_MATCHSTEP` must be used to make the last time step in
+        `ExactFinalTime.MATCHSTEP` must be used to make the last time step in
         each sub-interval match the intermediate points specified. The
         intermediate solutions are saved in a vector array that can be accessed
         with `getTimeSpanSolutions`. 
@@ -1206,8 +1194,8 @@ cdef class TS(Object):
 
         See Also
         --------
-        petsc.`setTimeSpan`
-        TSGetTimeSpanSolutions
+        setTimeSpan
+        petsc.TSGetTimeSpanSolutions
         """
         cdef PetscInt nt = 0
         cdef PetscVec *sols = NULL
@@ -1307,9 +1295,8 @@ cdef class TS(Object):
         """Return the time of the most recently completed step.
 
         Not collective. When called during time step evaluation (e.g. during
-        residual evaluation or via hooks set using `setPreStep`, `setPreStage`,
-        `setPostStage`, or `setPostStep`), the time returned is at the start of
-        the step.
+        residual evaluation or via hooks set using `setPreStep` or
+        `setPostStep`), the time returned is at the start of the step.
 
         See Also
         --------
@@ -1602,7 +1589,7 @@ cdef class TS(Object):
         cdef PetscBool bval = flag
         CHKERR( TSSetErrorIfStepFails(self.ts, bval))
 
-    def setTolerances(self, rtol=None, atol=None) -> None:
+    def setTolerances(self, rtol: float=None, atol: float=None) -> None:
         """Set tolerances for local truncation error when using an adaptive controller.
 
         Logically collective.
@@ -1673,7 +1660,7 @@ cdef class TS(Object):
             atol = toReal(ratol)
         return (rtol, atol)
 
-    def setExactFinalTime(self, option: TS.ExactFinalTime) -> None:
+    def setExactFinalTime(self, option: ExactFinalTime) -> None:
         """Set method of computing the final time step.
 
         Logically collective.
@@ -1694,7 +1681,7 @@ cdef class TS(Object):
         cdef PetscTSExactFinalTimeOption oval = option
         CHKERR( TSSetExactFinalTime(self.ts, oval) )
 
-    def setConvergedReason(self, reason: TS.ConvergedReason) -> None:
+    def setConvergedReason(self, reason: ConvergedReason) -> None:
         """Set the reason for handling the convergence of `solve`.
 
         Logically collective. Can only be called when `solve` is active and
@@ -1712,7 +1699,7 @@ cdef class TS(Object):
         cdef PetscTSConvergedReason cval = reason
         CHKERR( TSSetConvergedReason(self.ts, cval) )
 
-    def getConvergedReason(self) -> TSConvergedReason:
+    def getConvergedReason(self) -> ConvergedReason:
         """Return the reason the `TS` step was stopped.
 
         Not collective. Can only be called once `solve` is complete.
@@ -2013,7 +2000,7 @@ cdef class TS(Object):
     def step(self) -> None:
         """Take one step.
 
-        Collective. The preferred interface for the `TS`solvers is `solve`. If
+        Collective. The preferred interface for the `TS` solvers is `solve`. If
         you need to execute code at the beginning or ending of each step, use
         `setPreStep` and `setPostStep` respectively.
 
@@ -2133,7 +2120,7 @@ cdef class TS(Object):
     # --- Adjoint methods ---
 
     def setSaveTrajectory(self) -> None:
-        """Enable to save solutions as a `TSTrajectory`.
+        """Enable to save solutions as an internal `TS` trajectory.
 
         Collective. This routine shuld be called after all `TS` options have
         been set.
@@ -2149,7 +2136,7 @@ cdef class TS(Object):
         CHKERR(TSSetSaveTrajectory(self.ts))
 
     def removeTrajectory(self) -> None:
-        """Remove the internal `TSTrajectory` object from a `TS`.
+        """Remove the internal `TS` trajectory object.
 
         Collective.
 
@@ -2271,7 +2258,7 @@ cdef class TS(Object):
         else:
             CHKERR( TSSetRHSJacobianP(self.ts, Amat, NULL, NULL) )
 
-    def createQuadratureTS(self, forward=True) -> TS:
+    def createQuadratureTS(self, forward: bool=True) -> TS:
         """Create a sub `TS` that evaluates integrals over time.
 
         Parameters
@@ -2294,9 +2281,9 @@ cdef class TS(Object):
 
         Returns
         -------
-        forward
+        forward : bool
             True if evaluating the integral forward in time
-        qts
+        qts : TS
             The sub `TS`
 
         See Also
@@ -2411,7 +2398,7 @@ cdef class TS(Object):
         CHKERR(TSAdjointStep(self.ts))
 
     def adjointReset(self) -> None:
-        """Resets a `TS`, removing any allocated vectors and matrices.
+        """Reset a `TS`, removing any allocated vectors and matrices.
 
         Collective.
 
@@ -2425,9 +2412,6 @@ cdef class TS(Object):
 
     def createPython(self, context=None, comm=None) -> Self:
         """
-        See Also
-        --------
-        petsc.TSCreate
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscTS newts = NULL
@@ -2439,17 +2423,11 @@ cdef class TS(Object):
 
     def setPythonContext(self, context) -> None:
         """
-        See Also
-        --------
-        petsc.TSPythonSetContext
         """
         CHKERR( TSPythonSetContext(self.ts, <void*>context) )
 
     def getPythonContext(self) -> Any:
         """
-        See Also
-        --------
-        petsc.TSPythonGetContext
         """
         cdef void *context = NULL
         CHKERR( TSPythonGetContext(self.ts, &context) )
@@ -2458,9 +2436,6 @@ cdef class TS(Object):
 
     def setPythonType(self, py_type) -> None:
         """
-        See Also
-        --------
-        petsc.TSPythonSetType
         """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
@@ -2468,9 +2443,6 @@ cdef class TS(Object):
 
     def getPythonType(self) -> str:
         """
-        See Also
-        --------
-        petsc.TSPythonGetType
         """
         cdef const char *cval = NULL
         CHKERR( TSPythonGetType(self.ts, &cval) )
@@ -2479,7 +2451,7 @@ cdef class TS(Object):
     # --- Theta ---
 
     def setTheta(self, theta: float) -> None:
-        """Set the abscissa of the stage in ``(0,1]`` for `TSTHETA`.
+        """Set the abscissa of the stage in ``(0,1]`` for `Type.THETA`.
 
         Parameters
         ----------
@@ -2498,7 +2470,7 @@ cdef class TS(Object):
         CHKERR( TSThetaSetTheta(self.ts, rval) )
 
     def getTheta(self) -> float:
-        """Return the abscissa of the stage in ``(0,1]`` for `TSTHETA`.
+        """Return the abscissa of the stage in ``(0,1]`` for `Type.THETA`.
 
         Not collective.
 
@@ -2511,7 +2483,7 @@ cdef class TS(Object):
         return toReal(rval)
 
     def setThetaEndpoint(self, flag=True) -> None:
-        """Set to use the endpoint variant of `TSTHETA`.
+        """Set to use the endpoint variant of `Type.THETA`.
 
         Parameters
         ----------
@@ -2526,7 +2498,7 @@ cdef class TS(Object):
         CHKERR( TSThetaSetEndpoint(self.ts, bval) )
 
     def getThetaEndpoint(self) -> bool:
-        """Return whether the endpoint variable of `TSTHETA` is used.
+        """Return whether the endpoint variable of `Type.THETA` is used.
 
         See Also
         --------
@@ -2539,7 +2511,7 @@ cdef class TS(Object):
     # --- Alpha ---
 
     def setAlphaRadius(self, radius: float) -> None:
-        """Set the spectral radius for `TSALPHA`.
+        """Set the spectral radius for `Type.ALPHA`.
 
         Logically collective.
 
@@ -2564,9 +2536,9 @@ cdef class TS(Object):
         alpha_m: float | None=None,
         alpha_f: float | None=None, 
         gamma: float | None=None) -> None:
-        """Set the algorithmic parameters for `TSALPHA`.
+        """Set the algorithmic parameters for `Type.ALPHA`.
 
-        Logically collective. Users should call `tsSetRadius`.
+        Logically collective. Users should call `setAlphaRadius`.
 
         Parameters
         ----------
@@ -2590,7 +2562,7 @@ cdef class TS(Object):
         CHKERR( TSAlphaSetParams(self.ts,  rval1,  rval2,  rval3) )
 
     def getAlphaParams(self) -> tuple[float, float, float]:
-        """Return the algorithmic parameters for `TSALPHA`.
+        """Return the algorithmic parameters for `Type.ALPHA`.
 
         See Also
         --------
@@ -2622,14 +2594,14 @@ cdef class TS(Object):
 
     property problem_type:
         """The problem type."""
-        def __get__(self) -> TS.ProblemType:
+        def __get__(self) -> ProblemType:
             return self.getProblemType()
         def __set__(self, value) -> None:
             self.setProblemType(value)
 
     property equation_type:
         """The equation type."""
-        def __get__(self) -> TS.EquationType:
+        def __get__(self) -> EquationType:
             return self.getEquationType()
         def __set__(self, value) -> None:
             self.setEquationType(value)
