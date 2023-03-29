@@ -394,8 +394,30 @@ def visit_module(module, done=None):
 
 IMPORTS = """
 from __future__ import annotations
+import sys
 from numpy import dtype, ndarray
 import numpy
+
+from typing import (
+    Any,
+    Union,
+    Literal,
+    Optional,
+    NoReturn,
+    Final,
+)
+from typing import (
+    Callable,
+    Hashable,
+    Iterable,
+    Iterator,
+    Sequence,
+    Mapping,
+)
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 IntType: dtype = ...
 RealType: dtype =  ...
@@ -436,27 +458,7 @@ OVERRIDE = {
 }
 
 TYPING = """
-from typing import (
-    Any,
-    Union,
-    Literal,
-    Optional,
-    NoReturn,
-    Final,
-)
-from typing import (
-    Callable,
-    Hashable,
-    Iterable,
-    Iterator,
-    Sequence,
-    Mapping,
-)
-from mpi4py.MPI import (
-    Intracomm,
-    Datatype,
-    Op,
-)
+from .typing import *
 """
 
 
