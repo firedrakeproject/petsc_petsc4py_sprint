@@ -87,8 +87,16 @@ autodoc_class_signature = 'separated'
 autodoc_typehints = 'description'
 autodoc_typehints_format = 'short'
 autodoc_mock_imports = []
-autodoc_type_aliases = {
-}
+autodoc_type_aliases = {}
+autodoc_type_aliases.update({
+    typename: f"~petsc4py.typing.{typename}"
+    for typename in (
+        "ArrayInt",
+        "ArrayReal",
+        "ArrayComplex",
+        "ArrayScalar",
+    )
+})
 
 autosummary_context = {
     'synopsis': {},
@@ -143,27 +151,6 @@ except ImportError:
     sphinx_rtd_theme = None
 
 
-def _setup_numpy_typing():
-    try:
-        import numpy as np
-    except ImportError:
-        np = type(sys)('numpy')
-        sys.modules[np.__name__] = np
-        np.dtype = type('dtype', (), {})
-        np.dtype.__module__ = np.__name__
-
-    try:
-        import numpy.typing as npt
-    except ImportError:
-        npt = type(sys)('numpy.typing')
-        np.typing = npt
-        sys.modules[npt.__name__] = npt
-        npt.__all__ = []
-        for attr in ['ArrayLike', 'DTypeLike']:
-            setattr(npt, attr, typing.Any)
-            npt.__all__.append(attr)
-
-
 def _setup_mpi4py_typing():
     try:
         import mpi4py
@@ -183,15 +170,6 @@ def _setup_mpi4py_typing():
 
 
 def _patch_domain_python():
-    try:
-        from numpy.typing import __all__ as numpy_types
-    except ImportError:
-        numpy_types = []
-
-    numpy_types = set(numpy_types)
-    for name in numpy_types:
-        autodoc_type_aliases[name] = f'~numpy.typing.{name}'
-
     from sphinx.domains.python import PythonDomain
     PythonDomain.object_types['data'].roles += ('class',)
 
@@ -277,7 +255,6 @@ _monkey_patch_see_also()
 
 
 def setup(app):
-    _setup_numpy_typing()
     _setup_mpi4py_typing()
     _patch_domain_python()
     _setup_autodoc(app)
