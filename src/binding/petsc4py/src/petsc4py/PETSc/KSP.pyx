@@ -180,7 +180,7 @@ cdef class KSP(Object):
         See `Type` for available methods (for instance, `Type.CG` or
         `Type.GMRES`).
 
-        Normally, it is best to use the `KSP.setFromOptions` command
+        Normally, it is best to use the `setFromOptions` command
         and then set the KSP type from the options database rather than
         by using this routine. Using the options database provides the
         user with maximum flexibility in evaluating the many different
@@ -297,7 +297,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        This routine must be called before `KSP.setUp` if the user is
+        This routine must be called before `setUp` if the user is
         to be allowed to set the Krylov type.
 
         See also
@@ -323,8 +323,8 @@ cdef class KSP(Object):
         -----
         The user context is a way for users to attach any information
         to the `PETSc.KSP` that they may need later when interacting with the
-        KSP.
-        Use `KSP.getAppCtx` to get access to the context at a later
+
+        Use `getAppCtx` to get access to the context at a later
         time.
 
         See also
@@ -379,9 +379,9 @@ cdef class KSP(Object):
         -----
         If this is used then the `PETSc.KSP` will attempt to use the `DM` to
         create the matrix and use the routine set with
-        `DM.setKSPComputeOperators`. Use ``KSP.setDMActive(False)``
+        `DM.setKSPComputeOperators`. Use ``setDMActive(False)``
         to instead use the matrix you have provided with
-        `KSP.setOperators`.
+        `setOperators`.
 
         A `DM` can only be used for solving one problem at a time
         because information about the problem is stored on the DM, even
@@ -391,7 +391,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, DM, DM.setKSPComputeOperators, KSP.setOperators, DM.clone,
+        KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone,
         petsc.KSPSetDM
 
         """
@@ -409,13 +409,13 @@ cdef class KSP(Object):
 
         Notes
         -----
-        By default `KSP.setDM` sets the `DM` as active, call
-        ``KSP.setDMActive(False)`` after ``KSP.setDM(dm)`` to not
+        By default `setDM` sets the `DM` as active, call
+        ``setDMActive(False)`` after ``setDM(dm)`` to not
         have the `PETSc.KSP` object use the `DM` to generate the matrices.
 
         See also
         --------
-        KSP, DM, KSP.setDM, petsc.KSPSetDMActive
+        KSP, DM, setDM, petsc.KSPSetDMActive
 
         """
         cdef PetscBool cflag = PETSC_FALSE
@@ -445,12 +445,12 @@ cdef class KSP(Object):
 
         Notes
         -----
-        The routine you provide will be called EACH you call `KSP.solve`
+        The routine you provide will be called EACH you call `solve`
         to prepare the new right hand side for that solve.
 
         See also
         --------
-        KSP, KSP.solve, petsc.KSPSetComputeRHS
+        KSP, solve, petsc.KSPSetComputeRHS
 
         """
         if args  is None: args  = ()
@@ -481,21 +481,21 @@ cdef class KSP(Object):
         Notes
         -----
         The user provided function `operators` will be called
-        automatically at the very next call to `KSP.solve`. It will NOT
-        be called at future `KSP.solve` calls unless either
-        `KSP.setComputeOperators` or `KSP.setOperators` is called
-        before that `KSP.solve` is called. This allows the same system
+        automatically at the very next call to `solve`. It will NOT
+        be called at future `solve` calls unless either
+        `setComputeOperators` or `setOperators` is called
+        before that `solve` is called. This allows the same system
         to be solved several times with different right hand side
         functions, but is a confusing API since one might expect it to
-        be called for each `KSP.solve`.
+        be called for each `solve`.
 
-        To reuse the same preconditioner for the next `KSP.solve` and
+        To reuse the same preconditioner for the next `solve` and
         not compute a new one based on the most recently computed
         matrix call `petsc.KSPSetReusePreconditioner`.
 
         See also
         --------
-        KSP, KSP.solve, KSP.setOperators, petsc.KSPSetComputeOperators,
+        KSP, solve, setOperators, petsc.KSPSetComputeOperators,
         petsc.KSPSetReusePreconditioner
 
         """
@@ -529,7 +529,7 @@ cdef class KSP(Object):
         null space to ``A`` and the `PETSc.KSP` solvers will automatically use
         that null space as needed during the solution process.
 
-        All future calls to `KSP.setOperators` must use the same size
+        All future calls to `setOperators` must use the same size
         matrices!
 
         Passing ``None`` for ``A`` or ``P`` removes the matrix that is
@@ -537,7 +537,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.solve, KSP.setComputeOperators,
+        KSP, solve, setComputeOperators,
         petsc.KSPSetOperators
 
         """
@@ -565,7 +565,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.solve, KSP.setOperators, petsc.KSPGetOperators
+        KSP, solve, setOperators, petsc.KSPGetOperators
 
         """
         cdef Mat A = Mat(), P = Mat()
@@ -589,7 +589,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.getPC, petsc.KSPSetPC
+        KSP, getPC, petsc.KSPSetPC
 
         """
         CHKERR( KSPSetPC(self.ksp, pc.pc) )
@@ -601,7 +601,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, KSP.setPC, petsc.KSPGetPC
+        KSP, setPC, petsc.KSPGetPC
 
         """
         cdef PC pc = PC()
@@ -648,7 +648,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.getTolerances, KSP.setConvergenceTest,
+        petsc_options, getTolerances, setConvergenceTest,
         petsc.KSPSetTolerances, petsc.KSPConvergedDefault,
 
         """
@@ -682,7 +682,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setTolerances, petsc.KSPGetTolerances
+        setTolerances, petsc.KSPGetTolerances
 
         """
         cdef PetscReal crtol=0, catol=0, cdivtol=0
@@ -712,7 +712,7 @@ cdef class KSP(Object):
         Notes
         -----
         Must be called after the KSP type has been set so put this
-        after a call to `KSP.setType`, or `KSP.setFromOptions`.
+        after a call to `setType`, or `setFromOptions`.
 
         The default convergence test, `petsc.KSPConvergedDefault`,
         aborts if the residual grows to more than 10000 times the
@@ -725,11 +725,11 @@ cdef class KSP(Object):
 
         In the default PETSc convergence test, the precise values of
         reason are macros such as ``KSP_CONVERGED_RTOL``, which are
-        defined in ``petscksp.h``.
+        defined in ``petsch``.
 
         See also
         --------
-        KSP.setTolerances, KSP.getConvergenceTest,
+        setTolerances, getConvergenceTest,
         petsc.KSPSetConvergenceTest, petsc.KSPConvergedDefault
 
         """
@@ -761,7 +761,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setTolerances, KSP.setConvergenceTest,
+        setTolerances, setConvergenceTest,
         petsc.KSPGetConvergenceTest, petsc.KSPConvergedDefault
 
         """
@@ -814,12 +814,12 @@ cdef class KSP(Object):
         of length 10000 is allocated.
 
         If the array is not long enough then once the iterations is
-        longer than the array length `KSP.solve` stops recording the
+        longer than the array length `solve` stops recording the
         history.
 
         See also
         --------
-        KSP.getConvergenceHistory, petsc.KSPSetResidualHistory
+        getConvergenceHistory, petsc.KSPSetResidualHistory
 
         """
         cdef PetscReal *data = NULL
@@ -840,7 +840,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setConvergenceHistory, petsc.KSPGetResidualHistory
+        setConvergenceHistory, petsc.KSPGetResidualHistory
 
         """
         cdef const PetscReal *data = NULL
@@ -890,17 +890,17 @@ cdef class KSP(Object):
         -----
         The default is to do nothing. To print the residual, or
         preconditioned residual if
-        ``KSP.setNormType(KSP.NORM_PRECONDITIONED)`` was called, use
-        `KSP.monitor` as the monitoring routine, with a
+        ``setNormType(NORM_PRECONDITIONED)`` was called, use
+        `monitor` as the monitoring routine, with a
         `PETSc.Viewer.ASCII` as the context.
 
         Several different monitoring routines may be set by calling
-        `KSP.setMonitor` multiple times; all will be called in the order
+        `setMonitor` multiple times; all will be called in the order
         in which they were set.
 
         See also
         --------
-        petsc_options, KSP.getMonitor ,KSP.monitor, KSP.monitorCancel,
+        petsc_options, getMonitor ,monitor, monitorCancel,
         petsc.KSPMonitorSet
 
         """
@@ -921,8 +921,8 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.setMonitor, KSP.monitor,
-        KSP.monitorCancel, petsc.KSPGetMonitorContext
+        petsc_options, setMonitor, monitor,
+        monitorCancel, petsc.KSPGetMonitorContext
 
         """
         return self.get_attr('__monitor__')
@@ -934,7 +934,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.getMonitor, KSP.setMonitor, KSP.monitor,
+        petsc_options, getMonitor, setMonitor, monitor,
         petsc.KSPMonitorCancel
 
         """
@@ -955,7 +955,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setMonitor, petsc.KSPMonitor
+        setMonitor, petsc.KSPMonitor
 
         """
         cdef PetscInt  ival = asInt(its)
@@ -980,7 +980,7 @@ cdef class KSP(Object):
         except `Type.FGMRES` which only supports right preconditioning.
 
         For methods changing the side of the preconditioner changes the
-        norm type that is used, see `KSP.setNormType`.
+        norm type that is used, see `setNormType`.
 
         Symmetric preconditioning is currently available only for the
         `Type.QCG` method. Note, however, that symmetric preconditioning
@@ -988,12 +988,12 @@ cdef class KSP(Object):
         and a pre or post processing step.
 
         Setting the PC side often affects the default norm type. See
-        `KSP.setNormType` for details.
+        `setNormType` for details.
 
         See also
         --------
-        PC.Side, petsc_options, KSP.getPCSide, KSP.setNormType,
-        KSP.getNormType, petsc.KSPSetPCSide
+        PC.Side, petsc_options, getPCSide, setNormType,
+        getNormType, petsc.KSPSetPCSide
 
         """
         CHKERR( KSPSetPCSide(self.ksp, side) )
@@ -1005,7 +1005,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, KSP.setPCSide, KSP.setNormType, KSP.getNormType,
+        petsc_options, setPCSide, setNormType, getNormType,
         petsc.KSPGetPCSide
         """
         cdef PetscPCSide side = PC_LEFT
@@ -1023,29 +1023,29 @@ cdef class KSP(Object):
         Notes
         -----
         Not all combinations of preconditioner side (see
-        `KSP.setPCSide`) and norm type are supported by all Krylov
+        `setPCSide`) and norm type are supported by all Krylov
         methods. If only one is set, PETSc tries to automatically
         change the other to find a compatible pair. If no such
         combination is supported, PETSc will generate an error.
 
         See also
         --------
-        NormType, petsc_options, KSP.setUp, KSP.solve, KSP.destroy,
-        KSP.setPCSide, KSP.getPCSide, KSP.NormType,
+        NormType, petsc_options, setUp, solve, destroy,
+        setPCSide, getPCSide, NormType,
         petsc.KSPSetNormType, petsc.KSPConvergedSkip,
         petsc.KSPSetCheckNormIteration
 
         """
         CHKERR( KSPSetNormType(self.ksp, normtype) )
 
-    def getNormType(self) -> KSP.NormType:
+    def getNormType(self) -> NormType:
         """Get the norm that is used for convergence testing.
 
         Not collective.
 
         See also
         --------
-        KSP.NormType, KSP.setNormType,
+        NormType, setNormType,
         petsc.KSPGetNormType, petsc.KSPConvergedSkip
 
         """
@@ -1071,7 +1071,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        KSP.getComputeEigenvalues, petsc.KSPSetComputeEigenvalues
+        getComputeEigenvalues, petsc.KSPSetComputeEigenvalues
 
         """
         cdef PetscBool compute = PETSC_FALSE
@@ -1089,7 +1089,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setComputeEigenvalues, petsc.KSPSetComputeEigenvalues
+        setComputeEigenvalues, petsc.KSPSetComputeEigenvalues
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -1116,7 +1116,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.getComputeSingularValues, petsc.KSPSetComputeSingularValues
+        getComputeSingularValues, petsc.KSPSetComputeSingularValues
 
         """
         cdef PetscBool compute = PETSC_FALSE
@@ -1132,7 +1132,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP.setComputeSingularValues, petsc.KSPGetComputeSingularValues
+        setComputeSingularValues, petsc.KSPGetComputeSingularValues
 
         """
         cdef PetscBool flag = PETSC_FALSE
