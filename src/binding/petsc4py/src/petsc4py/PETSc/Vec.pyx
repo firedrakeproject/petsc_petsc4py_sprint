@@ -837,22 +837,21 @@ cdef class Vec(Object):
         dlm_tensor.del_obj = <dlpack_manager_del_obj>PetscDEALLOC
         return PyCapsule_New(dlm_tensor, 'dltensor', pycapsule_deleter)
 
-    # FIXME STUCK HERE
     def createGhost(
         self,
-        ghosts: ???,
+        ghosts: Sequence[int],
         size: tuple[int, int] | int,
         bsize: int | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a parallel vector.
+        """Create a parallel vector with ghost padding on each processor.
 
         Collective.
 
         Parameters
         ----------
         ghosts
-            ???
+            Global indices of ghost points. These do not need to be sorted.
         size
             Global size ``N`` or 2-tuple ``(n, N)`` with local and global
             sizes. For more information see `Sys.splitOwnership`.
@@ -863,6 +862,7 @@ cdef class Vec(Object):
 
         See Also
         --------
+        Vec.createGhostWithArray
         petsc.VecCreateGhost, petsc.VecCreateGhostBlock
 
         """
@@ -882,8 +882,39 @@ cdef class Vec(Object):
         PetscCLEAR(self.obj); self.vec = newvec
         return self
 
-    def createGhostWithArray(self, ghosts, array,
-                             size=None, bsize=None, comm=None):
+    def createGhostWithArray(
+        self,
+        ghosts: Sequence[int],
+        array: Sequence[Scalar],
+        size: tuple[int, int] | int | None = None,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a parallel vector with ghost padding and provided arrays.
+
+        Collective.
+
+        Parameters
+        ----------
+        ghosts
+            Global indices of ghost points. These do not need to be sorted.
+        array
+            Array to store the vector values. Must be at least as large as
+            the local size of the vector (including ghost points).
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            The block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Vec.createGhost
+        petsc.VecCreateGhostWithArray, petsc.VecCreateGhostBlockWithArray
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt ng=0, *ig=NULL
         ghosts = iarray_i(ghosts, &ng, &ig)
@@ -910,7 +941,31 @@ cdef class Vec(Object):
         self.set_attr('__array__', array)
         return self
 
-    def createShared(self, size, bsize=None, comm=None):
+    def createShared(
+        self,
+        size: tuple[int, int] | int,
+        bsize: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a parallel vector that uses shared memory.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Global size ``N`` or 2-tuple ``(n, N)`` with local and global
+            sizes. For more information see `Sys.splitOwnership`.
+        bsize
+            Block size, defaults to 1.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateShared
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt bs=0, n=0, N=0
         Vec_Sizes(size, bsize, &bs, &n, &N)
@@ -922,7 +977,34 @@ cdef class Vec(Object):
             CHKERR( VecSetBlockSize(self.vec, bs) )
         return self
 
-    def createNest(self, vecs, isets=None, comm=None):
+    # FIXME Is the description of isets correct?
+    def createNest(
+        self,
+        vecs: Sequence[Vec],
+        isets: Sequence[IS] = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a vector containing multiple nested subvectors.
+
+        The subvectors are stored separately.
+
+        Collective.
+
+        Parameters
+        ----------
+        vecs
+            Iterable of subvectors.
+        isets
+            Iterable of index sets describing a reordering for each of the
+            nested vectors, defaults to no reordering.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.VecCreateNest
+
+        """
         vecs = list(vecs)
         if isets:
             isets = list(isets)
@@ -947,57 +1029,200 @@ cdef class Vec(Object):
 
     #
 
-    def setOptionsPrefix(self, prefix):
+    def setOptionsPrefix(self, prefix: str) -> None:
+        """Set the prefix used to index the vector in the options database.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        prefix
+            Prefix prepended to all options.
+
+        See Also
+        --------
+        petsc_options, Vec.getOptionsPrefix, petsc.VecSetOptionsPrefix
+
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( VecSetOptionsPrefix(self.vec, cval) )
 
-    def getOptionsPrefix(self):
+    def getOptionsPrefix(self) -> str:
+        """Return the prefix used to index the vector in the options database.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_options, Vec.setOptionsPrefix, petsc.VecGetOptionsPrefix
+
+        """
         cdef const char *cval = NULL
         CHKERR( VecGetOptionsPrefix(self.vec, &cval) )
         return bytes2str(cval)
 
-    def appendOptionsPrefix(self, prefix):
+    def appendOptionsPrefix(self, prefix: str) -> None:
+        """Append to prefix used to index the vector in the options database.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        prefix
+            Prefix appended to existing options prefix.
+
+        See Also
+        --------
+        petsc_options
+        Vec.getOptionsPrefix, Vec.setOptionsPrefix
+        petsc.VecAppendOptionsPrefix
+
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( VecAppendOptionsPrefix(self.vec, cval) )
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
+        """Configure the vector using the options database.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_options, petsc.VecSetFromOptions
+
+        """
         CHKERR( VecSetFromOptions(self.vec) )
 
-    def setUp(self):
+    def setUp(self) -> Self:
+        """Prepare vector for use.
+
+        Most users will not need to call this directly as it will be called
+        automatically.
+
+        Collective.
+
+        See Also
+        --------
+        Vec.create, Vec.destroy, petsc.VecSetUp
+
+        """
         CHKERR( VecSetUp(self.vec) )
         return self
 
-    def setOption(self, option, flag):
+    def setOption(self, option: Vec.Option | str, flag: bool) -> None:
+        """Set a database option to control the vector's behaviour.
+
+        Collective.
+
+        Parameters
+        ----------
+        option
+            The option to set.
+        flag
+            Whether to enable (`True`) or disable (`False`) the option.
+
+        See Also
+        --------
+        petsc_options, petsc.VecSetOption
+
+        """
         CHKERR( VecSetOption(self.vec, option, flag) )
 
-    def getType(self):
+    def getType(self) -> Vec.Type | str:
+        """Return the type of the vector.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.VecGetType
+
+        """
         cdef PetscVecType cval = NULL
         CHKERR( VecGetType(self.vec, &cval) )
         return bytes2str(cval)
 
-    def getSize(self):
+    def getSize(self) -> int:
+        """Return the global number of elements in the vector.
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.setSizes, Vec.getLocalSize, petsc.VecGetSize
+
+        """
         cdef PetscInt N = 0
         CHKERR( VecGetSize(self.vec, &N) )
         return toInt(N)
 
-    def getLocalSize(self):
+    def getLocalSize(self) -> int:
+        """Return the number of elements stored locally by the vector.
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.setSizes, Vec.getSize, petsc.VecGetLocalSize
+
+        """
         cdef PetscInt n = 0
         CHKERR( VecGetLocalSize(self.vec, &n) )
         return toInt(n)
 
-    def getSizes(self):
+    def getSizes(self) -> tuple[int, int]:
+        """Return the local and global vector sizes.
+
+        Not collective.
+
+        Returns
+        -------
+        local_size : int
+            Local number of vector elements.
+        global_size : int
+            Global number of vector elements.
+
+        See Also
+        --------
+        Vec.getSize, Vec.getLocalSize
+        petsc.VecGetLocalSize, petsc.VecGetSize
+
+        """
         cdef PetscInt n = 0, N = 0
         CHKERR( VecGetLocalSize(self.vec, &n) )
         CHKERR( VecGetSize(self.vec, &N) )
         return (toInt(n), toInt(N))
 
-    def setBlockSize(self, bsize):
+    def setBlockSize(self, bsize: int) -> None:
+        """Set the block size.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        bsize
+            Block size.
+
+        See Also
+        --------
+        petsc.VecSetBlockSize
+
+        """
         cdef PetscInt bs = asInt(bsize)
         CHKERR( VecSetBlockSize(self.vec, bs) )
 
-    def getBlockSize(self):
+    def getBlockSize(self) -> int:
+        """Return the block size of the vector.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.VecGetBlockSize
+
+        """
         cdef PetscInt bs=0
         CHKERR( VecGetBlockSize(self.vec, &bs) )
         return toInt(bs)

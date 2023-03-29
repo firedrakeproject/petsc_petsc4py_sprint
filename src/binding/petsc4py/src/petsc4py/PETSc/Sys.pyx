@@ -292,7 +292,7 @@ cdef class Sys:
 
         Notes
         -----
-        Note that the ``size`` argument corresponds to the full size of the
+        The ``size`` argument corresponds to the full size of the
         vector. That is, an array with 10 blocks and a block size of 3 will
         have a ``size`` of 30, not 10.
 
