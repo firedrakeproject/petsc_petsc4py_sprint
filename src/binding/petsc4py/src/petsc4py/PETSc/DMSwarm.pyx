@@ -29,15 +29,19 @@ cdef class DMSwarm(DM):
     CollectType = DMSwarmCollectType
     PICLayoutType = DMSwarmPICLayoutType
 
-    def create(self, comm=None):
-        """TODO
+    def create(self, comm: Comm | None = None) -> Self:
+        """Creates an empty DM object and set its type to `SWARM`.
 
-        Not collective.
+        DMs are the abstract objects in PETSc that mediate between meshes and
+        discretizations and the algebraic solvers, time integrators, and
+        optimization algorithms.
+
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        comm
+            The communicator for the DM object.
 
         See also
         --------
@@ -51,15 +55,17 @@ cdef class DMSwarm(DM):
         CHKERR( DMSetType(self.dm, DMSWARM) )
         return self
 
-    def createGlobalVectorFromField(self, fieldname):
-        """TODO
+    def createGlobalVectorFromField(self, fieldname: str) -> Vec:
+        """Creates a `Vec` object sharing the array associated with a given field.
 
-        Not collective.
+        The vector must be returned using a matching call to `destroyGlobalVectorFromField`.
+
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name given to a registered field.
 
         See also
         --------
@@ -72,15 +78,15 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmCreateGlobalVectorFromField(self.dm, cfieldname, &vg.vec) )
         return vg
 
-    def destroyGlobalVectorFromField(self, fieldname):
-        """TODO
+    def destroyGlobalVectorFromField(self, fieldname: str) -> None:
+        """Destroys the `Vec` object which share the array associated with a given field.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name given to a registered field.
 
         See also
         --------
@@ -92,15 +98,17 @@ cdef class DMSwarm(DM):
         fieldname = str2bytes(fieldname, &cfieldname)
         CHKERR( DMSwarmDestroyGlobalVectorFromField(self.dm, cfieldname, &vec) )
 
-    def createLocalVectorFromField(self, fieldname):
-        """TODO
+    def createLocalVectorFromField(self, fieldname: str) -> Vec:
+        """Creates a `Vec` object sharing the array associated with a given field.
 
-        Not collective.
+        The vector must be returned using a matching call to `destroyLocalVectorFromField`.
+
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name given to a registered field.
 
         See also
         --------
@@ -113,15 +121,15 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmCreateLocalVectorFromField(self.dm, cfieldname, &vl.vec) )
         return vl
 
-    def destroyLocalVectorFromField(self, fieldname):
-        """TODO
+    def destroyLocalVectorFromField(self, fieldname: str) -> None:
+        """Destroys the `Vec` object which share the array associated with a given field.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name given to a registered field.
 
         See also
         --------
@@ -254,15 +262,18 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         cdef npy_intp s = <npy_intp> nlocal * blocksize
         return <object> PyArray_SimpleNewFromData(1, &s, typenum, data)
 
-    def restoreField(self, fieldname):
-        """TODO
+    def restoreField(self, fieldname: str):
+        """Restore access to the underlying array storing all entries associated with a registered field.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+fieldname - the textual name to identify this field
+Output parameters
+blocksize - the number of each data type
+type - the data type
+data - pointer to raw array
 
         See also
         --------
@@ -276,14 +287,14 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         CHKERR( DMSwarmRestoreField(self.dm, cfieldname, &blocksize, &ctype, <void**> 0) )
 
     def vectorDefineField(self, fieldname):
-        """TODO
+        """Set the field from which to define a `Vec` object when `createLocalVector`, or `createGlobalVector` is called.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        fieldname
+            The textual name given to a registered field.
 
         See also
         --------
@@ -427,15 +438,10 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         cdef PetscBool remove_pts = asBool(remove_sent_points)
         CHKERR( DMSwarmMigrate(self.dm, remove_pts) )
 
-    def collectViewCreate(self):
-        """TODO
+    def collectViewCreate(self) -> None:
+        """Applies a collection method and gathers points in neighbour ranks into the `DMSwarm`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -444,15 +450,10 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         """
         CHKERR( DMSwarmCollectViewCreate(self.dm) )
 
-    def collectViewDestroy(self):
-        """TODO
+    def collectViewDestroy(self) -> None:
+        """Resets the `DMSwarm` to the size prior to calling `collectViewCreate`.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -666,15 +667,12 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
         filename = str2bytes(filename, &cval)
         CHKERR( DMSwarmViewXDMF(self.dm, cval) )
 
-    def sortGetAccess(self):
-        """TODO
+    def sortGetAccess(self) -> None:
+        """Setups up a `DMSwarm` point sort context for efficient traversal of points within a cell.
+
+        You must call `sortRestoreAccess` when you no longer need access to the sort context.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -685,8 +683,6 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
 
     def sortRestoreAccess(self) -> None:
         """Invalidates the `DMSwarm` point sorting context.
-
-        You must call `sortGetAccess` before calling `sortRestoreAccess`.
 
         Not collective.
 
