@@ -393,31 +393,21 @@ cdef class FE(Object):
         CHKERR( PetscFESetBasisSpace(self.fe, sp.space ) )
 
     def setFromOptions(self) -> None:
-        """TODO
+        """Set parameters in a `FE` from the options database.
 
         Collective.
 
-        Parameters
-        ----------
-        unit
-            Data type.
-
         See also
         --------
-        petsc.PetscFESetFromOptions
+        petsc.PetscFESetFromOptions, petsc_options
 
         """
         CHKERR( PetscFESetFromOptions(self.fe) )
 
     def setUp(self) -> None:
-        """TODO
+        """Construct data structures for the `FE` after the `FEType` has been set.
 
         Collective.
-
-        Parameters
-        ----------
-        unit
-            Data type.
 
         See also
         --------
@@ -458,18 +448,18 @@ cdef class FE(Object):
         CHKERR( PetscFESetDualSpace(self.fe, dspace.dualspace) )
 
     def viewFromOptions(self, name: str, Object obj=None) -> None:
-        """TODO
+        """View from a `FE` based on values in the options database.
 
         Collective.
 
         Parameters
         ----------
-        unit
-            Data type.
+obj - Optional object that provides the options prefix
+name - command line option name
 
         See also
         --------
-        petsc.PetscFEViewFromOptions
+        petsc.PetscFEViewFromOptions, petsc_options
 
         """
         cdef const char *cname = NULL
