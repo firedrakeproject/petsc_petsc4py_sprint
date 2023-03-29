@@ -844,7 +844,45 @@ cdef class KSP(Object):
 
     # --- monitoring ---
 
-    def setMonitor(self, monitor, args=None, kargs=None):
+    def setMonitor(self,
+        monitor: KSPMonitorFunction,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None
+    ) -> None:
+        """Set additional function to monitor the residual.
+
+        Sets an ADDITIONAL function to be called at every iteration to
+        monitor the residual/error etc.
+
+        Logically collective
+
+        Parameters
+        ----------
+        monitor
+            Callback which monitors the convergence.
+        args
+            Positional arguments for callback function ``converged``.
+        kargs
+            Keyword arguments for callback function ``converged``.
+
+        Notes
+        -----
+        The default is to do nothing. To print the residual, or
+        preconditioned residual if
+        ``KSP.setNormType(KSP.NORM_PRECONDITIONED)`` was called, use
+        `KSP.monitorResidual` as the monitoring routine, with a
+        `PETS.Viewer.ASCII` as the context.
+
+        Several different monitoring routines may be set by calling
+        `KSP.monitorSet` multiple times; all will be called in the order
+        in which they were set.
+
+        See also
+        --------
+        petsc_options, KSP.getResidual ,KSP.monitorResidual,
+        KSP.monitorCancel, petsc.KSPMonitorSet
+
+        """
         if monitor is None: return
         cdef object monitorlist = self.get_attr('__monitor__')
         if monitorlist is None:
@@ -855,54 +893,245 @@ cdef class KSP(Object):
         if kargs is None: kargs = {}
         monitorlist.append((monitor, args, kargs))
 
-    def getMonitor(self):
+    def getMonitor(self) -> KSPMonitorFunction:
+        """Get function used to monitor the residual.
+
+        Not collective.
+
+        See also
+        --------
+        petsc_options, KSP.setResidual, KSP.monitorResidual,
+        KSP.monitorCancel, petsc.KSPGetMonitor
+
+        """
         return self.get_attr('__monitor__')
 
-    def monitorCancel(self):
+    def monitorCancel(self) -> None:
+        """Clear all monitors for a `KSP` object.
+
+        Logically collective.
+
+        See also
+        --------
+        petsc_options, KSP.getResidual, KSP.setResidual,
+        KSP.monitorResidual, petsc.KSPMonitorCancel
+
+        """
         CHKERR( KSPMonitorCancel(self.ksp) )
         self.set_attr('__monitor__', None)
 
     cancelMonitor = monitorCancel
 
-    def monitor(self, its, rnorm):
+    def monitor(self, int its, float rnorm) -> None:
+        """Run the user provided monitor routines, if they exist
+
+        Collective.
+
+        Notes
+        -----
+        This routine is called by the `KSP` implementations. It does not
+        typically need to be called by the user.
+
+        See also
+        --------
+        KSP.setMonitor, petsc.KSPMonitor
+
+        """
         cdef PetscInt  ival = asInt(its)
         cdef PetscReal rval = asReal(rnorm)
         CHKERR( KSPMonitor(self.ksp, ival, rval) )
 
     # --- customization ---
 
-    def setPCSide(self, side):
+    def setPCSide(self, PC.Side side) -> None:
+        """Sets the preconditioning side.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        side
+            The preconditioning side, where side is one of
+            - `PC.Side.LEFT` - left preconditioning (default)
+            - `PC.Side.RIGHT` - right preconditioning
+            - `PC.Side.SYMMETRIC` - symmetric preconditioning
+
+        Notes
+        -----
+        Left preconditioning is used by default for most Krylov methods
+        except `KSP.FGMRES` which only supports right preconditioning.
+
+        For methods changing the side of the preconditioner changes the
+        norm type that is used, see `KSP.setNormType`.
+
+        Symmetric preconditioning is currently available only for the
+        `KSP.QCG` method. Note, however, that symmetric preconditioning
+        can be emulated by using either right or left preconditioning
+        and a pre or post processing step.
+
+        Setting the PC side often affects the default norm type. See
+        `KSP.setNormType` for details.
+
+        See also
+        --------
+        petsc_options, KSP.getPCSide, KSP.setNormType, KSP.getNormType,
+        petsc.KSPSetPCSide
+
+        """
         CHKERR( KSPSetPCSide(self.ksp, side) )
 
-    def getPCSide(self):
+    def getPCSide(self) -> PC.Side:
+        """Get the preconditioning side.
+
+        Not collective.
+
+        See also
+        --------
+        petsc_options, KSP.setPCSide, KSP.setNormType, KSP.getNormType,
+        petsc.KSPGetPCSide
+        """
         cdef PetscPCSide side = PC_LEFT
         CHKERR( KSPGetPCSide(self.ksp, &side) )
         return side
 
-    def setNormType(self, normtype):
+    def setNormType(self, KSP.NormType normtype) -> None:
+        """Sets the norm that is used for convergence testing.
+
+        Parameters
+        ----------
+            normtype
+                one of
+                - `KSP.NormType.NONE` - skips computing the norm, this
+                    should generally only be used if you are using the
+                    Krylov method as a smoother with a fixed small
+                    number of iterations. Implicitly sets
+                    `KSP.convergedSkip` as KSP convergence test. Note
+                    that certain algorithms such as `KSP.GMRES` ALWAYS
+                    require the norm calculation, for these methods the
+                    norms are still computed, they are just not used in
+                    the convergence test.
+                - `KSP.NormType.PRECONDITIONED` - the default for left
+                    preconditioned solves, uses the l₂ norm of the
+                    preconditioned residual P⁻¹(b - Ax)
+                - `KSP.NormType.UNPRECONDITIONED` - uses the l₂ norm of
+                    the true b - Ax residual.
+                - `KSP.NormType.NATURAL` - supported  by `KSP.CG`,
+                    `KSP.CR`, `KSP.CGNE`, `KSP.CGS`.
+
+        Notes
+        -----
+        Not all combinations of preconditioner side (see
+        `KSP.setPCSide`) and norm type are supported by all Krylov
+        methods. If only one is set, PETSc tries to automatically
+        change the other to find a compatible pair. If no such
+        combination is supported, PETSc will generate an error.
+
+        See also
+        --------
+        petsc_options, KSP.setUp, KSP.solve, KSP.destroy,
+        KSP.convergedSkip, KSP.setCheckNormIteration, KSP.setPCSide,
+        KSP.getPCSide, KSP.normType, petsc.KSPSetNormType
+
+        """
         CHKERR( KSPSetNormType(self.ksp, normtype) )
 
-    def getNormType(self):
+    def getNormType(self) -> KSP.NormType:
+        """Get the norm that is used for convergence testing.
+
+        Not collective.
+
+        See also
+        --------
+        KSP.NormType, KSP.setNormType, KSP.convergedSkip,
+        petsc.KSPGetNormType
+
+        """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
         CHKERR( KSPGetNormType(self.ksp, &normtype) )
         return normtype
 
-    def setComputeEigenvalues(self, bint flag):
+    def setComputeEigenvalues(self, bint flag) -> None:
+        """Set a flag to compute eigenvalues.
+
+        Sets a flag so that the extreme eigenvalues values will be
+        calculated via a Lanczos or Arnoldi process as the linear
+        system is solved.
+
+        Parameters
+        ----------
+        flag
+            Boolean whether to compute eigenvalues (or not).
+
+        Notes
+        -----
+        Currently this option is not valid for all iterative methods.
+
+        See Also
+        --------
+        KSP.getComputeEigenvalues, petsc.KSPSetComputeEigenvalues
+
+        """
         cdef PetscBool compute = PETSC_FALSE
         if flag: compute = PETSC_TRUE
         CHKERR( KSPSetComputeEigenvalues(self.ksp, compute) )
 
-    def getComputeEigenvalues(self):
+    def getComputeEigenvalues(self) -> bool:
+        """Get flag indicating whether eigenvalues will be calculated.
+
+        Gets the flag indicating that the extreme eigenvalues values
+        will be calculated via a Lanczos or Arnoldi process as the
+        linear system is solved.
+
+        Not collective.
+
+        See also
+        --------
+        KSP.setComputeEigenvalues, petsc.KSPSetComputeEigenvalues
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( KSPGetComputeEigenvalues(self.ksp, &flag) )
         return toBool(flag)
 
-    def setComputeSingularValues(self, bint flag):
+    def setComputeSingularValues(self, bint flag) -> None:
+        """Set flag to calculate singular values.
+
+        Sets a flag so that the extreme singular values will be
+        calculated via a Lanczos or Arnoldi process as the linear
+        system is solved.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        flag
+            Boolean whether to compute singular values (or not).
+
+        Notes
+        -----
+        Currently this option is not valid for all iterative methods.
+
+        See also
+        --------
+        KSP.getComputeSingularValues, petsc.KSPSetComputeSingularValues
+
+        """
         cdef PetscBool compute = PETSC_FALSE
         if flag: compute = PETSC_TRUE
         CHKERR( KSPSetComputeSingularValues(self.ksp, compute) )
 
-    def getComputeSingularValues(self):
+    def getComputeSingularValues(self) -> bool:
+        """Get flag indicating whether singular values will be calculated.
+
+        Gets the flag indicating whether the extreme singular values
+        will be calculated via a Lanczos or Arnoldi process as the
+        linear system is solved.
+
+        See also
+        --------
+        KSP.setComputeSingularValues, petsc.KSPGetComputeSingularValues
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( KSPGetComputeSingularValues(self.ksp, &flag) )
         return toBool(flag)
