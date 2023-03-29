@@ -1174,7 +1174,7 @@ cdef class TS(Object):
         cdef object tmp = oarray_r(tspan, &nt, &rtspan)
         CHKERR( TSSetTimeSpan(self.ts, nt, rtspan) )
 
-    def getTimeSpan(self) -> NDArray[float]:
+    def getTimeSpan(self) -> ArrayReal:
         """Return the time span.
 
         Not collective.
