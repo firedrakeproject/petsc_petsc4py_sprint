@@ -1,6 +1,9 @@
 # --------------------------------------------------------------------
 
 class DMType(object):
+    """`DM` types.
+
+    """
     DA        = S_(DMDA_type)
     COMPOSITE = S_(DMCOMPOSITE)
     SLICED    = S_(DMSLICED)
@@ -18,6 +21,9 @@ class DMType(object):
     STAG      = S_(DMSTAG)
 
 class DMBoundaryType(object):
+    """`DM` Boundary types.
+
+    """
     NONE     = DM_BOUNDARY_NONE
     GHOSTED  = DM_BOUNDARY_GHOSTED
     MIRROR   = DM_BOUNDARY_MIRROR
@@ -44,6 +50,9 @@ class DMPolytopeType(object):
 # --------------------------------------------------------------------
 
 cdef class DM(Object):
+    """`DM`.
+
+    """
 
     Type         = DMType
     BoundaryType = DMBoundaryType
@@ -85,9 +94,18 @@ cdef class DM(Object):
             Viewer used to display the DM, either 
             `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
         
+        Notes
+        -----
+        On using `Viewer.Type.HDF5` format, one can save 
+        multiple `DMPLEX` meshes in a single HDF5 files.
+        This in turn requires one to name the `DMPLEX` object 
+        with petsc4py.Object.setName before saving it with
+        DM.view and before loading it with DM.load for 
+        identification of the mesh object.
+
         See Also
         --------
-        petsc.DMLoad
+        Dm.view, DM.load, Object.setName, petsc.DMLoad
 
         """
         CHKERR( DMLoad(self.dm, viewer.vwr) )
@@ -128,28 +146,79 @@ cdef class DM(Object):
         return self
 
     def clone(self):
+        """Clone a `DM`.
+
+        Collective.
+
+        Returns
+        -------
+        dm 
+            Object dm created by cloning from an original dm.
+        
+        See Also
+        --------
+        petsc.DMClone
+
+        """
         cdef DM dm = type(self)()
         CHKERR( DMClone(self.dm, &dm.dm) )
         return dm
 
-    def setType(self, dm_type):
-        """
+    def setType(self, dm_type) -> None:
+        """Set a `DM`.
+
+        Collective.
+
+        Parameters
+        ----------
+        dm_type
+            Set the `DM` type.
+
+        Notes
+        -----
+        `DM` types are availabe in DMType class.
+
+        See Also
+        --------
+        DMtype, petsc.DMSetType
+
         """
         cdef PetscDMType cval = NULL
         dm_type = str2bytes(dm_type, &cval)
         CHKERR( DMSetType(self.dm, cval) )
 
-    def getType(self):
+    def getType(self) -> str:
+        """Get the `DM` type name.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetType
+
+        """
         cdef PetscDMType cval = NULL
         CHKERR( DMGetType(self.dm, &cval) )
         return bytes2str(cval)
 
-    def getDimension(self):
+    def getDimension(self) -> int:
+        """Get the topological dimension of the `DM`.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetDimension
+
+        """
         cdef PetscInt dim = 0
         CHKERR( DMGetDimension(self.dm, &dim) )
         return toInt(dim)
 
-    def setDimension(self, dim):
+    def setDimension(self, dim) -> None:
+        """Set the topological dimension of the `DM`.
+        
+        """
         cdef PetscInt cdim = asInt(dim)
         CHKERR( DMSetDimension(self.dm, cdim) )
 
