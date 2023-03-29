@@ -777,7 +777,7 @@ cdef class IS(Object):
         indices = iarray_i(indices, &nidx, &idx)
         CHKERR( ISGeneralSetIndices(self.iset, nidx, idx, cm) )
 
-    def getIndices(self) -> NDArray[int]:
+    def getIndices(self) -> ArrayInt:
         """Return the indices of the index set.
 
         Not collective.
@@ -821,7 +821,7 @@ cdef class IS(Object):
         indices = iarray_i(indices, &nidx, &idx)
         CHKERR( ISBlockSetIndices(self.iset, bs, nidx, idx, cm) )
 
-    def getBlockIndices(self) -> NDArray[int]:
+    def getBlockIndices(self) -> ArrayInt:
         """Return the indices of an index set with type `IS.Type.BLOCK`.
 
         Not collective.
@@ -1019,7 +1019,7 @@ cdef class IS(Object):
         IS.getIndices
 
         """
-        def __get__(self) -> NDArray[int]:
+        def __get__(self) -> ArrayInt:
             return self.getIndices()
 
     property array:
@@ -1028,7 +1028,7 @@ cdef class IS(Object):
         Not collective.
 
         """
-        def __get__(self) -> NDArray[int]:
+        def __get__(self) -> ArrayInt:
             return asarray(self)
 
     # --- NumPy array interface (legacy) ---
@@ -1090,7 +1090,7 @@ cdef class LGMap(Object):
     def __call__(
         self,
         indices: Sequence[int],
-        result: NDArray[int] | None = None
+        result: ArrayInt | None = None
     ) -> None:
         """Convert a locally numbered list of integers to a global numbering.
 
@@ -1289,7 +1289,7 @@ cdef class LGMap(Object):
         CHKERR( ISLocalToGlobalMappingGetBlockSize(self.lgm, &bs) )
         return toInt(bs)
 
-    def getIndices(self) -> NDArray[int]:
+    def getIndices(self) -> ArrayInt:
         """Return the global indices for each local point in the mapping.
 
         Not collective.
@@ -1313,7 +1313,7 @@ cdef class LGMap(Object):
                     self.lgm, &indices) )
         return oindices
 
-    def getBlockIndices(self) -> NDArray[int]:
+    def getBlockIndices(self) -> ArrayInt:
         """Return the global indices for each local block.
 
         Not collective.
@@ -1339,14 +1339,14 @@ cdef class LGMap(Object):
                     self.lgm, &indices) )
         return oindices
 
-    def getInfo(self) -> dict[int, NDArray[int]]:
+    def getInfo(self) -> dict[int, ArrayInt]:
         """Determine the indices shared with neighbouring processes.
 
         Collective.
 
         Returns
         -------
-        dict[int, NDArray[int]]
+        dict[int, ArrayInt]
             Mapping from neighbouring processor number to an array of shared
             indices (in local numbering).
 
@@ -1368,14 +1368,14 @@ cdef class LGMap(Object):
                 self.lgm, &nproc, &procs, &numprocs, &indices)
         return neighs
 
-    def getBlockInfo(self) -> dict[int, NDArray[int]]:
+    def getBlockInfo(self) -> dict[int, ArrayInt]:
         """Determine the block indices shared with neighbouring processes.
 
         Collective.
 
         Returns
         -------
-        dict[int, NDArray[int]]
+        dict[int, ArrayInt]
             Mapping from neighbouring processor number to an array of shared
             block indices (in local numbering).
 
@@ -1402,8 +1402,8 @@ cdef class LGMap(Object):
     def apply(
         self,
         indices: Sequence[int],
-        result: NDArray[int_] | None = None,
-    ) -> NDArray[int_]:
+        result: ArrayInt | None = None,
+    ) -> ArrayInt:
         """Convert a locally numbered list of integers to a global numbering.
 
         Not collective.
@@ -1418,7 +1418,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        NDArray[int_]
+        ArrayInt
             Indices in global numbering. If ``result`` is not `None` then this is
             returned here.
 
@@ -1440,8 +1440,8 @@ cdef class LGMap(Object):
     def applyBlock(
         self,
         indices: Sequence[int],
-        result: NDArray[int_] | None = None,
-    ) -> NDArray[int_]:
+        result: ArrayInt | None = None,
+    ) -> ArrayInt:
         """Convert a local block numbering to a global block numbering.
 
         Not collective.
@@ -1456,7 +1456,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        NDArray[int_]
+        ArrayInt
             Block indices in global numbering. If ``result`` is not `None`
             then this is returned here.
 
@@ -1504,7 +1504,7 @@ cdef class LGMap(Object):
         self,
         indices: Sequence[int],
         mode: LGMap.MapMode | str | None = None,
-    ) -> NDArray[int]:
+    ) -> ArrayInt:
         """Compute local numbering from global numbering.
 
         Not collective.
@@ -1519,7 +1519,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        NDArray[int]
+        ArrayInt
             Indices with a local numbering.
 
         See Also
@@ -1544,7 +1544,7 @@ cdef class LGMap(Object):
         self,
         indices: Sequence[int],
         mode: LGMap.MapMode | str | None = None,
-    ) -> NDArray[int]:
+    ) -> ArrayInt:
         """Compute blocked local numbering from blocked global numbering.
 
         Not collective.
@@ -1559,7 +1559,7 @@ cdef class LGMap(Object):
 
         Returns
         -------
-        NDArray[int]
+        ArrayInt
             Indices with a local block numbering.
 
         See Also
@@ -1617,7 +1617,7 @@ cdef class LGMap(Object):
         LGMap.getIndices, petsc.ISLocalToGlobalMappingGetIndices
 
         """
-        def __get__(self) -> NDArray[int]:
+        def __get__(self) -> ArrayInt:
             return self.getIndices()
 
     property block_indices:
@@ -1630,7 +1630,7 @@ cdef class LGMap(Object):
         LGMap.getBlockIndices, petsc.ISLocalToGlobalMappingGetBlockIndices
 
         """
-        def __get__(self) -> NDArray[int]:
+        def __get__(self) -> ArrayInt:
             return self.getBlockIndices()
 
     property info:
@@ -1643,7 +1643,7 @@ cdef class LGMap(Object):
         LGMap.getInfo, petsc.ISLocalToGlobalMappingGetInfo
 
         """
-        def __get__(self) -> dict[int, NDArray[int]]:
+        def __get__(self) -> dict[int, ArrayInt]:
             return self.getInfo()
 
     property block_info:
@@ -1656,7 +1656,7 @@ cdef class LGMap(Object):
         LGMap.getBlockInfo, petsc.ISLocalToGlobalMappingGetBlockInfo
 
         """
-        def __get__(self) -> dict[int, NDArray[int]]:
+        def __get__(self) -> dict[int, ArrayInt]:
             return self.getBlockInfo()
 
 # --------------------------------------------------------------------
