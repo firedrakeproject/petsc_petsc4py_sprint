@@ -348,7 +348,7 @@ cdef class LogStage:
         CHKERR( PetscLogStageGetActive(self.id, &flag) )
         return toBool(flag)
 
-    def setActive(self, flag: bool) -> None: 
+    def setActive(self, flag: bool) -> None:
         """Set if the stage is active.
         
         Not Collective.
