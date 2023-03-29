@@ -464,7 +464,7 @@ cdef class TS(Object):
         f
             The vector into which the right-hand-side is computed.
         args
-            Additional posititional arguments for ``function``.
+            Additional positional arguments for ``function``.
         kargs
             Additional keyword arguments for ``function``.
 
@@ -503,7 +503,7 @@ cdef class TS(Object):
         P
             The matrix into which the preconditioner is computed.
         args
-            Additional posititional arguments for ``jacobian``.
+            Additional positional arguments for ``jacobian``.
         kargs
             Additional keyword arguments for ``jacobian``.
 
@@ -662,7 +662,7 @@ cdef class TS(Object):
         f
             The vector to store values or ``None`` to be created internally.
         args
-            Additional posititional arguments for ``function``.
+            Additional positional arguments for ``function``.
         kargs
             Additional keyword arguments for ``function``.
 
@@ -704,7 +704,7 @@ cdef class TS(Object):
         P
             The optional matrix to use for building a preconditioner matrix.
         args
-            Additional posititional arguments for ``jacobian``.
+            Additional positional arguments for ``jacobian``.
         kargs
             Additional keyword arguments for ``jacobian``.
 
@@ -744,7 +744,7 @@ cdef class TS(Object):
         J
             The matrix into which the Jacobian is computed.
         args
-            Additional posititional arguments for ``jacobian``.
+            Additional positional arguments for ``jacobian``.
         kargs
             Additional keyword arguments for ``jacobian``.
         
@@ -909,7 +909,7 @@ cdef class TS(Object):
         f
             The vector to store values or ``None`` to be created internally.
         args
-            Additional posititional arguments for ``function``.
+            Additional positional arguments for ``function``.
         kargs
             Additional keyword arguments for ``function``.
 
@@ -949,7 +949,7 @@ cdef class TS(Object):
         P
             The optional matrix to use for building a preconditioner matrix.
         args
-            Additional posititional arguments for ``jacobian``.
+            Additional positional arguments for ``jacobian``.
         kargs
             Additional keyword arguments for ``jacobian``.
 
@@ -1728,7 +1728,7 @@ cdef class TS(Object):
         monitor
             The custom monitor function.
         args
-            Additional posititional arguments for ``monitor``.
+            Additional positional arguments for ``monitor``.
         kargs
             Additional keyword arguments for ``monitor``.
 
@@ -1819,7 +1819,7 @@ cdef class TS(Object):
         postevent
             Function to execute after the event
         args
-            Additional posititional arguments for ``eventhandler``.
+            Additional positional arguments for ``eventhandler``.
         kargs
             Additional keyword arguments for ``eventhandler``.
 
@@ -1912,7 +1912,7 @@ cdef class TS(Object):
         prestep
             The function to be called at the beginning of each step.
         args
-            Additional posititional arguments for ``prestep``.
+            Additional positional arguments for ``prestep``.
         kargs
             Additional keyword arguments for ``prestep``.
 
@@ -1952,7 +1952,7 @@ cdef class TS(Object):
         poststep
             The function to be called at the end of each step.
         args
-            Additional posititional arguments for ``poststep``.
+            Additional positional arguments for ``poststep``.
         kargs
             Additional keyword arguments for ``poststep``.
 
@@ -2239,7 +2239,7 @@ cdef class TS(Object):
         A
             The matrix into which the Jacobian will be computed.
         args
-            Additional posititional arguments for ``jacobianp``.
+            Additional positional arguments for ``jacobianp``.
         kargs
             Additional keyword arguments for ``jacobianp``.
         
@@ -2311,7 +2311,7 @@ cdef class TS(Object):
         A
             The JacobianP matrix
         args
-            Additional posititional arguments for ``rhsjacobianp``.
+            Additional positional arguments for ``rhsjacobianp``.
         kargs
             Additional keyword arguments for ``rhsjacobianp``.
         
