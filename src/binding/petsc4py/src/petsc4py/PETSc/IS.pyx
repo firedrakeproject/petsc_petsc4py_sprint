@@ -1045,8 +1045,6 @@ class GLMapMode(object):
     """Enum describing mapping behavior for global-to-local maps when global
     indices are missing.
 
-    Attributes
-    ----------
     MASK
         Give missing global indices a local index of -1.
     DROP
@@ -1054,7 +1052,7 @@ class GLMapMode(object):
         
     See Also
     --------
-    ISGlobalToLocalMappingMode
+    petsc.ISGlobalToLocalMappingMode
 
     """
     MASK = PETSC_IS_GTOLM_MASK
@@ -1503,7 +1501,7 @@ cdef class LGMap(Object):
     def applyInverse(
         self,
         indices: Sequence[int],
-        mode: LGMap.MapMode | str | None = None,
+        mode: MapMode | str | None = None,
     ) -> ArrayInt:
         """Compute local numbering from global numbering.
 
@@ -1515,7 +1513,7 @@ cdef class LGMap(Object):
             Indices with a global numbering.
         mode
             Flag indicating what to do with indices that have no local value,
-            defaults to `LGMap.MapMode.MASK`.
+            defaults to ``"mask"``.
 
         Returns
         -------
@@ -1543,7 +1541,7 @@ cdef class LGMap(Object):
     def applyBlockInverse(
         self,
         indices: Sequence[int],
-        mode: LGMap.MapMode | str | None = None,
+        mode: MapMode | str | None = None,
     ) -> ArrayInt:
         """Compute blocked local numbering from blocked global numbering.
 
@@ -1555,7 +1553,7 @@ cdef class LGMap(Object):
             Indices with a global block numbering.
         mode
             Flag indicating what to do with indices that have no local value,
-            defaults to `LGMap.MapMode.MASK`.
+            defaults to ``"mask"``.
 
         Returns
         -------
