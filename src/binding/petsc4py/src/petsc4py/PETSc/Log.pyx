@@ -588,7 +588,7 @@ cdef class LogEvent:
         raise NotImplementedError
 
     def setActive(self, flag: bool) -> None:
-        """Indicate if the event should be or not be logged.
+        """Indicate whether or not the event should logged.
 
         Not Collective
 
