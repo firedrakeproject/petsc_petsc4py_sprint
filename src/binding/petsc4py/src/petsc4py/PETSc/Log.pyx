@@ -648,13 +648,13 @@ cdef class LogEvent:
     #
 
     def getPerfInfo(self, stage: int | None = None):
-        """Return the performance information about the given event
+        """Get the performance information about the given event
             in the given event.   
 
         Parameters
         ----------
         stage
-            The stage number, defaults to `PETSC_DETERMINE`.
+            The stage number.
 
         Returns
         -------
