@@ -41,7 +41,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMCreate, petsc.DMSetType
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -63,7 +63,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmCreateGlobalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -84,7 +84,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmDestroyGlobalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -104,7 +104,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmCreateLocalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -125,7 +125,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmDestroyLocalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -145,7 +145,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmInitializeFieldRegister
 
         """
         CHKERR( DMSwarmInitializeFieldRegister(self.dm) )
@@ -162,7 +162,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmFinalizeFieldRegister
 
         """
         CHKERR( DMSwarmFinalizeFieldRegister(self.dm) )
@@ -179,7 +179,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSetLocalSizes
 
         """
         cdef PetscInt cnlocal = asInt(nlocal)
@@ -199,7 +199,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmRegisterPetscDatatypeField
 
         """
         cdef const char *cfieldname = NULL
@@ -225,7 +225,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmGetField
 
         """
         cdef const char *cfieldname = NULL
@@ -257,7 +257,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmRestoreField
 
         """
         cdef const char *cfieldname = NULL
@@ -278,7 +278,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmVectorDefineField
 
         """
         cdef const char *cval = NULL
@@ -297,7 +297,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmAddPoint
 
         """
         CHKERR( DMSwarmAddPoint(self.dm) )
@@ -314,7 +314,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmAddNPoints
 
         """
         cdef PetscInt cnpoints = asInt(npoints)
@@ -332,7 +332,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmRemovePoint
 
         """
         CHKERR( DMSwarmRemovePoint(self.dm) )
@@ -349,7 +349,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmRemovePointAtIndex
 
         """
         cdef PetscInt cindex = asInt(index)
@@ -367,7 +367,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmCopyPoint
 
         """
         cdef PetscInt cpi = asInt(pi)
@@ -386,7 +386,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmGetLocalSize
 
         """
         cdef PetscInt size = asInt(0)
@@ -405,7 +405,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmGetSize
 
         """
         cdef PetscInt size = asInt(0)
@@ -424,7 +424,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmMigrate
 
         """
         cdef PetscBool remove_pts = asBool(remove_sent_points)
@@ -442,7 +442,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmCollectViewCreate
 
         """
         CHKERR( DMSwarmCollectViewCreate(self.dm) )
@@ -459,7 +459,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmCollectViewDestroy
 
         """
         CHKERR( DMSwarmCollectViewDestroy(self.dm) )
@@ -476,7 +476,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSetCellDM
 
         """
         CHKERR( DMSwarmSetCellDM(self.dm, dm.dm) )
@@ -493,7 +493,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmGetCellDM
 
         """
         cdef PetscDM newdm = NULL
@@ -515,7 +515,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSetType
 
         """
         cdef PetscDMSwarmType cval = dmswarm_type
@@ -533,7 +533,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSetPointsUniformCoordinates
 
         """
         cdef PetscInt dim = asInt(0)
@@ -563,7 +563,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSetPointCoordinates
 
         """
         cdef ndarray xyz = iarray(coordinates, NPY_PETSC_REAL)
@@ -589,7 +589,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmInsertPointsUsingCellDM
 
         """
         cdef PetscDMSwarmPICLayoutType clayoutType = layoutType
@@ -608,7 +608,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSetPointCoordinatesCellwise
 
         """
         cdef ndarray xyz = iarray(coordinates, NPY_PETSC_REAL)
@@ -632,7 +632,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmViewFieldsXDMF
 
         """
         cdef const char *cval = NULL
@@ -659,7 +659,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmViewXDMF
 
         """
         cdef const char *cval = NULL
@@ -678,7 +678,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSortGetAccess
 
         """
         CHKERR( DMSwarmSortGetAccess(self.dm) )
@@ -695,7 +695,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSortRestoreAccess
 
         """
         CHKERR( DMSwarmSortRestoreAccess(self.dm) )
@@ -712,7 +712,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSortGetPointsPerCell
 
         """
         cdef PetscInt ce = asInt(e)
@@ -736,7 +736,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSortGetNumberOfPointsPerCell
 
         """
         cdef PetscInt ce = asInt(e)
@@ -756,7 +756,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSortGetIsValid
 
         """
         cdef PetscBool isValid = asBool(False)
@@ -775,7 +775,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmSortGetSizes
 
         """
         cdef PetscInt ncells = asInt(0)
@@ -795,7 +795,7 @@ cdef class DMSwarm(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMSwarmProjectFields
 
         """
         cdef PetscBool creuse = asBool(reuse)
