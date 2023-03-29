@@ -376,7 +376,7 @@ cdef class DM(Object):
     #
 
     def setBasicAdjacency(self, useCone: bool, useClosure: bool) -> None:
-        """Set the flags for determining the variable influence.
+        """Set the flags for determining variable influence.
 
         Not Collective.
 
@@ -397,7 +397,7 @@ cdef class DM(Object):
         CHKERR( DMSetBasicAdjacency(self.dm, uC, uCl) )
 
     def getBasicAdjacency(self):
-        """Get the flags that determine the variable influence.
+        """Get the flags for determing variable influence.
 
         Not collective.
 
@@ -407,7 +407,7 @@ cdef class DM(Object):
             This flag provides the variable influence starting with the cone operation if True.
         toBool(uCl) : bool
             This flag provides the variable influence using transitive closure.
-
+        
         See Also
         --------
         petsc.DMGetBasicAdjacency
@@ -418,13 +418,47 @@ cdef class DM(Object):
         CHKERR( DMGetBasicAdjacency(self.dm, &uC, &uCl) )
         return toBool(uC), toBool(uCl)
 
-    def setFieldAdjacency(self, field, useCone, useClosure):
+    def setFieldAdjacency(self, field: int, useCone: bool, useClosure: bool) -> None:
+        """Set the flags for determining variable influence.
+
+        Not Collective.
+
+        Parameters
+        ----------
+        field : int
+            The field number.
+        bool
+            If True, the variable influence is set, starting with the cone operation.
+        bool
+            If True, the variable influence is set using transitive closure.
+
+        See Also
+        --------
+        petsc.DMSetAdjacency
+
+        """
         cdef PetscInt  f   = asInt(field)
         cdef PetscBool uC  = useCone
         cdef PetscBool uCl = useClosure
         CHKERR( DMSetAdjacency(self.dm, f, uC, uCl) )
 
-    def getFieldAdjacency(self, field):
+    def getFieldAdjacency(self, field: int):
+        """Get the flags for determining variable influence.
+
+        Not Collective.
+
+        Returns
+        -------
+        toBool(uC) : bool
+            This flag provides the variable influence starting with the cone operation if True.
+        toBool(uCl) : bool
+            This flag provides the variable influence using transitive closure.
+        
+        See Also
+        --------
+        petsc.DMGetAdjacency
+        
+        """
         cdef PetscInt  f   = asInt(field)
         cdef PetscBool uC  = PETSC_FALSE
         cdef PetscBool uCl = PETSC_FALSE
@@ -444,7 +478,7 @@ cdef class DM(Object):
 
     #
 
-    def setAuxiliaryVec(self, Vec aux, label=None, value=0, part=0):
+    def setAuxiliaryVec(self, Vec aux, label=None, value=0, part=0) -> None:
         cdef PetscInt cvalue = asInt(value)
         cdef PetscInt cpart = asInt(part)
         cdef const char *cval = NULL
@@ -475,7 +509,7 @@ cdef class DM(Object):
         CHKERR( DMGetNumFields(self.dm, &cnum) )
         return toInt(cnum)
 
-    def setField(self, index, Object field, label=None):
+    def setField(self, index, Object field, label=None) -> None:
         cdef PetscInt     cidx = asInt(index)
         cdef PetscObject  cobj = field.obj[0]
         cdef PetscDMLabel clbl = NULL
@@ -493,22 +527,22 @@ cdef class DM(Object):
         PetscINCREF(field.obj)
         return (field, None)
 
-    def addField(self, Object field, label=None):
+    def addField(self, Object field, label=None) -> None:
         cdef PetscObject  cobj = field.obj[0]
         cdef PetscDMLabel clbl = NULL
         assert label is None
         CHKERR( DMAddField(self.dm, clbl, cobj) )
 
-    def clearFields(self):
+    def clearFields(self) -> None:
         CHKERR( DMClearFields(self.dm) )
 
-    def copyFields(self, DM dm):
+    def copyFields(self, DM dm) -> None:
         CHKERR( DMCopyFields(self.dm, dm.dm) )
 
-    def createDS(self):
+    def createDS(self) -> None:
         CHKERR( DMCreateDS(self.dm) )
 
-    def clearDS(self):
+    def clearDS(self) -> None:
         CHKERR( DMClearDS(self.dm) )
 
     def getDS(self):
@@ -517,20 +551,20 @@ cdef class DM(Object):
         PetscINCREF(ds.obj)
         return ds
 
-    def copyDS(self, DM dm):
+    def copyDS(self, DM dm) -> None:
         CHKERR( DMCopyDS(self.dm, dm.dm) )
 
-    def copyDisc(self, DM dm):
+    def copyDisc(self, DM dm) -> None:
         CHKERR( DMCopyDisc(self.dm, dm.dm) )
 
     #
 
-    def getBlockSize(self):
+    def getBlockSize(self)
         cdef PetscInt bs = 1
         CHKERR( DMGetBlockSize(self.dm, &bs) )
         return toInt(bs)
 
-    def setVecType(self, vec_type):
+    def setVecType(self, vec_type) -> None:
         cdef PetscVecType vtype = NULL
         vec_type = str2bytes(vec_type, &vtype)
         CHKERR( DMSetVecType(self.dm, vtype) )
@@ -551,7 +585,7 @@ cdef class DM(Object):
         PetscINCREF(vg.obj)
         return vg
 
-    def restoreGlobalVec(self, Vec vg):
+    def restoreGlobalVec(self, Vec vg) -> None:
         CHKERR( PetscObjectDereference(<PetscObject>vg.vec) )
         CHKERR( DMRestoreGlobalVector(self.dm, &vg.vec) )
 
@@ -561,21 +595,21 @@ cdef class DM(Object):
         PetscINCREF(vl.obj)
         return vl
 
-    def restoreLocalVec(self, Vec vl):
+    def restoreLocalVec(self, Vec vl) -> None:
         CHKERR( PetscObjectDereference(<PetscObject>vl.vec) )
         CHKERR( DMRestoreLocalVector(self.dm, &vl.vec) )
 
-    def globalToLocal(self, Vec vg, Vec vl, addv=None):
+    def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMGlobalToLocalBegin(self.dm, vg.vec, im, vl.vec) )
         CHKERR( DMGlobalToLocalEnd  (self.dm, vg.vec, im, vl.vec) )
 
-    def localToGlobal(self, Vec vl, Vec vg, addv=None):
+    def localToGlobal(self, Vec vl, Vec vg, addv=None) -> None:
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMLocalToGlobalBegin(self.dm, vl.vec, im, vg.vec) )
         CHKERR( DMLocalToGlobalEnd(self.dm, vl.vec, im, vg.vec) )
 
-    def localToLocal(self, Vec vl, Vec vlg, addv=None):
+    def localToLocal(self, Vec vl, Vec vlg, addv=None) -> None:
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMLocalToLocalBegin(self.dm, vl.vec, im, vlg.vec) )
         CHKERR( DMLocalToLocalEnd  (self.dm, vl.vec, im, vlg.vec) )
@@ -600,7 +634,7 @@ cdef class DM(Object):
         PetscINCREF(sec.obj)
         return sec
 
-    def setCoordinates(self, Vec c):
+    def setCoordinates(self, Vec c) -> None:
         CHKERR( DMSetCoordinates(self.dm, c.vec) )
 
     def getCoordinates(self):
@@ -609,7 +643,7 @@ cdef class DM(Object):
         PetscINCREF(c.obj)
         return c
 
-    def setCoordinatesLocal(self, Vec c):
+    def setCoordinatesLocal(self, Vec c) -> None:
         CHKERR( DMSetCoordinatesLocal(self.dm, c.vec) )
 
     def getCoordinatesLocal(self):
@@ -638,11 +672,11 @@ cdef class DM(Object):
         return tuple([(toReal(lmin[i]), toReal(lmax[i]))
                       for i from 0 <= i < dim])
 
-    def localizeCoordinates(self):
+    def localizeCoordinates(self) -> None:
         CHKERR( DMLocalizeCoordinates(self.dm) )
     #
 
-    def setMatType(self, mat_type):
+    def setMatType(self, mat_type) -> None:
         """Set matrix type to be used by `DM.createMat`."""
         cdef PetscMatType mtype = NULL
         mat_type = str2bytes(mat_type, &mtype)
@@ -735,7 +769,7 @@ cdef class DM(Object):
         CHKERR( DMGetRefineLevel(self.dm, &n) )
         return toInt(n)
 
-    def setRefineLevel(self, level):
+    def setRefineLevel(self, level) -> None:
         cdef PetscInt clevel = asInt(level)
         CHKERR( DMSetRefineLevel(self.dm, clevel) )
 
@@ -779,7 +813,7 @@ cdef class DM(Object):
 
     #
 
-    def setSection(self, Section sec):
+    def setSection(self, Section sec) -> None:
         CHKERR( DMSetSection(self.dm, sec.sec) )
 
     def getSection(self):
@@ -788,7 +822,7 @@ cdef class DM(Object):
         PetscINCREF(sec.obj)
         return sec
 
-    def setGlobalSection(self, Section sec):
+    def setGlobalSection(self, Section sec) -> None:
         CHKERR( DMSetGlobalSection(self.dm, sec.sec) )
 
     def getGlobalSection(self):
@@ -802,7 +836,7 @@ cdef class DM(Object):
     setDefaultGlobalSection = setGlobalSection
     getDefaultGlobalSection = getGlobalSection
 
-    def createSectionSF(self, Section localsec, Section globalsec):
+    def createSectionSF(self, Section localsec, Section globalsec) -> None:
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
     def getSectionSF(self):
@@ -811,7 +845,7 @@ cdef class DM(Object):
         PetscINCREF(sf.obj)
         return sf
 
-    def setSectionSF(self, SF sf):
+    def setSectionSF(self, SF sf) -> None:
         CHKERR( DMSetSectionSF(self.dm, sf.sf) )
 
     createDefaultSF = createSectionSF
@@ -824,7 +858,7 @@ cdef class DM(Object):
         PetscINCREF(sf.obj)
         return sf
 
-    def setPointSF(self, SF sf):
+    def setPointSF(self, SF sf) -> None:
         CHKERR( DMSetPointSF(self.dm, sf.sf) )
 
     def getNumLabels(self):
@@ -845,12 +879,12 @@ cdef class DM(Object):
         CHKERR( DMHasLabel(self.dm, cname, &flag) )
         return toBool(flag)
 
-    def createLabel(self, name):
+    def createLabel(self, name) -> None:
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMCreateLabel(self.dm, cname) )
 
-    def removeLabel(self, name):
+    def removeLabel(self, name) -> None:
         cdef const char *cname = NULL
         cdef PetscDMLabel clbl = NULL
         name = str2bytes(name, &cname)
@@ -865,13 +899,13 @@ cdef class DM(Object):
         CHKERR( DMGetLabelValue(self.dm, cname, cpoint, &value) )
         return toInt(value)
 
-    def setLabelValue(self, name, point, value):
+    def setLabelValue(self, name, point, value) -> None:
         cdef PetscInt cpoint = asInt(point), cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMSetLabelValue(self.dm, cname, cpoint, cvalue) )
 
-    def clearLabelValue(self, name, point, value):
+    def clearLabelValue(self, name, point, value) -> None:
         cdef PetscInt cpoint = asInt(point), cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
@@ -907,13 +941,13 @@ cdef class DM(Object):
         CHKERR( DMGetStratumIS(self.dm, cname, cvalue, &sis.iset) )
         return sis
 
-    def clearLabelStratum(self, name, value):
+    def clearLabelStratum(self, name, value) -> None:
         cdef PetscInt cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMClearLabelStratum(self.dm, cname, cvalue) )
 
-    def setLabelOutput(self, name, output):
+    def setLabelOutput(self, name, output) -> None:
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         cdef PetscBool coutput = output
@@ -931,7 +965,7 @@ cdef class DM(Object):
     createLocalVector = createLocalVec
     getMatrix = createMatrix = createMat
 
-    def setKSPComputeOperators(self, operators, args=None, kargs=None):
+    def setKSPComputeOperators(self, operators, args=None, kargs=None) -> None:
         if args  is None: args  = ()
         if kargs is None: kargs = {}
         context = (operators, args, kargs)
