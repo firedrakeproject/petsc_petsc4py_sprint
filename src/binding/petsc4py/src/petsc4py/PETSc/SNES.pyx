@@ -777,7 +777,7 @@ cdef class SNES(Object):
             CHKERR( SNESSetUpdate(self.snes, NULL) )
 
     def getUpdate(self) -> SNESUpdateFunction:
-        """Return the callback to compute update at the beginning of the nonlinear step.
+        """Return the callback to compute the update at the beginning of the nonlinear step.
 
         Not collective.
 
@@ -999,7 +999,7 @@ cdef class SNES(Object):
         return ngs
 
     def computeNGS(self, Vec x, Vec b=None) -> None:
-        """Compute the nonlinear Gauss-Seidel step.
+        """Compute a nonlinear Gauss-Seidel step.
 
         Collective.
 
@@ -1563,7 +1563,7 @@ cdef class SNES(Object):
         return toBool(flag)
 
     def setIterationNumber(self, its: int) -> None:
-        """Set the current iteration number.
+        """Set the current iteration number. This is only of use to implementers of custom SNES types.
 
         Collective.
 
@@ -1603,7 +1603,7 @@ cdef class SNES(Object):
         CHKERR( SNESSetForceIteration(self.snes, bval) )
 
     def setFunctionNorm(self, norm: float) -> None:
-        """Set the function norm.
+        """Set the function norm value. This is only of use to implementers of custom SNES types. 
 
         Collective.
 
@@ -1730,7 +1730,7 @@ cdef class SNES(Object):
         return ksp
 
     def setUseEW(self, flag: bool = True, *targs: Any, **kargs: Any) -> None:
-        """Inform the solver to use the Eisenstat-Walker trick.
+        """Tell the solver to use the Eisenstat-Walker trick.
 
         Logically collective.
 
