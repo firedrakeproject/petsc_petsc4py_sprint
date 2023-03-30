@@ -270,12 +270,11 @@ class KSPConvergedReason(object):
     An class modelling an ENUM. The following values are available as
     attributes.
 
-    ### Still iterating
     CONVERGED_ITERATING
         Still iterating
     ITERATING
         Still iterating
-    ### Converged
+
     CONVERGED_RTOL_NORMAL
         Undocumented.
     CONVERGED_ATOL_NORMAL
@@ -295,7 +294,6 @@ class KSPConvergedReason(object):
     CONVERGED_HAPPY_BREAKDOWN
         Undocumented.
 
-    ### Diverged
     DIVERGED_NULL
         Undocumented.
     DIVERGED_MAX_IT
