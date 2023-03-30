@@ -10,8 +10,6 @@ class DMPlexReorderDefaultFlag(object):
 cdef class DMPlex(DM):
     """Encapsulate an unstructured mesh.
 
-    A `DMPlex` object interfaces for both topology and geometry. It is capable of parallel refinement and coarsening (using Pragmatic or ParMmg) and parallel redistribution for load balancing. It is designed to interface with the `FE` and ``FV`` trial discretization objects.
-
     See Also
     --------
     petsc.DMPlex
@@ -23,18 +21,18 @@ cdef class DMPlex(DM):
     #
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Create a `DMPlex` object, which encapsulates an unstructured mesh, or CW complex, which can be expressed using a Hasse Diagram.
+        """Create a `DMPlex` object, which encapsulates an unstructured mesh.
 
         Collective.
 
         Parameters
         ----------
         comm
-            The communicator for the `DMPlex` object.
+            The communicator for the `DMPlex` object, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        DM, DMPlex, DMType, DM.create, DM.setType, petsc.DMPlexCreate
+        DM, DMPlex, DM.create, DM.setType, petsc.DMPlexCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -43,8 +41,8 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createFromCellList(self, dim: int, cells: Sequence[int], coords: Sequence[float], interpolate: bool = True, comm: Comm | None = None) -> Self:
-        """Create `DMPlex` from a list of vertices for each cell (common mesh generator output), but only process 0 takes in the input.
+    def createFromCellList(self, dim: int, cells: Sequence[int], coords: Sequence[float], interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create `DMPlex` from a list of vertices for each cell (common mesh generator output).
 
         Collective.
 
@@ -55,15 +53,15 @@ cdef class DMPlex(DM):
         cells
             An array of number of cells times number of vertices on each cell, only on process 0.
         coords
-            An array of number of vertices times spatial dimension, only on process 0.
+            An array of number of vertices times spatial dimension for coordinates, only on process 0.
         interpolate
             Flag indicating that intermediate mesh entities (faces, edges) should be created automatically.
         comm
-            The communicator.
+            The communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        DM, DMPlex, DMPlex.buildFromCellList, DMPlex.buildCoordinatesFromCellList, DMPlex.createFromDAG, DMPlex.create, petsc.DMPlexCreateFromCellListPetsc
+        DM, DMPlex, DMPlex.create, petsc.DMPlexCreateFromCellListPetsc
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -97,7 +95,7 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createBoxMesh(self, faces: Sequence[int], lower: Sequence[int] | None = (0,0,0), upper: Sequence[int] | None = (1,1,1),
+    def createBoxMesh(self, faces: Sequence[int], lower: Sequence[float] | None = (0,0,0), upper: Sequence[float] | None = (1,1,1),
                       simplex: bool | None = True, periodic: Sequence | str | int | bool | None = False, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
         """Create a mesh on the tensor product of unit intervals (box) using simplices or tensor cells (hexahedra).
 
@@ -108,21 +106,21 @@ cdef class DMPlex(DM):
         faces
             Number of faces per dimension, or `None` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D.
         lower
-            The lower left corner, defaults to (0, 0, 0).
+            The lower left corner.
         upper
-            The upper right corner, defaults to (1, 1, 1).
+            The upper right corner.
         simplex
-            `True` for simplices, `False` for tensor cells, defaults to `True`.
+            `True` for simplices, `False` for tensor cells.
         periodic
-            The boundary type for the X,Y,Z direction, or `None` for `DM_BOUNDARY_NONE`, defaults to `False`.
+            The boundary type for the X,Y,Z direction, or `None` for `DM.BoundaryType.NONE`.
         interpolate
-            Flag to create intermediate mesh pieces (edges, faces), defaults to `True`.
+            Flag to create intermediate mesh pieces (edges, faces).
         comm
-            The communicator for the `DMPlex` object.
+            The communicator for the `DMPlex` object, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        DM, DMPlex, DM.setFromOptions, DMPlex.createFromFile, DMPlex.createHexCylinderMesh, DM.setType, DM.create, petsc.DMPlexCreateBoxMesh
+        DM, DMPlex, DM.setFromOptions, DMPlex.createFromFile, DM.setType, DM.create, petsc.DMPlexCreateBoxMesh
 
         """
         cdef Py_ssize_t i = 0
@@ -146,31 +144,24 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createBoxSurfaceMesh(self, faces, lower=(0,0,0), upper=(1,1,1),
-                             interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateBoxSurfaceMesh - Creates a mesh on the surface of the tensor product of unit intervals (box) using tensor cells (hexahedra).
+    def createBoxSurfaceMesh(self, faces: Sequence[int], lower: Sequence[float] | None = (0,0,0), upper: Sequence[float] | None = (1,1,1),
+                             interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create a mesh on the surface of the tensor product of unit intervals (box) using tensor cells (hexahedra).
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The communicator for the `DM` object
-        dim
-            The spatial dimension of the box, so the resulting mesh is has dimension `dim`-1
         faces
-            Number of faces per dimension, or `None` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D
+            Number of faces per dimension, or `None` for (1,) in 1D and (2, 2) in 2D and (1, 1, 1) in 3D.
         lower
-            The lower left corner, or `None` for (0, 0, 0)
+            The lower left corner.
         upper
-            The upper right corner, or `None` for (1, 1, 1)
+            The upper right corner.
         interpolate
-            Flag to create intermediate mesh pieces (edges, faces)
-
-        Returns
-        -------
-        dm
-            The `DM` object
+            Flag to create intermediate mesh pieces (edges, faces).
+        comm
+            The communicator for the `DMPlex` object, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -194,37 +185,30 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createFromFile(self, filename, plexname="unnamed", interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateFromFile - This takes a filename and produces a `DM`
+    def createFromFile(self, filename: str, plexname: str | None = "unnamed", interpolate: bool | None = True, comm: Comm | None = None):
+        """Create `DMPlex` from a file.
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The communicator
         filename
-            A file name
+            A file name.
         plexname
-            The object name of the resulting `DM`, also used for intra-datafile lookup by some formats
+            The object name of the resulting `DMPlex`, also used for intra-datafile lookup by some formats.
         interpolate
-            Flag to create intermediate mesh pieces (edges, faces)
+            Flag to create intermediate mesh pieces (edges, faces).
+        comm
+            The communicator, defaults to `Sys.getDefaultComm`.
 
-        Returns
-        -------
-        dm
-            The `DM`
-
-        Options Database Key:
-        . -dm_plex_create_from_hdf5_xdmf - use the `PETSC_VIEWER_HDF5_XDMF` format for reading HDF5
-
-        Use -dm_plex_create_ prefix to pass options to the internal PetscViewer, e.g.
-        $ -dm_plex_create_viewer_hdf5_collective
+        Notes
+        -----
+        ``-dm_plex_create_from_hdf5_xdmf`` allows for using the `Viewer.Format.HDF5_XDMF` format for reading HDF5.\n
+        ``-dm_plex_create_ prefix`` allows for passing options to the internal `Viewer`, e.g., ``-dm_plex_create_viewer_hdf5_collective``.\n
 
         See Also
         --------
-        DM, DMPlex, DMPlex.createFromDAG, DMPlex.createFromCellList, DMPlex.create, Object.setName, DM.view, DM.load
-        petsc.DMPlexCreateFromFile
+        DM, DMPlex, DMPlex.createFromCellList, DMPlex.create, Object.setName, DM.view, DM.load, petsc.DMPlexCreateFromFile
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -238,28 +222,23 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createCGNS(self, cgid, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateCGNS - Create a `DMPlex` mesh from a CGNS file.
+    def createCGNS(self, cgid: int, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create a `DMPlex` mesh from a CGNS file.
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The MPI communicator
         filename
-            The name of the CGNS file
+            The CG id associated with a file and obtained using cg_open.
         interpolate
-            Create faces and edges in the mesh
-
-        Returns
-        -------
-        dm
-            The `DM` object representing the mesh
+            Create faces and edges in the mesh.
+        comm
+            The MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        DM, DMPlex, DMPlex.create, DMPlex.createCGNS, DMPlex.createExodus, petsc.DMPlexCreateCGNS
+        DM, DMPlex, DMPlex.create, DMPlex.createCGNSFromFile, DMPlex.createExodus, petsc.DMPlexCreateCGNS
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -270,7 +249,25 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createCGNSFromFile(self, filename, interpolate=True, comm: Comm | None = None):
+    def createCGNSFromFile(self, filename: str, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """"Create a `DMPlex` mesh from a CGNS file.
+
+        Collective.
+
+        Parameters
+        ----------
+        filename
+            The name of the CGNS file.
+        interpolate
+            Create faces and edges in the mesh.
+        comm
+            The MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        DM, DMPlex, DMPlex.create, DMPlex.createCGNS, DMPlex.createExodus, petsc.DMPlexCreateCGNSFromFile
+
+        """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscBool interp = interpolate
         cdef PetscDM   newdm = NULL
@@ -280,28 +277,23 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createExodusFromFile(self, filename, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateExodusFromFile - Create a `DMPlex` mesh from an ExodusII file.
+    def createExodusFromFile(self, filename: str, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create a `DMPlex` mesh from an ExodusII file.
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The MPI communicator
         filename
-            The name of the ExodusII file
+            The name of the ExodusII file.
         interpolate
-            Create faces and edges in the mesh
-
-        Returns
-        -------
-        dm
-            The `DM` object representing the mesh
+            Create faces and edges in the mesh.
+        comm
+            The MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        DM, PETSCVIEWEREXODUSII, DMPlex, DM.create, DMPlex.createExodus, petsc.DMPlexCreateExodusFromFile
+        DM, DMPlex, DM.create, DMPlex.createExodus, petsc.DMPlexCreateExodusFromFile
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -313,28 +305,23 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createExodus(self, exoid, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateExodus - Create a `DMPlex` mesh from an ExodusII file ID.
+    def createExodus(self, exoid: int, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create a `DMPlex` mesh from an ExodusII file ID.
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The MPI communicator
         exoid
-            The ExodusII id associated with a exodus file and obtained using ex_open
+            The ExodusII id associated with a exodus file and obtained using ex_open.
         interpolate
-            Create faces and edges in the mesh
-
-        Returns
-        -------
-        dm
-            The `DM` object representing the mesh
+            Create faces and edges in the mesh,
+        comm
+            The MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        DM, PETSCVIEWEREXODUSII, DMPlex, DM.create, petsc.DMPlexCreateExodus
+        DM, DMPlex, DM.create, petsc.DMPlexCreateExodus
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -345,39 +332,30 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createGmsh(self, Viewer viewer, interpolate=True, comm: Comm | None = None):
-        """DMPlexCreateGmsh - Create a `DMPlex` mesh from a Gmsh file viewer
+    def createGmsh(self, Viewer viewer, interpolate: bool | None = True, comm: Comm | None = None) -> Self:
+        """Create a `DMPlex` mesh from a Gmsh file viewer.
 
         Collective.
 
         Parameters
         ----------
-        comm
-            The MPI communicator
         viewer
-            The `Viewer` associated with a Gmsh file
+            The `Viewer` associated with a Gmsh file.
         interpolate
-            Create faces and edges in the mesh
+            Create faces and edges in the mesh.
+        comm
+            The MPI communicator, defaults to `Sys.getDefaultComm`.
 
-        Returns
-        -------
-        dm
-            The `DM` object representing the mesh
-
-        Options Database Keys:
-        + -dm_plex_gmsh_hybrid        - Force triangular prisms to use tensor order
-        . -dm_plex_gmsh_periodic      - Read Gmsh periodic section and construct a periodic Plex
-        . -dm_plex_gmsh_highorder     - Generate high-order coordinates
-        . -dm_plex_gmsh_project       - Project high-order coordinates to a different space, use the prefix dm_plex_gmsh_project_ to define the space
-        . -dm_plex_gmsh_use_regions   - Generate labels with region names
-        . -dm_plex_gmsh_mark_vertices - Add vertices to generated labels
-        . -dm_plex_gmsh_multiple_tags - Allow multiple tags for default labels
-        - -dm_plex_gmsh_spacedim <d>  - Embedding space dimension, if different from topological dimension
-
-        Note:
-        The Gmsh file format is described in http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format
-
-        By default, the "Cell Sets", "Face Sets", and "Vertex Sets" labels are created, and only insert the first tag on a point. By using -dm_plex_gmsh_multiple_tags, all tags can be inserted. Instead, -dm_plex_gmsh_use_regions creates labels based on the region names from the PhysicalNames section, and all tags are used.
+        Notes
+        -----
+        ``-dm_plex_gmsh_hybrid`` forces triangular prisms to use tensor order.\n
+        ``-dm_plex_gmsh_periodic`` allows for reading Gmsh periodic section and construct a periodic `DMPlex`.\n
+        ``-dm_plex_gmsh_highorder`` allows for generating high-order coordinates.\n
+        ``-dm_plex_gmsh_project`` projects high-order coordinates to a different space, use the prefix ``-dm_plex_gmsh_project_`` to define the space.\n
+        ``-dm_plex_gmsh_use_regions`` generates labels with region names.\n
+        ``-dm_plex_gmsh_mark_vertices`` adds vertices to generated labels.\n
+        ``-dm_plex_gmsh_multiple_tags`` allows multiple tags for default labels.\n
+        ``-dm_plex_gmsh_spacedim <d>`` embeds space dimension, if different from topological dimension.\n
 
         See Also
         --------
@@ -391,28 +369,19 @@ cdef class DMPlex(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def createCohesiveSubmesh(self, hasLagrange, value):
-        """DMPlexCreateCohesiveSubmesh - Extract from a mesh with cohesive cells the hypersurface defined by one face of the cells. Optionally, a label can be given to restrict the cells.
+    def createCohesiveSubmesh(self, hasLagrange: bool, value: int) -> DMPlex:
+        """Extract from this `DMPlex` with cohesive cells the hypersurface defined by one face of the cells.
 
         Parameters
         ----------
-        dm
-            The original mesh
         hasLagrange
-            The mesh has Lagrange unknowns in the cohesive cells
-        label
-            A label name, or `None`
+            Flag indicating whether the mesh has Lagrange unknowns in the cohesive cells.
         value
-            A label value
-
-        Returns
-        -------
-        subdm
-            The surface mesh
+            A label value.
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getSubpointMap, DMPlex.createSubmesh, petsc.DMPlexCreateCohesiveSubmesh
+        DM, DMPlex, petsc.DMPlexCreateCohesiveSubmesh
 
         """
         cdef PetscBool flag = hasLagrange
@@ -425,6 +394,13 @@ cdef class DMPlex(DM):
         """Return the interval for all mesh points [``pStart``, ``pEnd``).
 
         Not collective.
+
+        Returns
+        -------
+        pStart: int
+            The first mesh point.
+        pEnd: int
+            The upper bound for mesh points.
 
         See Also
         --------
@@ -515,7 +491,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getConeSize, DMPlex.setCone, DMPlex.getConeTuple, DMPlex.setChart, DMPlex.restoreCone, petsc.DMPlexGetCone
+        DM, DMPlex, DMPlex.getConeSize, DMPlex.setCone, DMPlex.setChart, petsc.DMPlexGetCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -681,7 +657,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getCellTypeLabel, DMPlex.getDepthLabel, DMPlex.getDepth, DMPlex.computeCellTypes, DM.createLabel, petsc.DMPlexSetCellType
+        DM, DMPlex, DMPlex.getCellTypeLabel, DMPlex.getDepth, DM.createLabel, petsc.DMPlexSetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -700,7 +676,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPolytopeType, DMPlex.getCellTypeLabel, DMPlex.getDepthLabel, DMPlex.getDepth, petsc.DMPlexGetCellType
+        DM, DMPlex, DMPolytopeType, DMPlex.getCellTypeLabel, DMPlex.getDepth, petsc.DMPlexGetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -715,7 +691,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getCellType, DMPlex.getDepthLabel, DM.createLabel, petsc.DMPlexGetCellTypeLabel
+        DM, DMPlex, DMPlex.getCellType, DM.createLabel, petsc.DMPlexGetCellTypeLabel
 
         """
         cdef DMLabel label = DMLabel()
@@ -858,7 +834,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.create, DMPlex.symmetrize, DMPlex.computeCellTypes, petsc.DMPlexStratify
+        DM, DMPlex, DMPlex.create, DMPlex.symmetrize, petsc.DMPlexStratify
 
         """
         CHKERR( DMPlexStratify(self.dm) )
@@ -920,7 +896,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getDepthLabel, DMPlex.getDepthStratum, DMPlex.getPointDepth, DMPlex.symmetrize, petsc.DMPlexGetDepth
+        DM, DMPlex, DMPlex.getDepthStratum, DMPlex.symmetrize, petsc.DMPlexGetDepth
 
         """
         cdef PetscInt depth = 0
@@ -939,7 +915,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getHeightStratum, DMPlex.getDepth, DMPlex.getDepthLabel, DMPlex.getPointDepth, DMPlex.symmetrize, DMPlex.interpolate, petsc.DMPlexGetDepthStratum
+        DM, DMPlex, DMPlex.getHeightStratum, DMPlex.getDepth, DMPlex.symmetrize, DMPlex.interpolate, petsc.DMPlexGetDepthStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
@@ -977,7 +953,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.restoreMeet, DMPlex.getJoin, petsc.DMPlexGetMeet
+        DM, DMPlex, DMPlex.getJoin, petsc.DMPlexGetMeet
 
         """
         cdef PetscInt  numPoints = 0
@@ -1003,7 +979,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.restoreJoin, DMPlex.getMeet, petsc.DMPlexGetJoin
+        DM, DMPlex, DMPlex.getMeet, petsc.DMPlexGetJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1029,7 +1005,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getJoin, DMPlex.restoreJoin, DMPlex.getMeet, petsc.DMPlexGetFullJoin
+        DM, DMPlex, DMPlex.getJoin, DMPlex.getMeet, petsc.DMPlexGetFullJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1090,7 +1066,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.vecRestoreClosure, DMPlex.vecSetClosure, DMPlex.matSetClosure, petsc.DMPlexVecRestoreClosure
+        DM, DMPlex, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscInt cp = asInt(p), csize = 0
@@ -1118,7 +1094,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.vecRestoreClosure, DMPlex.vecSetClosure, DMPlex.matSetClosure, petsc.DMPlexVecRestoreClosure
+        DM, DMPlex, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1151,7 +1127,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.vecGetClosure, DMPlex.matSetClosure, petsc.DMPlexVecSetClosure
+        DM, DMPlex, petsc.DMPlexVecSetClosure
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -1185,7 +1161,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.matSetClosureGeneral, DMPlex.vecGetClosure, DMPlex.vecSetClosure, petsc.DMPlexMatSetClosure
+        DM, DMPlex, petsc.DMPlexMatSetClosure
 
         """
         cdef PetscSection csec  =  sec.sec if  sec is not None else NULL
@@ -1325,7 +1301,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.constructCohesiveCells, DMPlex.labelComplete, petsc.DMPlexLabelCohesiveComplete
+        DM, DMPlex, DMPlex.labelComplete, petsc.DMPlexLabelCohesiveComplete
 
         """
         cdef PetscBool flg = flip
@@ -1342,7 +1318,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex, DMPlex.getAdjacency, DMPlex.distribute, DMPlex.preallocateOperator, DMPlex.setAnchors, petsc.DMPlexSetAdjacencyUseAnchors
+        DMPlex, DMPlex.getAdjacency, DMPlex.distribute, petsc.DMPlexSetAdjacencyUseAnchors
 
         """
         cdef PetscBool flag = useAnchors
@@ -1353,7 +1329,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex, DMPlex.getAdjacency, DMPlex.distribute, DMPlex.preallocateOperator, DMPlex.setAnchors, petsc.DMPlexGetAdjacencyUseAnchors
+        DMPlex, DMPlex.getAdjacency, DMPlex.distribute, petsc.DMPlexGetAdjacencyUseAnchors
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -1370,7 +1346,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex, DMPlex.distribute, DM.createMatrix, DMPlex.preallocateOperator, petsc.DMPlexGetAdjacency
+        DMPlex, DMPlex.distribute, petsc.DMPlexGetAdjacency
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1441,7 +1417,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.distribute, DMPlex.createOverlap, petsc_options, petsc.DMPlexRebalanceSharedPoints
+        DM, DMPlex, DMPlex.distribute, petsc_options, petsc.DMPlexRebalanceSharedPoints
 
         """
         cdef PetscInt centityDepth = asInt(entityDepth)
@@ -1503,7 +1479,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, SF, DMPlex.create, DMPlex.distribute, DMPlex.createOverlapLabel, petsc_options, petsc.DMPlexDistributeOverlap
+        DM, DMPlex, SF, DMPlex.create, DMPlex.distribute, petsc_options, petsc.DMPlexDistributeOverlap
 
         """
         cdef PetscInt coverlap = asInt(overlap)
@@ -1620,7 +1596,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex, DMPlex.uninterpolate, DMPlex.createFromCellList, DMPlex.copyCoordinates, petsc.DMPlexInterpolate
+        DMPlex, DMPlex.uninterpolate, DMPlex.createFromCellList, petsc.DMPlexInterpolate
 
         """
         cdef PetscDM newdm = NULL
@@ -1634,7 +1610,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex, DMPlex.interpolate, DMPlex.createFromCellList, DMPlex.copyCoordinates, petsc.DMPlexUninterpolate
+        DMPlex, DMPlex.interpolate, DMPlex.createFromCellList, petsc.DMPlexUninterpolate
 
         """
         cdef PetscDM newdm = NULL
@@ -1656,13 +1632,13 @@ cdef class DMPlex(DM):
         vec
             The existing data in a local vector.
         newsec
-            The `PetscSF` describing the new data layout.
+            The `SF` describing the new data layout.
         newvec
             The new data in a local vector.
 
         See Also
         --------
-        DMPlex, DMPlex.distribute, DMPlex.distributeFieldIS, DMPlex.distributeData, petsc.DMPlexDistributeField
+        DMPlex, DMPlex.distribute, petsc.DMPlexDistributeField
 
         """
         cdef MPI_Comm ccomm = MPI_COMM_NULL
@@ -1801,7 +1777,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getPointLocalField, DM.getLocalSection, Section.getOffset, Section.getDof, DMPlex.pointLocalRead, DMPlex.pointLocalRead, `DMPlex.pointLocalRef`, petsc.DMPlexGetPointLocal
+        DM, DMPlex, DMPlex.getPointLocalField, Section.getOffset, Section.getDof, `DMPlex.pointLocalRef`, petsc.DMPlexGetPointLocal
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1830,7 +1806,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getPointLocal, DM.getLocalSection, Section.getOffset, Petsc.sectionGetDof, DMPlex.pointLocalRead, DMPlex.pointLocalRead, DMPlex.pointLocalRef, petsc.DMPlexGetPointLocalField
+        DM, DMPlex, DMPlex.getPointLocal, Section.getOffset, Petsc.sectionGetDof, petsc.DMPlexGetPointLocalField
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1858,7 +1834,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getPointGlobalField, DM.getLocalSection, Section.getOffset, Section.getDof, DMPlex.pointGlobalRead, DMPlex.getPointLocal, DMPlex.pointGlobalRead, DMPlex.pointGlobalRef, petsc.DMPlexGetPointGlobal
+        DM, DMPlex, DMPlex.getPointGlobalField, Section.getOffset, Section.getDof, DMPlex.getPointLocal, petsc.DMPlexGetPointGlobal
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1887,7 +1863,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getPointGlobal, DM.getLocalSection, Section.getOffset, Section.getDof, DMPlex.pointGlobalRead, DMPlex.getPointLocal, DMPlex.pointGlobalRead, DMPlex.pointGlobalRef, petsc.DMPlexGetPointGlobalField
+        DM, DMPlex, DMPlex.getPointGlobal, Section.getOffset, Section.getDof, DMPlex.getPointLocal, petsc.DMPlexGetPointGlobalField
 
         """
         cdef PetscInt start = 0, end = 0
@@ -1908,7 +1884,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, Section, DMPlex.gecGetClosure, DMPlex.vecRestoreClosure, DMPlex.vecSetClosure, DMPlex.matSetClosure, petsc.DMPlexCreateClosureIndex
+        DM, DMPlex, Section, DMPlex.gecGetClosure, petsc.DMPlexCreateClosureIndex
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -2148,7 +2124,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex.metricSetUniform, DMPlex.metricIsIsotropic, DMPlex.metricRestrictAnisotropyFirst, petsc.DMPlexMetricIsUniform
+        DMPlex.metricSetUniform, DMPlex.metricRestrictAnisotropyFirst, petsc.DMPlexMetricIsUniform
 
         """
         cdef PetscBool uniform = PETSC_FALSE
@@ -2163,11 +2139,9 @@ cdef class DMPlex(DM):
         isotropic
             Flag indicating whether the metric is isotropic or not.
 
-        .seealso: `DMPlexMetricIsIsotropic`, `DMPlexMetricSetUniform`, `DMPlexMetricSetRestrictAnisotropyFirst`
-
         See Also
         --------
-        petsc.DMPlexMetricSetIsotropic
+        DMPlex.metricIsIsotropic, DMPlex.metricSetUniform, DMPlex.metricSetRestrictAnisotropyFirst, petsc.DMPlexMetricSetIsotropic
 
         """
         cdef PetscBool bval = asBool(isotropic)
@@ -2723,7 +2697,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex.metricNormalize, DMPlex.metricIntersection, petsc_options, petsc.DMPlexMetricEnforceSPD
+        DMPlex.metricNormalize, DMPlex.metricIntersection2, DMPlex.metricIntersection3, petsc_options, petsc.DMPlexMetricEnforceSPD
 
         """
         cdef PetscBool bval_rs = asBool(restrictSizes)
@@ -2768,7 +2742,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex.metricEnforceSPD, DMPlex.metricIntersection, petsc_options, petsc.DMPlexMetricNormalize
+        DMPlex.metricEnforceSPD, DMPlex.metricIntersection2, DMPlex.metricIntersection3, petsc_options, petsc.DMPlexMetricNormalize
 
         """
         cdef PetscBool bval_rs = asBool(restrictSizes)
@@ -2832,7 +2806,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex.metricIntersection, DMPlex.metricIntersection3, petsc.DMPlexMetricIntersection2
+        DMPlex.metricIntersection3, petsc.DMPlexMetricIntersection2
 
         """
         CHKERR( DMPlexMetricIntersection2(self.dm, metric1.vec, metric2.vec, metricInt.vec) )
@@ -2854,7 +2828,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex.metricIntersection, DMPlex.metricIntersection2, petsc.DMPlexMetricIntersection3
+        DMPlex.metricIntersection2, petsc.DMPlexMetricIntersection3
 
         """
         CHKERR( DMPlexMetricIntersection3(self.dm, metric1.vec, metric2.vec, metric3.vec, metricInt.vec) )
@@ -2874,7 +2848,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DM.projectFunction, DM.computeL2Diff, DMPlex.computeL2FieldDiff, DM.computeL2GradientDiff, petsc.DMPlexComputeGradientClementInterpolant
+        DM, DMPlex, DM.projectFunction, petsc.DMPlexComputeGradientClementInterpolant
 
         """
         CHKERR( DMPlexComputeGradientClementInterpolant(self.dm, locX.vec, locC.vec) )
@@ -2947,7 +2921,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DM.view, DMPlex.topologyView, DMPlex.coordinatesView, DMPlex.labelsView, DMPlex.globalVectorView, DMPlex.localVectorView, Section.View, DMPlex.sectionLoad, Viewer, petsc.DMPlexSectionView
+        DM, DMPlex, DM.view, DMPlex.topologyView, DMPlex.coordinatesView, DMPlex.labelsView, DMPlex.globalVectorView, DMPlex.localVectorView, DMPlex.sectionLoad, Viewer, petsc.DMPlexSectionView
 
         """
         CHKERR( DMPlexSectionView(self.dm, viewer.vwr, sectiondm.dm))
@@ -3081,7 +3055,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DM.load, DMPlex.topologyLoad, DMPlex.coordinatesLoad, DMPlex.labelsLoad, DMPlex.globalVectorLoad, DMPlex.localVectorLoad, Section.load, DMPlex.sectionView, SF, Viewer, petsc.DMPlexSectionLoad
+        DM, DMPlex, DM.load, DMPlex.topologyLoad, DMPlex.coordinatesLoad, DMPlex.labelsLoad, DMPlex.globalVectorLoad, DMPlex.localVectorLoad, DMPlex.sectionView, SF, Viewer, petsc.DMPlexSectionLoad
 
         """
         cdef SF gsf = SF()
@@ -3101,7 +3075,7 @@ cdef class DMPlex(DM):
         sectiondm
             The `DM` that contains the global section on which vec is defined.
         sf
-            The `PetscSF` that migrates the on-disk vector data into vec.
+            The `SF` that migrates the on-disk vector data into vec.
         vec
             The global vector to set values of.
 
