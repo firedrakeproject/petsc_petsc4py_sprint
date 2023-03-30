@@ -28,6 +28,9 @@ class VecOption(object):
 cdef class Vec(Object):
     """A vector object.
 
+    Vectors are further documented in
+    `the PETSc manual <petsc:chapter_vectors>`
+
     See Also
     --------
     petsc.Vec
