@@ -362,7 +362,7 @@ cdef class DMLabel(Object):
         return toInt(csize)
 
     def getStratumIS(self, stratum: int) -> IS:
-        """Return an IS with the stratum points.
+        """Return an `IS` with the stratum points.
 
         Not collective.
 
