@@ -10,7 +10,9 @@ class DMPlexReorderDefaultFlag(object):
 cdef class DMPlex(DM):
     """Encapsulate an unstructured mesh.
 
-    `DMPlex` interfaces for both topology and geometry. It is capable of parallel refinement and coarsening (using Pragmatic or ParMmg) and parallel redistribution for load balancing. It is designed to interface with the `FE` and ``FV`` trial discretization objects.
+    DMPlex encapsulates both topology and geometry. It is capable of parallel refinement and coarsening (using Pragmatic or ParMmg) and parallel redistribution for load balancing. It is designed to interface with the `FE` and ``FV`` trial discretization objects.
+
+    DMPlex is further documented in `the PETSc manual <petsc:chapter_unstructured>`.
 
     """
 
