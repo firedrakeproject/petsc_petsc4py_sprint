@@ -377,6 +377,22 @@ cdef class KSP(Object):
     only application of the preconditioner is used as the linear
     solver.
 
+    __call__(self, Vec b, Vec x = None) -> Vec:
+
+        Collective.
+
+        Parameters:
+        b
+            Right hand side vector.
+        x
+            Solution vector.
+
+        Notes:
+        Shortcut for `Type.solve`, which returns the solution vector.
+
+        See also:
+        solve, petsc_options, petsc.KSPSolve
+
     See also
     --------
     create, setType, SNES, TS, PC, Type.CG, Type.GMRES,
@@ -395,24 +411,7 @@ cdef class KSP(Object):
         self.ksp = NULL
 
     def __call__(self, Vec b, Vec x = None) -> Vec:
-        """Solves linear system.
-
-        Collective.
-
-        Parameters
-        ----------
-        b
-            Right hand side vector.
-        x
-            Solution vector.
-
-        Notes
-        -----
-        Shortcut for `Type.solve`, which returns the solution vector.
-
-        See also
-        --------
-        solve, petsc_options, petsc.KSPSolve
+        """Documented in class docstring.
 
         """
         if x is None: # XXX do this better
@@ -1697,7 +1696,7 @@ cdef class KSP(Object):
     def matSolve(self, Mat B, Mat X) -> None:
         """Solve a linear system with multiple right-hand sides.
 
-        These are stored as a `Mat.Type.MATDENSE`. Unlike `solve`,
+        These are stored as a `Mat.Type.DENSE`. Unlike `solve`,
         ``B`` and ``X`` must be different matrices.
 
         Parameters
