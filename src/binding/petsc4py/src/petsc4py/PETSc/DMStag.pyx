@@ -54,7 +54,8 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagCreate1d, petsc.DMStagCreate2d, petsc.DMStagCreate3d,
+        petsc.DMSetUp
 
         """
         # ndim
@@ -131,7 +132,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetStencilWidth
 
         """
         cdef PetscInt sw = asInt(swidth)
@@ -149,7 +150,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetStencilType
 
         """
         cdef PetscDMStagStencilType stype = asStagStencil(stenciltype)
@@ -167,7 +168,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetBoundaryTypes
 
         """
         cdef PetscDMBoundaryType btx = DM_BOUNDARY_NONE
@@ -188,7 +189,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetDOF
 
         """
         cdef tuple gdofs = tuple(dofs)
@@ -208,7 +209,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetGlobalSizes
 
         """
         cdef tuple gsizes = tuple(sizes)
@@ -228,7 +229,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetNumRanks
 
         """
         cdef tuple psizes = tuple(sizes)
@@ -248,7 +249,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetOwnershipRanges
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -289,7 +290,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetEntriesPerElement
 
         """
         cdef PetscInt epe=0
@@ -308,7 +309,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetStencilWidth
 
         """
         cdef PetscInt swidth=0
@@ -327,7 +328,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetDOF, petsc.DMGetDimension
 
         """
         cdef PetscInt dim=0, dof0=0, dof1=0, dof2=0, dof3=0
@@ -347,7 +348,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetCorners, petsc.DMGetDimension
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0, nExtrax=0, nExtray=0, nExtraz=0
@@ -367,7 +368,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetGhostCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -387,7 +388,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetLocalSizes
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -407,7 +408,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetGlobalSizes
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -427,7 +428,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetNumRanks
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -447,7 +448,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetStencilType
 
         """
         cdef PetscDMStagStencilType stype = DMSTAG_STENCIL_BOX
@@ -466,7 +467,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetOwnershipRanges
 
         """
         cdef PetscInt dim=0, m=0, n=0, p=0
@@ -488,7 +489,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetBoundaryTypes
 
         """
         cdef PetscInt dim=0
@@ -511,7 +512,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetIsFirstRank
 
         """
         cdef PetscBool rank0=PETSC_FALSE, rank1=PETSC_FALSE, rank2=PETSC_FALSE
@@ -532,7 +533,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetIsLastRank
 
         """
         cdef PetscBool rank0=PETSC_FALSE, rank1=PETSC_FALSE, rank2=PETSC_FALSE
@@ -555,7 +556,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetUniformCoordinatesExplicit
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
@@ -575,7 +576,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetUniformCoordinatesProduct
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
@@ -595,7 +596,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetUniformCoordinates
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
@@ -615,7 +616,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagSetCoordinateDMType
 
         """
         cdef PetscDMType cval = NULL
@@ -636,7 +637,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetLocationSlot
 
         """
         cdef PetscInt slot=0
@@ -657,7 +658,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetProductCoordinateLocationSlot
 
         """
         cdef PetscInt slot=0
@@ -677,7 +678,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagGetLocationDOF
 
         """
         cdef PetscInt dof=0
@@ -699,7 +700,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagMigrateVec
 
         """
         CHKERR( DMStagMigrateVec(self.dm, vec.vec, dmTo.dm, vecTo.vec ) )
@@ -716,7 +717,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagCreateCompatibleDMStag
 
         """
         cdef tuple gdofs = tuple(dofs)
@@ -740,7 +741,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMStagVecSplitToDMDA
 
         """
         cdef PetscInt pc = asInt(c)

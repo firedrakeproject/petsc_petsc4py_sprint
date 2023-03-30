@@ -21,7 +21,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_SELF)
@@ -41,7 +41,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationDestroy
 
         """
         CHKERR( DMInterpolationDestroy(&self.dminterp))
@@ -58,7 +58,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationEvaluate
 
         """
         cdef Vec v = Vec()
@@ -77,7 +77,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationGetCoordinates
 
         """
         cdef Vec coords = Vec()
@@ -96,7 +96,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationGetDim
 
         """
         cdef PetscInt cdim = 0
@@ -115,7 +115,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationGetDof
 
         """
         cdef PetscInt cdof = 0
@@ -134,7 +134,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationSetDim
 
         """
         cdef PetscInt cdim = asInt(dim)
@@ -152,7 +152,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationSetDof
 
         """
         cdef PetscInt cdof = asInt(dof)
@@ -170,7 +170,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationSetUp
 
         """
         cdef PetscBool credundantPoints = asBool(redundantPoints)
@@ -189,7 +189,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationGetVector
 
         """
         cdef Vec vec = Vec()
@@ -208,7 +208,7 @@ cdef class DMInterpolation:
 
         See also
         --------
-        petsc.TODO
+        petsc.DMInterpolationRestoreVector
 
         """
         CHKERR( DMInterpolationRestoreVector(self.dminterp, &vec.vec) )

@@ -12,7 +12,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -33,7 +33,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetMatrix
 
         """
         CHKERR( DMShellSetMatrix(self.dm, mat.mat) )
@@ -50,7 +50,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetGlobalVector
 
         """
         CHKERR( DMShellSetGlobalVector(self.dm, gv.vec) )
@@ -67,7 +67,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetLocalVector
 
         """
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
@@ -84,7 +84,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateGlobalVector
 
         """
         if create_gvec is not None:
@@ -108,7 +108,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateLocalVector
 
         """
         if create_lvec is not None:
@@ -133,7 +133,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetGlobalToLocal
 
         """
         cdef PetscDMShellXToYFunction cbegin = NULL, cend = NULL
@@ -163,7 +163,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetGlobalToLocalVecScatter
 
         """
         CHKERR( DMShellSetGlobalToLocalVecScatter(self.dm, gtol.sct) )
@@ -181,7 +181,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetLocalToGlobal
 
         """
         cdef PetscDMShellXToYFunction cbegin = NULL, cend = NULL
@@ -211,7 +211,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetLocalToGlobalVecScatter
 
         """
         CHKERR( DMShellSetLocalToGlobalVecScatter(self.dm, ltog.sct) )
@@ -229,7 +229,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetLocalToLocal
 
         """
         cdef PetscDMShellXToYFunction cbegin = NULL, cend = NULL
@@ -261,7 +261,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetLocalToLocalVecScatter
 
         """
         CHKERR( DMShellSetLocalToLocalVecScatter(self.dm, ltol.sct) )
@@ -278,7 +278,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateMatrix
 
         """
         if create_matrix is not None:
@@ -302,7 +302,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCoarsen
 
         """
         if coarsen is not None:
@@ -326,7 +326,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetRefine
 
         """
         if refine is not None:
@@ -350,7 +350,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateInterpolation
 
         """
         if create_interpolation is not None:
@@ -374,7 +374,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateInjection
 
         """
         if create_injection is not None:
@@ -398,7 +398,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateRestriction
 
         """
         if create_restriction is not None:
@@ -422,7 +422,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateFieldDecomposition
 
         """
         if decomp is not None:
@@ -446,7 +446,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateDomainDecomposition
 
         """
         if decomp is not None:
@@ -470,7 +470,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateDomainDecompositionScatters
 
         """
         if scatter is not None:
@@ -494,7 +494,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.TODO
+        petsc.DMShellSetCreateSubDM
 
         """
         if create_subdm is not None:
