@@ -11,10 +11,10 @@ class KSPType(object):
         `petsc.KSPRICHARDSON`.
     CHEBYSHEV
         The preconditioned Chebyshev iterative method.
-        `petsc.CHEBYSHEV`.
+        `petsc.KSPCHEBYSHEV`.
     CG
         The Preconditioned Conjugate Gradient (PCG) iterative method.
-        `petsc.CG`
+        `petsc.KSPCG`
     GROPPCG
         A pipelined conjugate gradient method (Gropp).
          `petsc.KSPGROPPCG`
@@ -64,7 +64,7 @@ class KSPType(object):
     LGMRES
         Augments the standard Generalized Minimal Residual method
         approximation space with approximations to the error from
-        previous restart cycles. `petsc.LGMRES`
+        previous restart cycles. `petsc.KSPLGMRES`
     DGMRES
         Deflated Generalized Minimal Residual method. In this
         implementation, the adaptive strategy allows to switch to the
@@ -131,7 +131,7 @@ class KSPType(object):
     BICG
         Implements the Biconjugate gradient method (BiCG).
         Similar to running the conjugate gradient on the normal equations.
-        `petsc.BICG`
+        `petsc.KSPBICG`
     MINRES
         Minimum Residual (MINRES) method.
         `petsc.KSPMINRES`
@@ -144,7 +144,7 @@ class KSPType(object):
         `petsc.KSPLCD`
     PYTHON
         Python shell solver. Call Python function to implement solver.
-        `petsc.KSPPYTHON`
+        ``KSPPYTHON``
     GCR
         Preconditioned flexible Generalized Conjugate Residual (GCR)
         method.
@@ -327,7 +327,7 @@ class KSPConvergedReason(object):
         preconditioner. This is usually due to a zero pivot in a
         factorization. It can also result from a failure in a
         subpreconditioner inside a nested preconditioner such as
-        `PC.FIELDSPLIT`.
+        `PC.Type.FIELDSPLIT`.
 
     See also
     --------
@@ -361,11 +361,27 @@ class KSPConvergedReason(object):
 # --------------------------------------------------------------------
 
 cdef class KSP(Object):
-    """
+    """Abstract PETSc object that manages all Krylov methods.
+
+    This is the object that manages the linear solves in PETSc (even
+    those such as direct solvers that do no use Krylov accelerators).
 
     Further info in
 
     `KSP: Linear System Solvers <https://petsc.org/release/docs/manual/ksp/>`__
+
+    Notes
+    -----
+    When a direct solver is used, but no Krylov solver is used, the KSP
+    object is still used but with a KSPType of KSPPREONLY, meaning that
+    only application of the preconditioner is used as the linear
+    solver.
+
+    See also
+    --------
+    create, setType, SNES, TS, PC, Type.CG, Type.GMRES,
+    petsc.KSP
+
     """
 
     Type            = KSPType
@@ -378,8 +394,26 @@ cdef class KSP(Object):
         self.obj = <PetscObject*> &self.ksp
         self.ksp = NULL
 
-    def __call__(self, Vec b, x: Vec | None = None) -> Vec:
-        """
+    def __call__(self, Vec b, Vec x = None) -> Vec:
+        """Solves linear system.
+
+        Collective.
+
+        Parameters
+        ----------
+        b
+            Right hand side vector.
+        x
+            Solution vector.
+
+        Notes
+        -----
+        Shortcut for `Type.solve`, which returns the solution vector.
+
+        See also
+        --------
+        solve, petsc_options, petsc.KSPSolve
+
         """
         if x is None: # XXX do this better
             x = self.getOperators()[0].createVecLeft()
@@ -388,21 +422,47 @@ cdef class KSP(Object):
 
     # --- xxx ---
 
-    def view(self, viewer: Viewer | None = None):
-        """
+    def view(self, Viewer viewer=None):
+        """Prints the KSP data structure.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            Viewer used to display the KSP.
+
+        See Also
+        --------
+        petsc.KSPView
+
         """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( KSPView(self.ksp, vwr) )
 
     def destroy(self) -> Self:
-        """
+        """Destroys KSP context.
+
+        Collective.
+
+        See also
+        --------
+        petsc.KSPDestroy
+
         """
         CHKERR( KSPDestroy(&self.ksp) )
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """
+        """Creates the KSP context.
+
+        Collective.
+
+        See also
+        --------
+        petsc.KSPCreate
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscKSP newksp = NULL
@@ -600,7 +660,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, DM, petsc.KSPGetDM
+        PETSc.KSP, DM, petsc.KSPGetDM
 
         """
         cdef PetscDM newdm = NULL
@@ -636,7 +696,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone,
+        PETSc.KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone,
         petsc.KSPSetDM
 
         """
@@ -660,7 +720,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, DM, setDM, petsc.KSPSetDMActive
+        PETSc.KSP, DM, setDM, petsc.KSPSetDMActive
 
         """
         cdef PetscBool cflag = PETSC_FALSE
@@ -695,7 +755,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, solve, petsc.KSPSetComputeRHS
+        PETSc.KSP, solve, petsc.KSPSetComputeRHS
 
         """
         if args  is None: args  = ()
@@ -740,7 +800,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, solve, setOperators, petsc.KSPSetComputeOperators,
+        PETSc.KSP, solve, setOperators, petsc.KSPSetComputeOperators,
         petsc.KSPSetReusePreconditioner
 
         """
@@ -782,7 +842,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, solve, setComputeOperators,
+        PETSc.KSP, solve, setComputeOperators,
         petsc.KSPSetOperators
 
         """
@@ -810,7 +870,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, solve, setOperators, petsc.KSPGetOperators
+        PETSc.KSP, solve, setOperators, petsc.KSPGetOperators
 
         """
         cdef Mat A = Mat(), P = Mat()
@@ -834,7 +894,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, getPC, petsc.KSPSetPC
+        PETSc.KSP, getPC, petsc.KSPSetPC
 
         """
         CHKERR( KSPSetPC(self.ksp, pc.pc) )
@@ -846,7 +906,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        KSP, setPC, petsc.KSPGetPC
+        PETSc.KSP, setPC, petsc.KSPGetPC
 
         """
         cdef PC pc = PC()
@@ -1422,7 +1482,83 @@ cdef class KSP(Object):
     def setUpOnBlocks(self):
         CHKERR( KSPSetUpOnBlocks(self.ksp) )
 
-    def solve(self, Vec b or None, Vec x or None):
+    def solve(self, Vec b, Vec x) -> None:
+        """Solves linear system.
+
+        Collective.
+
+        Parameters
+        ----------
+        b
+            Right hand side vector.
+        x
+            Solution vector.
+
+        Notes
+        -----
+        If one uses `setDM` then ``x`` or ``b`` need not be passed. Use
+        `getSolution` to access the solution in this case.
+
+        The operator is specified with `setOperators`.
+
+        `solve` will normally return without generating an error
+        regardless of whether the linear system was solved or if
+        constructing the preconditioner failed. Call
+        `getConvergedReason` to determine if the solver converged or
+        failed and why. The option ``-ksp_error_if_not_converged`` or
+        function `setErrorIfNotConverged` will cause `solve` to error
+        as soon as an error occurs in the linear solver. In inner
+        solves, ``DIVERGED_MAX_IT`` is not treated as an error
+        because when using nested solvers it may be fine that inner
+        solvers in the preconditioner do not converge during the
+        solution process.
+
+        The number of iterations can be obtained from `its`.
+
+        If you provide a matrix that has a `Mat.setNullSpace` and
+        `Mat.setTransposeNullSpace` this will use that information to
+        solve singular systems in the least squares sense with a norm
+        minimizing solution.
+
+        Ax = b where b = bₚ + bₜ where bₜ is not in the range of A
+        (and hence by the fundamental theorem of linear algebra is in
+        the nullspace(A'), see `Mat.setNullSpace`
+
+        KSP first removes bₜ producing the linear system Ax = bₚ (which
+        has multiple solutions) and solves this to find the ∥x∥
+        minimizing solution (and hence it finds the solution x
+        orthogonal to the nullspace(A). The algorithm is simply in each
+        iteration of the Krylov method we remove the nullspace(A) from
+        the search direction thus the solution which is a linear
+        combination of the search directions has no component in the
+        nullspace(A).
+
+        We recommend always using `Type.GMRES` for such singular
+        systems. If nullspace(A) = nullspace(A') (note symmetric
+        matrices always satisfy this property) then both left and right
+        preconditioning will work If nullspace(A) != nullspace(A') then
+        left preconditioning will work but right preconditioning may
+        not work (or it may).
+
+        If using a direct method (e.g., via the KSP solver
+        `Type.PREONLY` and a preconditioner such as `PC.Type.LU` or
+        `PC.Type.ILU`, then its=1. See `setTolerances` and
+        `converged` for more details.
+
+        **Understanding Convergence**
+
+        The routines `setMonitor` and `computeEigenvalues` provide
+        information on additional options to monitor convergence and
+        print eigenvalue information.
+
+        See also
+        --------
+        create, setUp, destroy, setTolerances, converged,
+        solveTranspose, its, Mat.setNullSpace,
+        Mat.setTransposeNullSpace, Type, converged,
+        setErrorIfNotConverged petsc_options, petsc.KSPSolve
+
+        """
         cdef PetscVec b_vec = NULL
         cdef PetscVec x_vec = NULL
         if b is not None: b_vec = b.vec
