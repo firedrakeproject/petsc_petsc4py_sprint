@@ -235,7 +235,7 @@ cdef class Space(Object):
         return bytes2str(cval)
 
     def setType(self, space_type: Type | str) -> Self:
-        """Build a particular `Space`.
+        """Build a particular type of space.
 
         Collective.
 
