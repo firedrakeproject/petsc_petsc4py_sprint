@@ -10,10 +10,6 @@ class DMPlexReorderDefaultFlag(object):
 cdef class DMPlex(DM):
     """Encapsulate an unstructured mesh.
 
-    See Also
-    --------
-    petsc.DMPlex
-
     """
 
     ReorderDefaultFlag = DMPlexReorderDefaultFlag
@@ -1988,6 +1984,22 @@ cdef class DMPlex(DM):
     def getOrdering(self, otype: Mat.OrderingType) -> IS:
         """Calculate a reordering of the mesh.
 
+        Collective.
+
+        Parameters
+        ----------
+        otype
+            Type of reordering, see `Mat.OrderingType`.
+
+        Returns
+        -------
+        perm: IS
+            The point permutation as an `IS`, ``perm[old point number] = new point number``.
+
+        See Also
+        --------
+        DMPlex, DMPlex.permute, Mat.OrderingType, Mat.getOrdering, petsc.DMPlexGetOrdering
+
         """
         cdef PetscMatOrderingType cval = NULL
         cdef PetscDMLabel label = NULL
@@ -1998,6 +2010,22 @@ cdef class DMPlex(DM):
 
     def permute(self, IS perm) -> DMPlex:
         """Reorder the mesh according to the input permutation.
+
+        Collective.
+
+        Parameters
+        ----------
+        perm
+            The point permutation, ``perm[old point number] = new point number``.
+
+        Returns
+        -------
+        pdm: DMPlex
+            The permuted `DMPlex`.
+
+        See Also
+        --------
+        DMPlex, Mat.permute, petsc.DMPlexPermute
 
         """
         cdef DMPlex dm = <DMPlex>type(self)()
