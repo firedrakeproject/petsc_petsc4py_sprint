@@ -884,6 +884,9 @@ cdef class DM(Object):
         
         Collective.
 
+        See Also
+        --------
+        petsc.DMGetCoordinateDM
 
         """
         cdef DM cdm = type(self)()
@@ -891,7 +894,16 @@ cdef class DM(Object):
         PetscINCREF(cdm.obj)
         return cdm
 
-    def getCoordinateSection(self):
+    def getCoordinateSection(self) -> Section:
+        """Return the layout of the coodinate values over the mesh.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMGetCoordinateSection
+
+        """
         cdef Section sec = Section()
         CHKERR( DMGetCoordinateSection(self.dm, &sec.sec) )
         PetscINCREF(sec.obj)
