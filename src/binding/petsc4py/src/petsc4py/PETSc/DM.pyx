@@ -162,7 +162,7 @@ cdef class DM(Object):
 
         Notes
         -----
-        `DM` types are availabe in DM.Type class.
+        `DM` types are availabe in `DM.Type` class.
 
         See Also
         --------
