@@ -990,7 +990,16 @@ cdef class DM(Object):
         return tuple([(toReal(gmin[i]), toReal(gmax[i]))
                       for i from 0 <= i < dim])
 
-    def getLocalBoundingBox(self):
+    def getLocalBoundingBox(self) -> tuple[tuple[float, float], ...]:
+        """Return the bounding box for the piece of the `DM`.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetLocalBoundingBox
+
+        """
         cdef PetscInt i,dim=0
         CHKERR( DMGetCoordinateDim(self.dm, &dim) )
         cdef PetscReal lmin[3], lmax[3]
@@ -999,11 +1008,28 @@ cdef class DM(Object):
                       for i from 0 <= i < dim])
 
     def localizeCoordinates(self) -> None:
+        """Create local coodinates for cells having periodic faces.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMLocalizeCoordinates
+
+        """
         CHKERR( DMLocalizeCoordinates(self.dm) )
     #
 
-    def setMatType(self, mat_type) -> None:
-        """Set matrix type to be used by `DM.createMat`."""
+    def setMatType(self, mat_type: ) -> None:
+        """Set matrix type to be used by `DM.createMat`.
+        
+        Logically Collective.
+
+        See Also
+        --------
+        petsc.DMSetMatType
+        
+        """
         cdef PetscMatType mtype = NULL
         mat_type = str2bytes(mat_type, &mtype)
         CHKERR( DMSetMatType(self.dm, mtype) )
