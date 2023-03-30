@@ -1371,10 +1371,10 @@ cdef class Vec(Object):
         Returns
         -------
         typing.Any
-            Buffer object wrapping the local portion of the vector data. This
-            can be used either as a context manager providing access as a
-            numpy array or can be passed to array constructors accepting
-            buffered objects such as `numpy.asarray`.
+            `Buffer object <python:c-api/buffer>` wrapping the local portion of
+            the vector data. This can be used either as a context manager
+            providing access as a numpy array or can be passed to array
+            constructors accepting buffered objects such as `numpy.asarray`.
 
         Examples
         --------
