@@ -88,7 +88,7 @@ KSPRHSFunction = Callable[[KSP, Vec], None]
 KSPOperatorsFunction = Callable[[KSP, Mat, Mat], None]
 """`PETSc.KSP` operators function callback."""
 
-KSPConvergenceTestFunction = Callable[[KSP, int, float, KSP.ConvergedReason], None]
+KSPConvergenceTestFunction = Callable[[KSP, int, float], KSP.ConvergedReason]
 """`PETSc.KSP` convergence test callback."""
 
 KSPMonitorFunction = Callable[[KSP, int, float], None]
