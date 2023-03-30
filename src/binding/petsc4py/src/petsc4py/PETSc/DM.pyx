@@ -504,7 +504,7 @@ cdef class DM(Object):
         aux
             The auxiliary vector.
         label
-            The `DM` label.
+            The name of the `DMLabel`.
         value
             Indicate the region.
         part
