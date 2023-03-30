@@ -832,10 +832,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexSymmetrize(self.dm) )
 
     def stratify(self) -> None:
-        """The DAG for most topologies is a graded poset (https://en.wikipedia.org/wiki/Graded_poset), and
-        can be illustrated by a Hasse Diagram (https://en.wikipedia.org/wiki/Hasse_diagram). The strata group all points of the
-        same grade, and this function calculates the strata. This grade can be seen as the height (or depth) of the point in
-        the DAG.
+        """Calculate the strata of DAG.
 
         Collective.
 
@@ -1079,7 +1076,7 @@ cdef class DMPlex(DM):
         return out[::2],out[1::2]
 
     def vecGetClosure(self, Section sec, Vec vec, p: int) -> ArrayScalar:
-        """Get an array of the values on the closure of 'point'.
+        """Get an array of the values on the closure of ``point``.
 
         Not collective.
 
@@ -1089,7 +1086,7 @@ cdef class DMPlex(DM):
             The section describing the layout in ``vec``.
         vec
             The local vector.
-        point
+        p
             The point in the `DMPlex`.
 
         See Also
@@ -1238,8 +1235,8 @@ cdef class DMPlex(DM):
 
         Not collective.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         opts
             The command line options.
 
@@ -2253,8 +2250,8 @@ cdef class DMPlex(DM):
     def metricSetNoSwapping(self, noSwap: bool) -> None:
         """Set the flag indicating whether facet swapping should be turned off.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         noSwap
             Flag indicating whether facet swapping should be turned off.
 
