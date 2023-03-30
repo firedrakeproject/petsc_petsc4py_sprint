@@ -248,12 +248,7 @@ def _monkey_patch_returns():
     @functools.wraps(NumpyDocstring._parse_returns_section)
     def wrapper(*args, **kwargs):
         out = _parse_returns_section(*args, **kwargs)
-        def fixup(line):
-            for symbol in ["ArrayInt", "ArrayReal", "ArrayScalar"]:
-                line = line.replace(f":class:`{symbol}`", f":any:`{symbol}`")
-            return line
-
-        return [fixup(line) for line in out]
+        return [line.replace(":class:", ":any:") for line in out]
 
 
     NumpyDocstring._parse_returns_section = wrapper
@@ -276,18 +271,11 @@ def _monkey_patch_see_also():
     NumpyDocstring._parse_numpydoc_see_also_section = wrapper
 
 
-def _apply_monkey_patches():
-    """Modify Napoleon types after parsing to make references work."""
-    _monkey_patch_returns()
-    _monkey_patch_see_also()
-
-
-_apply_monkey_patches()
-
-
 def setup(app):
     _setup_mpi4py_typing()
     _patch_domain_python()
+    _monkey_patch_returns()
+    _monkey_patch_see_also()
     _setup_autodoc(app)
 
     try:
