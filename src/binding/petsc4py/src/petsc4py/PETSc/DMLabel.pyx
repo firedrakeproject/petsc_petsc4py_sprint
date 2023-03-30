@@ -603,7 +603,7 @@ cdef class DMLabel(Object):
         return new
 
     def convertToSection(self) -> tuple[Section, IS]:
-        """Return a (`Section`, `IS`) tuple that encodes the label.
+        """Return a `Section` and `IS` that encode the label.
 
         Not collective.
 
