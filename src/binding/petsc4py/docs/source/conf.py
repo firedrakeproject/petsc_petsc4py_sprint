@@ -138,6 +138,7 @@ _mangle_petsc_intersphinx()
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
+    'numpydoc': ('https://numpydoc.readthedocs.io/en/latest/', None),
     'mpi4py': ('https://mpi4py.readthedocs.io/en/stable/', None),
     'pyopencl': ('https://documen.tician.de/pyopencl/', None),
     'dlpack': ('https://dmlc.github.io/dlpack/latest/', None),
@@ -307,7 +308,7 @@ def _process_demos(*demos):
         html_static_path.append(demo_copy_name)
     with open(os.path.join("demo", "demo.rst"), "w") as demofile:
         demofile.write("""
-PETSC4py demos
+petsc4py demos
 ==============
 
 .. toctree::
