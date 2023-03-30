@@ -722,44 +722,107 @@ cdef class DM(Object):
         CHKERR( DMGetBlockSize(self.dm, &bs) )
         return toInt(bs)
 
-    def setVecType(self, vec_type) -> None:
-        """
+    def setVecType(self, vec_type: str) -> None:
+        """Sets the type of vector.
+
+        Logically Collective.
+
+        See Also
+        --------
+        petsc.DMSetVecType
+
         """
         cdef PetscVecType vtype = NULL
         vec_type = str2bytes(vec_type, &vtype)
         CHKERR( DMSetVecType(self.dm, vtype) )
 
-    def createGlobalVec(self):
+    def createGlobalVec(self) -> Vec:
+        """Create a global vector.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCreateGlobalVector
+
+        """
         cdef Vec vg = Vec()
         CHKERR( DMCreateGlobalVector(self.dm, &vg.vec) )
         return vg
 
-    def createLocalVec(self):
+    def createLocalVec(self) -> Vec:
+        """Creates a local vector.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMCreateLocalVector
+
+        """
         cdef Vec vl = Vec()
         CHKERR( DMCreateLocalVector(self.dm, &vl.vec) )
         return vl
 
-    def getGlobalVec(self):
+    def getGlobalVec(self) -> Vec:
+        """Return a global vector.
+
+        Collective on `DM`.
+
+        See Also
+        --------
+        petsc.DMGetGlobalVector
+
+        """
         cdef Vec vg = Vec()
         CHKERR( DMGetGlobalVector(self.dm, &vg.vec) )
         PetscINCREF(vg.obj)
         return vg
 
     def restoreGlobalVec(self, Vec vg) -> None:
+        """Restore a global vector.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMRestoreGlobalVector
+
+        """
         CHKERR( PetscObjectDereference(<PetscObject>vg.vec) )
         CHKERR( DMRestoreGlobalVector(self.dm, &vg.vec) )
 
-    def getLocalVec(self):
+    def getLocalVec(self) -> Vec:
+        """Return a local vector.
+
+        Not Collective
+
+        See Also
+        --------
+        petsc.DMGetLocalVector
+
+        """
         cdef Vec vl = Vec()
         CHKERR( DMGetLocalVector(self.dm, &vl.vec) )
         PetscINCREF(vl.obj)
         return vl
 
     def restoreLocalVec(self, Vec vl) -> None:
+        """Restore a local vector.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMRestoreLocalVector
+
+        """
         CHKERR( PetscObjectDereference(<PetscObject>vl.vec) )
         CHKERR( DMRestoreLocalVector(self.dm, &vl.vec) )
 
     def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
+        """
+        """
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMGlobalToLocalBegin(self.dm, vg.vec, im, vl.vec) )
         CHKERR( DMGlobalToLocalEnd  (self.dm, vg.vec, im, vl.vec) )
