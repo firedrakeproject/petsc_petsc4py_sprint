@@ -4,6 +4,7 @@ from petsc4py.PETSc import Vec
 from petsc4py.PETSc import IS
 from petsc4py.PETSc import InsertMode
 from petsc4py.PETSc import NormType
+from petsc4py.PETSc import Viewer
 
 
 # A template class with the Python methods supported by MATPYTHON
@@ -36,6 +37,14 @@ class MatPythonProtocol:
 
     def multHermitianAdd(self, A: Mat, x: Vec, y: Vec, z: Vec) -> None:
         """Hermitian matrix vector multiplication: z = A^H @ x + y."""
+        ...
+
+    def view(self, A: Mat, viewer: Viewer) -> None:
+        """View the matrix."""
+        ...
+
+    def setFromOptions(self, A: Mat) -> None:
+        """Process command line for customization."""
         ...
 
     def multDiagonalBlock(self, A: Mat, x: Vec, y: Vec) -> None:

@@ -374,6 +374,7 @@ cdef PetscErrorCode MatPythonGetType_PYTHON(PetscMat mat, const char *name[]) \
     name[0] = PyMat(mat).getname()
     return FunctionEnd()
 
+#FIXME: view and setFromOptions?
 cdef dict dMatOps = {   3 : 'mult',
                         4 : 'multAdd',
                         5 : 'multTranspose',

@@ -64,7 +64,20 @@ class Poisson2D:
                 u_yy = (-u_n + 2*u - u_s)*hx/hy
                 y[i, j] = u_xx + u_yy
 
-    # The class may contain other methods that PETSc won't use
+    # This is the method that PETSc will look for when the diagonal of the matrix is needed.
+    def getDiagonal(self, mat, D):
+        mx, my = self.da.getSizes()
+        hx, hy = [1.0/m for m in [mx, my]]
+        (xs, xe), (ys, ye) = self.da.getRanges()
+
+        d = self.da.getVecArray(D)
+
+        # Loop on the local grid and compute the diagonal
+        for j in range(ys, ye):
+            for i in range(xs, xe):
+                d[i, j] = 2*hy/hx + 2*hx/hy
+
+    # The class can contain other methods that PETSc won't use
     def formRHS(self, B):
         b = self.da.getVecArray(B)
         mx, my = self.da.getSizes()
@@ -101,7 +114,11 @@ A.setUp()
 # Create a Conjugate Gradient Krylov solver
 ksp = PETSc.KSP().create()
 ksp.setType(PETSc.KSP.Type.CG)
-ksp.getPC().setType(PETSc.PC.Type.NONE)
+
+# Use diagonal preconditioning
+ksp.getPC().setType(PETSc.PC.Type.JACOBI)
+
+# Allow command-line customization
 ksp.setFromOptions()
 
 # Assemble right-hand side and solve the linear system
