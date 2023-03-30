@@ -468,7 +468,7 @@ cdef class KSP(Object):
         return self
 
     def setType(self, ksp_type: Type | str) -> None:
-        """Build the `PETSc.KSP` data structure for a particular `Type`.
+        """Build the `KSP` data structure for a particular `Type`.
 
         Logically collective.
 
@@ -504,7 +504,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetType(self.ksp, cval) )
 
     def getType(self) -> str:
-        """Get the KSP type as a string from the `PETSc.KSP` object.
+        """Get the KSP type as a string from the `KSP` object.
 
         Not collective.
 
@@ -518,7 +518,7 @@ cdef class KSP(Object):
         return bytes2str(cval)
 
     def setOptionsPrefix(self, prefix: str) -> None:
-        """Set the prefix used for all `PETSc.KSP` options in the database.
+        """Set the prefix used for all `KSP` options in the database.
 
         Logically collective.
 
@@ -532,7 +532,7 @@ cdef class KSP(Object):
         A hyphen (-) must NOT be given at the beginning of the prefix
         name. The first character of all runtime options is
         AUTOMATICALLY the hyphen. For example, to distinguish between
-        the runtime options for two different `PETSc.KSP` contexts, one could
+        the runtime options for two different `KSP` contexts, one could
         call
         ```
         KSPSetOptionsPrefix(ksp1, "sys1_")
@@ -556,7 +556,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetOptionsPrefix(self.ksp, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Get the prefix used for all `PETSc.KSP` options in the database.
+        """Get the prefix used for all `KSP` options in the database.
 
         Not collective.
 
@@ -570,7 +570,7 @@ cdef class KSP(Object):
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix: str) -> None:
-        """Append to prefix used for all `PETSc.KSP` options in the database.
+        """Append to prefix used for all `KSP` options in the database.
 
         Logically collective.
 
@@ -595,7 +595,7 @@ cdef class KSP(Object):
         CHKERR( KSPAppendOptionsPrefix(self.ksp, cval) )
 
     def setFromOptions(self) -> None:
-        """Sets `PETSc.KSP` options from the options database.
+        """Sets `KSP` options from the options database.
 
         Collective.
 
@@ -624,7 +624,7 @@ cdef class KSP(Object):
         Notes
         -----
         The user context is a way for users to attach any information
-        to the `PETSc.KSP` that they may need later when interacting with the
+        to the `KSP` that they may need later when interacting with the
 
         Use `getAppCtx` to get access to the context at a later
         time.
@@ -679,7 +679,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        If this is used then the `PETSc.KSP` will attempt to use the `DM` to
+        If this is used then the `KSP` will attempt to use the `DM` to
         create the matrix and use the routine set with
         `DM.setKSPComputeOperators`. Use ``setDMActive(False)``
         to instead use the matrix you have provided with
@@ -713,7 +713,7 @@ cdef class KSP(Object):
         -----
         By default `setDM` sets the `DM` as active, call
         ``setDMActive(False)`` after ``setDM(dm)`` to not
-        have the `PETSc.KSP` object use the `DM` to generate the matrices.
+        have the `KSP` object use the `DM` to generate the matrices.
 
         See also
         --------
@@ -828,7 +828,7 @@ cdef class KSP(Object):
         -----
         If you know the operator ``A`` has a null space you can use
         `Mat.setNullSpace` and `Mat.setTransposeNullSpace` to supply the
-        null space to ``A`` and the `PETSc.KSP` solvers will automatically use
+        null space to ``A`` and the `KSP` solvers will automatically use
         that null space as needed during the solution process.
 
         All future calls to `setOperators` must use the same size
@@ -1230,7 +1230,7 @@ cdef class KSP(Object):
         return self.get_attr('__monitor__')
 
     def monitorCancel(self) -> None:
-        """Clear all monitors for a `PETSc.KSP` object.
+        """Clear all monitors for a `KSP` object.
 
         Logically collective.
 
@@ -1252,7 +1252,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        This routine is called by the `PETSc.KSP` implementations. It does not
+        This routine is called by the `KSP` implementations. It does not
         typically need to be called by the user.
 
         See also
