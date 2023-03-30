@@ -149,7 +149,7 @@ cdef class Vec(Object):
         Parameters
         ----------
         viewer
-            The viewer instance, defaults to `Viewer.Type.DEFAULT`.
+            The viewer instance, defaults to printing vector contents.
 
         See Also
         --------
@@ -323,7 +323,7 @@ cdef class Vec(Object):
 
     def createWithArray(
         self,
-        array: Sequence[ScalarType],
+        array: Sequence[Scalar],
         size: tuple[int, int] | int = None,
         bsize: int | None = None,
         comm: Comm | None = None,
@@ -377,7 +377,7 @@ cdef class Vec(Object):
 
     def createCUDAWithArrays(
         self,
-        cpuarray: Sequence[ScalarType] | None = None,
+        cpuarray: Sequence[Scalar] | None = None,
         cudahandle: Any | None = None,  # FIXME What type is appropriate here?
         size: tuple[int, int] | int = None,
         bsize: int | None = None,
@@ -438,7 +438,7 @@ cdef class Vec(Object):
 
     def createHIPWithArrays(
         self,
-        cpuarray: Sequence[ScalarType] | None = None,
+        cpuarray: Sequence[Scalar] | None = None,
         hiphandle: Any | None = None,  # FIXME What type is appropriate here?
         size: tuple[int, int] | int | None = None,
         bsize: int | None = None,
@@ -499,7 +499,7 @@ cdef class Vec(Object):
 
     def createViennaCLWithArrays(
         self,
-        cpuarray: Sequence[ScalarType] | None = None,
+        cpuarray: Sequence[Scalar] | None = None,
         viennaclvechandle: Any | None = None,  # FIXME What type is appropriate here?
         size: tuple[int, int] | int | None = None,
         bsize: int | None = None,
@@ -885,7 +885,7 @@ cdef class Vec(Object):
     def createGhostWithArray(
         self,
         ghosts: Sequence[int],
-        array: Sequence[ScalarType],
+        array: Sequence[Scalar],
         size: tuple[int, int] | int | None = None,
         bsize: int | None = None,
         comm: Comm | None = None,
@@ -1367,7 +1367,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        Any
+        typing.Any
             Buffer object wrapping the local portion of the vector data. This
             can be used either as a context manager providing access as a
             numpy array or can be passed to array constructors accepting
@@ -1420,7 +1420,7 @@ cdef class Vec(Object):
         else:
             return vec_getarray_w(self)
 
-    def setArray(self, array: Sequence[ScalarType]) -> None:
+    def setArray(self, array: Sequence[Scalar]) -> None:
         """Set the local portion of the vector.
 
         This will fail if ``array`` has a different size to the local portion
@@ -1441,7 +1441,7 @@ cdef class Vec(Object):
         """
         vec_setarray(self, array)
 
-    def placeArray(self, array: Sequence[ScalarType]) -> None:
+    def placeArray(self, array: Sequence[Scalar]) -> None:
         """Set the local portion of the vector to a provided array.
 
         This method can be used instead of `Vec.setArray` to avoid copying
@@ -1555,7 +1555,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        Any
+        typing.Any
             CUDA device pointer.
 
         Notes
@@ -1645,7 +1645,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        Any
+        typing.Any
             HIP device pointer.
 
         Notes
@@ -1843,7 +1843,7 @@ cdef class Vec(Object):
         """
         CHKERR( VecViennaCLRestoreCLMemWrite(self.vec) )
 
-    def duplicate(self, array: Sequence[ScalarType] | None = None) -> Vec:
+    def duplicate(self, array: Sequence[Scalar] | None = None) -> Vec:
         """Create a new vector with the same type, optionally with data.
 
         Collective.
@@ -1982,7 +1982,7 @@ cdef class Vec(Object):
         CHKERR( VecEqual(self.vec, vec.vec, &flag) )
         return toBool(flag)
 
-    def dot(self, Vec vec) -> ScalarType:
+    def dot(self, Vec vec) -> Scalar:
         """Return the dot product with ``vec``.
 
         For complex numbers this computes yᴴ·x with ``self`` as x, ``vec``
@@ -1997,11 +1997,6 @@ cdef class Vec(Object):
         ----------
         vec
             Vector to compute the dot product with.
-
-        Returns
-        -------
-        ScalarType
-            The dot product.
 
         See Also
         --------
@@ -2030,7 +2025,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = 0
         CHKERR( VecDotBegin(self.vec, vec.vec, &sval) )
 
-    def dotEnd(self, Vec vec) -> ScalarType:
+    def dotEnd(self, Vec vec) -> Scalar:
         """Finish computing the dot product.
 
         Parameters
@@ -2040,7 +2035,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        ScalarType
+        Scalar
             The dot product.
 
         See Also
@@ -2052,7 +2047,7 @@ cdef class Vec(Object):
         CHKERR( VecDotEnd(self.vec, vec.vec, &sval) )
         return toScalar(sval)
 
-    def tDot(self, Vec vec) -> ScalarType:
+    def tDot(self, Vec vec) -> Scalar:
         """Return the indefinite dot product with ``vec``.
 
         This computes yᵀ·x with ``self`` as x, ``vec``
@@ -2070,7 +2065,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        ScalarType
+        Scalar
             The indefinite dot product.
 
         See Also
@@ -2100,7 +2095,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = 0
         CHKERR( VecTDotBegin(self.vec, vec.vec, &sval) )
 
-    def tDotEnd(self, Vec vec) -> ScalarType:
+    def tDotEnd(self, Vec vec) -> Scalar:
         """Finish computing the indefinite dot product.
 
         Parameters
@@ -2110,7 +2105,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        ScalarType
+        Scalar
             The indefinite dot product.
 
         See Also
@@ -2166,11 +2161,11 @@ cdef class Vec(Object):
             The type of norm requested. Possible values (assuming ``self`` as
             x) include:
 
-            - `NormType.NORM_1` Compute Σₙ |xₙ| 
+            - `NormType.NORM_1` Compute Σₙ abs(xₙ)
 
-            - `NormType.NORM_2` Compute √(Σₙ |xₙ|²)
+            - `NormType.NORM_2` Compute √(Σₙ abs(xₙ)²)
 
-            - `NormType.NORM_INFINITY` Compute maxₙ |xₙ| 
+            - `NormType.NORM_INFINITY` Compute maxₙ abs(xₙ) 
 
             - `NormType.NORM_1_AND_2` Compute both `NormType.NORM_1` and
               `NormType.NORM_2`.
@@ -2179,7 +2174,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        float | tuple[float, float]
+        typing.Any
             The computed norm. A 2-tuple is returned if `NormType.NORM_1_AND_2`
             is specified.
 
@@ -2236,7 +2231,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        float | tuple[float, float]
+        typing.Any
             The computed norm. A 2-tuple is returned if `NormType.NORM_1_AND_2`
             is specified.
 
@@ -2253,7 +2248,7 @@ cdef class Vec(Object):
         if ntype != norm_1_2: return toReal(rval[0])
         else: return (toReal(rval[0]), toReal(rval[1]))
 
-    def sum(self) -> ScalarType:
+    def sum(self) -> Scalar:
         """Compute the sum of all the entries of the vector.
 
         Collective.
@@ -2267,7 +2262,7 @@ cdef class Vec(Object):
         CHKERR( VecSum(self.vec, &sval) )
         return toScalar(sval)
 
-    def min(self) -> tuple[int, ScalarType]:
+    def min(self) -> tuple[int, Scalar]:
         """Return the entry in the vector with minimum real part.
 
         Collective.
@@ -2277,7 +2272,7 @@ cdef class Vec(Object):
         p : int
             Location of the minimum value. If multiple entries exist with the
             same value then the smallest index will be returned.
-        val : ScalarType
+        val : Scalar
             Minimum value.
 
         Notes
@@ -2295,7 +2290,7 @@ cdef class Vec(Object):
         CHKERR( VecMin(self.vec, &ival, &rval) )
         return (toInt(ival), toReal(rval))
 
-    def max(self) -> tuple[int, ScalarType]:
+    def max(self) -> tuple[int, Scalar]:
         """Return the entry in the vector with maximum real part.
 
         Collective.
@@ -2305,7 +2300,7 @@ cdef class Vec(Object):
         p : int
             Location of the maximum value. If multiple entries exist with the
             same value then the smallest index will be returned.
-        val : ScalarType
+        val : Scalar
             Minimum value.
 
         Notes
@@ -2379,7 +2374,7 @@ cdef class Vec(Object):
         CHKERR( VecLog(self.vec) )
 
     def sqrtabs(self) -> None:
-        """Replace each entry (xₙ) in the vector by √|xₙ|.
+        """Replace each entry (xₙ) in the vector by √abs(xₙ).
 
         Not collective.
 
@@ -2391,7 +2386,7 @@ cdef class Vec(Object):
         CHKERR( VecSqrtAbs(self.vec) )
 
     def abs(self) -> None:
-        """Replace each entry (xₙ) in the vector by |xₙ|.
+        """Replace each entry (xₙ) in the vector by abs(xₙ).
 
         Logically collective.
 
@@ -2470,7 +2465,7 @@ cdef class Vec(Object):
         """
         CHKERR( VecZeroEntries(self.vec) )
 
-    def set(self, alpha: ScalarType) -> None:
+    def set(self, alpha: Scalar) -> None:
         """Set all components of the vector to the same value.
 
         Logically collective.
@@ -2487,13 +2482,13 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.zero, Vec.isset, petsc.VecSet
+        Vec.zeroEntries, Vec.isset, petsc.VecSet
 
         """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecSet(self.vec, sval) )
 
-    def isset(self, IS idx, alpha: ScalarType) -> None:
+    def isset(self, IS idx, alpha: Scalar) -> None:
         """Set specific elements of the vector to the same value.
 
         Parameters
@@ -2505,13 +2500,13 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.set, Vec.zero, petsc.VecISSet
+        Vec.set, Vec.zeroEntries, petsc.VecISSet
 
         """
         cdef PetscScalar aval = asScalar(alpha)
         CHKERR( VecISSet(self.vec, idx.iset, aval) )
 
-    def scale(self, alpha: ScalarType) -> None:
+    def scale(self, alpha: Scalar) -> None:
         """Scale all entries of the vector by some value.
 
         This method sets each entry (xₙ) in the vector to ɑ·xₙ.
@@ -2531,7 +2526,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecScale(self.vec, sval) )
 
-    def shift(self, alpha: ScalarType) -> None:
+    def shift(self, alpha: Scalar) -> None:
         """Shift all entries in the vector.
 
         This method sets each entry (xₙ) in the vector to xₙ + ɑ.
@@ -2568,7 +2563,7 @@ cdef class Vec(Object):
         """
         CHKERR( VecSwap(self.vec, vec.vec) )
 
-    def axpy(self, alpha: ScalarType, Vec x) -> None:
+    def axpy(self, alpha: Scalar, Vec x) -> None:
         """Compute and store y = ɑ·x + y.
 
         Logically collective.
@@ -2588,7 +2583,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecAXPY(self.vec, sval, x.vec) )
 
-    def isaxpy(self, IS idx, alpha: ScalarType, Vec x) -> None:
+    def isaxpy(self, IS idx, alpha: Scalar, Vec x) -> None:
         """Add a scaled reduced-space vector to a subset of the vector.
 
         This is equivalent to ``y[idx[i]] += alpha*x[i]``.
@@ -2610,7 +2605,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecISAXPY(self.vec, idx.iset, sval, x.vec) )
 
-    def aypx(self, alpha: ScalarType, Vec x) -> None:
+    def aypx(self, alpha: Scalar, Vec x) -> None:
         """Compute and store y = x + ɑ·y.
 
         Logically collective.
@@ -2630,7 +2625,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecAYPX(self.vec, sval, x.vec) )
 
-    def axpby(self, alpha: ScalarType, beta: ScalarType, Vec x) -> None:
+    def axpby(self, alpha: Scalar, beta: Scalar, Vec x) -> None:
         """Compute and store y = ɑ·x + β·y.
 
         Logically collective.
@@ -2653,7 +2648,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval2 = asScalar(beta)
         CHKERR( VecAXPBY(self.vec, sval1, sval2, x.vec) )
 
-    def waxpy(self, alpha: ScalarType, Vec x, Vec y) -> None:
+    def waxpy(self, alpha: Scalar, Vec x, Vec y) -> None:
         """Compute and store w = ɑ·x + y.
 
         Logically collective.
@@ -2680,7 +2675,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecWAXPY(self.vec, sval, x.vec, y.vec) )
 
-    def maxpy(self, alphas: Sequence[ScalarType], vecs: Sequence[Vec]) -> None:
+    def maxpy(self, alphas: Sequence[Scalar], vecs: Sequence[Vec]) -> None:
         """Compute and store y = Σₙ(ɑₙ·Xₙ) + y with X an array of vectors.
 
         Equivalent to ``y[:] = alphas[i]*vecs[i, :] + y[:]``.
@@ -2859,14 +2854,14 @@ cdef class Vec(Object):
         See Also
         --------
         Vec.pointwiseMin, Vec.pointwiseMax, Vec.pointwiseMaxAbs
-        petsc.MaxPointwiseDivide
+        petsc.VecMaxPointwiseDivide
 
         """
         cdef PetscReal rval = 0
         CHKERR( VecMaxPointwiseDivide(self.vec, vec.vec, &rval) )
         return toReal(rval)
 
-    def getValue(self, index: int) -> ScalarType:
+    def getValue(self, index: int) -> Scalar:
         """Return a single value from the vector.
 
         Not collective.
@@ -2894,7 +2889,7 @@ cdef class Vec(Object):
     def getValues(
         self,
         indices: Sequence[int],
-        values: Sequence[ScalarType] | None = None,
+        values: Sequence[Scalar] | None = None,
     ) -> ArrayScalar:
         """Return values from certain locations in the vector.
 
@@ -2934,7 +2929,7 @@ cdef class Vec(Object):
     def setValue(
         self,
         index: int,
-        value: ScalarType,
+        value: Scalar,
         addv: InsertMode | int | None = None,
     ) -> None:
         """Insert or add a single value in the vector.
@@ -2977,7 +2972,7 @@ cdef class Vec(Object):
     def setValues(
         self,
         indices: Sequence[int],
-        values: Sequence[ScalarType],
+        values: Sequence[Scalar],
         addv: InsertMode | int | None = None,
     ) -> None:
         """Insert or add multiple values in the vector.
@@ -3017,7 +3012,7 @@ cdef class Vec(Object):
     def setValuesBlocked(
         self,
         indices: Sequence[int],
-        values: Sequence[ScalarType],
+        values: Sequence[Scalar],
         addv: InsertMode | int | None = None,
     ) -> None:
         """Insert or add blocks of values in the vector.
@@ -3105,7 +3100,7 @@ cdef class Vec(Object):
     def setValueLocal(
         self,
         index: int,
-        value: ScalarType,
+        value: Scalar,
         addv: InsertMode | int | None = None,
     ):
         """Insert or add a single value in the vector using a local numbering.
@@ -3148,7 +3143,7 @@ cdef class Vec(Object):
     def setValuesLocal(
         self,
         indices: Sequence[int],
-        values: Sequence[ScalarType],
+        values: Sequence[Scalar],
         addv: InsertMode | int | None = None,
     ) -> None:
         """Insert or add multiple values in the vector with a local numbering.
@@ -3188,7 +3183,7 @@ cdef class Vec(Object):
     def setValuesBlockedLocal(
         self,
         indices: Sequence[int],
-        values: Sequence[ScalarType],
+        values: Sequence[Scalar],
         addv: InsertMode | int | None = None,
     ) -> None:
         """Insert or add blocks of values in the vector with a local numbering.
@@ -3285,7 +3280,7 @@ cdef class Vec(Object):
 
     # --- methods for strided vectors ---
 
-    def strideScale(self, field: int, alpha: ScalarType) -> None:
+    def strideScale(self, field: int, alpha: Scalar) -> None:
         """Scale a component of the vector.
 
         Logically collective.
@@ -3306,7 +3301,7 @@ cdef class Vec(Object):
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecStrideScale(self.vec, ival, sval) )
 
-    def strideSum(self, field: int) -> ScalarType:
+    def strideSum(self, field: int) -> Scalar:
         """Sum subvector entries.
 
         Equivalent to ``sum(x[field], x[field+bs], x[field+2*bs], ...)`` where
@@ -3412,7 +3407,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        float | tuple[float, float]
+        typing.Any
             The computed norm. A 2-tuple is returned if `NormType.NORM_1_AND_2`
             is specified.
 
@@ -3529,7 +3524,7 @@ cdef class Vec(Object):
 
         Returns
         -------
-        Any
+        typing.Any
             Context manager yielding the vector in local (ghosted) form.
 
         Notes
@@ -3596,6 +3591,7 @@ cdef class Vec(Object):
         cdef PetscScatterMode csctm = scattermode(mode)
         CHKERR( VecGhostUpdateEnd(self.vec, caddv, csctm) )
 
+    # FIXME addv should also support InsertMode.MIN_VALUES but this isn't defined
     def ghostUpdate(
         self,
         addv: InsertMode | int | None = None,
@@ -3616,9 +3612,6 @@ cdef class Vec(Object):
             - `InsertMode.ADD_VALUES` Add new values to existing ones.
 
             - `InsertMode.MAX_VALUES` Keep the maximum value in for each
-              entry.
-
-            - `InsertMode.MIN_VALUES` Keep the minimum value in for each
               entry.
         mode
             Scatter mode. Possible values are:
@@ -3803,8 +3796,8 @@ cdef class Vec(Object):
 
         Notes
         -----
-        This method is rarely needed as `DM.getLocalVector` or
-        `DM.getGlobalVector` will set this appropriately.
+        This method is rarely needed as `DM.getLocalVec` or
+        `DM.getGlobalVec` will set this appropriately.
 
         See Also
         --------
@@ -3837,7 +3830,7 @@ cdef class Vec(Object):
         Vec.getSizes, Vec.setSizes
 
         """
-        def __get__(self):
+        def __get__(self) -> tuple[int, int]:
             return self.getSizes()
         def __set__(self, value):
             self.setSizes(value)
@@ -3850,7 +3843,7 @@ cdef class Vec(Object):
         Vec.getSize
 
         """
-        def __get__(self):
+        def __get__(self) -> int:
             return self.getSize()
 
     property local_size:
@@ -3861,7 +3854,7 @@ cdef class Vec(Object):
         Vec.getLocalSize
 
         """
-        def __get__(self):
+        def __get__(self) -> int:
             return self.getLocalSize()
 
     property block_size:
@@ -3872,7 +3865,7 @@ cdef class Vec(Object):
         Vec.getBlockSize
 
         """
-        def __get__(self):
+        def __get__(self) -> int:
             return self.getBlockSize()
 
     property owner_range:
@@ -3883,7 +3876,7 @@ cdef class Vec(Object):
         Vec.getOwnershipRange
 
         """
-        def __get__(self):
+        def __get__(self) -> tuple[int, int]:
             return self.getOwnershipRange()
 
     property owner_ranges:
@@ -3894,7 +3887,7 @@ cdef class Vec(Object):
         Vec.getOwnershipRanges
 
         """
-        def __get__(self):
+        def __get__(self) -> ArrayInt:
             return self.getOwnershipRanges()
 
     property buffer_w:
@@ -3905,7 +3898,7 @@ cdef class Vec(Object):
         Vec.getBuffer
 
         """
-        def __get__(self):
+        def __get__(self) -> Any:
             return self.getBuffer()
 
     property buffer_r:
@@ -3916,7 +3909,7 @@ cdef class Vec(Object):
         Vec.getBuffer
 
         """
-        def __get__(self):
+        def __get__(self) -> Any:
             return self.getBuffer(True)
 
     property array_w:
@@ -3927,7 +3920,7 @@ cdef class Vec(Object):
         Vec.getArray
 
         """
-        def __get__(self):
+        def __get__(self) -> ArrayScalar:
             return self.getArray()
         def __set__(self, value):
             cdef buf = self.getBuffer()
@@ -3941,17 +3934,17 @@ cdef class Vec(Object):
         Vec.getArray
 
         """
-        def __get__(self):
+        def __get__(self) -> ArrayScalar:
             return self.getArray(True)
 
     property buffer:
         """Alias for `Vec.buffer_w`."""
-        def __get__(self):
+        def __get__(self) -> Any:
             return self.buffer_w
 
     property array:
         """Alias for `Vec.array_w`."""
-        def __get__(self):
+        def __get__(self) -> ArrayScalar:
             return self.array_w
         def __set__(self, value):
             self.array_w = value
