@@ -226,7 +226,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelAddStratum
+        petsc.DMLabelAddStratum, addStrata, addStrataIS
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -244,7 +244,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelAddStrata
+        petsc.DMLabelAddStrata, addStrataIS, addStratum
 
         """
         cdef PetscInt *istrata = NULL
@@ -264,7 +264,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelAddStrataIS
+        petsc.DMLabelAddStrataIS, addStrata, addStratum
 
         """
         CHKERR( DMLabelAddStrataIS(self.dmlabel, iset.iset) )
@@ -341,7 +341,7 @@ cdef class DMLabel(Object):
         return toBool(cexists)
 
     def getStratumSize(self, stratum: int) -> int:
-        """Get the size of a stratum.
+        """Return the size of a stratum.
 
         Not collective.
 
@@ -372,7 +372,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelGetStratumIS
+        petsc.DMLabelGetStratumIS, setStratumIS
 
         """
         cdef PetscInt cstratum = asInt(stratum)
@@ -394,7 +394,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelSetStratumIS
+        petsc.DMLabelSetStratumIS, getStratumIS
 
         """
         cdef PetscInt cstratum = asInt(stratum)
@@ -446,7 +446,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelCreateIndex
+        petsc.DMLabelCreateIndex, destroyIndex
 
         """
         cdef PetscInt cpstart = asInt(pStart), cpend = asInt(pEnd)
@@ -459,7 +459,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelDestroyIndex
+        petsc.DMLabelDestroyIndex, createIndex
 
         """
         CHKERR( DMLabelDestroyIndex(self.dmlabel) )
@@ -476,7 +476,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelHasValue
+        petsc.DMLabelHasValue, hasPoint
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -498,7 +498,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelHasPoint
+        petsc.DMLabelHasPoint, hasValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -523,7 +523,7 @@ cdef class DMLabel(Object):
         return toInt(cpstart), toInt(cpend)
 
     def filter(self, start: int, end: int) -> None:
-        """Remove all points outside of [start, end)
+        """Remove all points outside of [start, end).
 
         Not collective.
 
