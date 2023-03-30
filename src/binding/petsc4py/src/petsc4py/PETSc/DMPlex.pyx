@@ -230,7 +230,7 @@ cdef class DMPlex(DM):
 
         Parameters
         ----------
-        filename
+        cgid
             The CG id associated with a file and obtained using cg_open.
         interpolate
             Create faces and edges in the mesh.
