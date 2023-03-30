@@ -23,14 +23,16 @@ class DMSwarmPICLayoutType(object):
 
 
 cdef class DMSwarm(DM):
-
+    """
+    A DM object used to represent arrays of data (fields) of arbitrary type.
+    """
     Type = DMSwarmType
     MigrateType = DMSwarmMigrateType
     CollectType = DMSwarmCollectType
     PICLayoutType = DMSwarmPICLayoutType
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Creates an empty DM object and set its type to `SWARM`.
+        """Create an empty DM object and set its type to `DMSWARM`. TODO:
 
         DMs are the abstract objects in PETSc that mediate between meshes and
         discretizations and the algebraic solvers, time integrators, and
@@ -56,9 +58,10 @@ cdef class DMSwarm(DM):
         return self
 
     def createGlobalVectorFromField(self, fieldname: str) -> Vec:
-        """Creates a `Vec` object sharing the array associated with a given field.
+        """Create a `Vec` object sharing the array associated with a given field.
 
-        The vector must be returned using a matching call to `destroyGlobalVectorFromField`.
+        The vector must be returned using a matching call to
+        `destroyGlobalVectorFromField`.
 
         Collective.
 
@@ -79,7 +82,7 @@ cdef class DMSwarm(DM):
         return vg
 
     def destroyGlobalVectorFromField(self, fieldname: str) -> None:
-        """Destroys the `Vec` object which share the array associated with a given field.
+        """Destroy the `Vec` object which share the array associated with a given field.
 
         Collective.
 
@@ -99,7 +102,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmDestroyGlobalVectorFromField(self.dm, cfieldname, &vec) )
 
     def createLocalVectorFromField(self, fieldname: str) -> Vec:
-        """Creates a `Vec` object sharing the array associated with a given field.
+        """Create a `Vec` object sharing the array associated with a given field.
 
         The vector must be returned using a matching call to `destroyLocalVectorFromField`.
 
@@ -122,7 +125,7 @@ cdef class DMSwarm(DM):
         return vl
 
     def destroyLocalVectorFromField(self, fieldname: str) -> None:
-        """Destroys the `Vec` object which share the array associated with a given field.
+        """Destroy the `Vec` object which share the array associated with a given field.
 
         Collective.
 
@@ -168,7 +171,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmFinalizeFieldRegister(self.dm) )
 
     def setLocalSizes(self, nlocal: int, buffer: int) -> Self:
-        """Sets the length of all registered fields on the `DMSwarm`.
+        """Set the length of all registered fields on the `DMSwarm`.
 
         Not collective.
 
@@ -217,8 +220,9 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         fieldname = str2bytes(fieldname, &cfieldname)
         CHKERR( DMSwarmRegisterPetscDatatypeField(self.dm, cfieldname, cblocksize, ctype) )
 
-    def getField(self, fieldname) -> TODO:
-        """Get access to the underlying array storing all entries associated with a registered field.
+    # TODO: return type
+    def getField(self, fieldname):
+        """get/return access to the underlying array storing all entries associated with a registered field.
 
         The array must be returned using a matching call to `restoreField`.
 
@@ -269,11 +273,12 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
 
         Parameters
         ----------
-fieldname - the textual name to identify this field
-Output parameters
-blocksize - the number of each data type
-type - the data type
-data - pointer to raw array
+        fieldname
+            TODO the textual name to identify this field
+        Output parameters
+        blocksize TODO the number of each data type
+        type TODO the data type
+        data TODO pointer to raw array
 
         See also
         --------
@@ -341,11 +346,6 @@ data - pointer to raw array
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See also
         --------
         petsc.DMSwarmRemovePoint
@@ -354,7 +354,7 @@ data - pointer to raw array
         CHKERR( DMSwarmRemovePoint(self.dm) )
 
     def removePointAtIndex(self, index: int) -> None:
-        """Removes a specific point from the DMSWARM
+        """Remove a specific point from the DMSWARM
 
         Not collective.
 
@@ -372,16 +372,16 @@ data - pointer to raw array
         CHKERR( DMSwarmRemovePointAtIndex(self.dm, cindex) )
 
     def copyPoint(self, pi: int, pj: int) -> None:
-        """Copy point pj to point pi in the `DMSwarm`.
+        """Copy point pi to point pj in the `DMSwarm`.
 
-        Not collective. #TODO: verify order
+        Not collective.
 
         Parameters
         ----------
         pi
-            The index of the point to copy.
+            The index of the point to copy (source).
         pj
-            The point index where the copy should be located.
+            The point index where the copy should be located (destination).
 
         See also
         --------
@@ -421,7 +421,7 @@ data - pointer to raw array
         return toInt(size)
 
     def migrate(self, remove_sent_points=False) -> None: #TODO: remove_sent_points = bool | None = False ?
-        """Relocates points defined in the `DMSwarm` to other MPI-ranks.
+        """Relocate points defined in the `DMSwarm` to other MPI-ranks.
 
         Collective.
 
@@ -439,7 +439,7 @@ data - pointer to raw array
         CHKERR( DMSwarmMigrate(self.dm, remove_pts) )
 
     def collectViewCreate(self) -> None:
-        """Applies a collection method and gathers points in neighbour ranks into the `DMSwarm`.
+        """Apply a collection method and gathers points in neighbour ranks into the `DMSwarm`.
 
         Collective.
 
@@ -451,7 +451,7 @@ data - pointer to raw array
         CHKERR( DMSwarmCollectViewCreate(self.dm) )
 
     def collectViewDestroy(self) -> None:
-        """Resets the `DMSwarm` to the size prior to calling `collectViewCreate`.
+        """Reset the `DMSwarm` to the size prior to calling `collectViewCreate`.
 
         Collective.
 
@@ -463,7 +463,7 @@ data - pointer to raw array
         CHKERR( DMSwarmCollectViewDestroy(self.dm) )
 
     def setCellDM(self, DM dm):
-        """Attaches a `DM` to a `DMSwarm`.
+        """Attach a `DM` to a `DMSwarm`.
 
         Collective.
 
@@ -503,7 +503,8 @@ data - pointer to raw array
 
         Parameters
         ----------
-stype - the DMSWARM type (e.g. DMSWARM_PIC)
+        stype
+            TODO the DMSWARM type (e.g. DMSWARM_PIC)
 
         See also
         --------
@@ -520,10 +521,14 @@ stype - the DMSWARM type (e.g. DMSWARM_PIC)
 
         Parameters
         ----------
-min - minimum coordinate values in the x, y, z directions (array of length dim)
-max - maximum coordinate values in the x, y, z directions (array of length dim)
-npoints - number of points in each spatial direction (array of length dim)
-mode - indicates whether to append points to the swarm (ADD_VALUES), or over-ride existing points (INSERT_VALUES)
+        min
+            TODO minimum coordinate values in the x, y, z directions (array of length dim)
+        max
+            TODO maximum coordinate values in the x, y, z directions (array of length dim)
+        npoints
+            TODO number of points in each spatial direction (array of length dim)
+        mode
+            TODO indicates whether to append points to the swarm (ADD_VALUES), or over-ride existing points (INSERT_VALUES)
 
         See also
         --------
@@ -552,10 +557,14 @@ mode - indicates whether to append points to the swarm (ADD_VALUES), or over-rid
 
         Parameters
         ----------
-npoints - the number of points to insert
-coor - the coordinate values
-redundant - if set to PETSC_TRUE, it is assumed that npoints and coor are only valid on rank 0 and should be broadcast to other ranks
-mode - indicates whether to append points to the swarm (ADD_VALUES), or over-ride existing points (INSERT_VALUES)
+        npoints
+            TODO: the number of points to insert
+        coor
+            TODO: the coordinate values
+        redundant
+            TODO: if set to PETSC_TRUE, it is assumed that npoints and coor are only valid on rank 0 and should be broadcast to other ranks
+        mode
+            TODO: indicates whether to append points to the swarm (ADD_VALUES), or over-ride existing points (INSERT_VALUES)
 
         See also
         --------
@@ -573,7 +582,8 @@ mode - indicates whether to append points to the swarm (ADD_VALUES), or over-rid
         cdef PetscReal *coords = <PetscReal*> PyArray_DATA(xyz)
         CHKERR( DMSwarmSetPointCoordinates(self.dm, cnpoints, coords, credundant, cmode) )
 
-    def insertPointUsingCellDM(self, layoutType: TODO, fill_param: int) -> None:
+    # TODO: layoutType: is not none
+    def insertPointUsingCellDM(self, layoutType: None, fill_param: int) -> None:
         """Insert point coordinates within each cell.
 
         Not collective.
@@ -601,9 +611,12 @@ mode - indicates whether to append points to the swarm (ADD_VALUES), or over-rid
 
         Parameters
         ----------
-celldm - the cell DM
-npoints - the number of points to insert in each cell
-xi - the coordinates (defined in the local coordinate system for each cell) to insert
+        celldm
+            TODO the cell DM
+        npoints
+            TODO the number of points to insert in each cell
+        xi
+            TODO the coordinates (defined in the local coordinate system for each cell) to insert
 
         See also
         --------
@@ -668,7 +681,7 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
         CHKERR( DMSwarmViewXDMF(self.dm, cval) )
 
     def sortGetAccess(self) -> None:
-        """Setups up a `DMSwarm` point sort context for efficient traversal of points within a cell.
+        """Setup up a `DMSwarm` point sort context for efficient traversal of points within a cell.
 
         You must call `sortRestoreAccess` when you no longer need access to the sort context.
 
@@ -682,7 +695,7 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
         CHKERR( DMSwarmSortGetAccess(self.dm) )
 
     def sortRestoreAccess(self) -> None:
-        """Invalidates the `DMSwarm` point sorting context.
+        """Invalidate the `DMSwarm` point sorting context.
 
         Not collective.
 
@@ -693,8 +706,8 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
         """
         CHKERR( DMSwarmSortRestoreAccess(self.dm) )
 
-    def sortGetPointsPerCell(self, e: int) -> List[int]: #TODO:
-        """Creates an array of point indices for all points in a cell.
+    def sortGetPointsPerCell(self, e: int) -> list[int]:
+        """Create an array of point indices for all points in a cell.
 
         Not collective.
 
@@ -759,7 +772,7 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
         return toBool(isValid)
 
     def sortGetSizes(self) -> tuple(int, int):
-        """Gets the sizes associated with a `DMSwarm` point sorting context.
+        """Return the sizes associated with a `DMSwarm` point sorting context.
 
         Not collective.
 
@@ -789,7 +802,7 @@ xi - the coordinates (defined in the local coordinate system for each cell) to i
         ----------
         nfields - the number of swarm fields to project
         fieldnames - the textual names of the swarm fields to project
-        fields - an array of Vec’s of length nfields
+        fields - an array of ``Vec``s of length nfields
         reuse - flag indicating whether the array and contents of fields should be re-used or internally allocated
 
         See also
