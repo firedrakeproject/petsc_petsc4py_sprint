@@ -2681,7 +2681,9 @@ cdef class Vec(Object):
         CHKERR( VecWAXPY(self.vec, sval, x.vec, y.vec) )
 
     def maxpy(self, alphas: Sequence[ScalarType], vecs: Sequence[Vec]) -> None:
-        """Compute and store y = Σₙ(ɑₙ·``vecs[n]``) + y.
+        """Compute and store y = Σₙ(ɑₙ·Xₙ) + y with X an array of vectors.
+
+        Equivalent to ``y[:] = alphas[i]*vecs[i, :] + y[:]``.
 
         Logically collective.
 
@@ -2713,57 +2715,388 @@ cdef class Vec(Object):
             v[i] = (<Vec?>(vecs[i])).vec
         CHKERR( VecMAXPY(self.vec, n, a, v) )
 
-    def pointwiseMult(self, Vec x, Vec y):
+    def pointwiseMult(self, Vec x, Vec y) -> None:
+        """Compute and store the component-wise multiplication of two vectors.
+
+        Equivalent to ``w[i] = x[i] * y[i]``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        x, y
+            Input vectors to multiply component-wise.
+
+        Notes
+        -----
+        Any subset of this vector, ``x`` or ``y`` may be the same vector.
+
+        See Also
+        --------
+        Vec.pointwiseDivide, petsc.VecPointwiseMult
+
+        """
         CHKERR( VecPointwiseMult(self.vec, x.vec, y.vec) )
 
-    def pointwiseDivide(self, Vec x, Vec y):
+    def pointwiseDivide(self, Vec x, Vec y) -> None:
+        """Compute and store the component-wise division of two vectors.
+
+        Equivalent to ``w[i] = x[i] / y[i]``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        x
+            Numerator vector.
+        y
+            Denominator vector.
+
+        Notes
+        -----
+        Any subset of this vector, ``x`` or ``y`` may be the same vector.
+
+        See Also
+        --------
+        Vec.pointwiseMult, petsc.VecPointwiseDivide
+
+        """
         CHKERR( VecPointwiseDivide(self.vec, x.vec, y.vec) )
 
-    def pointwiseMin(self, Vec x, Vec y):
+    def pointwiseMin(self, Vec x, Vec y) -> None:
+        """Compute and store the component-wise minimum of two vectors.
+
+        Equivalent to ``w[i] = min(x[i], y[i])``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        x, y
+            Input vectors to find the component-wise minima.
+
+        Notes
+        -----
+        Any subset of this vector, ``x`` or ``y`` may be the same vector.
+
+        For complex numbers only the real part is compared.
+
+        See Also
+        --------
+        Vec.pointwiseMax, Vec.pointwiseMaxAbs, petsc.VecPointwiseMin
+
+        """
         CHKERR( VecPointwiseMin(self.vec, x.vec, y.vec) )
 
-    def pointwiseMax(self, Vec x, Vec y):
+    def pointwiseMax(self, Vec x, Vec y) -> None:
+        """Compute and store the component-wise maximum of two vectors.
+
+        Equivalent to ``w[i] = max(x[i], y[i])``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        x, y
+            Input vectors to find the component-wise maxima.
+
+        Notes
+        -----
+        Any subset of this vector, ``x`` or ``y`` may be the same vector.
+
+        For complex numbers only the real part is compared.
+
+        See Also
+        --------
+        Vec.pointwiseMin, Vec.pointwiseMaxAbs, petsc.VecPointwiseMax
+
+        """
         CHKERR( VecPointwiseMax(self.vec, x.vec, y.vec) )
 
-    def pointwiseMaxAbs(self, Vec x, Vec y):
+    def pointwiseMaxAbs(self, Vec x, Vec y) -> None:
+        """Compute and store the component-wise maximum absolute values.
+
+        Equivalent to ``w[i] = max(abs(x[i]), abs(y[i]))``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        x, y
+            Input vectors to find the component-wise maxima.
+
+        Notes
+        -----
+        Any subset of this vector, ``x`` or ``y`` may be the same vector.
+
+        See Also
+        --------
+        Vec.pointwiseMin, Vec.pointwiseMax, petsc.VecPointwiseMaxAbs
+
+        """
         CHKERR( VecPointwiseMaxAbs(self.vec, x.vec, y.vec) )
 
-    def maxPointwiseDivide(self, Vec vec):
+    def maxPointwiseDivide(self, Vec vec) -> float:
+        """Return the maximum of the component-wise absolute value division.
+
+        Equivalent to ``result = max_i abs(x[i] / y[i])``.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        x
+            Numerator vector.
+        y
+            Denominator vector.
+
+        Notes
+        -----
+        ``x`` and ``y`` may be the same vector.
+
+        If a particular ``y[i]`` is zero it will be treated as one.
+
+        See Also
+        --------
+        Vec.pointwiseMin, Vec.pointwiseMax, Vec.pointwiseMaxAbs
+        petsc.MaxPointwiseDivide
+
+        """
         cdef PetscReal rval = 0
         CHKERR( VecMaxPointwiseDivide(self.vec, vec.vec, &rval) )
         return toReal(rval)
 
-    def getValue(self, index):
+    def getValue(self, index: int) -> ScalarType:
+        """Return a single value from the vector.
+
+        Not collective.
+
+        Parameters
+        ----------
+        index
+            Location of the value to read.
+
+        Notes
+        -----
+        If `Vec.setValues` has been called then `Vec.assemblyBegin` and
+        `Vec.assemblyEnd` must precede this method.
+
+        See Also
+        --------
+        Vec.getValues, petsc.VecGetValues
+
+        """
         cdef PetscInt    ival = asInt(index)
         cdef PetscScalar sval = 0
         CHKERR( VecGetValues(self.vec, 1, &ival, &sval) )
         return toScalar(sval)
 
-    def getValues(self, indices, values=None):
+    def getValues(
+        self,
+        indices: Sequence[int],
+        values: Sequence[ScalarType] | None = None,
+    ) -> ArrayScalar:
+        """Return values from certain locations in the vector.
+
+        Only values on the same processor may be accessed.
+
+        Not collective.
+
+        Parameters
+        ----------
+        indices
+            Locations of the values to read.
+        values
+            Location to store the collected values. If not provided then a new
+            array will be allocated.
+
+        Returns
+        -------
+        ArrayScalar
+            Collected values. If ``values`` is provided then that is returned.
+
+        Notes
+        -----
+        If `Vec.setValues` has been called then `Vec.assemblyBegin` and
+        `Vec.assemblyEnd` must precede this method.
+
+        See Also
+        --------
+        Vec.getValue, Vec.setValues, petsc.VecGetValues
+
+        """
         return vecgetvalues(self.vec, indices, values)
 
     def getValuesStagStencil(self, indices, values=None):
+        """Not implemented."""
         raise NotImplementedError('getValuesStagStencil not yet implemented in petsc4py')
 
-    def setValue(self, index, value, addv=None):
+    def setValue(
+        self,
+        index: int,
+        value: ScalarType,
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Insert or add a single value in the vector.
+
+        Not collective.
+
+        Parameters
+        ----------
+        index
+            Location to write to.
+        value
+            Value to insert at ``index``.
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entry with new
+              value (default).
+
+            - `InsertMode.ADD_VALUES` Add new value to existing one.
+
+        Notes
+        -----
+        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        must be called after all calls of this method are completed.
+
+        Multiple calls to `Vec.setValue` cannot be made with different values
+        for ``addv`` without intermediate calls to `Vec.assemblyBegin` and
+        `Vec.assemblyEnd`.
+
+        See Also
+        --------
+        Vec.getValue, Vec.getValues, Vec.setValues, petsc.VecSetValues
+
+        """
         cdef PetscInt    ival = asInt(index)
         cdef PetscScalar sval = asScalar(value)
         cdef PetscInsertMode caddv = insertmode(addv)
         CHKERR( VecSetValues(self.vec, 1, &ival, &sval, caddv) )
 
-    def setValues(self, indices, values, addv=None):
+    def setValues(
+        self,
+        indices: Sequence[int],
+        values: Sequence[ScalarType],
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Insert or add multiple values in the vector.
+
+        Not collective.
+
+        Parameters
+        ----------
+        indices
+            Locations to write to. Any negative indices are ignored.
+        values
+            Values to insert at ``indices``.
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+        Notes
+        -----
+        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        must be called after all calls of this method are completed.
+
+        Multiple calls to `Vec.setValues` cannot be made with different values
+        for ``addv`` without intermediate calls to `Vec.assemblyBegin` and
+        `Vec.assemblyEnd`.
+
+        See Also
+        --------
+        Vec.getValue, Vec.getValues, Vec.setValue, petsc.VecSetValues
+
+        """
         vecsetvalues(self.vec, indices, values, addv, 0, 0)
 
-    def setValuesBlocked(self, indices, values, addv=None):
+    def setValuesBlocked(
+        self,
+        indices: Sequence[int],
+        values: Sequence[ScalarType],
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Insert or add blocks of values in the vector.
+
+        Equivalent to ``x[bs*indices[i]+j] = y[bs*i+j]`` for
+        ``0 <= i < len(indices)``, ``0 <= j < bs`` and ``bs`` `Vec.block_size`.
+
+        Not collective.
+
+        Parameters
+        ----------
+        indices
+            Block indices to write to. Any negative indices are ignored.
+        values
+            Values to insert at ``indices``. Should have length
+            ``len(indices) * vec.block_size``.
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+        Notes
+        -----
+        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        must be called after all calls of this method are completed.
+
+        Multiple calls to `Vec.setValuesBlocked` cannot be made with different
+        values for ``addv`` without intermediate calls to `Vec.assemblyBegin`
+        and `Vec.assemblyEnd`.
+
+        See Also
+        --------
+        Vec.getValues, Vec.setValues, petsc.VecSetValues
+
+        """
         vecsetvalues(self.vec, indices, values, addv, 1, 0)
 
     def setValuesStagStencil(self, indices, values, addv=None):
+        """Not implemented."""
         raise NotImplementedError('setValuesStagStencil not yet implemented in petsc4py')
 
-    def setLGMap(self, LGMap lgmap):
+    def setLGMap(self, LGMap lgmap) -> None:
+        """Set the local-to-global numbering.
+
+        This allows users to insert vector entries using a local numbering
+        with `Vec.setValuesLocal`.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        lgmap
+            Local-to-global mapping.
+
+        Notes
+        -----
+        Vectors created with `Vec.duplicate` inherit the same mapping.
+
+        See Also
+        --------
+        Vec.setValues, Vec.setValuesLocal, Vec.getLGMap
+        petsc.VecSetLocalToGlobalMapping
+
+        """
         CHKERR( VecSetLocalToGlobalMapping(self.vec, lgmap.lgm) )
 
-    def getLGMap(self):
+    def getLGMap(self) -> LGMap:
+        """Return the local-to-global numbering.
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.setLGMap, petsc.VecGetLocalToGlobalMapping
+
+        """
         cdef LGMap cmap = LGMap()
         CHKERR( VecGetLocalToGlobalMapping(self.vec, &cmap.lgm) )
         PetscINCREF(cmap.obj)
