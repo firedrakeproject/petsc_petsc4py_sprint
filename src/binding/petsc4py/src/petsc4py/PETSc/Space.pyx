@@ -31,7 +31,7 @@ cdef class Space(Object):
         """
         CHKERR( PetscSpaceSetUp(self.space) )
 
-    def create(self, comm: Comm | None = None):
+    def create(self, comm: Comm | None = None) -> Self:
         """Create an empty `Space` object.
 
         The type can then be set with `setType`.
@@ -113,6 +113,7 @@ cdef class Space(Object):
 
     def getDegree(self) -> tuple(int, int):
         """Return the polynomial degrees that characterize this space.
+        TODO: +1?
 
         Returns
         -------
@@ -558,6 +559,7 @@ class DualSpaceType(object):
 # --------------------------------------------------------------------
 
 cdef class DualSpace(Object):
+    """A PETSc object that manages the dual space to a linear space."""
 
     Type = DualSpaceType
 
@@ -661,7 +663,7 @@ cdef class DualSpace(Object):
         return dm
 
     def setDM(self, DM dm) -> None:
-        """Get the `DM` representing the reference cell.
+        """Set the `DM` representing the reference cell.
 
         Not collective.
 
@@ -735,7 +737,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceGetType(self.dualspace, &cval) )
         return bytes2str(cval)
 
-    def setType(self, dualspace_type: DualSpace.Type | str) -> Self:
+    def setType(self, dualspace_type: Type | str) -> Self:
         """Build a particular `DualSpace` based on its `Type`.
 
         Collective.
