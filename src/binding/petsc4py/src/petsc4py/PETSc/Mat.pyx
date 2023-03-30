@@ -2669,16 +2669,53 @@ cdef class Mat(Object):
 
     # dense matrices
 
-    def setDenseLDA(self, lda):
+    def setDenseLDA(self, lda: int) -> None:
+        """Set the leading dimension of the array used by the matrix.
+
+        Not collective. Only for `Type.DENSE` and `Type.DENSECUDA`.
+
+        Parameters
+        ----------
+        lda
+            The leading dimension.
+
+        See Also
+        --------
+        petsc.MatDenseSetLDA
+
+        """
         cdef PetscInt _ilda = asInt(lda)
         CHKERR( MatDenseSetLDA(self.mat, _ilda) )
 
-    def getDenseLDA(self):
+    def getDenseLDA(self) -> int:
+        """Return the leading dimension of the array used by the matrix.
+
+        Not collective. Only for `Type.DENSE` and `Type.DENSECUDA`.
+
+        See Also
+        --------
+        petsc.MatDenseGetLDA
+
+        """
         cdef PetscInt lda=0
         CHKERR( MatDenseGetLDA(self.mat, &lda) )
         return toInt(lda)
 
-    def getDenseArray(self,readonly=False):
+    def getDenseArray(self, readonly: bool = False) -> ArrayScalar:
+        """Return the array where the data is stored.
+
+        Not collective.
+
+        Parameters
+        ----------
+        readonly
+            Enable to obtain a read only array.
+
+        See Also
+        --------
+        petsc.MatDenseGetArrayRead, petsc.MatDenseGetArray
+
+        """
         cdef PetscInt m=0, N=0, lda=0
         cdef PetscScalar *data = NULL
         CHKERR( MatGetLocalSize(self.mat, &m, NULL) )
@@ -2702,13 +2739,35 @@ cdef class Mat(Object):
             CHKERR( MatDenseRestoreArray(self.mat, &data) )
         return array
 
-    def getDenseLocalMatrix(self):
+    def getDenseLocalMatrix(self) -> Mat:
+        """Return the matrix local to this process.
+
+        See Also
+        --------
+        petsc.MatDenseGetLocalMatrix
+
+        """
         cdef Mat mat = type(self)()
         CHKERR( MatDenseGetLocalMatrix(self.mat, &mat.mat) )
         PetscINCREF(mat.obj)
         return mat
 
-    def getDenseColumnVec(self, i, mode='rw'):
+    def getDenseColumnVec(self, i: int, mode: Literal['r','w','rw'] = 'rw') -> Vec:
+        """Return the iᵗʰ column vector of the matrix.
+
+        Parameters
+        ----------
+        i
+            The column index to return.
+        mode
+            The read type of the returned array
+
+        See Also
+        --------
+        petsc.MatDenseGetColumnVec, petsc.MatDenseGetColumnVecRead,
+        petsc.MatDenseGetColumnVecWrite
+
+        """
         if mode is None: mode = 'rw'
         if mode not in ['rw', 'r', 'w']:
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
@@ -2723,7 +2782,22 @@ cdef class Mat(Object):
         PetscINCREF(v.obj)
         return v
 
-    def restoreDenseColumnVec(self, i, mode='rw'):
+    def restoreDenseColumnVec(self, i: int, mode: Literal['r','w','rw'] = 'rw'):
+        """Restore the iᵗʰ column vector of the matrix.
+
+        Parameters
+        ----------
+        i
+            The column index to restored.
+        mode
+            The read type of the restored array
+
+        See Also
+        --------
+        petsc.MatDenseRestoreColumnVec, petsc.MatDenseRestoreColumnVecRead,
+        petsc.MatDenseRestoreColumnVecWrite
+
+        """
         cdef PetscInt _i = asInt(i)
         if mode == 'rw':
             CHKERR( MatDenseRestoreColumnVec(self.mat, _i, NULL) )
