@@ -1200,7 +1200,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMatSetClosure(self.dm, csec, cgsec, mat.mat, cp, cvals, im) )
 
     def generate(self, DMPlex boundary, name: str | None = None, interpolate: bool | None = True) -> Self:
-        """Generates a mesh.
+        """Generate a mesh.
 
         Not collective.
 
