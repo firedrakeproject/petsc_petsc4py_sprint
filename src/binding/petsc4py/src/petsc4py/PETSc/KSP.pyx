@@ -1052,7 +1052,7 @@ cdef class KSP(Object):
             self.set_attr('__converged__', None)
 
     def getConvergenceTest(self) -> KSPConvergenceTestFunction:
-        """Returns the function to be used to determine convergence.
+        """Return the function to be used to determine convergence.
 
         Logically collective.
 
