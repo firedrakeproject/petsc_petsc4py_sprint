@@ -467,7 +467,7 @@ cdef class DM(Object):
 
     #
 
-    def createSubDM(self, fields: Sequence[int]):
+    def createSubDM(self, fields: Sequence[int]) -> tuple[IS, DM]:
         """Return `IS` and `DM` encapsuling a subproblem.
        
         Not collective.
