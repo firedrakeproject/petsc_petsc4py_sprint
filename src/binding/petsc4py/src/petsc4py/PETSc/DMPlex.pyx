@@ -204,7 +204,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.createFromCellList, DMPlex.create, Object.setName, DM.view, DM.load, petsc.DMPlexCreateFromFile
+        DM, DMPlex, DMPlex.createFromCellList, DMPlex.create, Object.setName, DM.view, DM.load, petsc_options, petsc.DMPlexCreateFromFile
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -355,7 +355,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DM.create, petsc.DMPlexCreateGmsh
+        DM, DMPlex, DM.create, petsc_options, petsc.DMPlexCreateGmsh
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -948,7 +948,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getDepthStratum, DMPlex.getDepth, DMPlex.getPointHeight, petsc.DMPlexGetHeightStratum
+        DM, DMPlex, DMPlex.getDepthStratum, DMPlex.getDepth, petsc.DMPlexGetHeightStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
@@ -1210,7 +1210,7 @@ cdef class DMPlex(DM):
 
         Notes
         -----
-        ``-dm_plex_generate <name>`` sets package to generate mesh, for example, triangle, ctetgen or tetgen.
+        ``-dm_plex_generate <name>`` sets package to generate mesh, for example, triangle, ctetgen or tetgen.\n
         ``-dm_generator <name>`` sets package to generate mesh, for example, triangle, ctetgen or tetgen.
 
         See Also
@@ -1431,10 +1431,10 @@ cdef class DMPlex(DM):
 
         Notes
         -----
-        Pass ``-dm_plex_rebalance_shared_points_parmetis`` to use ParMetis instead of Metis for the partitioner.
-        Pass ``-dm_plex_rebalance_shared_points_use_initial_guess`` to use current partition to bootstrap ParMetis partition.
-        Pass ``-dm_plex_rebalance_shared_points_use_mat_partitioning`` to use the `MatPartitioning` object to perform the partition, the prefix for those operations is ``-dm_plex_rebalance_shared_points_``.
-        Pass ``-dm_plex_rebalance_shared_points_monitor`` to monitor the shared points rebalance process.
+        ``-dm_plex_rebalance_shared_points_parmetis`` allows for using ParMetis instead of Metis for the partitioner.\n
+        ``-dm_plex_rebalance_shared_points_use_initial_guess`` allows for using current partition to bootstrap ParMetis partition.\n
+        ``-dm_plex_rebalance_shared_points_use_mat_partitioning`` allows for using the `MatPartitioning` object to perform the partition, the prefix for those operations is ``-dm_plex_rebalance_shared_points_``.\n
+        ``-dm_plex_rebalance_shared_points_monitor`` allows for monitoring the shared points rebalance process.\n
 
         See Also
         --------
@@ -1493,10 +1493,10 @@ cdef class DMPlex(DM):
 
         Notes
         -----
-        ``-dm_plex_overlap_labels <name1,name2,...>`` sets list of overlap label names.
-        ``-dm_plex_overlap_values <int1,int2,...>`` sets list of overlap label values.
-        ``-dm_plex_overlap_exclude_label <name>`` sets label used to exclude points from overlap.
-        ``-dm_plex_overlap_exclude_value <int>`` sets label value used to exclude points from overlap.
+        ``-dm_plex_overlap_labels <name1,name2,...>`` sets list of overlap label names.\n
+        ``-dm_plex_overlap_values <int1,int2,...>`` sets list of overlap label values.\n
+        ``-dm_plex_overlap_exclude_label <name>`` sets label used to exclude points from overlap.\n
+        ``-dm_plex_overlap_exclude_value <int>`` sets label value used to exclude points from overlap.\n
 
         See Also
         --------
