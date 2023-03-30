@@ -829,7 +829,7 @@ cdef class KSP(Object):
         All future calls to `setOperators` must use the same size
         matrices!
 
-        Passing ``None`` for ``A`` or ``P`` removes the matrix that is
+        Passing `None` for ``A`` or ``P`` removes the matrix that is
         currently used.
 
         See also
@@ -940,7 +940,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        Use ``None`` to retain the default value of any of the
+        Use `None` to retain the default value of any of the
         tolerances.
 
         See also
@@ -1102,12 +1102,12 @@ cdef class KSP(Object):
         length
             Length of array to store history in.
         reset
-            ``True`` indicates the history counter is reset to zero for
+            `True` indicates the history counter is reset to zero for
             each new linear solve.
 
         Notes
         -----
-        If ``length`` is not provided or ``None`` then a default array
+        If ``length`` is not provided or `None` then a default array
         of length 10000 is allocated.
 
         If the array is not long enough then once the iterations is
@@ -1449,7 +1449,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            ``True`` indicates the guess is non-zero, ``False``
+            `True` indicates the guess is non-zero, `False`
             indicates the guess is zero.
 
         See also
@@ -1485,7 +1485,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            ``True`` uses Knoll trick.
+            `True` uses Knoll trick.
 
         See also
         --------
@@ -1779,7 +1779,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            ``True`` enables this behaviour
+            `True` enables this behaviour
 
         See also
         --------
