@@ -5,8 +5,8 @@
 #
 # .. math::
 #
-#     - u_{xx} - u_{yy} = 1 \textrm{in} [0,1]^2
-#     u = 0 \textrm{on the boundary}
+#     - u_{xx} - u_{yy} = 1 \quad\textsf{in}\quad [0,1]^2\\
+#     u = 0 \quad\textsf{on the boundary.}
 
 # This is a naïve, parallel implementation, using :math:`n` interior grid
 # points per dimension and a lexicographic ordering of the nodes.
@@ -16,14 +16,17 @@
 # naive decomposition that does not lead to an optimal communication complexity
 # for the matrix-vector product. See dmda.c for an example of optimal
 # communication complexity and nodes ordering.
-
+#
 # This demo is structured as a script to be executed using:
 #
-# .. code-block:: console
+# .. code-block:: console
 #
 #   $ python poisson2d.py
 #
-# potentially with additional options passed at the end of the command.
+# potentially with additional options passed at the end of the command.
+#
+# At the start of your script, call `petsc4py.init` passing `sys.argv` so that
+# command-line arguments to the script are passed through to PETSc.
 
 import sys
 import petsc4py
@@ -31,6 +34,7 @@ import petsc4py
 petsc4py.init(sys.argv)
 
 # import PETSc module
+
 from petsc4py import PETSc
 
 # Access options database
