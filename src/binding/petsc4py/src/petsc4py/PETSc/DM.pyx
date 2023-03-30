@@ -395,7 +395,7 @@ cdef class DM(Object):
         -------
         toBool(uC) : bool
             This flag provides the variable influence starting with the cone operation if True.
-        toBool(uCl) : boll
+        toBool(uCl) : bool
             This flag provides the variable influence using transitive closure.
         
         See Also
@@ -566,7 +566,7 @@ cdef class DM(Object):
         return toInt(cnum)
 
     def setField(self, index: int, Object field, label=None) -> None:
-        """Set the discretization object.
+        """Set the discretization object for a given `DM` field.
 
         Logically Collective.
 
@@ -582,7 +582,7 @@ cdef class DM(Object):
         CHKERR( DMSetField(self.dm, cidx, clbl, cobj) )
 
     def getField(self, index: int) -> tuple[Object,None]:
-        """Return the discretization object.
+        """Return the discretization object for a given `DM` field.
         
         Not Collective.
         
@@ -629,7 +629,7 @@ cdef class DM(Object):
         CHKERR( DMClearFields(self.dm) )
 
     def copyFields(self, DM dm) -> None:
-        """Copy the discretizations.
+        """Copy the discretizations of a `DM` into another `DM`.
 
         Collective.
 
