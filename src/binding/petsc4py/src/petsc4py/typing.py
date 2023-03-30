@@ -24,6 +24,8 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "DMCoarsenHookFunction",
+    "DMRestrictHookFunction",
     "TSRHSFunction",
     "TSRHSJacobian",
     "TSRHSJacobianP",
