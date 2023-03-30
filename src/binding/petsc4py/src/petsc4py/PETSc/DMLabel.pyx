@@ -6,7 +6,7 @@ cdef class DMLabel(Object):
         self.dmlabel  = NULL
 
     def destroy(self) -> Self:
-        """Destroy the `DMLabel`.
+        """Destroy the label.
 
         Collective.
 
