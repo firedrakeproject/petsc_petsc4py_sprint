@@ -1981,7 +1981,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetRefinementLimit(self.dm, &rval) )
         return toReal(rval)
 
-    def getOrdering(self, otype: MatOrderingType) -> IS:
+    def getOrdering(self, otype: Mat.OrderingType) -> IS:
         """Calculate a reordering of the mesh.
 
         Collective.
@@ -1989,7 +1989,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         otype
-            Type of reordering, see `MatOrderingType`.
+            Type of reordering, see `Mat.OrderingType`.
 
         Returns
         -------
@@ -1998,7 +1998,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex, DMPlex.permute, MatOrderingType, Mat.getOrdering, petsc.DMPlexGetOrdering
+        DMPlex, DMPlex.permute, Mat.OrderingType, Mat.getOrdering, petsc.DMPlexGetOrdering
 
         """
         cdef PetscMatOrderingType cval = NULL
@@ -2008,77 +2008,57 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexGetOrdering(self.dm, cval, label, &perm.iset) )
         return perm
 
-    def permute(self, IS perm):
-        """DMPlexPermute - Reorder the mesh according to the input permutation
+    def permute(self, IS perm) -> DMPlex:
+        """Reorder the mesh according to the input permutation.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DMPlex` object
         perm
-            The point permutation, `perm`[old point number] = new point number
+            The point permutation, ``perm``[old point number] = new point number.
 
         Returns
         -------
-        pdm
-            The permuted `DM`
-
-        .seealso: `DMPlex`, `MatPermute`
+        pdm: DMPlex
+            The permuted `DMPlex`.
 
         See Also
         --------
-        petsc.DMPlexPermute
+        DMPlex, Mat.permute, petsc.DMPlexPermute
 
         """
         cdef DMPlex dm = <DMPlex>type(self)()
         CHKERR( DMPlexPermute(self.dm, perm.iset, &dm.dm) )
         return dm
 
-    def reorderGetDefault(self):
-        """DMPlexReorderGetDefault - Get flag indicating whether the DM should be reordered by default
+    def reorderGetDefault(self) -> DMPlex.ReorderDefaultFlag:
+        """Return flag indicating whether the `DMPlex` should be reordered by default.
 
         Not collective.
 
-        Parameters
-        ----------
-        dm
-            The `DM`
-
-        Returns
-        -------
-        reorder
-            Flag for reordering
-
-        .seealso: `DMPlexReorderSetDefault`
-
         See Also
         --------
-        petsc.DMPlexReorderGetDefault
+        `DMPlex.reorderSetDefault`, petsc.DMPlexReorderGetDefault
 
         """
         cdef PetscDMPlexReorderDefaultFlag reorder = DMPLEX_REORDER_DEFAULT_NOTSET
         CHKERR( DMPlexReorderGetDefault(self.dm, &reorder) )
         return reorder
 
-    def reorderSetDefault(self, flag):
-        """DMPlexReorderSetDefault - Set flag indicating whether the DM should be reordered by default
+    def reorderSetDefault(self, flag: DMPlex.ReorderDefaultFlag):
+        """Set flag indicating whether the DM should be reordered by default.
 
         Logically collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
         reorder
-            Flag for reordering
-
-        .seealso: `DMPlexReorderGetDefault`
+            Flag for reordering.
 
         See Also
         --------
-        petsc.DMPlexReorderSetDefault
+        DMPlex.reorderGetDefault, petsc.DMPlexReorderSetDefault
 
         """
         cdef PetscDMPlexReorderDefaultFlag reorder = flag
@@ -2087,32 +2067,28 @@ cdef class DMPlex(DM):
 
     #
 
-    def computeCellGeometryFVM(self, cell):
-        """DMPlexComputeCellGeometryFVM - Compute the volume for a given cell
+    def computeCellGeometryFVM(self, cell: int) -> tuple[float, ArrayReal, ArrayReal]:
+        """Compute the volume for a given cell.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            the `DMPlex`
         cell
-            the cell
+            The cell.
 
         Returns
         -------
-        volume
-            the cell volume
-        centroid
-            the cell centroid
-        normal
-            the cell normal, if appropriate
-
-        .seealso: `DMPlex`, `DMGetCoordinateSection`, `DMGetCoordinates`
+        volume: float
+            The cell volume.
+        centroid: ArrayReal
+            The cell centroid.
+        normal: ArrayReal
+            The cell normal, if appropriate.
 
         See Also
         --------
-        petsc.DMPlexComputeCellGeometryFVM
+        DMPlex, DM.getCoordinateSection, DM.getCoordinates, petsc.DMPlexComputeCellGeometryFVM
 
         """
         cdef PetscInt cdim = 0
@@ -2122,30 +2098,24 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexComputeCellGeometryFVM(self.dm, ccell, &vol, centroid, normal) )
         return (toReal(vol), array_r(cdim, centroid), array_r(cdim, normal))
 
-    def constructGhostCells(self, labelName=None):
-        """DMPlexConstructGhostCells - Construct ghost cells which connect to every boundary face
+    def constructGhostCells(self, labelName: str | None = None) -> int:
+        """Construct ghost cells which connect to every boundary face.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The original `DM`
         labelName
-            The label specifying the boundary faces, or "Face Sets" if this is `None`
+            The name of the label specifying the boundary faces, ``"Face Sets"`` if `None`.
 
         Returns
         -------
-        numGhostCells
-            The number of ghost cells added to the `DM`
-        dmGhosted
-            The new `DM`
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMCreate`
+        numGhostCells: int
+            The number of ghost cells added to the `DMPlex`.
 
         See Also
         --------
-        petsc.DMPlexConstructGhostCells
+        DM, DMPlex, DM.create, petsc.DMPlexConstructGhostCells
 
         """
         cdef const char *cname = NULL
@@ -2158,52 +2128,44 @@ cdef class DMPlex(DM):
 
     # Metric
 
-    def metricSetFromOptions(self):
+    def metricSetFromOptions(self) -> None:
         CHKERR( DMPlexMetricSetFromOptions(self.dm) )
 
-    def metricSetUniform(self, uniform):
-        """DMPlexMetricSetUniform - Record whether a metric is uniform
+    def metricSetUniform(self, uniform: bool) -> None:
+        """Record whether the metric is uniform or not.
 
-        Input parameters:
-        + dm      - The DM
-        - uniform - Is the metric uniform?
-
-        .seealso: `DMPlexMetricIsUniform`, `DMPlexMetricSetIsotropic`, `DMPlexMetricSetRestrictAnisotropyFirst`
+        Parameters
+        ----------
+        uniform
+            Flag indicating whether the metric is uniform or not.
 
         See Also
         --------
-        petsc.DMPlexMetricSetUniform
+        DMPlex.metricIsUniform, DMPlex.metricSetIsotropic, DMPlex.metricSetRestrictAnisotropyFirst, petsc.DMPlexMetricSetUniform
 
         """
         cdef PetscBool bval = asBool(uniform)
         CHKERR( DMPlexMetricSetUniform(self.dm, bval) )
 
-    def metricIsUniform(self):
-        """DMPlexMetricIsUniform - Is a metric uniform?
-
-        Input parameters:
-        . dm      - The DM
-
-        Output parameters:
-        . uniform - Is the metric uniform?
-
-        .seealso: `DMPlexMetricSetUniform`, `DMPlexMetricIsIsotropic`, `DMPlexMetricRestrictAnisotropyFirst`
+    def metricIsUniform(self) -> bool:
+        """Return the flag indicating whether the metric is uniform or not.
 
         See Also
         --------
-        petsc.DMPlexMetricIsUniform
+        DMPlex.metricSetUniform, DMPlex.metricIsIsotropic, DMPlex.metricRestrictAnisotropyFirst, petsc.DMPlexMetricIsUniform
 
         """
         cdef PetscBool uniform = PETSC_FALSE
         CHKERR( DMPlexMetricIsUniform(self.dm, &uniform) )
         return toBool(uniform)
 
-    def metricSetIsotropic(self, isotropic):
-        """DMPlexMetricSetIsotropic - Record whether a metric is isotropic
+    def metricSetIsotropic(self, isotropic: bool) -> None:
+        """Record whether the metric is isotropic or not.
 
-        Input parameters:
-        + dm        - The DM
-        - isotropic - Is the metric isotropic?
+        Parameters
+        ----------
+        isotropic
+            Flag indicating whether the metric is isotropic or not.
 
         .seealso: `DMPlexMetricIsIsotropic`, `DMPlexMetricSetUniform`, `DMPlexMetricSetRestrictAnisotropyFirst`
 
@@ -2215,587 +2177,449 @@ cdef class DMPlex(DM):
         cdef PetscBool bval = asBool(isotropic)
         CHKERR( DMPlexMetricSetIsotropic(self.dm, bval) )
 
-    def metricIsIsotropic(self):
-        """DMPlexMetricIsIsotropic - Is a metric isotropic?
-
-        Input parameters:
-        . dm        - The DM
-
-        Output parameters:
-        . isotropic - Is the metric isotropic?
-
-        .seealso: `DMPlexMetricSetIsotropic`, `DMPlexMetricIsUniform`, `DMPlexMetricRestrictAnisotropyFirst`
+    def metricIsIsotropic(self) -> bool:
+        """Return the flag indicating whether the metric is isotropic or not.
 
         See Also
         --------
-        petsc.DMPlexMetricIsIsotropic
+        DMPlex.metricSetIsotropic, DMPlex.metricIsUniform, DMPlex.metricRestrictAnisotropyFirst, petsc.DMPlexMetricIsIsotropic
 
         """
         cdef PetscBool isotropic = PETSC_FALSE
         CHKERR( DMPlexMetricIsIsotropic(self.dm, &isotropic) )
         return toBool(isotropic)
 
-    def metricSetRestrictAnisotropyFirst(self, restrictAnisotropyFirst):
-        """DMPlexMetricSetRestrictAnisotropyFirst - Record whether anisotropy should be restricted before normalization
+    def metricSetRestrictAnisotropyFirst(self, restrictAnisotropyFirst: bool) -> None:
+        """Record whether anisotropy is be restricted before normalization or after.
 
-        Input parameters:
-        + dm                      - The DM
-        - restrictAnisotropyFirst - Should anisotropy be normalized first?
-
-        .seealso: `DMPlexMetricSetIsotropic`, `DMPlexMetricRestrictAnisotropyFirst`
+        Parameters
+        ----------
+        restrictAnisotropyFirst
+            Flag indicating if anisotropy is restricted before normalization or after.
 
         See Also
         --------
-        petsc.DMPlexMetricSetRestrictAnisotropyFirst
+        DMPlex.metricSetIsotropic, DMPlex.metricRestrictAnisotropyFirst, petsc.DMPlexMetricSetRestrictAnisotropyFirst
 
         """
         cdef PetscBool bval = asBool(restrictAnisotropyFirst)
         CHKERR( DMPlexMetricSetRestrictAnisotropyFirst(self.dm, bval) )
 
-    def metricRestrictAnisotropyFirst(self):
-        """DMPlexMetricRestrictAnisotropyFirst - Is anisotropy restricted before normalization or after?
-
-        Input parameters:
-        . dm                      - The DM
-
-        Output parameters:
-        . restrictAnisotropyFirst - Is anisotropy be normalized first?
-
-        .seealso: `DMPlexMetricIsIsotropic`, `DMPlexMetricSetRestrictAnisotropyFirst`
+    def metricRestrictAnisotropyFirst(self) -> bool:
+        """Return the flag indicating whether anisotropy is restricted before normalization or after?
 
         See Also
         --------
-        petsc.DMPlexMetricRestrictAnisotropyFirst
+        DMPlex.metricIsIsotropic, DMPlex.metricSetRestrictAnisotropyFirst, petsc.DMPlexMetricRestrictAnisotropyFirst
 
         """
         cdef PetscBool restrictAnisotropyFirst = PETSC_FALSE
         CHKERR( DMPlexMetricRestrictAnisotropyFirst(self.dm, &restrictAnisotropyFirst) )
         return toBool(restrictAnisotropyFirst)
 
-    def metricSetNoInsertion(self, noInsert):
-        """DMPlexMetricSetNoInsertion - Should node insertion and deletion be turned off?
+    def metricSetNoInsertion(self, noInsert: bool) -> None:
+        """Set the flag indicating whether node insertion and deletion should be turned off.
 
-        Input parameters:
-        + dm       - The DM
-        - noInsert - Should node insertion and deletion be turned off?
-
-        .seealso: `DMPlexMetricNoInsertion`, `DMPlexMetricSetNoSwapping`, `DMPlexMetricSetNoMovement`, `DMPlexMetricSetNoSurf`
+        Prameters
+        ---------
+        noInsert
+            Flag indicating whether node insertion and deletion should be turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricSetNoInsertion
+        DMPlex.metricNoInsertion, DMPlex.metricSetNoSwapping, DMPlex.metricSetNoMovement, DMPlex.metricSetNoSurf, petsc.DMPlexMetricSetNoInsertion
 
         """
         cdef PetscBool bval = asBool(noInsert)
         CHKERR( DMPlexMetricSetNoInsertion(self.dm, bval) )
 
-    def metricNoInsertion(self):
-        """DMPlexMetricNoInsertion - Are node insertion and deletion turned off?
-
-        Input parameters:
-        . dm       - The DM
-
-        Output parameters:
-        . noInsert - Are node insertion and deletion turned off?
-
-        .seealso: `DMPlexMetricSetNoInsertion`, `DMPlexMetricNoSwapping`, `DMPlexMetricNoMovement`, `DMPlexMetricNoSurf`
+    def metricNoInsertion(self) -> bool:
+        """Return the flag indicating whether node insertion and deletion are turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricNoInsertion
+        DMPlex.metricSetNoInsertion, DMPlex.metricNoSwapping, DMPlex.metricNoMovement, DMPlex.metricNoSurf, petsc.DMPlexMetricNoInsertion
 
         """
         cdef PetscBool noInsert = PETSC_FALSE
         CHKERR( DMPlexMetricNoInsertion(self.dm, &noInsert) )
         return toBool(noInsert)
 
-    def metricSetNoSwapping(self, noSwap):
-        """DMPlexMetricSetNoSwapping - Should facet swapping be turned off?
+    def metricSetNoSwapping(self, noSwap: bool) -> None:
+        """Set the flag indicating whether facet swapping should be turned off.
 
-        Input parameters:
-        + dm     - The DM
-        - noSwap - Should facet swapping be turned off?
-
-        .seealso: `DMPlexMetricNoSwapping`, `DMPlexMetricSetNoInsertion`, `DMPlexMetricSetNoMovement`, `DMPlexMetricSetNoSurf`
+        Parameter
+        ---------
+        noSwap
+            Flag indicating whether facet swapping should be turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricSetNoSwapping
+        DMPlex.metricNoSwapping, DMPlex.metricSetNoInsertion, DMPlex.metricSetNoMovement, DMPlex.metricSetNoSurf, petsc.DMPlexMetricSetNoSwapping
 
         """
         cdef PetscBool bval = asBool(noSwap)
         CHKERR( DMPlexMetricSetNoSwapping(self.dm, bval) )
 
-    def metricNoSwapping(self):
-        """DMPlexMetricNoSwapping - Is facet swapping turned off?
-
-        Input parameters:
-        . dm     - The DM
-
-        Output parameters:
-        . noSwap - Is facet swapping turned off?
-
-        .seealso: `DMPlexMetricSetNoSwapping`, `DMPlexMetricNoInsertion`, `DMPlexMetricNoMovement`, `DMPlexMetricNoSurf`
+    def metricNoSwapping(self) -> bool:
+        """Return the flag indicating whether facet swapping is turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricNoSwapping
+        DMPlex.metricSetNoSwapping, DMPlex.metricNoInsertion, DMPlex.metricNoMovement, DMPlex.metricNoSurf, petsc.DMPlexMetricNoSwapping
 
         """
         cdef PetscBool noSwap = PETSC_FALSE
         CHKERR( DMPlexMetricNoSwapping(self.dm, &noSwap) )
         return toBool(noSwap)
 
-    def metricSetNoMovement(self, noMove):
-        """DMPlexMetricSetNoMovement - Should node movement be turned off?
+    def metricSetNoMovement(self, noMove: bool) -> None:
+        """Set the flag indicating whether node movement should be turned off.
 
-        Input parameters:
-        + dm     - The DM
-        - noMove - Should node movement be turned off?
-
-        .seealso: `DMPlexMetricNoMovement`, `DMPlexMetricSetNoInsertion`, `DMPlexMetricSetNoSwapping`, `DMPlexMetricSetNoSurf`
+        Parameters
+        ----------
+        noMove
+            Flag indicating whether node movement should be turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricSetNoMovement
+        DMPlex.metricNoMovement, DMPlex.metricSetNoInsertion, DMPlex.metricSetNoSwapping, DMPlex.metricSetNoSurf, petsc.DMPlexMetricSetNoMovement
 
         """
         cdef PetscBool bval = asBool(noMove)
         CHKERR( DMPlexMetricSetNoMovement(self.dm, bval) )
 
-    def metricNoMovement(self):
-        """DMPlexMetricNoMovement - Is node movement turned off?
-
-        Input parameters:
-        . dm     - The DM
-
-        Output parameters:
-        . noMove - Is node movement turned off?
-
-        .seealso: `DMPlexMetricSetNoMovement`, `DMPlexMetricNoInsertion`, `DMPlexMetricNoSwapping`, `DMPlexMetricNoSurf`
+    def metricNoMovement(self) -> bool:
+        """Return the flag indicating whether node movement is turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricNoMovement
+        DMPlex.metricSetNoMovement, DMPlex.metricNoInsertion, DMPlex.metricNoSwapping, DMPlex.metricNoSurf, petsc.DMPlexMetricNoMovement
 
         """
         cdef PetscBool noMove = PETSC_FALSE
         CHKERR( DMPlexMetricNoMovement(self.dm, &noMove) )
         return toBool(noMove)
 
-    def metricSetNoSurf(self, noSurf):
-        """DMPlexMetricSetNoSurf - Should surface modification be turned off?
+    def metricSetNoSurf(self, noSurf: bool) -> None:
+        """Set the flag indicating whether surface modification should be turned off.
 
-        Input parameters:
-        + dm     - The DM
-        - noSurf - Should surface modification be turned off?
-
-        .seealso: `DMPlexMetricNoSurf`, `DMPlexMetricSetNoMovement`, `DMPlexMetricSetNoInsertion`, `DMPlexMetricSetNoSwapping`
+        Parameters
+        ----------
+        noSurf
+            Flag indicating whether surface modification should be turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricSetNoSurf
+        DMPlex.metricNoSurf, DMPlex.metricSetNoMovement, DMPlex.metricSetNoInsertion, DMPlex.metricSetNoSwapping, petsc.DMPlexMetricSetNoSurf
 
         """
         cdef PetscBool bval = asBool(noSurf)
         CHKERR( DMPlexMetricSetNoSurf(self.dm, bval) )
 
-    def metricNoSurf(self):
-        """DMPlexMetricNoSurf - Is surface modification turned off?
-
-        Input parameters:
-        . dm     - The DM
-
-        Output parameters:
-        . noSurf - Is surface modification turned off?
-
-        .seealso: `DMPlexMetricSetNoSurf`, `DMPlexMetricNoMovement`, `DMPlexMetricNoInsertion`, `DMPlexMetricNoSwapping`
+    def metricNoSurf(self) -> bool:
+        """Return the flag indicating whether surface modification is turned off.
 
         See Also
         --------
-        petsc.DMPlexMetricNoSurf
+        DMPlex.metricSetNoSurf, DMPlex.metricNoMovement, DMPlex.metricNoInsertion, DMPlex.metricNoSwapping, petsc.DMPlexMetricNoSurf
 
         """
         cdef PetscBool noSurf = PETSC_FALSE
         CHKERR( DMPlexMetricNoSurf(self.dm, &noSurf) )
         return toBool(noSurf)
 
-    def metricSetVerbosity(self, verbosity):
-        """DMPlexMetricSetVerbosity - Set the verbosity of the mesh adaptation package
+    def metricSetVerbosity(self, verbosity: int) -> None:
+        """Set the verbosity of the mesh adaptation package.
 
-        Input parameters:
-        + dm        - The DM
-        - verbosity - The verbosity, where -1 is silent and 10 is maximum
-
-        .seealso: `DMPlexMetricGetVerbosity`, `DMPlexMetricSetNumIterations`
+        Parameters
+        ----------
+        verbosity
+            The verbosity, where -1 is silent and 10 is maximum.
 
         See Also
         --------
-        petsc.DMPlexMetricSetVerbosity
+        DMPlex.metricGetVerbosity, DMPlex.metricSetNumIterations, petsc.DMPlexMetricSetVerbosity
 
         """
         cdef PetscInt ival = asInt(verbosity)
         CHKERR( DMPlexMetricSetVerbosity(self.dm, ival) )
 
-    def metricGetVerbosity(self):
-        """DMPlexMetricGetVerbosity - Get the verbosity of the mesh adaptation package
+    def metricGetVerbosity(self) -> int:
+        """Return the verbosity of the mesh adaptation package.
 
-        Input parameters:
-        . dm        - The DM
-
-        Output parameters:
-        . verbosity - The verbosity, where -1 is silent and 10 is maximum
-
-        .seealso: `DMPlexMetricSetVerbosity`, `DMPlexMetricGetNumIterations`
+        Returns
+        -------
+        verbosity: int
+            The verbosity, where -1 is silent and 10 is maximum.
 
         See Also
         --------
-        petsc.DMPlexMetricGetVerbosity
+        DMPlex.metricSetVerbosity, DMPlex.metricGetNumIterations, petsc.DMPlexMetricGetVerbosity
 
         """
         cdef PetscInt verbosity = 0
         CHKERR( DMPlexMetricGetVerbosity(self.dm, &verbosity) )
         return toInt(verbosity)
 
-    def metricSetNumIterations(self, numIter):
-        """DMPlexMetricSetNumIterations - Set the number of parallel adaptation iterations
+    def metricSetNumIterations(self, numIter: int) -> None:
+        """Set the number of parallel adaptation iterations.
 
-        Input parameters:
-        + dm      - The DM
-        - numIter - the number of parallel adaptation iterations
-
-        .seealso: `DMPlexMetricSetVerbosity`, `DMPlexMetricGetNumIterations`
+        Parameters
+        ----------
+        numIter
+            The number of parallel adaptation iterations.
 
         See Also
         --------
-        petsc.DMPlexMetricSetNumIterations
+        DMPlex.metricSetVerbosity, DMPlex.metricGetNumIterations, petsc.DMPlexMetricSetNumIterations
 
         """
         cdef PetscInt ival = asInt(numIter)
         CHKERR( DMPlexMetricSetNumIterations(self.dm, ival) )
 
-    def metricGetNumIterations(self):
-        """DMPlexMetricGetNumIterations - Get the number of parallel adaptation iterations
-
-        Input parameters:
-        . dm      - The DM
-
-        Output parameters:
-        . numIter - the number of parallel adaptation iterations
-
-        .seealso: `DMPlexMetricSetNumIterations`, `DMPlexMetricGetVerbosity`
+    def metricGetNumIterations(self) -> int:
+        """Return the number of parallel adaptation iterations.
 
         See Also
         --------
-        petsc.DMPlexMetricGetNumIterations
+        DMPlex.metricSetNumIterations, DMPlex.metricGetVerbosity, petsc.DMPlexMetricGetNumIterations
 
         """
         cdef PetscInt numIter = 0
         CHKERR( DMPlexMetricGetNumIterations(self.dm, &numIter) )
         return toInt(numIter)
 
-    def metricSetMinimumMagnitude(self, h_min):
-        """DMPlexMetricSetMinimumMagnitude - Set the minimum tolerated metric magnitude
+    def metricSetMinimumMagnitude(self, h_min: float) -> None:
+        """Set the minimum tolerated metric magnitude.
 
-        Input parameters:
-        + dm    - The DM
-        - h_min - The minimum tolerated metric magnitude
-
-        .seealso: `DMPlexMetricGetMinimumMagnitude`, `DMPlexMetricSetMaximumMagnitude`
+        Parameters
+        ----------
+        h_min
+            The minimum tolerated metric magnitude.
 
         See Also
         --------
-        petsc.DMPlexMetricSetMinimumMagnitude
+        DMPlex.metricGetMinimumMagnitude, DMPlex.metricSetMaximumMagnitude, petsc.DMPlexMetricSetMinimumMagnitude
 
         """
         cdef PetscReal rval = asReal(h_min)
         CHKERR( DMPlexMetricSetMinimumMagnitude(self.dm, rval) )
 
-    def metricGetMinimumMagnitude(self):
-        """DMPlexMetricGetMinimumMagnitude - Get the minimum tolerated metric magnitude
-
-        Input parameters:
-        . dm    - The DM
-
-        Output parameters:
-        . h_min - The minimum tolerated metric magnitude
-
-        .seealso: `DMPlexMetricSetMinimumMagnitude`, `DMPlexMetricGetMaximumMagnitude`
+    def metricGetMinimumMagnitude(self) -> float:
+        """Return the minimum tolerated metric magnitude.
 
         See Also
         --------
-        petsc.DMPlexMetricGetMinimumMagnitude
+        DMPlex.metricSetMinimumMagnitude, DMPlexMetric.getMaximumMagnitude, petsc.DMPlexMetricGetMinimumMagnitude
 
         """
         cdef PetscReal h_min = 0
         CHKERR( DMPlexMetricGetMinimumMagnitude(self.dm, &h_min) )
         return toReal(h_min)
 
-    def metricSetMaximumMagnitude(self, h_max):
-        """DMPlexMetricSetMaximumMagnitude - Set the maximum tolerated metric magnitude
+    def metricSetMaximumMagnitude(self, h_max: float) -> None:
+        """Set the maximum tolerated metric magnitude.
 
-        Input parameters:
-        + dm    - The DM
-        - h_max - The maximum tolerated metric magnitude
-
-        .seealso: `DMPlexMetricGetMaximumMagnitude`, `DMPlexMetricSetMinimumMagnitude`
+        Parameters
+        ----------
+        h_max
+            The maximum tolerated metric magnitude.
 
         See Also
         --------
-        petsc.DMPlexMetricSetMaximumMagnitude
+        DMPlex.metricGetMaximumMagnitude, DMPlex.metricSetMinimumMagnitude, petsc.DMPlexMetricSetMaximumMagnitude
 
         """
         cdef PetscReal rval = asReal(h_max)
         CHKERR( DMPlexMetricSetMaximumMagnitude(self.dm, rval) )
 
-    def metricGetMaximumMagnitude(self):
-        """DMPlexMetricGetMaximumMagnitude - Get the maximum tolerated metric magnitude
-
-        Input parameters:
-        . dm    - The DM
-
-        Output parameters:
-        . h_max - The maximum tolerated metric magnitude
-
-        .seealso: `DMPlexMetricSetMaximumMagnitude`, `DMPlexMetricGetMinimumMagnitude`
+    def metricGetMaximumMagnitude(self) -> float:
+        """Return the maximum tolerated metric magnitude.
 
         See Also
         --------
-        petsc.DMPlexMetricGetMaximumMagnitude
+        DMPlex.metricSetMaximumMagnitude, DMPlex.metricGetMinimumMagnitude, petsc.DMPlexMetricGetMaximumMagnitude
 
         """
         cdef PetscReal h_max = 0
         CHKERR( DMPlexMetricGetMaximumMagnitude(self.dm, &h_max) )
         return toReal(h_max)
 
-    def metricSetMaximumAnisotropy(self, a_max):
-        """DMPlexMetricSetMaximumAnisotropy - Set the maximum tolerated metric anisotropy
+    def metricSetMaximumAnisotropy(self, a_max: float) -> None:
+        """Set the maximum tolerated metric anisotropy.
 
-        Input parameters:
-        + dm    - The DM
-        - a_max - The maximum tolerated metric anisotropy
-
-        .seealso: `DMPlexMetricGetMaximumAnisotropy`, `DMPlexMetricSetMaximumMagnitude`
+        Parameters
+        ----------
+        a_max
+            The maximum tolerated metric anisotropy.
 
         See Also
         --------
-        petsc.DMPlexMetricSetMaximumAnisotropy
+        DMPlex.metricGetMaximumAnisotropy, DMPlex.metricSetMaximumMagnitude, petsc.DMPlexMetricSetMaximumAnisotropy
 
         """
         cdef PetscReal rval = asReal(a_max)
         CHKERR( DMPlexMetricSetMaximumAnisotropy(self.dm, rval) )
 
-    def metricGetMaximumAnisotropy(self):
-        """DMPlexMetricGetMaximumAnisotropy - Get the maximum tolerated metric anisotropy
-
-        Input parameters:
-        . dm    - The DM
-
-        Output parameters:
-        . a_max - The maximum tolerated metric anisotropy
-
-        .seealso: `DMPlexMetricSetMaximumAnisotropy`, `DMPlexMetricGetMaximumMagnitude`
+    def metricGetMaximumAnisotropy(self) -> float:
+        """Return the maximum tolerated metric anisotropy.
 
         See Also
         --------
-        petsc.DMPlexMetricGetMaximumAnisotropy
+        DMPlex.metricSetMaximumAnisotropy, DMPlex.metricGetMaximumMagnitude, petsc.DMPlexMetricGetMaximumAnisotropy
 
         """
         cdef PetscReal a_max = 0
         CHKERR( DMPlexMetricGetMaximumAnisotropy(self.dm, &a_max) )
         return toReal(a_max)
 
-    def metricSetTargetComplexity(self, targetComplexity):
-        """DMPlexMetricSetTargetComplexity - Set the target metric complexity
+    def metricSetTargetComplexity(self, targetComplexity: float) -> None:
+        """Set the target metric complexity.
 
-        Input parameters:
-        + dm               - The DM
-        - targetComplexity - The target metric complexity
-
-        .seealso: `DMPlexMetricGetTargetComplexity`, `DMPlexMetricSetNormalizationOrder`
+        Parameters
+        ----------
+        targetComplexity
+            The target metric complexity.
 
         See Also
         --------
-        petsc.DMPlexMetricSetTargetComplexity
+        DMPlex.metricGetTargetComplexity, DMPlex.metricSetNormalizationOrder, petsc.DMPlexMetricSetTargetComplexity
 
         """
         cdef PetscReal rval = asReal(targetComplexity)
         CHKERR( DMPlexMetricSetTargetComplexity(self.dm, rval) )
 
-    def metricGetTargetComplexity(self):
-        """DMPlexMetricGetTargetComplexity - Get the target metric complexity
-
-        Input parameters:
-        . dm               - The DM
-
-        Output parameters:
-        . targetComplexity - The target metric complexity
-
-        .seealso: `DMPlexMetricSetTargetComplexity`, `DMPlexMetricGetNormalizationOrder`
+    def metricGetTargetComplexity(self) -> float:
+        """Return the target metric complexity.
 
         See Also
         --------
-        petsc.DMPlexMetricGetTargetComplexity
+        DMPlex.metricSetTargetComplexity, DMPlex.metricGetNormalizationOrder, petsc.DMPlexMetricGetTargetComplexity
 
         """
         cdef PetscReal targetComplexity = 0
         CHKERR( DMPlexMetricGetTargetComplexity(self.dm, &targetComplexity) )
         return toReal(targetComplexity)
 
-    def metricSetNormalizationOrder(self, p):
-        """DMPlexMetricSetNormalizationOrder - Set the order p for L-p normalization
+    def metricSetNormalizationOrder(self, p: float) -> None:
+        """Set the order p for L-p normalization.
 
-        Input parameters:
-        + dm - The DM
-        - p  - The normalization order
-
-        .seealso: `DMPlexMetricGetNormalizationOrder`, `DMPlexMetricSetTargetComplexity`
+        Parameters
+        ----------
+        p
+            The normalization order.
 
         See Also
         --------
-        petsc.DMPlexMetricSetNormalizationOrder
+        DMPlex.metricGetNormalizationOrder, DMPlex.metricSetTargetComplexity, petsc.DMPlexMetricSetNormalizationOrder
 
         """
         cdef PetscReal rval = asReal(p)
         CHKERR( DMPlexMetricSetNormalizationOrder(self.dm, rval) )
 
-    def metricGetNormalizationOrder(self):
-        """DMPlexMetricGetNormalizationOrder - Get the order p for L-p normalization
-
-        Input parameters:
-        . dm - The DM
-
-        Output parameters:
-        . p - The normalization order
-
-        .seealso: `DMPlexMetricSetNormalizationOrder`, `DMPlexMetricGetTargetComplexity`
+    def metricGetNormalizationOrder(self) -> float:
+        """Return the order p for L-p normalization.
 
         See Also
         --------
-        petsc.DMPlexMetricGetNormalizationOrder
+        DMPlex.metricSetNormalizationOrder, DMPlex.metricGetTargetComplexity, petsc.DMPlexMetricGetNormalizationOrder
 
         """
         cdef PetscReal p = 0
         CHKERR( DMPlexMetricGetNormalizationOrder(self.dm, &p) )
         return toReal(p)
 
-    def metricSetGradationFactor(self, beta):
-        """DMPlexMetricSetGradationFactor - Set the metric gradation factor
+    def metricSetGradationFactor(self, beta: float) -> None:
+        """Set the metric gradation factor.
 
-        Input parameters:
-        + dm   - The DM
-        - beta - The metric gradation factor
-
-        .seealso: `DMPlexMetricGetGradationFactor`, `DMPlexMetricSetHausdorffNumber`
+        Parameters
+        ----------
+        beta
+            The metric gradation factor.
 
         See Also
         --------
-        petsc.DMPlexMetricSetGradationFactor
+        DMPlex.metricGetGradationFactor, DMPlex.metricSetHausdorffNumber, petsc.DMPlexMetricSetGradationFactor
 
         """
         cdef PetscReal rval = asReal(beta)
         CHKERR( DMPlexMetricSetGradationFactor(self.dm, rval) )
 
-    def metricGetGradationFactor(self):
-        """DMPlexMetricGetGradationFactor - Get the metric gradation factor
-
-        Input parameters:
-        . dm   - The DM
-
-        Output parameters:
-        . beta - The metric gradation factor
-
-        .seealso: `DMPlexMetricSetGradationFactor`, `DMPlexMetricGetHausdorffNumber`
+    def metricGetGradationFactor(self) -> float:
+        """Return the metric gradation factor.
 
         See Also
         --------
-        petsc.DMPlexMetricGetGradationFactor
+        DMPlex.metricSetGradationFactor, DMPlex.metricGetHausdorffNumber, petsc.DMPlexMetricGetGradationFactor
 
         """
         cdef PetscReal beta = 0
         CHKERR( DMPlexMetricGetGradationFactor(self.dm, &beta) )
         return toReal(beta)
 
-    def metricSetHausdorffNumber(self, hausd):
-        """DMPlexMetricSetHausdorffNumber - Set the metric Hausdorff number
+    def metricSetHausdorffNumber(self, hausd: float) -> None:
+        """Set the metric Hausdorff number.
 
-        Input parameters:
-        + dm    - The DM
-        - hausd - The metric Hausdorff number
-
-        .seealso: `DMPlexMetricSetGradationFactor`, `DMPlexMetricGetHausdorffNumber`
+        Parameters
+        ----------
+        hausd
+            The metric Hausdorff number.
 
         See Also
         --------
-        petsc.DMPlexMetricSetHausdorffNumber
+        DMPlex.metricSetGradationFactor, DMPlex.metricGetHausdorffNumber, petsc.DMPlexMetricSetHausdorffNumber
 
         """
         cdef PetscReal rval = asReal(hausd)
         CHKERR( DMPlexMetricSetHausdorffNumber(self.dm, rval) )
 
-    def metricGetHausdorffNumber(self):
-        """DMPlexMetricGetHausdorffNumber - Get the metric Hausdorff number
-
-        Input parameters:
-        . dm    - The DM
-
-        Output parameters:
-        . hausd - The metric Hausdorff number
-
-        .seealso: `DMPlexMetricGetGradationFactor`, `DMPlexMetricSetHausdorffNumber`
+    def metricGetHausdorffNumber(self) -> float:
+        """Return the metric Hausdorff number.
 
         See Also
         --------
-        petsc.DMPlexMetricGetHausdorffNumber
+        DMPlex.metricGetGradationFactor, DMPlex.metricSetHausdorffNumber, petsc.DMPlexMetricGetHausdorffNumber
 
         """
         cdef PetscReal hausd = 0
         CHKERR( DMPlexMetricGetHausdorffNumber(self.dm, &hausd) )
         return toReal(hausd)
 
-    def metricCreate(self, field=0):
-        """DMPlexMetricCreate - Create a Riemannian metric field
+    def metricCreate(self, field: int | None = 0) -> Vec:
+        """Create a Riemannian metric field.
 
-        Input parameters:
-        + dm     - The DM
-        - f      - The field number to use
+        Parameters
+        ----------
+        field
+            The field number to use.
 
-        Output parameter:
-        . metric - The metric
-
-        Notes:
-
-        It is assumed that the DM is comprised of simplices.
-
+        Notes
+        -----
         Command line options for Riemannian metrics:
 
-        + -dm_plex_metric_isotropic                 - Is the metric isotropic?
-        . -dm_plex_metric_uniform                   - Is the metric uniform?
-        . -dm_plex_metric_restrict_anisotropy_first - Should anisotropy be restricted before normalization?
-        . -dm_plex_metric_h_min                     - Minimum tolerated metric magnitude
-        . -dm_plex_metric_h_max                     - Maximum tolerated metric magnitude
-        . -dm_plex_metric_a_max                     - Maximum tolerated anisotropy
-        . -dm_plex_metric_p                         - L-p normalization order
-        - -dm_plex_metric_target_complexity         - Target metric complexity
-
-        Switching between remeshers can be achieved using
-
-        . -dm_adaptor <pragmatic/mmg/parmmg>        - specify dm adaptor to use
+        ``-dm_plex_metric_isotropic`` sets whether the metric is isotropic.\n
+        ``-dm_plex_metric_uniform`` sets whether the metric is uniform.\n
+        ``-dm_plex_metric_restrict_anisotropy_first`` sets whether anisotropy should be restricted before normalization.\n
+        ``-dm_plex_metric_h_min`` sets the minimum tolerated metric magnitude.\n
+        ``-dm_plex_metric_h_max`` sets the maximum tolerated metric magnitude.\n
+        ``-dm_plex_metric_a_max`` sets the maximum tolerated anisotropy.\n
+        ``-dm_plex_metric_p`` sets the L-p normalization order.\n
+        ``-dm_plex_metric_target_complexity`` sets the target metric complexity.\n
+        ``-dm_adaptor <pragmatic/mmg/parmmg>`` allows for switching between dm adaptors to use.\n
 
         Further options that are only relevant to Mmg and ParMmg:
 
-        + -dm_plex_metric_gradation_factor          - Maximum ratio by which edge lengths may grow during gradation
-        . -dm_plex_metric_num_iterations            - Number of parallel mesh adaptation iterations for ParMmg
-        . -dm_plex_metric_no_insert                 - Should node insertion/deletion be turned off?
-        . -dm_plex_metric_no_swap                   - Should facet swapping be turned off?
-        . -dm_plex_metric_no_move                   - Should node movement be turned off?
-        - -dm_plex_metric_verbosity                 - Choose a verbosity level from -1 (silent) to 10 (maximum).
-
-        .seealso: `DMPlexMetricCreateUniform`, `DMPlexMetricCreateIsotropic`
+        ``-dm_plex_metric_gradation_factor`` sets maximum ratio by which edge lengths may grow during gradation.\n
+        ``-dm_plex_metric_num_iterations`` sets number of parallel mesh adaptation iterations for ParMmg.\n
+        ``-dm_plex_metric_no_insert`` sets whether node insertion/deletion should be turned off.\n
+        ``-dm_plex_metric_no_swap`` sets whether facet swapping should be turned off.\n
+        ``-dm_plex_metric_no_move`` sets whether node movement should be turned off.\n
+        ``-dm_plex_metric_verbosity`` sets a verbosity level from -1 (silent) to 10 (maximum).
 
         See Also
         --------
-        petsc.DMPlexMetricCreate
+        DMPlex.metricCreateUniform, DMPlex.metricCreateIsotropic, petsc_options, petsc.DMPlexMetricCreate
 
         """
         cdef PetscInt ival = asInt(field)
