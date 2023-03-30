@@ -692,7 +692,7 @@ cdef class DM(Object):
         CHKERR( DMCopyDS(self.dm, dm.dm) )
 
     def copyDisc(self, DM dm) -> None:
-        """Copy fields and discrete systems.
+        """Copy fields and discrete systems of a `DM` into another `DM`.
 
         Collective.
 
