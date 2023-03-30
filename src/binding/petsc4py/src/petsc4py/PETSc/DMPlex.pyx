@@ -1105,7 +1105,7 @@ cdef class DMPlex(DM):
         return closure
 
     def getVecClosure(self, Section sec or None, Vec vec, point: int) -> ArrayScalar:
-        """Return an array of the values on the closure of 'point'.
+        """Return an array of the values on the closure of a point.
 
         Not collective.
 
