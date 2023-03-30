@@ -1060,6 +1060,7 @@ cdef class Mat(Object):
 
         See Also
         --------
+        Mat.createHermitianTranspose
         petsc.MATNORMAL, petsc.MATNORMALHERMITIAN, petsc.MatCreateNormalHermitian
 
         """
@@ -1068,13 +1069,73 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createHermitianTranspose(self, Mat mat):
+    def createHermitianTranspose(self, Mat mat) -> Self:
+        """Create a virtual matrix transpose that behaves like (A*)ᵀ.
+
+        This sets the matrix to have type `Mat.Type.MATHERMITIANTRANSPOSEVIRTUAL`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            Matrix A to represent the hermitian transpose of.
+
+        Notes
+        -----
+        The Hermitian transpose is never actually formed. Instead
+        `Mat.multHermitianTranspose` is called whenever the matrix-vector
+        product is computed.
+
+        See Also
+        --------
+        Mat.createNormal, Mat.createNormalHermitian
+        petsc.MATHERMITIANTRANSPOSEVIRTUAL, petsc.MatCreateHermitianTranspose
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateHermitianTranspose(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createLRC(self, Mat A or None, Mat U, Vec c or None, Mat V or None):
+    def createLRC(self, Mat A, Mat U, Vec c, Mat V) -> Self:
+        """Create a matrix representing A + UCVᵀ.
+
+        This sets the matrix to have type `Mat.Type.MATLRC`.
+
+        Collective.
+
+        Parameters
+        ----------
+        A
+            Sparse matrix, can be `None`.
+        U, V
+            Dense rectangular (tall and thin) matrices.
+        c
+            Vector containing the diagonal of C, can be `None`.
+
+        Notes
+        -----
+        The matrix A + UCVᵀ is never actually formed. Instead things are
+        computed on the fly during `Mat.mult` etc.
+
+        C is a diagonal matrix (represented as a vector) of order k, where k
+        is the number of columns of both U and V.
+
+        If A is `None` then the new object behaves like a low-rank matrix UCVᵀ.
+
+        Use the same matrix for ``V`` and ``U`` (or ``V=None``) for a symmetric
+        low-rank correction, A + UCUᵀ.
+
+        If ``c`` is `None` then the low-rank correction is just U*Vᵀ. If a
+        sequential ``c`` vector is used for a parallel matrix, PETSc assumes
+        that the values of the vector are consistently set across processors.
+
+        See Also
+        --------
+        petsc.MATLRC, petsc.MatCreateLRC
+
+        """
         cdef PetscMat Amat = NULL
         cdef PetscMat Umat = U.mat
         cdef PetscVec cvec = NULL
@@ -1087,14 +1148,68 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None):
+    def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None) -> Self:
+        """Create a virtual matrix that acts as a submatrix.
+
+        This sets the matrix type to `Mat.Type.MATSUBMATRIX`.
+
+        Collective.
+
+        Parameters
+        ----------
+        A
+            Matrix to extract submatrix from.
+        isrow
+            Rows present in the submatrix.
+        iscol
+            Columns present in the submatrix, defaults to ``isrow``.
+
+        See Also
+        --------
+        petsc.MatCreateSubMatrixVirtual
+
+        """
         if iscol is None: iscol = isrow
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateSubMatrixVirtual(A.mat, isrow.iset, iscol.iset, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createNest(self, mats, isrows=None, iscols=None, comm=None):
+    def createNest(
+        self,
+        mats: Sequence[Mat],
+        isrows: Sequence[IS] | None = None,
+        iscols: Sequence[IS] | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a nested matrix containing multiple submatrices.
+
+        Each submatrix is stored separately.
+
+        The resulting matrix has type `Mat.Type.MATNEST`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mats
+            Row-aligned iterable of matrices with size
+            ``len(isrows)*len(iscols)``. Empty submatrices can be set with
+            `None`.
+        isrows
+            Index set for each nested row block, default to contiguous
+            ordering.
+        iscols
+            Index set for each nested column block, defaults to contiguous
+            ordering.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.MatCreateNest, petsc.MATNEST
+
+        """
         cdef object mat
         mats = [list(mat) for mat in mats]
         if isrows:
@@ -1132,7 +1247,51 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createH2OpusFromMat(self, Mat A, coordinates=None, dist=None, eta=None, leafsize=None, maxrank=None, bs=None, rtol=None):
+    def createH2OpusFromMat(
+        self,
+        Mat A,
+        coordinates: Sequence[Scalar] | None = None,
+        dist: bool | None = None,
+        eta: float | None = None,
+        leafsize: int | None = None,
+        maxrank: int | None = None,
+        bs: int | None = None,
+        rtol: float | None = None,
+    ) -> Self:
+        """Create a `Mat.Type.MATH2OPUS` sampling from a provided operator.
+
+        Serial execution only.
+
+        Parameters
+        ----------
+        A
+            Matrix to be sampled.
+        coordinates
+            Coordinates of the points.
+        dist
+            Whether or not coordinates are distributed, defaults to `False`.
+        eta
+            Admissibility condition tolerance, defaults to `DECIDE`.
+        leafsize
+            Leaf size in cluster tree, defaults to `DECIDE`.
+        maxrank
+            Maximum rank permitted, defaults to `DECIDE`.
+        bs
+            Maximum number of samples to take concurrently, defaults to
+            `DECIDE`.
+        rtol
+            Relative tolerance for construction, defaults to `DECIDE`.
+
+        Notes
+        -----
+        See `petsc.MatCreateH2OpusFromMat` for the appropriate database
+        options.
+
+        See Also
+        --------
+        petsc_options, petsc.MatCreateH2OpusFromMat
+
+        """
         cdef PetscInt cdim = 1
         cdef PetscReal *coords = NULL
         cdef PetscBool cdist = PETSC_FALSE
