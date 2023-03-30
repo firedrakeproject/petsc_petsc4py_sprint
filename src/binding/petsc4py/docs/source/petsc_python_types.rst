@@ -9,9 +9,10 @@ In particular, we discuss matrices, preconditioners, Krylov solvers, nonlinear s
 
 The low-level, Cython implementation exposing the Python methods is contained in
 
-**${PETSC_DIR}/src/binding/petsc4py/src/petsc4py/PETSc/libpetsc4py.pyx**
+:file:`${PETSC_DIR}/src/binding/petsc4py/src/petsc4py/PETSc/libpetsc4py.pyx`
 
-The scripts can be found in **${PETSC_DIR}/src/binding/petsc4py/demo/python_types**.
+The scripts can be found in
+:file:`${PETSC_DIR}/src/binding/petsc4py/demo/python_types`.
 
 .. _petsc_python_mat:
 
@@ -21,16 +22,16 @@ PETSc Python matrix type
 PETSc provides a convenient way to compute the action of linear operators coded
 in Python through the `petsc4py.PETSc.Mat.Type.PYTHON` type.
 
-The implementation is not limited to the action only, but it also exposes
-additional methods that can be used within the library. A template class for
+In addition to the matrix action, the implementation can expose additional
+methods for use within the library. A template class for
 the supported methods is given below.
 
 .. literalinclude:: ../../demo/python_types/matpython_protocol.py
 
-In the example below, we create an operator the applies the Laplacian operator
-on a two-dimensional grid, and use it solve the associated linear system.
-The default preconditioner in the script uses `petsc4py.PETSc.PC.Type.JACOBI`
-the needs to access the diagonal of the matrix.
+In the example below, we create an operator that applies the Laplacian operator
+on a two-dimensional grid, and use it to solve the associated linear system.
+The default preconditioner in the script is `petsc4py.PETSc.PC.Type.JACOBI`
+which needs to access the diagonal of the matrix.
 
 .. literalinclude:: ../../demo/python_types/mat.py
 
@@ -44,12 +45,13 @@ The protocol for the `petsc4py.PETSc.PC.Type.PYTHON` preconditioner is:
 .. literalinclude:: ../../demo/python_types/pcpython_protocol.py
 
 In the example below, we create a Jacobi preconditioner, which needs to access
-the diagonal of the matrix. The action of the preconditioner consists in the pointwise
-multiplication of the inverse diagonal with the input vector.
+the diagonal of the matrix. The action of the preconditioner consists of the
+pointwise multiplication of the inverse diagonal with the input vector.
 
 .. literalinclude:: ../../demo/python_types/pc.py
 
-We can run the script used to test our matrix class and use our preconditioner by command line options:
+We can run the script used to test our matrix class and use command line
+arguments to specify that our preconditioner should be used:
 
 .. code-block:: console
 
