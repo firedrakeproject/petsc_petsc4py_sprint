@@ -8,6 +8,15 @@ class DMPlexReorderDefaultFlag(object):
 # --------------------------------------------------------------------
 
 cdef class DMPlex(DM):
+    """Encapsulate an unstructured mesh.
+
+    A `DMPlex` object interfaces for both topology and geometry. It is capable of parallel refinement and coarsening (using Pragmatic or ParMmg) and parallel redistribution for load balancing. It is designed to interface with the `FE` and ``FV`` trial discretization objects.
+
+    See Also
+    --------
+    petsc.DMPlex
+
+    """
 
     ReorderDefaultFlag = DMPlexReorderDefaultFlag
 
@@ -25,7 +34,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMType`, `DM.create`, `DM.setType`, petsc.DMPlexCreate
+        DM, DMPlex, DMType, DM.create, DM.setType, petsc.DMPlexCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -54,7 +63,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.buildFromCellList`, `DMPlex.buildCoordinatesFromCellList`, `DMPlex.createFromDAG`, `DMPlex.create`, petsc.DMPlexCreateFromCellListPetsc
+        DM, DMPlex, DMPlex.buildFromCellList, DMPlex.buildCoordinatesFromCellList, DMPlex.createFromDAG, DMPlex.create, petsc.DMPlexCreateFromCellListPetsc
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -113,7 +122,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DM.setFromOptions`, `DMPlex.createFromFile`, `DMPlex.createHexCylinderMesh`, `DM.setType`, `DM.create`, petsc.DMPlexCreateBoxMesh
+        DM, DMPlex, DM.setFromOptions, DMPlex.createFromFile, DMPlex.createHexCylinderMesh, DM.setType, DM.create, petsc.DMPlexCreateBoxMesh
 
         """
         cdef Py_ssize_t i = 0
@@ -163,11 +172,9 @@ cdef class DMPlex(DM):
         dm
             The `DM` object
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMSetFromOptions`, `DMPlexCreateBoxMesh`, `DMPlexCreateFromFile`, `DMSetType`, `DMCreate`
-
         See Also
         --------
-        petsc.DMPlexCreateBoxSurfaceMesh
+        DM, DMPlex, DM.setFromOptions, DMPlex.createBoxMesh, DMPlex.createFromFile, DM.setType`, DM.create, petsc.DMPlexCreateBoxSurfaceMesh
 
         """
         cdef Py_ssize_t i = 0
@@ -214,10 +221,9 @@ cdef class DMPlex(DM):
         Use -dm_plex_create_ prefix to pass options to the internal PetscViewer, e.g.
         $ -dm_plex_create_viewer_hdf5_collective
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexCreateFromDAG`, DMPlex.createFromCellList, `DMPlex.create`, `PetscObjectSetName`, `DMView`, `DMLoad`
-
         See Also
         --------
+        DM, DMPlex, DMPlex.createFromDAG, DMPlex.createFromCellList, DMPlex.create, Object.setName, DM.view, DM.load
         petsc.DMPlexCreateFromFile
 
         """
@@ -251,11 +257,9 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.create`, `DMPlexCreateCGNS`, `DMPlexCreateExodus`
-
         See Also
         --------
-        petsc.DMPlexCreateCGNS
+        DM, DMPlex, DMPlex.create, DMPlex.createCGNS, DMPlex.createExodus, petsc.DMPlexCreateCGNS
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -295,11 +299,9 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `PETSCVIEWEREXODUSII`, `DMPlex`, `DMCreate`, `DMPlexCreateExodus`
-
         See Also
         --------
-        petsc.DMPlexCreateExodusFromFile
+        DM, PETSCVIEWEREXODUSII, DMPlex, DM.create, DMPlex.createExodus, petsc.DMPlexCreateExodusFromFile
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -330,11 +332,9 @@ cdef class DMPlex(DM):
         dm
             The `DM` object representing the mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `PETSCVIEWEREXODUSII`, `DMPlex`, `DMPlex`, `DMCreate`
-
         See Also
         --------
-        petsc.DMPlexCreateExodus
+        DM, PETSCVIEWEREXODUSII, DMPlex, DM.create, petsc.DMPlexCreateExodus
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -379,11 +379,9 @@ cdef class DMPlex(DM):
 
         By default, the "Cell Sets", "Face Sets", and "Vertex Sets" labels are created, and only insert the first tag on a point. By using -dm_plex_gmsh_multiple_tags, all tags can be inserted. Instead, -dm_plex_gmsh_use_regions creates labels based on the region names from the PhysicalNames section, and all tags are used.
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMCreate`
-
         See Also
         --------
-        petsc.DMPlexCreateGmsh
+        DM, DMPlex, DM.create, petsc.DMPlexCreateGmsh
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -412,11 +410,9 @@ cdef class DMPlex(DM):
         subdm
             The surface mesh
 
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlex.getSubpointMap`, `DMPlexCreateSubmesh`
-
         See Also
         --------
-        petsc.DMPlexCreateCohesiveSubmesh
+        DM, DMPlex, DMPlex.getSubpointMap, DMPlex.createSubmesh, petsc.DMPlexCreateCohesiveSubmesh
 
         """
         cdef PetscBool flag = hasLagrange
@@ -432,7 +428,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setChart`, petsc.DMPlexGetChart
+        DM, DMPlex, DMPlex.create, DMPlex.setChart, petsc.DMPlexGetChart
 
         """
         cdef PetscInt pStart = 0, pEnd = 0
@@ -453,7 +449,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getChart`, petsc.DMPlexSetChart
+        DM, DMPlex, DMPlex.create, DMPlex.getChart, petsc.DMPlexSetChart
 
         """
         cdef PetscInt cStart = asInt(pStart)
@@ -472,7 +468,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setConeSize`, `DMPlex.setChart`, petsc.DMPlexGetConeSize
+        DM, DMPlex, DMPlex.create, `DMPlex.setConeSize`, DMPlex.setChart, petsc.DMPlexGetConeSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -497,7 +493,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getConeSize`, `DMPlex.setChart`, petsc.DMPlexSetConeSize
+        DM, DMPlex, DMPlex.create, `DMPlex.getConeSize`, DMPlex.setChart, petsc.DMPlexSetConeSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -519,7 +515,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getConeSize`, `DMPlex.setCone`, `DMPlex.getConeTuple`, `DMPlex.setChart`, `DMPlex.restoreCone`, petsc.DMPlexGetCone
+        DM, DMPlex, `DMPlex.getConeSize`, DMPlex.setCone, `DMPlex.getConeTuple`, DMPlex.setChart, `DMPlex.restoreCone`, petsc.DMPlexGetCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -548,7 +544,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, `DMPlex.setSupport`, `DMPlex.setSupportSize`, petsc.DMPlexSetCone
+        DM, DMPlex, DMPlex.create, DMPlex.getCone, DMPlex.setChart, `DMPlex.setConeSize`, `DM.setUp`, `DMPlex.setSupport`, `DMPlex.setSupportSize`, petsc.DMPlexSetCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -585,7 +581,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexInsertCone
+        DM, DMPlex, DMPlex.create, DMPlex.getCone, DMPlex.setChart, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexInsertCone
 
         """
         cdef PetscInt cp = asInt(p)
@@ -609,7 +605,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexInsertConeOrientation
+        DM, DMPlex, DMPlex.create, DMPlex.getCone, DMPlex.setChart, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexInsertConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -629,7 +625,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DM.DMPolytopeType.composeOrientation`, `DM.DMPolytopeType.composeOrientationInv`, `DMPlex.create`, `DMPlex.getCone`, `DMPlex.setCone`, `DMPlex.setChart`, petsc.DMPlexGetConeOrientation
+        DM, DMPlex, `DM.DMPolytopeType.composeOrientation`, `DM.DMPolytopeType.composeOrientationInv`, DMPlex.create, DMPlex.getCone, DMPlex.setCone, DMPlex.setChart, petsc.DMPlexGetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -656,7 +652,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getConeOrientation`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexSetConeOrientation
+        DM, DMPlex, DMPlex.create, `DMPlex.getConeOrientation`, DMPlex.setCone, DMPlex.setChart, `DMPlex.setConeSize`, `DM.setUp`, petsc.DMPlexSetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -685,7 +681,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getCellTypeLabel`, `DMPlex.getDepthLabel`, `DMPlex.getDepth`, `DMPlex.computeCellTypes`, `DM.createLabel`, petsc.DMPlexSetCellType
+        DM, DMPlex, `DMPlex.getCellTypeLabel`, `DMPlex.getDepthLabel`, `DMPlex.getDepth`, `DMPlex.computeCellTypes`, `DM.createLabel`, petsc.DMPlexSetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -704,7 +700,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPolytopeType`, `DMPlex.getCellTypeLabel`, `DMPlex.getDepthLabel`, `DMPlex.getDepth`, petsc.DMPlexGetCellType
+        DM, DMPlex, `DMPolytopeType`, `DMPlex.getCellTypeLabel`, `DMPlex.getDepthLabel`, `DMPlex.getDepth`, petsc.DMPlexGetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -719,7 +715,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getCellType`, `DMPlex.getDepthLabel`, `DM.createLabel`, petsc.DMPlexGetCellTypeLabel
+        DM, DMPlex, `DMPlex.getCellType`, `DMPlex.getDepthLabel`, `DM.createLabel`, petsc.DMPlexGetCellTypeLabel
 
         """
         cdef DMLabel label = DMLabel()
@@ -739,7 +735,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setConeSize`, `DMPlex.setChart`, `DMPlex.getConeSize`, petsc.DMPlexGetSupportSize
+        DM, DMPlex, DMPlex.create, `DMPlex.setConeSize`, DMPlex.setChart, `DMPlex.getConeSize`, petsc.DMPlexGetSupportSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -764,7 +760,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.getSupportSize`, `DMPlex.setChart`, petsc.DMPlexSetSupportSize
+        DM, DMPlex, DMPlex.create, `DMPlex.getSupportSize`, DMPlex.setChart, petsc.DMPlexSetSupportSize
 
         """
         cdef PetscInt cp = asInt(p)
@@ -786,7 +782,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getSupportSize`, `DMPlex.setSupport`, `DMPlex.getCone`, `DMPlex.setChart`, petsc.DMPlexGetSupport
+        DM, DMPlex, `DMPlex.getSupportSize`, `DMPlex.setSupport`, DMPlex.getCone, DMPlex.setChart, petsc.DMPlexGetSupport
 
         """
         cdef PetscInt cp = asInt(p)
@@ -813,7 +809,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.setCone`, `DMPlex.setConeSize`, `DMPlex.create`, `DMPlex.getSupport`, `DMPlex.setChart`, `DMPlex.setSupportSize`, `DM.setUp`, petsc.DMPlexSetSupport
+        DM, DMPlex, DMPlex.setCone, `DMPlex.setConeSize`, DMPlex.create, `DMPlex.getSupport`, DMPlex.setChart, `DMPlex.setSupportSize`, `DM.setUp`, petsc.DMPlexSetSupport
 
         """
         cdef PetscInt cp = asInt(p)
@@ -833,7 +829,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setConeSize`, `DMPlex.setChart`, petsc.DMPlexGetMaxSizes
+        DM, DMPlex, DMPlex.create, `DMPlex.setConeSize`, `DMPlex.setChart`, petsc.DMPlexGetMaxSizes
 
         """
         cdef PetscInt maxConeSize = 0, maxSupportSize = 0
@@ -847,7 +843,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.setChart`, `DMPlex.setConeSize`, `DMPlex.setCone`, petsc.DMPlexSymmetrize
+        DM, DMPlex, DMPlex.create, DMPlex.setChart, `DMPlex.setConeSize`, DMPlex.setCone, petsc.DMPlexSymmetrize
 
         """
         CHKERR( DMPlexSymmetrize(self.dm) )
@@ -862,7 +858,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.create`, `DMPlex.symmetrize`, `DMPlex.computeCellTypes`, petsc.DMPlexStratify
+        DM, DMPlex, DMPlex.create, `DMPlex.symmetrize`, `DMPlex.computeCellTypes`, petsc.DMPlexStratify
 
         """
         CHKERR( DMPlexStratify(self.dm) )
@@ -872,7 +868,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DM.create`, petsc.DMPlexOrient
+        DM, DMPlex, DM.create, petsc.DMPlexOrient
 
         """
         CHKERR( DMPlexOrient(self.dm) )
@@ -882,7 +878,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getVertexNumbering`, petsc.DMPlexGetCellNumbering
+        DM, DMPlex, `DMPlex.getVertexNumbering`, petsc.DMPlexGetCellNumbering
 
         """
         cdef IS iset = IS()
@@ -895,7 +891,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getCellNumbering`, petsc.DMPlexGetVertexNumbering
+        DM, DMPlex, `DMPlex.getCellNumbering`, petsc.DMPlexGetVertexNumbering
 
         """
         cdef IS iset = IS()
@@ -910,7 +906,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getCellNumbering`, petsc.DMPlexCreatePointNumbering
+        DM, DMPlex, `DMPlex.getCellNumbering`, petsc.DMPlexCreatePointNumbering
 
         """
         cdef IS iset = IS()
@@ -924,7 +920,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getDepthLabel`, `DMPlex.getDepthStratum`, `DMPlex.getPointDepth`, `DMPlex.symmetrize`, petsc.DMPlexGetDepth
+        DM, DMPlex, `DMPlex.getDepthLabel`, `DMPlex.getDepthStratum`, `DMPlex.getPointDepth`, `DMPlex.symmetrize`, petsc.DMPlexGetDepth
 
         """
         cdef PetscInt depth = 0
@@ -943,7 +939,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getHeightStratum`, `DMPlex.getDepth`, `DMPlex.getDepthLabel`, `DMPlex.getPointDepth`, `DMPlex.symmetrize`, `DMPlex.interpolate`, petsc.DMPlexGetDepthStratum
+        DM, DMPlex, `DMPlex.getHeightStratum`, `DMPlex.getDepth`, `DMPlex.getDepthLabel`, `DMPlex.getPointDepth`, `DMPlex.symmetrize`, `DMPlex.interpolate`, petsc.DMPlexGetDepthStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
@@ -962,7 +958,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getDepthStratum`, `DMPlex.getDepth`, `DMPlex.getPointHeight`, petsc.DMPlexGetHeightStratum
+        DM, DMPlex, `DMPlex.getDepthStratum`, `DMPlex.getDepth`, `DMPlex.getPointHeight`, petsc.DMPlexGetHeightStratum
 
         """
         cdef PetscInt csvalue = asInt(svalue), sStart = 0, sEnd = 0
@@ -981,7 +977,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.restoreMeet`, `DMPlex.getJoin`, petsc.DMPlexGetMeet
+        DM, DMPlex, `DMPlex.restoreMeet`, `DMPlex.getJoin`, petsc.DMPlexGetMeet
 
         """
         cdef PetscInt  numPoints = 0
@@ -1007,7 +1003,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetJoin
+        DM, DMPlex, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1033,7 +1029,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.getJoin`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetFullJoin
+        DM, DMPlex, `DMPlex.getJoin`, `DMPlex.restoreJoin`, `DMPlex.getMeet`, petsc.DMPlexGetFullJoin
 
         """
         cdef PetscInt  numPoints = 0
@@ -1061,7 +1057,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.restoreTransitiveClosure`, `DMPlex.create`, `DMPlex.setCone`, `DMPlex.setChart`, `DMPlex.getCone`, petsc.DMPlexGetTransitiveClosure
+        DM, DMPlex, `DMPlex.restoreTransitiveClosure`, DMPlex.create, DMPlex.setCone, DMPlex.setChart, DMPlex.getCone, petsc.DMPlexGetTransitiveClosure
 
         """
         cdef PetscInt cp = asInt(p)
@@ -1094,7 +1090,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        `DM`, `DMPlex`, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
+        DM, DMPlex, `DMPlex.vecRestoreClosure`, `DMPlex.vecSetClosure`, `DMPlex.matSetClosure`, petsc.DMPlexVecRestoreClosure
 
         """
         cdef PetscInt cp = asInt(p), csize = 0
