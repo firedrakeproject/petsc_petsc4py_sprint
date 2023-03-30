@@ -3676,16 +3676,78 @@ cdef class Vec(Object):
 
     #
 
-    def getSubVector(self, IS iset, Vec subvec=None):
+    def getSubVector(self, IS iset, Vec subvec=None) -> Vec:
+        """Return a subvector from given indices.
+
+        Once finished with the subvector it should be returned with
+        `Vec.restoreSubVector`.
+
+        Collective.
+
+        Parameters
+        ----------
+        iset
+            Index set describing which indices to extract into the subvector. 
+        subvec
+            Subvector to copy entries into. If `None` then a new `Vec` will
+            be created.
+
+        Returns
+        -------
+        Vec
+            Subvector containing the extracted entries. If ``subvec`` is
+            provided this is returned.
+
+        Notes
+        -----
+        This function may return a subvector without making a copy, therefore
+        it is not safe to use the original vector while modifying the
+        subvector. Other non-overlapping subvectors can still be obtained
+        using this function.
+
+        The resulting subvector inherits the block size from ``iset`` if
+        greater than one. Otherwise, the block size is guessed from the block
+        size of the original vector.
+
+        See Also
+        --------
+        Vec.restoreSubVector, petsc.VecGetSubVector
+
+        """
         if subvec is None: subvec = Vec()
         else: CHKERR( VecDestroy(&subvec.vec) )
         CHKERR( VecGetSubVector(self.vec, iset.iset, &subvec.vec) )
         return subvec
 
-    def restoreSubVector(self, IS iset, Vec subvec):
+    def restoreSubVector(self, IS iset, Vec subvec) -> None:
+        """Restore a subvector extracted using `Vec.getSubVector`.
+
+        Collective.
+
+        Parameters
+        ----------
+        iset
+            Index set describing the indices represented by the subvector. 
+        subvec
+            Subvector to restore.
+
+        See Also
+        --------
+        Vec.getSubVector, petsc.VecRestoreSubVector
+
+        """
         CHKERR( VecRestoreSubVector(self.vec, iset.iset, &subvec.vec) )
 
-    def getNestSubVecs(self):
+    def getNestSubVecs(self) -> list[Vec]:
+        """Return all the vectors contained in the nested vector.
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.setNestSubVecs, petsc.VecNestGetSubVecs
+
+        """
         cdef PetscInt N=0
         cdef PetscVec* sx=NULL
         CHKERR( VecNestGetSubVecs(self.vec, &N, &sx) )
@@ -3698,7 +3760,27 @@ cdef class Vec(Object):
 
         return output
 
-    def setNestSubVecs(self, sx, idxm=None):
+    def setNestSubVecs(
+        self,
+        sx: Sequence[Vec],
+        idxm: Sequence[int] | None = None,
+    ) -> None:
+        """Set the component vectors at specified indices in the nested vector.
+
+        Not collective.
+
+        Parameters
+        ----------
+        sx
+            Array of component vectors.
+        idxm
+            Indices of the component vectors, defaults to ``range(len(sx))``.
+
+        See Also
+        --------
+        Vec.getNestSubVecs, petsc.VecNestSetSubVecs
+
+        """
         if idxm is None: idxm = range(len(sx))
         else: assert len(idxm) == len(sx)
         cdef PetscInt N = 0
@@ -3714,10 +3796,33 @@ cdef class Vec(Object):
 
     #
 
-    def setDM(self, DM dm):
+    def setDM(self, DM dm) -> None:
+        """Set the DM describing the data layout of the vector.
+
+        Not collective.
+
+        Notes
+        -----
+        This method is rarely needed as `DM.getLocalVector` or
+        `DM.getGlobalVector` will set this appropriately.
+
+        See Also
+        --------
+        Vec.getDM, petsc.VecSetDM
+
+        """
         CHKERR( VecSetDM(self.vec, dm.dm) )
 
-    def getDM(self):
+    def getDM(self) -> DM:
+        """Return the DM describing the data layout of the vector.
+
+        Not collective.
+
+        See Also
+        --------
+        Vec.setDM, petsc.VecGetDM
+
+        """
         cdef DM dm = DM()
         CHKERR( VecGetDM(self.vec, &dm.dm) )
         return dm
@@ -3725,40 +3830,103 @@ cdef class Vec(Object):
     #
 
     property sizes:
+        """The local and global vector sizes.
+
+        See Also
+        --------
+        Vec.getSizes, Vec.setSizes
+
+        """
         def __get__(self):
             return self.getSizes()
         def __set__(self, value):
             self.setSizes(value)
 
     property size:
+        """The global vector size.
+
+        See Also
+        --------
+        Vec.getSize
+
+        """
         def __get__(self):
             return self.getSize()
 
     property local_size:
+        """The local vector size.
+
+        See Also
+        --------
+        Vec.getLocalSize
+
+        """
         def __get__(self):
             return self.getLocalSize()
 
     property block_size:
+        """The block size.
+
+        See Also
+        --------
+        Vec.getBlockSize
+
+        """
         def __get__(self):
             return self.getBlockSize()
 
     property owner_range:
+        """The locally owned range of indices in the form ``[low, high)``.
+
+        See Also
+        --------
+        Vec.getOwnershipRange
+
+        """
         def __get__(self):
             return self.getOwnershipRange()
 
     property owner_ranges:
+        """The range of indices owned by each process.
+
+        See Also
+        --------
+        Vec.getOwnershipRanges
+
+        """
         def __get__(self):
             return self.getOwnershipRanges()
 
     property buffer_w:
+        """Writeable buffered view of the local portion of the vector.
+
+        See Also
+        --------
+        Vec.getBuffer
+
+        """
         def __get__(self):
             return self.getBuffer()
 
     property buffer_r:
+        """Read-only buffered view of the local portion of the vector.
+
+        See Also
+        --------
+        Vec.getBuffer
+
+        """
         def __get__(self):
             return self.getBuffer(True)
 
     property array_w:
+        """Writeable numpy array containing the local portion of the vector.
+
+        See Also
+        --------
+        Vec.getArray
+
+        """
         def __get__(self):
             return self.getArray()
         def __set__(self, value):
@@ -3766,14 +3934,23 @@ cdef class Vec(Object):
             with buf as array: array[:] = value
 
     property array_r:
+        """Read-only numpy array containing the local portion of the vector.
+
+        See Also
+        --------
+        Vec.getArray
+
+        """
         def __get__(self):
             return self.getArray(True)
 
     property buffer:
+        """Alias for `Vec.buffer_w`."""
         def __get__(self):
             return self.buffer_w
 
     property array:
+        """Alias for `Vec.array_w`."""
         def __get__(self):
             return self.array_w
         def __set__(self, value):
