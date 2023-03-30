@@ -1184,7 +1184,16 @@ cdef class DM(Object):
             hierarchy.append(dmf)
         return hierarchy
 
-    def coarsenHierarchy(self, nlevels):
+    def coarsenHierarchy(self, nlevels: int) -> list:
+        """Return a `DM` object coarsed.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCoarsenHierarchy
+
+        """
         cdef PetscInt i, n = asInt(nlevels)
         cdef PetscDM *newdmc = NULL
         cdef object tmp = oarray_p(empty_p(n),NULL, <void**>&newdmc)
@@ -1197,23 +1206,59 @@ cdef class DM(Object):
             hierarchy.append(dmc)
         return hierarchy
 
-    def getRefineLevel(self):
+    def getRefineLevel(self) -> int:
+        """Return the number of refinements that have generated this `DM` from some initial `DM`.
+       
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetRefineLevel
+
+        """
         cdef PetscInt n = 0
         CHKERR( DMGetRefineLevel(self.dm, &n) )
         return toInt(n)
 
-    def setRefineLevel(self, level) -> None:
+    def setRefineLevel(self, level: int) -> None:
+        """Set the number of refinements.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMSetRefineLevel
+
+        """
         cdef PetscInt clevel = asInt(level)
         CHKERR( DMSetRefineLevel(self.dm, clevel) )
 
-    def getCoarsenLevel(self):
+    def getCoarsenLevel(self) -> int:
+        """Return the number of coarsenings.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetCoarsenLevel
+
+        """
         cdef PetscInt n = 0
         CHKERR( DMGetCoarsenLevel(self.dm, &n) )
         return toInt(n)
 
     #
 
-    def adaptLabel(self, label):
+    def adaptLabel(self, label: str) -> DM:
+        """Adapt a `DM` based on a `DMLabel`.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMAdaptLabel
+
+        """
         cdef const char *cval = NULL
         cdef PetscDMLabel clbl = NULL
         label = str2bytes(label, &cval)
@@ -1222,7 +1267,14 @@ cdef class DM(Object):
         CHKERR( DMAdaptLabel(self.dm, clbl, &newdm.dm) )
         return newdm
 
-    def adaptMetric(self, Vec metric, bdLabel=None, rgLabel=None):
+    def adaptMetric(self, Vec metric, bdLabel: str | None, rgLabel: str | None) -> DM:
+        """Return a mesh adapted to the specified metric field.
+
+        See Also
+        --------
+        petsc.DMAdaptMetric
+
+        """
         cdef const char *cval = NULL
         cdef PetscDMLabel cbdlbl = NULL
         cdef PetscDMLabel crglbl = NULL
@@ -1236,7 +1288,16 @@ cdef class DM(Object):
         CHKERR( DMAdaptMetric(self.dm, metric.vec, cbdlbl, crglbl, &newdm.dm) )
         return newdm
 
-    def getLabel(self, name):
+    def getLabel(self, name: str) -> DMLabel:
+        """Return the label of a given name.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetLabel
+
+        """
         cdef const char *cname = NULL
         cdef DMLabel dmlabel = DMLabel()
         name = str2bytes(name, &cname)
@@ -1247,18 +1308,46 @@ cdef class DM(Object):
     #
 
     def setSection(self, Section sec) -> None:
+        """Set the `Section` encoding the local data layout for the `DM`.
+
+        See Also
+        --------
+        petsc.DMSetSection
+
+        """
         CHKERR( DMSetSection(self.dm, sec.sec) )
 
-    def getSection(self):
+    def getSection(self) -> Section:
+        """Return the `Section` encoding the the local data layout for the `DM`.
+        
+        See Also
+        --------
+        petsc.DMGetSection
+
+        """
         cdef Section sec = Section()
         CHKERR( DMGetSection(self.dm, &sec.sec) )
         PetscINCREF(sec.obj)
         return sec
 
     def setGlobalSection(self, Section sec) -> None:
+        """Set the `Section` encoding the global data layout for the `DM`.
+
+        See Also
+        --------
+        petsc.DMSetGlobalSection
+
+        """
         CHKERR( DMSetGlobalSection(self.dm, sec.sec) )
 
-    def getGlobalSection(self):
+    def getGlobalSection(self) -> Section:
+        """Return the `Section` encoding the global data layout for the `DM`.
+       
+        See Also
+        --------
+        petsc.DMGetGlobalSection
+
+       """
         cdef Section sec = Section()
         CHKERR( DMGetGlobalSection(self.dm, &sec.sec) )
         PetscINCREF(sec.obj)
@@ -1270,9 +1359,21 @@ cdef class DM(Object):
     getDefaultGlobalSection = getGlobalSection
 
     def createSectionSF(self, Section localsec, Section globalsec) -> None:
+        """Create the `SF` encoding the parallel dof overlap for the `DM`.
+
+        Note
+        ----
+        Encoding based on the `Section` describing the data layout.
+
+        See Also
+        --------
+        DM.getSectionSF, petsc.DMCreateSectionSF
+
+        """
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
     def getSectionSF(self):
+
         cdef SF sf = SF()
         CHKERR( DMGetSectionSF(self.dm, &sf.sf) )
         PetscINCREF(sf.obj)
