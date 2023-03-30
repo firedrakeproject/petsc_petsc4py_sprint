@@ -494,7 +494,7 @@ cdef class DM(Object):
 
     #
 
-    def setAuxiliaryVec(self, Vec aux, label: DMLabel | None=None, value=0, part=0) -> None:
+    def setAuxiliaryVec(self, Vec aux, label: DMLabel | None, value: int | 0, part: int | 0) -> None:
         """Set an auxiliary vector for a specific region.
 
         Not Collective.
@@ -520,17 +520,10 @@ cdef class DM(Object):
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
     
-    def getAuxiliaryVec(self, label: DMLabel | None=None, value=0, part=0) -> Vec:
+    def getAuxiliaryVec(self, label: DMLabel | None, value: int | 0, part: int | 0) -> Vec:
         """Return an auxiliary vector for a specific region.
 
         Not Collective
-
-        Parameters
-        ----------
-        value : int, optional
-            Indicate the region.
-        part : int, optional
-            The equation part, or 0 is unused.
 
         See Also
         --------
@@ -575,7 +568,7 @@ cdef class DM(Object):
         CHKERR( DMGetNumFields(self.dm, &cnum) )
         return toInt(cnum)
 
-    def setField(self, index, Object field, label=None) -> None:
+    def setField(self, index: int, Object field, label=None) -> None:
         """Set the discretization object.
 
         Logically Collective.
@@ -591,7 +584,16 @@ cdef class DM(Object):
         assert label is None
         CHKERR( DMSetField(self.dm, cidx, clbl, cobj) )
 
-    def getField(self, index):
+    def getField(self, inde: int) -> tuple[Object,None]:
+        """Return the discretization object.
+        
+        Not Collective.
+        
+        See Also
+        --------
+        petsc.DMGetField
+
+        """
         cdef PetscInt     cidx = asInt(index)
         cdef PetscObject  cobj = NULL
         cdef PetscDMLabel clbl = NULL
