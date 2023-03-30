@@ -244,7 +244,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        dim :  int
+        dim : int
             The embedding dimension.
 
         See Also
