@@ -431,7 +431,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmMigrate(self.dm, remove_pts) )
 
     def collectViewCreate(self) -> None:
-        """Apply a collection method and gather points in neighbour ranks.
+        """Apply a collection method and gather points in neighbor ranks.
 
         Collective.
 
@@ -557,7 +557,7 @@ cdef class DMSwarm(DM):
         redundant: bool | None = False,
         mode: InsertMode | None = None
     ) -> None:
-        """Set point coordinates in a `DMSwarm` from a user defined list.
+        """Set point coordinates in a `DMSwarm` from a user-defined list.
 
         Collective.
 
