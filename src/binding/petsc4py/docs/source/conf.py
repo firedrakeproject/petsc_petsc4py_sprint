@@ -307,7 +307,7 @@ def _process_demos(*demos):
         html_static_path.append(demo_copy_name)
     with open(os.path.join("demo", "demo.rst"), "w") as demofile:
         demofile.write("""
-PETSC4py demos
+petsc4py demos
 ==============
 
 .. toctree::
