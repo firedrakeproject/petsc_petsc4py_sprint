@@ -1,6 +1,6 @@
 
 cdef class DMLabel(Object):
-
+    """Object which encapsulates a subset of the mesh from a `DM`."""
     def __cinit__(self):
         self.obj = <PetscObject*> &self.dmlabel
         self.dmlabel  = NULL
