@@ -1812,9 +1812,9 @@ cdef class KSP(Object):
 
         Returns
         -------
-        R: list[Vec]
+        R: list of Vec
             List of correctly allocated right hand vectors.
-        L: list[Vec]
+        L: list of Vec
             List of correctly allocated left hand vectors.
 
         """
