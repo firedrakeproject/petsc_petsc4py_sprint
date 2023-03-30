@@ -296,7 +296,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        petsc.DMAppendOptionsPrefix
+        petsc_options, petsc.DMAppendOptionsPrefix
         
         """
         cdef const char *cval = NULL
