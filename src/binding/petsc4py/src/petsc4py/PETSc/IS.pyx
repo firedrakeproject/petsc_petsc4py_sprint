@@ -124,7 +124,7 @@ cdef class IS(Object):
         is_type = str2bytes(is_type, &cval)
         CHKERR( ISSetType(self.iset, cval) )
 
-    def getType(self) -> IS.Type | str:
+    def getType(self) -> str:
         """Return the index set type associated with the IS.
 
         Not collective.
@@ -651,7 +651,7 @@ cdef class IS(Object):
     def difference(self, IS iset: IS) -> IS:
         """Compute the difference between two index sets.
 
-        Collective on ``self``.
+        Collective.
 
         Parameters
         ----------
@@ -843,7 +843,7 @@ cdef class IS(Object):
             CHKERR( ISBlockRestoreIndices(self.iset, &indices) )
         return oindices
 
-    def setStride(self, size: int, first: int=0, step: int=1) -> None:
+    def setStride(self, size: int, first: int = 0, step: int = 1) -> None:
         """Set the stride information for an index set with type `IS.Type.STRIDE`.
 
         Logically collective.
