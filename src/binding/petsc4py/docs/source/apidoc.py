@@ -424,10 +424,16 @@ from mpi4py.MPI import (
     Op,
 )
 
-IntType: dtype = ...
-RealType: dtype =  ...
-ComplexType: dtype = ...
-ScalarType: dtype = ...
+class _dtype:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return self.name
+
+IntType: dtype = _dtype('IntType')
+RealType: dtype =  _dtype('RealType')
+ComplexType: dtype = _dtype('ComplexType')
+ScalarType: dtype = _dtype('ScalarType')
 """
 
 HELPERS = """

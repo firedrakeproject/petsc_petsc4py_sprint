@@ -226,8 +226,7 @@ cdef class DMSwarm(DM):
     def getField(self, fieldname: str) -> Sequence[int | float | complex]:
         """Return arrays storing all entries associated with a field.
 
-        The returned array contains length, datatype and the underlying values
-        of the field.
+        The returned array contains underlying values of the field.
 
         The array must be returned using a matching call to `restoreField`.
 
