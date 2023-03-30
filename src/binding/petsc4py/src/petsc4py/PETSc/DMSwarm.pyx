@@ -192,6 +192,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetLocalSizes(self.dm, cnlocal, cbuffer) )
         return self
 
+    # TODO: check if dtype links
     def registerField(self, fieldname: str, blocksize: int, dtype: dtype | None = ScalarType) -> None:
         """Register a field to a `DMSwarm` with a native PETSc data type.
 
@@ -411,7 +412,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmGetSize(self.dm, &size) )
         return toInt(size)
 
-    def migrate(self, remove_sent_points = bool | None = False) -> None:
+    def migrate(self, remove_sent_points: bool | None = False) -> None:
         """Relocate points defined in the `DMSwarm` to other MPI ranks.
 
         Collective.
@@ -588,8 +589,7 @@ cdef class DMSwarm(DM):
         cdef PetscReal *coords = <PetscReal*> PyArray_DATA(xyz)
         CHKERR( DMSwarmSetPointCoordinates(self.dm, cnpoints, coords, credundant, cmode) )
 
-    # TODO: layoutType: is not none
-    def insertPointUsingCellDM(self, layoutType: None, fill_param: int) -> None:
+    def insertPointUsingCellDM(self, layoutType: PICLayoutType, fill_param: int) -> None:
         """Insert point coordinates within each cell.
 
         Not collective.
@@ -611,8 +611,7 @@ cdef class DMSwarm(DM):
         cdef PetscInt cfill_param = asInt(fill_param)
         CHKERR( DMSwarmInsertPointsUsingCellDM(self.dm, clayoutType, cfill_param) )
 
-    # TODO:???
-    def setPointCoordinatesCellwise(self, coordinates: Sequence[int]) -> None:
+    def setPointCoordinatesCellwise(self, coordinates: Sequence[float]) -> None:
         """Insert point coordinates within each cell.
 
         Point coordinates are defined over the reference cell.
@@ -621,12 +620,9 @@ cdef class DMSwarm(DM):
 
         Parameters
         ----------
-        celldm
-            TODO the cell DM
-        npoints
-            TODO the number of points to insert in each cell
-        xi
-            TODO the coordinates (defined in the local coordinate system for each cell) to insert
+        coordinates
+            The coordinates (defined in the local coordinate system for each
+            cell) to insert.
 
         See also
         --------
