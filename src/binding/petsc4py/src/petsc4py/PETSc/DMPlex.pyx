@@ -3026,7 +3026,7 @@ cdef class DMPlex(DM):
         return sf
 
     def coordinatesLoad(self, Viewer viewer, SF sfxc) -> None:
-        """Loads coordinates into this `DMPlex` object.
+        """Load coordinates into this `DMPlex` object.
 
         Collective.
 
