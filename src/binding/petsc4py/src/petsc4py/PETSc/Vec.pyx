@@ -3522,34 +3522,154 @@ cdef class Vec(Object):
 
     # --- methods for vectors with ghost values ---
 
-    def localForm(self):
-        """Intended for use in context manager.
+    def localForm(self) -> Any:
+        """Return context manager for viewing ghost vectors in local form.
 
-        Usage::
+        Logically collective.
 
-            with vec.localForm() as lf:
-                use(lf)
+        Returns
+        -------
+        Any
+            Context manager yielding the vector in local (ghosted) form.
+
+        Notes
+        -----
+        This operation does not perform a copy. To obtain up-to-date ghost
+        values `Vec.ghostUpdateBegin` and `Vec.ghostUpdateEnd` must be called
+        first.
+
+        Non-ghost values can be found
+        at ``values[0:nlocal]`` and ghost values at
+        ``values[nlocal:nlocal+nghost]``.
+
+        Examples
+        --------
+        >>> with vec.localForm() as lf:
+        ...     # compute with lf
+
+        See Also
+        --------
+        Vec.createGhost, Vec.ghostUpdateBegin, Vec.ghostUpdateEnd
+        petsc.VecGhostGetLocalForm, petsc.VecGhostRestoreLocalForm
         """
         return _Vec_LocalForm(self)
 
-    def ghostUpdateBegin(self, addv=None, mode=None):
+    def ghostUpdateBegin(
+        self,
+        addv: InsertMode | int | None = None,
+        mode: ScatterMode | int | None = None,
+    ) -> None:
+        """Start updating ghosted vector entries.
+
+        See `Vec.ghostUpdate` for more information.
+
+        Neighbour-wise collective.
+
+        See Also
+        --------
+        Vec.ghostUpdateEnd, Vec.ghostUpdate, Vec.createGhost
+        petsc.VecGhostUpdateBegin
+
+        """
         cdef PetscInsertMode  caddv = insertmode(addv)
         cdef PetscScatterMode csctm = scattermode(mode)
         CHKERR( VecGhostUpdateBegin(self.vec, caddv, csctm) )
 
-    def ghostUpdateEnd(self, addv=None, mode=None):
+    def ghostUpdateEnd(
+        self,
+        addv: InsertMode | int | None = None,
+        mode: ScatterMode | int | None = None,
+    ) -> None:
+        """Finish updating ghosted vector entries.
+
+        See `Vec.ghostUpdate` for more information.
+
+        Neighbour-wise collective.
+
+        See Also
+        --------
+        Vec.ghostUpdateBegin, Vec.ghostUpdate, Vec.createGhost
+        petsc.VecGhostUpdateEnd
+
+        """
         cdef PetscInsertMode  caddv = insertmode(addv)
         cdef PetscScatterMode csctm = scattermode(mode)
         CHKERR( VecGhostUpdateEnd(self.vec, caddv, csctm) )
 
-    def ghostUpdate(self, addv=None, mode=None):
+    def ghostUpdate(
+        self,
+        addv: InsertMode | int | None = None,
+        mode: ScatterMode | int | None = None,
+    ) -> None:
+        """Update ghosted vector entries.
+
+        Neighbour-wise collective.
+
+        Parameters
+        ----------
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+            - `InsertMode.MAX_VALUES` Keep the maximum value in for each
+              entry.
+
+            - `InsertMode.MIN_VALUES` Keep the minimum value in for each
+              entry.
+        mode
+            Scatter mode. Possible values are:
+
+            - `ScatterMode.FORWARD` Update ghost regions with correct values
+              from the owning process.
+
+            - `ScatterMode.REVERSE` Accumulate ghost region values onto the
+              owning process.
+
+        Notes
+        -----
+        This operation is blocking. To interleave computation and
+        communication use `Vec.ghostUpdateBegin` and `Vec.ghostUpdateEnd`
+        instead.
+
+        Examples
+        --------
+        To accumulate ghost region values onto owning processes and then
+        update ghost regions correctly one should do the following:
+
+        >>> vec.ghostUpdate(InsertMode.ADD_VALUES, ScatterMode.REVERSE)
+        >>> vec.ghostUpdate(InsertMode.INSERT_VALUES, ScatterMode.FORWARD)
+
+        See Also
+        --------
+        Vec.ghostUpdateBegin, Vec.ghostUpdateEnd
+
+        """
         cdef PetscInsertMode  caddv = insertmode(addv)
         cdef PetscScatterMode csctm = scattermode(mode)
         CHKERR( VecGhostUpdateBegin(self.vec, caddv, csctm) )
         CHKERR( VecGhostUpdateEnd(self.vec, caddv, csctm) )
 
-    def setMPIGhost(self, ghosts):
-        "Alternative to createGhost()"
+    def setMPIGhost(self, ghosts: Sequence[int]) -> None:
+        """Set the ghost points for a ghosted vector.
+
+        This method is an alternative to calling `Vec.createGhost`.
+
+        Collective.
+
+        Parameters
+        ----------
+        ghosts
+            Global indices of ghost points. These do not need to be sorted.
+
+        See Also
+        --------
+        Vec.createGhost
+
+        """
         cdef PetscInt ng=0, *ig=NULL
         ghosts = iarray_i(ghosts, &ng, &ig)
         CHKERR( VecMPISetGhost(self.vec, ng, ig) )
