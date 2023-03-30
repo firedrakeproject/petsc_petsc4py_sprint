@@ -541,7 +541,6 @@ cdef class Space(Object):
         petsc.PetscSpaceViewFromOptions, petsc_options
 
         """
-
         cdef const char *cname = NULL
         _ = str2bytes(name, &cname)
         cdef PetscObject  cobj = NULL
