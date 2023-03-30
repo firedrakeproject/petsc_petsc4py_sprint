@@ -332,7 +332,7 @@ cdef class FE(Object):
         Parameters
         ----------
         quad
-            The `Quad` object
+            The `Quad` object.
 
         See also
         --------
@@ -439,7 +439,7 @@ cdef class FE(Object):
         Parameters
         ----------
         dspace
-            The `DualSpace` object
+            The `DualSpace` object.
 
         See also
         --------
