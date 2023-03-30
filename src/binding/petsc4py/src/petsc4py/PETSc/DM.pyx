@@ -820,7 +820,7 @@ cdef class DM(Object):
         CHKERR( PetscObjectDereference(<PetscObject>vl.vec) )
         CHKERR( DMRestoreLocalVector(self.dm, &vl.vec) )
 
-    def globalToLocal(self, Vec vg, Vec vl, addv: insertmode | None) -> None:
+    def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
         """Update local vectors from global vector.
 
         Neighbor-wise Collective
@@ -834,7 +834,7 @@ cdef class DM(Object):
         CHKERR( DMGlobalToLocalBegin(self.dm, vg.vec, im, vl.vec) )
         CHKERR( DMGlobalToLocalEnd  (self.dm, vg.vec, im, vl.vec) )
 
-    def localToGlobal(self, Vec vl, Vec vg, addv: insertmode | None) -> None:
+    def localToGlobal(self, Vec vl, Vec vg, addv=None) -> None:
         """Update global vectors from local vector.
 
         Neighbor-wise Collective
@@ -849,11 +849,29 @@ cdef class DM(Object):
         CHKERR( DMLocalToGlobalEnd(self.dm, vl.vec, im, vg.vec) )
 
     def localToLocal(self, Vec vl, Vec vlg, addv=None) -> None:
+        """Mapp the values from a local vector to another local vector.
+
+        Neighbor-wise Collective.
+
+        See Also
+        --------
+        petsc.DMLocalToLocalBegin, petsc.DMLocalToLocalEnd
+
+        """
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMLocalToLocalBegin(self.dm, vl.vec, im, vlg.vec) )
         CHKERR( DMLocalToLocalEnd  (self.dm, vl.vec, im, vlg.vec) )
 
-    def getLGMap(self):
+    def getLGMap(self) -> LGMap:
+        """Return the local to global mapping.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMGetLocalToGlobalMapping
+
+        """
         cdef LGMap lgm = LGMap()
         CHKERR( DMGetLocalToGlobalMapping(self.dm, &lgm.lgm) )
         PetscINCREF(lgm.obj)
@@ -861,7 +879,13 @@ cdef class DM(Object):
 
     #
 
-    def getCoordinateDM(self):
+    def getCoordinateDM(self) -> DM:
+        """Return the coordinate layout and scatters betweem global and local coordinates.
+        
+        Collective.
+
+
+        """
         cdef DM cdm = type(self)()
         CHKERR( DMGetCoordinateDM(self.dm, &cdm.dm) )
         PetscINCREF(cdm.obj)
