@@ -50,7 +50,7 @@ class DMPolytopeType(object):
 # --------------------------------------------------------------------
 
 cdef class DM(Object):
-    """`DM`.
+    """Manage an abstract grid object and its iteractions with the algebraic solvers.
 
     """
 
