@@ -261,7 +261,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.create, DMPlex.createCGNS, DMPlex.createExodus, petsc.DMPlexCreateCGNSFromFile
+        DM, DMPlex, DMPlex.create, DMPlex.createCGNS, DMPlex.createExodus, petsc.DMPlexCreateCGNS
 
         """
         cdef MPI_Comm  ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
