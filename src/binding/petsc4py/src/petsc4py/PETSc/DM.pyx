@@ -674,7 +674,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        petsc.getDS
+        petsc.DMGetDS
         
         """
         cdef DS ds = DS()
@@ -1093,7 +1093,7 @@ cdef class DM(Object):
         return inject
 
     def createRestriction(self, DM dm) -> Mat:
-        """Return restriction matrix between two `DM` objects.
+        """Return the restriction matrix between two `DM` objects.
 
         Collective.
 
@@ -1107,7 +1107,7 @@ cdef class DM(Object):
         return mat
 
     def convert(self, dm_type: str) -> DM:
-        """Convert a `DM` to another `DM`.
+        """Return a `DM` converted to another `DM`.
 
         Collective.
 
@@ -1124,7 +1124,16 @@ cdef class DM(Object):
         dm.dm = newdm
         return dm
 
-    def refine(self, comm=None):
+    def refine(self, comm=None) -> DM:
+        """Return `DM` object refined.
+
+        Collective
+
+        See Also
+        --------
+        petsc.DMRefine
+
+        """
         cdef MPI_Comm dmcomm = MPI_COMM_NULL
         CHKERR( PetscObjectGetComm(<PetscObject>self.dm, &dmcomm) )
         dmcomm = def_Comm(comm, dmcomm)
@@ -1134,7 +1143,16 @@ cdef class DM(Object):
         dm.dm = newdm
         return dm
 
-    def coarsen(self, comm=None):
+    def coarsen(self, comm=None) -> DM:
+        """Return a coarsens `DM` object.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCoarsen
+
+        """
         cdef MPI_Comm dmcomm = MPI_COMM_NULL
         CHKERR( PetscObjectGetComm(<PetscObject>self.dm, &dmcomm) )
         dmcomm = def_Comm(comm, dmcomm)
@@ -1144,7 +1162,16 @@ cdef class DM(Object):
         dm.dm = newdm
         return dm
 
-    def refineHierarchy(self, nlevels):
+    def refineHierarchy(self, nlevels: int) -> list:
+        """Return a `DM` object refined.
+
+        Collective
+
+        See Also
+        --------
+        petsc.DMRefineHierarchy
+
+        """
         cdef PetscInt i, n = asInt(nlevels)
         cdef PetscDM *newdmf = NULL
         cdef object tmp = oarray_p(empty_p(n), NULL, <void**>&newdmf)
