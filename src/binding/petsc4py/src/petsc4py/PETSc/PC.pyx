@@ -1668,7 +1668,7 @@ cdef class PC(Object):
 
         See Also
         --------
-        petsc. PCMGSetType
+        petsc.PCMGSetType
 
         """
         cdef PetscPCMGType cval = mgtype
