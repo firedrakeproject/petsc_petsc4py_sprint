@@ -47,3 +47,4 @@ PETSc for Python
    reference
    citing
    install
+   documentation_standards
