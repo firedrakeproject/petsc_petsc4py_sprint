@@ -397,8 +397,8 @@ cdef class Mat(Object):
 
     def setSizes(
         self,
-        size: tuple | int,
-        bsize: tuple[int, int] | int | None = None,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
     ) -> None:
         """Set the local, global and block sizes.
 
@@ -535,10 +535,10 @@ cdef class Mat(Object):
 
     def createAIJ(
         self,
-        size: tuple | int,
-        bsize: tuple[int, int] | int | None = None,
-        nnz: int | Sequence[int] | tuple | None = None,
-        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse unblocked matrix, optionally preallocating.
@@ -580,10 +580,10 @@ cdef class Mat(Object):
 
     def createBAIJ(
         self,
-        size: tuple | int,
-        bsize: tuple[int, int] | int,
-        nnz: int | Sequence[int] | tuple | None = None,
-        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        size: MatSizeType,
+        bsize: MatBlockSizeType,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse blocked matrix, optionally preallocating.
@@ -613,10 +613,10 @@ cdef class Mat(Object):
 
     def createSBAIJ(
         self,
-        size: tuple | int,
+        size: MatSizeType,
         bsize: int,
-        nnz: int | Sequence[int] | tuple | None = None,
-        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse matrix in symmetric block AIJ format.
@@ -647,10 +647,10 @@ cdef class Mat(Object):
 
     def createAIJCRL(
         self,
-        size: tuple | int,
-        bsize: int | None = None,
-        nnz: int | Sequence[int] | tuple | None = None,
-        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse matrix with type `Mat.Type.AIJCRL`.
@@ -681,7 +681,7 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def setPreallocationNNZ(self, nnz: int | Sequence[int] | tuple) -> Self:
+    def setPreallocationNNZ(self, nnz: NNZType) -> Self:
         """Preallocate memory for the matrix with a non-zero pattern.
 
         This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ`,
@@ -715,10 +715,7 @@ cdef class Mat(Object):
         Mat_AllocAIJ_NNZ(self.mat, nnz)
         return self
 
-    def setPreallocationCSR(
-        self,
-        csr: tuple[Sequence[int], Sequence[int]],
-    ) -> Self:
+    def setPreallocationCSR(self, csr: CSRIndicesType) -> Self:
         """Preallocate memory for the matrix with a CSR layout.
 
         This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ` and
@@ -751,7 +748,41 @@ cdef class Mat(Object):
         Mat_AllocAIJ_CSR(self.mat, csr)
         return self
 
-    def createAIJWithArrays(self, size, csr, bsize=None, comm=None):
+    def createAIJWithArrays(
+        self,
+        size: MatSizeType,
+        csr: CSRType | tuple[CSRType, CSRType],
+        bsize: MatBlockSizeType | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse matrix with provided data in CSR format.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Matrix size. See `Mat.setSizes` for usage information.
+        csr
+            Matrix data expressed in compressed sparse row format. Note that
+            in this function this argument is a 3-tuple of
+            ``(row_start, col, data)`` instead of ``(row_start, col)``. One
+            can also pass a 2-tuple of CSR 3-tuples representing the
+            diagonal and off-diagonal portions of the parallel matrix. Doing
+            so will avoid any copies.
+        bsize
+            Block size. See `Mat.setSizes` for usage information.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.createAIJ
+        petsc.MatCreateSeqAIJWithArrays, petsc.MatCreateMPIAIJWithArrays
+        petsc.MatCreateMPIAIJWithSplitArrays
+
+        """
         # communicator
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         # sizes and block sizes
@@ -794,6 +825,8 @@ cdef class Mat(Object):
                 ccomm, m, n, i, j, v, &newmat) )
             csr = (pi, pj, pv)
         else:
+            # if off-diagonal components are provided then SplitArrays can be
+            # used (and not cause a copy).
             if oi != NULL and oj != NULL and ov != NULL:
                 CHKERR( MatCreateMPIAIJWithSplitArrays(
                     ccomm, m, n, M, N, i, j, v, oi, oj, ov, &newmat) )
@@ -808,7 +841,32 @@ cdef class Mat(Object):
 
     #
 
-    def createDense(self, size, bsize=None, array=None, comm=None):
+    def createDense(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        array: Sequence[Scalar] | None = None,
+        comm: Comm | None = None
+    ) -> Self:
+        """Create a dense matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize
+            Matrix size parameters. See `Mat.createAIJ` for usage information.
+        array
+            Matrix data. If `None` then the matrix will not be preallocated.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Mat.createDenseCUDA
+        petsc.MATDENSE, petsc.MatCreateDense
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATDENSE, comm, size, bsize, &newmat)
@@ -819,19 +877,35 @@ cdef class Mat(Object):
             self.set_attr('__array__', array)
         return self
 
-    def createDenseCUDA(self, size, bsize=None, array=None, cudahandle=None, comm=None):
-        """
-        Returns an instance of :class:`Mat`, a MATDENSECUDA with user provided
-        memory spaces for CPU and GPU arrays.
+    def createDenseCUDA(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        array: Sequence[Scalar] | None = None,
+        cudahandle: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a dense CUDA matrix with optional host and device data.
 
-        :arg size: A list denoting the size of the Mat.
-        :arg bsize: A :class:`int` denoting the block size.
-        :arg array: A :class:`numpy.ndarray`. Will be lazily allocated if
-            *None*.
-        :arg cudahandle: Address of the array on the GPU. Will be lazily
-            allocated if *None*. If cudahandle is provided, array will be
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize
+            Matrix size parameters. See `Mat.setSizes` for usage information.
+        array
+            Host data. Will be lazily allocated if `None`.
+        cudahandle
+            Address of the array on the GPU. Will be lazily allocated if
+            `None`. If ``cudahandle`` is provided, ``array`` will be
             ignored.
-        :arg comm: MPI communicator
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Mat.createDense, petsc.MatCreateDenseCUDA
+
         """
         # create matrix
         cdef PetscMat newmat = NULL
@@ -858,7 +932,28 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def setPreallocationDense(self, array):
+    def setPreallocationDense(self, array: Sequence[Scalar]) -> Self:
+        """Set the array used for storing matrix elements for a dense matrix.
+
+        Only valid for matrices with types `Mat.Type.SEQDENSE` and
+        `Mat.Type.MPIDENSE`.
+
+        Collective.
+
+        Parameters
+        ----------
+        array
+            Array that will be used to store matrix data.
+
+        Notes
+        -----
+        Most users will not need to call this routine.
+
+        See Also
+        --------
+        petsc.MatSeqDenseSetPreallocation, petsc.MatMPIDenseSetPreallocation
+
+        """
         cdef PetscBool done = PETSC_FALSE
         CHKERR( MatIsPreallocated(self.mat, &done) )
         # if done: raise Error(PETSC_ERR_ORDER)
