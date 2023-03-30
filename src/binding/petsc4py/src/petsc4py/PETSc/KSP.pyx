@@ -361,14 +361,13 @@ cdef class KSP(Object):
     This is the object that manages the linear solves in PETSc (even
     those such as direct solvers that do no use Krylov accelerators).
 
-    Further info in
-
-    `KSP: Linear System Solvers <https://petsc.org/release/docs/manual/ksp/>`__
+    Krylov solvers are further documented in
+    `the PETSc manual <petsc:chapter_ksp>`
 
     Notes
     -----
     When a direct solver is used, but no Krylov solver is used, the KSP
-    object is still used but with a KSPType of KSPPREONLY, meaning that
+    object is still used but with a `Type.PREONLY`, meaning that
     only application of the preconditioner is used as the linear
     solver.
 
@@ -390,7 +389,7 @@ cdef class KSP(Object):
         self.ksp = NULL
 
     def __call__(self, Vec b, Vec x = None) -> Vec:
-        """Solves linear system.
+        """Solve linear system.
 
         Collective.
 
@@ -415,7 +414,7 @@ cdef class KSP(Object):
     # --- xxx ---
 
     def view(self, Viewer viewer=None):
-        """Prints the KSP data structure.
+        """Print the KSP data structure.
 
         Collective.
 
@@ -434,7 +433,7 @@ cdef class KSP(Object):
         CHKERR( KSPView(self.ksp, vwr) )
 
     def destroy(self) -> Self:
-        """Destroys KSP context.
+        """Destroy KSP context.
 
         Collective.
 
@@ -447,7 +446,7 @@ cdef class KSP(Object):
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Creates the KSP context.
+        """Create the KSP context.
 
         Collective.
 
@@ -499,7 +498,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetType(self.ksp, cval) )
 
     def getType(self) -> str:
-        """Get the KSP type as a string from the `KSP` object.
+        """Return the KSP type as a string from the `KSP` object.
 
         Not collective.
 
@@ -551,7 +550,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetOptionsPrefix(self.ksp, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Get the prefix used for all `KSP` options in the database.
+        """Return the prefix used for all `KSP` options in the database.
 
         Not collective.
 
@@ -590,7 +589,7 @@ cdef class KSP(Object):
         CHKERR( KSPAppendOptionsPrefix(self.ksp, cval) )
 
     def setFromOptions(self) -> None:
-        """Sets `KSP` options from the options database.
+        """Set `KSP` options from the options database.
 
         Collective.
 
@@ -670,7 +669,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         dm
-            the dm, cannot be ``None``
+            The `DM` object, cannot be `None`.
 
         Notes
         -----
@@ -694,7 +693,7 @@ cdef class KSP(Object):
         """
         CHKERR( KSPSetDM(self.ksp, dm.dm) )
 
-    def setDMActive(self, bint flag) -> None:
+    def setDMActive(self, bint flag: bool) -> None:
         """`DM` should be used to generate system matrix & RHS vector.
 
         Logically collective
@@ -702,7 +701,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            Boolean whether to use the `DM` (or not)
+            Whether to use the `DM`.
 
         Notes
         -----
