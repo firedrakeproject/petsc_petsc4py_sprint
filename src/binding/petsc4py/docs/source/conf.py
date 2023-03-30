@@ -312,7 +312,7 @@ PETSC4py demos
 
 
 _process_demos(
-    "bratu2d/bratu2d.py"
+    "poisson2d/poisson2d.py"
 )
 
 
