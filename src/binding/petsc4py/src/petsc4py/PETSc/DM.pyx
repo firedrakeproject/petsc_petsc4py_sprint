@@ -494,8 +494,8 @@ cdef class DM(Object):
 
     #
 
-    def setAuxiliaryVec(self, Vec aux, label: str | None=None, value=0, part=0) -> None:
-        """Set an auxiliary vector.
+    def setAuxiliaryVec(self, Vec aux, label=None, value=0, part=0) -> None:
+        """Set an auxiliary vector for a specific region.
 
         Not Collective.
 
@@ -503,8 +503,17 @@ cdef class DM(Object):
         ----------
         aux : Vec
             This variable holds the auxiliary field data.
-        label : str, 
-        
+        label : str, optional
+            Vector label indicating the region.
+        value : int, optional
+            Indicate the region.
+        part : int, optional
+            The equation part, or 0 is unused.
+
+        See Also
+        --------
+        petsc.DMGetLabel, petsc.DMSetAuxiliaryVec
+
         """
         cdef PetscInt cvalue = asInt(value)
         cdef PetscInt cpart = asInt(part)
@@ -515,7 +524,27 @@ cdef class DM(Object):
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
     
-    def getAuxiliaryVec(self, label=None, value=0, part=0):
+    def getAuxiliaryVec(self, label=None, value=0, part=0) -> Vec:
+        """Return an auxiliary vector for a specific region.
+
+        Not Collective
+
+        Parameters
+        ----------
+        aux : Vec
+            This variable holds the auxiliary field data.
+        label : str, optional
+            Vector label indicating the region.
+        value : int, optional
+            Indicate the region.
+        part : int, optional
+            The equation part, or 0 is unused.
+
+        See Also
+        --------
+        petsc.DMGetLabel, petsc.DMGetAuxiliaryVec
+
+        """
         cdef PetscInt cvalue = asInt(value)
         cdef PetscInt cpart = asInt(part)
         cdef const char *cval = NULL
