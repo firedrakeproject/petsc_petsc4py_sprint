@@ -1758,7 +1758,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetResidualNorm(self.ksp, &rval) )
         return toReal(rval)
 
-    def setConvergedReason(self, KSP.ConvergedReason reason):
+    def setConvergedReason(self, reason: Type.ConvergedReason):
         """Use `reason` property.
 
         """
@@ -2226,7 +2226,7 @@ cdef class KSP(Object):
         getNormType, setNormType
 
         """
-        def __get__(self) -> normType:
+        def __get__(self) -> NormType:
             return self.getNormType()
         def __set__(self, value):
             self.setNormType(value)
