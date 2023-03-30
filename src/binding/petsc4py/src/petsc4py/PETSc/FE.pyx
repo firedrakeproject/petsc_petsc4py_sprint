@@ -84,7 +84,7 @@ cdef class FE(Object):
         nc
             The number of components.
         isSimplex
-            Flag for simplex reference cell, otherwise its a tensor product.
+            Flag for simplex reference cell, otherwise it's a tensor product.
         qorder
             The quadrature order or `DETERMINE` to use `Space` polynomial
             degree.
