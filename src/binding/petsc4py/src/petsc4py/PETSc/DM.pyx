@@ -1553,13 +1553,13 @@ cdef class DM(Object):
 
     def getLabelName(self, index: int) -> str:
         """Return the name of nth label.
+        
+        Not Collective.
 
         Parameters
         ----------
-        index : str
+        index
             The label number.
-
-        Not Collective.
 
         See Also
         --------
