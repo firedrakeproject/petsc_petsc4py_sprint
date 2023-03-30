@@ -378,9 +378,9 @@ cdef class DM(Object):
         Parameters
         ----------
         useCone
-            If True, the variable influence is set, starting with the cone operation.
+            If `True`, the variable influence is set, starting with the cone operation.
         useClosure
-            If True, the variable influence is set using transitive closure.
+            If `True`, the variable influence is set using transitive closure.
 
         See Also
         --------
