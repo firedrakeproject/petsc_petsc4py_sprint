@@ -126,7 +126,7 @@ cdef class FE(Object):
         k
             The degree k of the space.
         qorder
-            The quadrature order or `PETSC_DETERMINE` TODO: to use `Space`
+            The quadrature order or PETSC_DETERMINE TODO: to use `Space`
             polynomial degree.
         comm
             The MPI comm.
@@ -405,7 +405,7 @@ cdef class FE(Object):
         CHKERR( PetscFESetFromOptions(self.fe) )
 
     def setUp(self) -> None:
-        """Construct data structures for the `FE` after the `FEType` has been set.
+        """Construct data structures for the `FE` after the `Type` has been set.
 
         Collective.
 
@@ -454,8 +454,10 @@ cdef class FE(Object):
 
         Parameters
         ----------
-obj - Optional object that provides the options prefix
-name - command line option name
+        obj
+            TODO Optional object that provides the options prefix
+        name
+            TODO command line option name
 
         See also
         --------
