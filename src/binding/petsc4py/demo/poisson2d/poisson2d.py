@@ -62,7 +62,7 @@ A.create(comm=PETSc.COMM_WORLD)
 
 A.setSizes((n * n, n * n))
 
-# the call above implicitly assumes that we leave the parallel decomposition of
+# The call above implicitly assumes that we leave the parallel decomposition of
 # the matrix rows to PETSc by using `PETSc.DECIDE` for local sizes.
 # It is equivalent to:
 #
