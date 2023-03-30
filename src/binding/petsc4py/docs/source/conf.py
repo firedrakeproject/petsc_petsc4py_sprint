@@ -79,7 +79,6 @@ nitpick_ignore_regex = [
     (r'c:.*', r'Petsc.*'),
     (r'envvar', r'(LD_LIBRARY_)?PATH'),
     (r'envvar', r'(MPICH|OMPI|MPIEXEC)_.*'),
-    (r'py:.*', r'.*petsc4py\.PETSc\.KSP\.NormType\..*'),
 ]
 
 toc_object_entries = False
