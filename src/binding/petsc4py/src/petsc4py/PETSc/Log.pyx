@@ -134,7 +134,7 @@ cdef class Log:
 
         See Also
         --------
-        petsc.PetscLogFlops
+        logFlops, petsc.PetscLogFlops
 
         """
         cdef PetscLogDouble cflops=flops
