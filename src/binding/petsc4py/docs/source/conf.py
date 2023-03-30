@@ -93,6 +93,7 @@ autodoc_type_aliases = {}
 autodoc_type_aliases.update({
     typename: f"~petsc4py.typing.{typename}"
     for typename in (
+        "Scalar",
         "ArrayInt",
         "ArrayReal",
         "ArrayComplex",
