@@ -48,7 +48,6 @@ cdef class Space(Object):
         petsc.PetscSpaceCreate
 
         """
-
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscSpace newsp = NULL
         CHKERR( PetscSpaceCreate(ccomm, &newsp) )
