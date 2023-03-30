@@ -159,6 +159,10 @@ cdef class DM(Object):
         """Build a `DM`.
 
         Collective.
+        Parameters
+        ----------
+        dm_type
+            The type of `DM`.
 
         Notes
         -----
