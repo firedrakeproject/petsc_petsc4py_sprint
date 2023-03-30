@@ -252,7 +252,7 @@ cdef class IS(Object):
         CHKERR( ISDuplicate(self.iset, &iset.iset) )
         return iset
 
-    def copy(self, IS result: IS | None = None) -> IS:
+    def copy(self, IS result=None) -> IS:
         """Copy the contents of the index set into another.
 
         Collective.
