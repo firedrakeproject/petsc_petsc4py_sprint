@@ -558,7 +558,7 @@ class DualSpaceType(object):
 # --------------------------------------------------------------------
 
 cdef class DualSpace(Object):
-    """A PETSc object that manages the dual space to a linear space."""
+    """Dual space to a linear space."""
 
     Type = DualSpaceType
 
