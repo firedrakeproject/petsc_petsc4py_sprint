@@ -1425,7 +1425,7 @@ cdef class DM(Object):
     def getNumLabels(self) -> int:
         """Return the number of labels defined by on the `DM`.
 
-        Not Collective
+        Not Collective.
 
         See Also
         --------
@@ -1437,26 +1437,60 @@ cdef class DM(Object):
         return toInt(nLabels)
 
     def getLabelName(self, index) -> str:
-        """
+        """Return the name of nth label.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetLabelName
+
         """
         cdef PetscInt cindex = asInt(index)
         cdef const char *cname = NULL
         CHKERR( DMGetLabelName(self.dm, cindex, &cname) )
         return bytes2str(cname)
 
-    def hasLabel(self, name):
+    def hasLabel(self, name: str) -> bool:
+        """Determine whether the `DM` has a label.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMHasLabel
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMHasLabel(self.dm, cname, &flag) )
         return toBool(flag)
 
-    def createLabel(self, name) -> None:
+    def createLabel(self, name: str) -> None:
+        """Create a label of the given name if it does not already exit in the `DM`.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMCreateLabel
+
+        """
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMCreateLabel(self.dm, cname) )
 
-    def removeLabel(self, name) -> None:
+    def removeLabel(self, name: str) -> None:
+        """Remove and destroy the label by name.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMRemoveLabel
+
+        """
         cdef const char *cname = NULL
         cdef PetscDMLabel clbl = NULL
         name = str2bytes(name, &cname)
@@ -1464,40 +1498,94 @@ cdef class DM(Object):
         # TODO: Once DMLabel is wrapped, this should return the label, like the C function.
         CHKERR( DMLabelDestroy(&clbl) )
 
-    def getLabelValue(self, name, point):
+    def getLabelValue(self, name: str, point: int) -> int:
+        """Return the value in `DMLabel` for the given point.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetLabelValue
+
+        """
         cdef PetscInt cpoint = asInt(point), value = 0
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMGetLabelValue(self.dm, cname, cpoint, &value) )
         return toInt(value)
 
-    def setLabelValue(self, name, point, value) -> None:
+    def setLabelValue(self, name: str, point: int, value: int) -> None:
+        """Set a point to a `DMLabel` with a give value.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMSetLabelValue
+
+        """
         cdef PetscInt cpoint = asInt(point), cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMSetLabelValue(self.dm, cname, cpoint, cvalue) )
 
-    def clearLabelValue(self, name, point, value) -> None:
+    def clearLabelValue(self, name: str, point: int, value: int) -> None:
+        """Remove a point from a `DMLabel` with given value.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMClearLabelValue
+ 
+        """
         cdef PetscInt cpoint = asInt(point), cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMClearLabelValue(self.dm, cname, cpoint, cvalue) )
 
-    def getLabelSize(self, name):
+    def getLabelSize(self, name: str) -> int:
+        """Return the number of values that the `DMLabel` takes.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMLabelGetNumValues, petsc.DMGetLabelSize
+
+        """
         cdef PetscInt size = 0
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMGetLabelSize(self.dm, cname, &size) )
         return toInt(size)
 
-    def getLabelIdIS(self, name):
+    def getLabelIdIS(self, name: str) -> IS:
+        """Return an `IS` of all values that the `DMLabel` takes.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMLabelGetValueIS, petsc.DMGetLabelIdIS
+
+        """
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         cdef IS lis = IS()
         CHKERR( DMGetLabelIdIS(self.dm, cname, &lis.iset) )
         return lis
 
-    def getStratumSize(self, name, value):
+    def getStratumSize(self, name: str, value: int) -> int:
+        """Return the number of points in a label stratum.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetStratumSize
+
+        """
         cdef PetscInt size = 0
         cdef PetscInt cvalue = asInt(value)
         cdef const char *cname = NULL
@@ -1505,7 +1593,16 @@ cdef class DM(Object):
         CHKERR( DMGetStratumSize(self.dm, cname, cvalue, &size) )
         return toInt(size)
 
-    def getStratumIS(self, name, value):
+    def getStratumIS(self, name: str, value: int) -> IS:
+        """Return the points in a label stratum.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetStratumIS
+
+        """
         cdef PetscInt cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
@@ -1513,19 +1610,46 @@ cdef class DM(Object):
         CHKERR( DMGetStratumIS(self.dm, cname, cvalue, &sis.iset) )
         return sis
 
-    def clearLabelStratum(self, name, value) -> None:
+    def clearLabelStratum(self, name: str, value: int) -> None:
+        """Remove all points from a stratum.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMClearLabelStratum
+
+        """
         cdef PetscInt cvalue = asInt(value)
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         CHKERR( DMClearLabelStratum(self.dm, cname, cvalue) )
 
-    def setLabelOutput(self, name, output) -> None:
+    def setLabelOutput(self, name: str, output: bool) -> None:
+        """Set if a given lable should be saved to a view.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMSetLabelOutput
+
+        """
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         cdef PetscBool coutput = output
         CHKERR( DMSetLabelOutput(self.dm, cname, coutput) )
 
-    def getLabelOutput(self, name):
+    def getLabelOutput(self, name: str) -> bool:
+        """Return the output flag for a given label.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetLabelOutput
+
+        """
         cdef const char *cname = NULL
         name = str2bytes(name, &cname)
         cdef PetscBool coutput = PETSC_FALSE
@@ -1544,7 +1668,20 @@ cdef class DM(Object):
         self.set_attr('__operators__', context)
         CHKERR( DMKSPSetComputeOperators(self.dm, KSP_ComputeOps, <void*>context) )
 
-    def createFieldDecomposition(self):
+    def createFieldDecomposition(self) -> tuple[list, list, list] :
+        """Return a list of `IS` objects.
+
+        Not Collective; No Fortran Support.
+
+        Notes
+        -----
+        The user is responsible for freeing all requested arrays.
+
+        See Also
+        --------
+        petsc.DMCreateFieldDecomposition
+
+        """
         cdef PetscInt clen = 0
         cdef PetscIS *cis = NULL
         cdef PetscDM *cdm = NULL
@@ -1577,9 +1714,18 @@ cdef class DM(Object):
         CHKERR( PetscFree(cdm) )
         CHKERR( PetscFree(cnamelist) )
 
-        return (names, isets, dms)
+        return (names, isets, dms) # TODO REVIEW
 
-    def setSNESFunction(self, function, args=None, kargs=None):
+    def setSNESFunction(self, function, args=None, kargs=None) -> None:
+        """Set `SNES` residual evaluation function.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMSNESSetFunction
+
+        """
         if function is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -1589,7 +1735,16 @@ cdef class DM(Object):
         else:
             CHKERR( DMSNESSetFunction(self.dm, NULL, NULL) )
 
-    def setSNESJacobian(self, jacobian, args=None, kargs=None):
+    def setSNESJacobian(self, jacobian, args=None, kargs=None) -> None:
+        """Set the `SNES` Jacobian evaluation function.
+       
+        Not Collective
+
+        See Also
+        --------
+        petsc.DMSNESSetJacobian
+
+        """
         if jacobian is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -1599,7 +1754,16 @@ cdef class DM(Object):
         else:
             CHKERR( DMSNESSetJacobian(self.dm, NULL, NULL) )
 
-    def addCoarsenHook(self, coarsenhook, restricthook, args=None, kargs=None):
+    def addCoarsenHook(self, coarsenhook, restricthook, args=None, kargs=None) -> None:
+        """Add a callback to be executed when restricting a nonlinear problem to a coarse grid.
+        
+        Logically Collective; No Fortran Support.
+
+        See Also
+        --------
+        petsc.DMCoarsenHookAdd
+
+        """
         if args  is None: args  = ()
         if kargs is None: kargs = {}
 
