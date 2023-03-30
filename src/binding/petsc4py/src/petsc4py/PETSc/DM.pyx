@@ -1372,35 +1372,73 @@ cdef class DM(Object):
         """
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
-    def getSectionSF(self):
+    def getSectionSF(self) -> SF:
+        """Return the `Section` enconding the parallel dof overlap for the `DM`.
 
+        See Also
+        --------
+        petsc.DMGetSectionSF
+
+        """
         cdef SF sf = SF()
         CHKERR( DMGetSectionSF(self.dm, &sf.sf) )
         PetscINCREF(sf.obj)
         return sf
 
     def setSectionSF(self, SF sf) -> None:
+        """Set the `Section` encoding the parallel dof overlap for the `DM`.
+        
+        See Also
+        --------
+        petsc.DMSetSectionSF
+
+        """
         CHKERR( DMSetSectionSF(self.dm, sf.sf) )
 
     createDefaultSF = createSectionSF
     getDefaultSF = getSectionSF
     setDefaultSF = setSectionSF
 
-    def getPointSF(self):
+    def getPointSF(self) -> SF:
+        """Return the `SF` encoding the parallel dof overlap for the `DM`.
+        
+        See Also
+        --------
+        petsc.DMGetPointSF
+
+        """
         cdef SF sf = SF()
         CHKERR( DMGetPointSF(self.dm, &sf.sf) )
         PetscINCREF(sf.obj)
         return sf
 
     def setPointSF(self, SF sf) -> None:
+        """Set the `SF` encoding the parallel dof overlap for the `DM`.
+        
+        See Also
+        --------
+        petsc.DMSetPointSF
+
+        """
         CHKERR( DMSetPointSF(self.dm, sf.sf) )
 
-    def getNumLabels(self):
+    def getNumLabels(self) -> int:
+        """Return the number of labels defined by on the `DM`.
+
+        Not Collective
+
+        See Also
+        --------
+        petsc.DMGetNumLabels
+
+        """
         cdef PetscInt nLabels = 0
         CHKERR( DMGetNumLabels(self.dm, &nLabels) )
         return toInt(nLabels)
 
-    def getLabelName(self, index):
+    def getLabelName(self, index) -> str:
+        """
+        """
         cdef PetscInt cindex = asInt(index)
         cdef const char *cname = NULL
         CHKERR( DMGetLabelName(self.dm, cindex, &cname) )
