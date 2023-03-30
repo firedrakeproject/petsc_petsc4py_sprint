@@ -1,6 +1,20 @@
 cdef class DMShell(DM):
 
     def create(self, comm=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscDM newdm = NULL
         CHKERR( DMShellCreate(ccomm, &newdm) )
@@ -8,15 +22,71 @@ cdef class DMShell(DM):
         return self
 
     def setMatrix(self, Mat mat):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMShellSetMatrix(self.dm, mat.mat) )
 
     def setGlobalVector(self, Vec gv):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMShellSetGlobalVector(self.dm, gv.vec) )
 
     def setLocalVector(self, Vec lv):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
 
     def setCreateGlobalVector(self, create_gvec, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_gvec is not None:
             if args  is None: args = ()
             if kargs is None: kargs = {}
@@ -27,6 +97,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateGlobalVector(self.dm, NULL) )
 
     def setCreateLocalVector(self, create_lvec, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_lvec is not None:
             if args  is None: args = ()
             if kargs is None: kargs = {}
@@ -38,6 +122,20 @@ cdef class DMShell(DM):
 
     def setGlobalToLocal(self, begin, end, begin_args=None, begin_kargs=None,
                          end_args=None, end_kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscDMShellXToYFunction cbegin = NULL, cend = NULL
         if begin is not None:
             if begin_args  is None: begin_args = ()
@@ -54,10 +152,38 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetGlobalToLocal(self.dm, cbegin, cend) )
 
     def setGlobalToLocalVecScatter(self, Scatter gtol):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMShellSetGlobalToLocalVecScatter(self.dm, gtol.sct) )
 
     def setLocalToGlobal(self, begin, end, begin_args=None, begin_kargs=None,
                          end_args=None, end_kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscDMShellXToYFunction cbegin = NULL, cend = NULL
         if begin is not None:
             if begin_args  is None: begin_args = ()
@@ -74,10 +200,38 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetLocalToGlobal(self.dm, cbegin, cend) )
 
     def setLocalToGlobalVecScatter(self, Scatter ltog):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMShellSetLocalToGlobalVecScatter(self.dm, ltog.sct) )
 
     def setLocalToLocal(self, begin, end, begin_args=None, begin_kargs=None,
                         end_args=None, end_kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         cdef PetscDMShellXToYFunction cbegin = NULL, cend = NULL
         cbegin = NULL
         cend = NULL
@@ -96,9 +250,37 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetLocalToLocal(self.dm, cbegin, cend) )
 
     def setLocalToLocalVecScatter(self, Scatter ltol):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         CHKERR( DMShellSetLocalToLocalVecScatter(self.dm, ltol.sct) )
 
     def setCreateMatrix(self, create_matrix, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_matrix is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -109,6 +291,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateMatrix(self.dm, NULL) )
 
     def setCoarsen(self, coarsen, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if coarsen is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -119,6 +315,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCoarsen(self.dm, NULL) )
 
     def setRefine(self, refine, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if refine is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -129,6 +339,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetRefine(self.dm, NULL) )
 
     def setCreateInterpolation(self, create_interpolation, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_interpolation is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -139,6 +363,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateInterpolation(self.dm, NULL) )
 
     def setCreateInjection(self, create_injection, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_injection is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -149,6 +387,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateInjection(self.dm, NULL) )
 
     def setCreateRestriction(self, create_restriction, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_restriction is not None:
             if args  is None: args  = ()
             if kargs is None: kargs = {}
@@ -159,6 +411,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateRestriction(self.dm, NULL) )
 
     def setCreateFieldDecomposition(self, decomp, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if decomp is not None:
             if args  is None: args = ()
             if kargs is None: kargs = {}
@@ -169,6 +435,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateFieldDecomposition(self.dm, NULL) )
 
     def setCreateDomainDecomposition(self, decomp, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if decomp is not None:
             if args  is None: args = ()
             if kargs is None: kargs = {}
@@ -179,6 +459,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateDomainDecomposition(self.dm, NULL) )
 
     def setCreateDomainDecompositionScatters(self, scatter, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if scatter is not None:
             if args  is None: args = ()
             if kargs is None: kargs = {}
@@ -189,6 +483,20 @@ cdef class DMShell(DM):
             CHKERR( DMShellSetCreateDomainDecompositionScatters(self.dm, NULL) )
 
     def setCreateSubDM(self, create_subdm, args=None, kargs=None):
+        """TODO.
+
+        Not collective.
+
+        Parameters
+        ----------
+        TODO
+            TODO.
+
+        See also
+        --------
+        petsc.TODO
+
+        """
         if create_subdm is not None:
             if args  is None: args = ()
             if kargs is None: kargs = {}
