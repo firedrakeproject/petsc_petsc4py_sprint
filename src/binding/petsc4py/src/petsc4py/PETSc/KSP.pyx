@@ -1800,7 +1800,7 @@ cdef class KSP(Object):
         self,
         right: int | None = None,
         left: int | None = None
-    ) -> Tuple[list[Vec], list[Vec]] | list[Vec] | None:
+    ) -> tuple[list[Vec], list[Vec]] | list[Vec] | None:
         """Create working vectors.
 
         Parameters
