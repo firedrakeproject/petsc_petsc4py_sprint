@@ -20,6 +20,11 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+# --- DM ---
+
+cdef DMCoarsenHookFunction
+cdef DMRestrictHookFunction
+
 # --- TS ---
 
 cdef TSRHSFunction

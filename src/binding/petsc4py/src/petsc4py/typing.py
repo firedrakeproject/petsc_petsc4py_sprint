@@ -75,6 +75,11 @@ ArrayComplex = NDArray[complex]
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
 
+# --- DM ---
+
+DMCoarsenHookFunction = Callable[[DM, DM], None]
+DMRestrictHookFunction = Callable[[DM, Mat, Vec, Mat, DM], None]
+
 # --- SNES ---
 
 SNESMonitorFunction = Callable[[SNES, int, float], None]

@@ -1864,7 +1864,29 @@ cdef class DM(Object):
     createLocalVector = createLocalVec
     getMatrix = createMatrix = createMat
 
-    def setKSPComputeOperators(self, operators, args=None, kargs=None) -> None:
+    def setKSPComputeOperators(
+        self, operators,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+        ) -> None:
+        """Matrix associated with the linear system.
+
+        Collective.
+
+        Parameters
+        ----------
+        operator
+            Callback function to compute the operators.
+        args
+          Positional arguments for the callback.
+        kargs
+          Keyword arguments for the callback.
+        
+        See Also
+        --------
+        petsc.DMKSPSetComputeOperators
+
+        """
         if args  is None: args  = ()
         if kargs is None: kargs = {}
         context = (operators, args, kargs)
@@ -1919,14 +1941,28 @@ cdef class DM(Object):
 
         return (names, isets, dms) # TODO REVIEW
 
-    def setSNESFunction(self, function, args=None, kargs=None) -> None:
+    def setSNESFunction(
+        self, function: SNESFunction,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+        ) -> None:
+
         """Set `SNES` residual evaluation function.
 
         Not Collective.
 
+        Parameters
+        ----------
+        function
+            The callback.
+        args
+          Positional arguments for the callback.
+        kargs
+          Keyword arguments for the callback.
+
         See Also
         --------
-        petsc.DMSNESSetFunction
+        SNES.setFunction, petsc.DMSNESSetFunction
 
         """
         if function is not None:
@@ -1938,14 +1974,27 @@ cdef class DM(Object):
         else:
             CHKERR( DMSNESSetFunction(self.dm, NULL, NULL) )
 
-    def setSNESJacobian(self, jacobian, args=None, kargs=None) -> None:
+    def setSNESJacobian(
+            self, jacobian: SNESJacobianFunction, 
+            args: tuple[Any, ...] | None = None,
+            kargs: dict[str, Any] | None = None,
+            ) -> None:
         """Set the `SNES` Jacobian evaluation function.
        
         Not Collective
 
+        Parameters
+        ----------
+        jacobian
+            The Jacobian callback.
+        args
+          Positional arguments for the callback.
+        kargs
+          Keyword arguments for the callback.
+
         See Also
         --------
-        petsc.DMSNESSetJacobian
+        SNES.setJacobian, petsc.DMSNESSetJacobian
 
         """
         if jacobian is not None:
@@ -1957,10 +2006,27 @@ cdef class DM(Object):
         else:
             CHKERR( DMSNESSetJacobian(self.dm, NULL, NULL) )
 
-    def addCoarsenHook(self, coarsenhook, restricthook, args=None, kargs=None) -> None:
+    def addCoarsenHook(
+        self,
+        coarsenhook: DMCoarsenHookFunction, 
+        restricthook: DMRestrictHookFunction, 
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
         """Add a callback to be executed when restricting a nonlinear problem to a coarse grid.
         
         Logically Collective; No Fortran Support.
+
+        Parameters
+        ----------
+        coarsenhook
+            The coarsen hook function.
+        restricthook
+            The restrict hook function.
+        args
+          Positional arguments for the hooks.
+        kargs
+          Keyword arguments for the hooks.
 
         See Also
         --------
