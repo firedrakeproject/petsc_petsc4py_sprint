@@ -1,15 +1,13 @@
 # --------------------------------------------------------------------
 
 cdef class Quad(Object):
-    """
-    Quadrature rule for integration.
-    """
+    """Quadrature rule for integration."""
     def __cinit__(self):
         self.obj = <PetscObject*> &self.quad
         self.quad = NULL
 
     def view(self, Viewer viewer=None) -> None:
-        """View a `Quad` object
+        """View a `Quad` object.
 
         Collective.
 
@@ -28,7 +26,7 @@ cdef class Quad(Object):
         CHKERR( PetscQuadratureView(self.quad, vwr) )
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Create a `Quad` object
+        """Create a `Quad` object.
 
         Collective.
 
@@ -63,7 +61,7 @@ cdef class Quad(Object):
         return newquad
 
     def destroy(self) -> Self:
-        """Destroys the `Quad` object
+        """Destroy the `Quad` object.
 
         Collective.
 
@@ -75,16 +73,16 @@ cdef class Quad(Object):
         CHKERR( PetscQuadratureDestroy(&self.quad) )
         return self
 
-    def getData(self) -> tuple(ndarray, ndarray):
+    def getData(self) -> tuple(ArrayReal, ArrayReal):
         """Return the data defining the `Quad`.
 
         Not collective.
 
         Returns
         -------
-        points : ndarray
-            The quadrature points.
-        weights : ndarray
+        points : ArrayReal
+            The coordinates of the quadrature points.
+        weights : ArrayReal
             The quadrature weights.
 
         See also
@@ -100,14 +98,17 @@ cdef class Quad(Object):
         CHKERR( PetscQuadratureGetData(self.quad, &cdim, &cnc, &cnpoints, &cpoints, &cweights))
         return array_r(cnpoints*cdim, cpoints), array_r(cnpoints*cnc, cweights)
 
+    # FIXME:
+    # def setData(???)
+
     def getNumComponents(self) -> int:
-        """Return the number of components for functions to be integrated
+        """Return the number of components for functions to be integrated.
 
         Not collective.
 
         See also
         --------
-        petsc.PetscQuadratureGetNumComponents
+        petsc.PetscQuadratureGetNumComponents, setNumComponents
 
         """
         cdef PetscInt cnc = 0
@@ -126,7 +127,7 @@ cdef class Quad(Object):
 
         See also
         --------
-        petsc.PetscQuadratureSetNumComponents
+        petsc.PetscQuadratureSetNumComponents, getNumComponents
 
         """
         cdef PetscInt cnc = asInt(nc)
@@ -139,7 +140,7 @@ cdef class Quad(Object):
 
         See also
         --------
-        petsc.PetscQuadratureGetOrder
+        petsc.PetscQuadratureGetOrder, setOrder
 
         """
         cdef PetscInt corder = 0
@@ -159,7 +160,7 @@ cdef class Quad(Object):
 
         See also
         --------
-        petsc.PetscQuadratureSetOrder
+        petsc.PetscQuadratureSetOrder, getOrder
 
         """
         cdef PetscInt corder = asInt(order)
