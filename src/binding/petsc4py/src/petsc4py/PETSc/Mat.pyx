@@ -204,6 +204,14 @@ class MatSORType(object):
 # --------------------------------------------------------------------
 
 cdef class Mat(Object):
+    """Matrix object.
+
+    See Also
+    --------
+    manual/mat
+    petsc.Mat
+
+    """
 
     Type            = MatType
     Option          = MatOption
@@ -296,28 +304,147 @@ cdef class Mat(Object):
         return y
     #
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
+        """View the matrix.
+
+        For more information about the different viewers available and
+        relevant database options see `petsc_options` and `petsc.MatView`.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            Viewer instance. If `None` the matrix will print to screen.
+
+        Notes
+        -----
+        Viewers with type `Viewer.Type.ASCII` are only recommended for small
+        matrices on small numbers of processes. Larger matrices should use a
+        binary format.
+
+        See Also
+        --------
+        petsc_options, Mat.load, petsc.MatView
+
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( MatView(self.mat, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the matrix and free its memory.
+
+        Collective.
+
+        See Also
+        --------
+        Mat.create, petsc.MatDestroy
+
+        """
         CHKERR( MatDestroy(&self.mat) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
+        """Create the matrix.
+
+        Once created, the user should call `Mat.setType` or
+        `Mat.setFromOptions` before using the matrix. Alternatively, specific
+        creation routines can be used such as `Mat.createAIJ` or
+        `Mat.createBAIJ` can be used.
+
+        Collective.
+
+        Parameters
+        ----------
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Mat.destroy, petsc.MatCreate
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscMat newmat = NULL
         CHKERR( MatCreate(ccomm, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def setType(self, mat_type):
+    def setType(self, mat_type: Mat.Type | str) -> None:
+        """Set the matrix type.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat_type
+            Matrix type.
+
+        Notes
+        -----
+        `Mat.setFromOptions` can be used instead to set the type using the
+        options database. For more information see `petsc_options`.
+
+        See Also
+        --------
+        Mat.setFromOptions, Mat.create, petsc.MatSetType
+
+        """
         cdef PetscMatType cval = NULL
         mat_type = str2bytes(mat_type, &cval)
         CHKERR( MatSetType(self.mat, cval) )
 
-    def setSizes(self, size, bsize=None):
+    def setSizes(
+        self,
+        size: tuple | int,
+        bsize: tuple[int, int] | int | None = None,
+    ) -> None:
+        """Set the local, global and block sizes.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            `int` or nested `tuple` of `int` describing the matrix size. See
+            the "Examples" section and `Sys.splitOwnership` for more
+            information.
+        bsize
+            The row and column block sizes. If a single `int` is provided then
+            rows and columns share the same block size. If `None` then a block
+            size of ``1`` is set.
+
+        Examples
+        --------
+        Create a `Mat` with ``n`` rows and columns and the same local and
+        global sizes.
+
+        >>> mat = PETSc.Mat().create()
+        >>> mat.setFromOptions()
+        >>> mat.setSizes(n)
+
+        Create a `Mat` with ``nr`` rows, ``nc`` columns and the same local and
+        global sizes.
+
+        >>> mat = PETSc.Mat().create()
+        >>> mat.setFromOptions()
+        >>> mat.setSizes([nr, nc])
+
+        Create a `Mat` with ``nrl`` local rows, ``nrg`` global rows, ``ncl``
+        local columns and ``ncg`` global columns.
+
+        >>> mat = PETSc.Mat().create()
+        >>> mat.setFromOptions()
+        >>> mat.setSizes([[nrl, nrg], [ncl, ncg]])
+
+        See Also
+        --------
+        poisson2d
+        Mat.setBlockSize, Mat.setBlockSizes
+        petsc.MatSetSizes, petsc.MatSetBlockSize, petsc.MatSetBlockSizes
+
+        """
         cdef PetscInt rbs = 0, cbs = 0, m = 0, n = 0, M = 0, N = 0
         Mat_Sizes(size, bsize, &rbs, &cbs, &m, &n, &M, &N)
         CHKERR( MatSetSizes(self.mat, m, n, M, N) )
@@ -327,28 +454,127 @@ cdef class Mat(Object):
             else:
                 CHKERR( MatSetBlockSize(self.mat, rbs) )
 
-    def setBlockSize(self, bsize):
+    def setBlockSize(self, bsize: int) -> None:
+        """Set the matrix block size (same for rows and columns).
+
+        Logically collective.
+
+        Parameters
+        ----------
+        bsize
+            Block size.
+
+        See Also
+        --------
+        Mat.setBlockSizes, Mat.setSizes, petsc.MatSetBlockSize
+
+        """
         cdef PetscInt bs = asInt(bsize)
         CHKERR( MatSetBlockSize(self.mat, bs) )
 
-    def setBlockSizes(self, row_bsize, col_bsize):
+    def setBlockSizes(self, row_bsize: int, col_bsize: int) -> None:
+        """Set the row and column block sizes.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        row_bsize
+            Row block size.
+        col_bsize
+            Column block size.
+
+        See Also
+        --------
+        mat.setBlockSize, mat.setSizes, petsc.MatSetBlockSizes
+
+        """
         cdef PetscInt rbs = asInt(row_bsize)
         cdef PetscInt cbs = asInt(col_bsize)
         CHKERR( MatSetBlockSizes(self.mat, rbs, cbs) )
 
-    def setVecType(self, vec_type):
+    def setVecType(self, vec_type: Vec.Type | str) -> None:
+        """Set the vector type the matrix returns with `Mat.createVecs`.
+
+        Collective.
+
+        Parameters
+        ----------
+        vec_type
+            Vector type.
+
+        Notes
+        -----
+        This method is rarely needed since matrices internally set the proper
+        vector type.
+
+        See Also
+        --------
+        Mat.getVecType, petsc.MatSetVecType
+
+        """
         cdef PetscVecType cval = NULL
         vec_type = str2bytes(vec_type, &cval)
         CHKERR( MatSetVecType(self.mat, cval) )
 
-    def getVecType(self):
+    def getVecType(self) -> str:
+        """Return the vector type the matrix returns with `Mat.createVecs`.
+
+        Not collective.
+
+        See Also
+        --------
+        Mat.setVecType, petsc.MatGetVecType
+
+        """
         cdef PetscVecType cval = NULL
         CHKERR( MatGetVecType(self.mat, &cval) )
         return bytes2str(cval)
 
     #
 
-    def createAIJ(self, size, bsize=None, nnz=None, csr=None, comm=None):
+    def createAIJ(
+        self,
+        size: tuple | int,
+        bsize: tuple[int, int] | int | None = None,
+        nnz: int | Sequence[int] | tuple | None = None,
+        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse unblocked matrix, optionally preallocating.
+
+        To preallocate the matrix the user can either pass ``nnz`` or ``csr``
+        describing the sparsity. If neither is set then preallocation will
+        not occur.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize
+            Matrix size attributes. See `Mat.setSizes` for usage information.
+        nnz
+            The number of non-zeros per row. If an `int` is passed then this
+            is treated as the number of non-zeros for every row. If a 2-`tuple`
+            is passed then these correspond to the diagonal and off-diagonal
+            parts of the matrix. See `petsc.MatMPIAIJSetPreallocation` for
+            more information.
+        csr
+            Compressed sparse row (local) layout consisting of
+            ``(row_start, col)`` where ``row_start`` points to the start of
+            each row and ``col`` gives the column index for each entry. See
+            `petsc.MatMPIAIJSetPreallocationCSR` for more information.
+        comm
+            MPI communicators, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.createBAIJ
+        petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ, petsc.MatCreateAIJ
+        petsc.MatSeqAIJSetPreallocation, petsc.MatSeqAIJSetPreallocationCSR
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATAIJ, comm, size, bsize, &newmat)
@@ -357,7 +583,31 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def createBAIJ(self, size, bsize, nnz=None, csr=None, comm=None):
+    def createBAIJ(
+        self,
+        size: tuple | int,
+        bsize: tuple[int, int] | int,
+        nnz: int | Sequence[int] | tuple | None = None,
+        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse blocked matrix, optionally preallocating.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize, nnz, csr, comm
+            See `Mat.createAIJ` for information on the meaning of the
+            parameters. Note in this case that ``bsize`` cannot be `None`.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.createAIJ
+        petsc.MATBAIJ, petsc.MATSEQBAIJ, petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATBAIJ, comm, size, bsize, &newmat)
@@ -366,7 +616,30 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def createSBAIJ(self, size, bsize, nnz=None, csr=None, comm=None):
+    def createSBAIJ(
+        self,
+        size: tuple | int,
+        bsize: int,
+        nnz: int | Sequence[int] | tuple | None = None,
+        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse matrix in symmetric block AIJ format.
+
+        Parameters
+        ----------
+        size, bsize, nnz, csr, comm
+            See `Mat.createAIJ` for information on the meaning of the
+            parameters. Note in this case that ``bsize`` must be an `int`,
+            that is, blocks *must* be square.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.createAIJ, Mat.createBAIJ
+        petsc.MatCreateSBAIJ
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATSBAIJ, comm, size, bsize, &newmat)
