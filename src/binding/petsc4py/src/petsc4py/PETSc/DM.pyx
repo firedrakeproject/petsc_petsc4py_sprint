@@ -1556,7 +1556,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        index
+        index : str
             The label number.
 
         Not Collective.
