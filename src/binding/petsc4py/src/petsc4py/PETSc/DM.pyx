@@ -437,6 +437,11 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Paramters
+        ---------
+        field
+            The field number.
+
         Returns
         -------
         toBool(uC) : bool
@@ -570,6 +575,13 @@ cdef class DM(Object):
 
         Logically Collective.
 
+        Parameters
+        ----------
+        index
+            The field number.
+        field
+            The discretization object.
+
         See Also
         --------
         petsc.DMSetField
@@ -586,6 +598,11 @@ cdef class DM(Object):
         
         Not Collective.
         
+        Parameters
+        ----------
+        index
+            The field number
+
         See Also
         --------
         petsc.DMGetField
@@ -605,6 +622,10 @@ cdef class DM(Object):
         """Add a field to a `DM` object.
 
         Logically Collective.
+
+        Paramters
+        ---------
+        The discretization object.
 
         See Also
         --------
@@ -809,6 +830,11 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        vl
+            The local vector.
+
         See Also
         --------
         petsc.DMRestoreLocalVector
@@ -820,7 +846,14 @@ cdef class DM(Object):
     def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
         """Update local vectors from global vector.
 
-        Neighbor-wise Collective
+        Neighbor-wise Collective.
+
+        Parameters
+        ----------
+        vg
+            The global vector.
+        vl
+            The local vector.
 
         See Also
         --------
@@ -836,6 +869,13 @@ cdef class DM(Object):
 
         Neighbor-wise Collective
 
+        Parameters
+        ----------
+        vg
+            The global vector.
+        vl
+            The local vector.
+
         See Also
         --------
         petsc.DMLocalToGlobalBegin, petsc.DMLocalToGlobalEnd
@@ -849,6 +889,13 @@ cdef class DM(Object):
         """Mapp the values from a local vector to another local vector.
 
         Neighbor-wise Collective.
+
+        Parameters
+        ----------
+        vg
+            The global vector.
+        vl
+            The local vector.
 
         See Also
         --------
@@ -910,6 +957,11 @@ cdef class DM(Object):
         """Set a global vector that holds the coordinates.
         Collective
 
+        Parameters
+        ----------
+        c
+            Coordinate Vector.
+
         See Also
         --------
         petsc.DMSetCoordinates
@@ -937,6 +989,11 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        c
+            Coordinate Vector.
+
         See Also
         --------
         petsc.DMSetCoordinatesLocal
@@ -961,6 +1018,11 @@ cdef class DM(Object):
 
     def projectCoordinates(self, FE disc) -> Self:
         """Project coordinates to a different space.
+        
+        Parameters
+        ----------
+        disc
+            The new coordinates discretization or ``NULL`` to ensure a coordinate.
 
         See Also
         --------
@@ -1134,10 +1196,15 @@ cdef class DM(Object):
         dm.dm = newdm
         return dm
 
-    def refine(self, comm=None) -> DM:
+    def refine(self, comm: Comm | None = None) -> DM:
         """Return `DM` object refined.
 
         Collective
+
+        Parameters
+        ----------
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -1153,10 +1220,16 @@ cdef class DM(Object):
         dm.dm = newdm
         return dm
 
-    def coarsen(self, comm=None) -> DM:
+    def coarsen(self, comm: Comm | None = None) -> DM:
         """Return a coarsens `DM` object.
 
         Collective.
+
+        Parameters
+        ----------
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
 
         See Also
         --------
@@ -1176,6 +1249,11 @@ cdef class DM(Object):
         """Return a `DM` object refined.
 
         Collective
+
+        Parameters
+        ----------
+        nlevels
+            The number of levels of refinement.
 
         See Also
         --------
@@ -1198,6 +1276,11 @@ cdef class DM(Object):
         """Return a `DM` object coarsed.
 
         Collective.
+
+        Parameters
+        ----------
+        nlevels
+            The number of levels of coarsening.
 
         See Also
         --------
@@ -1234,6 +1317,11 @@ cdef class DM(Object):
         """Set the number of refinements.
 
         Not Collective.
+
+        Parameters
+        ----------
+        nlevels
+            The number of refinement.
 
         See Also
         --------
@@ -1279,6 +1367,15 @@ cdef class DM(Object):
 
     def adaptMetric(self, Vec metric, bdLabel: str | None, rgLabel: str | None) -> DM:
         """Return a mesh adapted to the specified metric field.
+
+        Parameters
+        ----------
+        metric
+            The metric to which the mesh is adapted, defined vertex-wise.
+        bdLabel
+            Label for boundary tags.
+        rgLabel
+            Label for cell tag.
 
         See Also
         --------
@@ -1371,6 +1468,13 @@ cdef class DM(Object):
     def createSectionSF(self, Section localsec, Section globalsec) -> None:
         """Create the `SF` encoding the parallel dof overlap for the `DM`.
 
+        Parameters
+        ----------
+        localsec
+            Describe the local data layout.
+        globalsec
+            Describe the global data layout.
+
         Note
         ----
         Encoding based on the `Section` describing the data layout.
@@ -1446,8 +1550,13 @@ cdef class DM(Object):
         CHKERR( DMGetNumLabels(self.dm, &nLabels) )
         return toInt(nLabels)
 
-    def getLabelName(self, index) -> str:
+    def getLabelName(self, index: int) -> str:
         """Return the name of nth label.
+
+        Parameters
+        ----------
+        index
+            The label number.
 
         Not Collective.
 
@@ -1466,6 +1575,11 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+
         See Also
         --------
         petsc.DMHasLabel
@@ -1482,6 +1596,11 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+
         See Also
         --------
         petsc.DMCreateLabel
@@ -1495,6 +1614,11 @@ cdef class DM(Object):
         """Remove and destroy the label by name.
 
         Not Collective.
+
+        Parameters
+        ----------
+        name
+            The label name.
 
         See Also
         --------
@@ -1513,6 +1637,13 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+        point
+            The mesh point
+
         See Also
         --------
         petsc.DMGetLabelValue
@@ -1529,6 +1660,15 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+        point
+            The mesh point.
+        value
+            The label value for this point.
+
         See Also
         --------
         petsc.DMSetLabelValue
@@ -1544,6 +1684,15 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+        point
+            The mesh point.
+        value
+            The label value for this point.
+
         See Also
         --------
         petsc.DMClearLabelValue
@@ -1558,6 +1707,11 @@ cdef class DM(Object):
         """Return the number of values that the `DMLabel` takes.
 
         Not Collective.
+
+        Parameters
+        ----------
+        name
+            The label name.
 
         See Also
         --------
@@ -1575,6 +1729,11 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+
         See Also
         --------
         petsc.DMLabelGetValueIS, petsc.DMGetLabelIdIS
@@ -1590,6 +1749,13 @@ cdef class DM(Object):
         """Return the number of points in a label stratum.
 
         Not Collective.
+
+        Parameters
+        ----------
+        name
+            The label name.
+        value
+            The stratum value.
 
         See Also
         --------
@@ -1608,6 +1774,13 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+        value
+            The stratum value.
+
         See Also
         --------
         petsc.DMGetStratumIS
@@ -1625,6 +1798,13 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+        value
+            The stratum value.
+
         See Also
         --------
         petsc.DMClearLabelStratum
@@ -1640,6 +1820,13 @@ cdef class DM(Object):
 
         Not Collective.
 
+        Parameters
+        ----------
+        name
+            The label name.
+        output
+            If True, it is save the label to the viewer.
+
         See Also
         --------
         petsc.DMSetLabelOutput
@@ -1654,6 +1841,11 @@ cdef class DM(Object):
         """Return the output flag for a given label.
 
         Not Collective.
+
+        Parameters
+        ----------
+        name
+            The label name.
 
         See Also
         --------
