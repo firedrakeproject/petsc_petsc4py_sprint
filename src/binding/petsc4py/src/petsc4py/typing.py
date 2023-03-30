@@ -15,6 +15,7 @@ from .PETSc import (
     SNES,
     TS,
     TAO,
+    DM,
 )
 
 __all__ = [
