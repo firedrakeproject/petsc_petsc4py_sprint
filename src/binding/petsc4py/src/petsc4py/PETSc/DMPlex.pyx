@@ -2627,22 +2627,19 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMetricCreate(self.dm, ival, &metric.vec) )
         return metric
 
-    def metricCreateUniform(self, alpha, field=0):
-        """DMPlexMetricCreateUniform - Construct a uniform isotropic metric
+    def metricCreateUniform(self, alpha: float, field: int | None = 0) -> Vec:
+        """Construct a uniform isotropic metric.
 
-        Input parameters:
-        + dm     - The DM
-        . f      - The field number to use
-        - alpha  - Scaling parameter for the diagonal
-
-        Output parameter:
-        . metric - The uniform metric
-
-        .seealso: `DMPlexMetricCreate`, `DMPlexMetricCreateIsotropic`
+        Parameters
+        ----------
+        alpha
+            Scaling parameter for the diagonal.
+        field
+            The field number to use.
 
         See Also
         --------
-        petsc.DMPlexMetricCreateUniform
+        DMPlex.metricCreate, DMPlex.metricCreateIsotropic, petsc.DMPlexMetricCreateUniform
 
         """
         cdef PetscInt  ival = asInt(field)
@@ -2651,22 +2648,19 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMetricCreateUniform(self.dm, ival, rval, &metric.vec) )
         return metric
 
-    def metricCreateIsotropic(self, Vec indicator, field=0):
-        """DMPlexMetricCreateIsotropic - Construct an isotropic metric from an error indicator
+    def metricCreateIsotropic(self, Vec indicator, field: int | None = 0) -> Vec:
+        """Construct an isotropic metric from an error indicator.
 
-        Input parameters:
-        + dm        - The DM
-        . f         - The field number to use
-        - indicator - The error indicator
-
-        Output parameter:
-        . metric    - The isotropic metric
-
-        .seealso: `DMPlexMetricCreate`, `DMPlexMetricCreateUniform`
+        Parameters
+        ----------
+        indicator
+            The error indicator.
+        field
+            The field number to use.
 
         See Also
         --------
-        petsc.DMPlexMetricCreateIsotropic
+        DMPlex.metricCreate, DMPlex.metricCreateUniform, petsc.DMPlexMetricCreateIsotropic
 
         """
         cdef PetscInt  ival = asInt(field)
@@ -2674,22 +2668,24 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMetricCreateIsotropic(self.dm, ival, indicator.vec, &metric.vec) )
         return metric
 
-    def metricDeterminantCreate(self, field=0):
-        """DMPlexMetricDeterminantCreate - Create the determinant field for a Riemannian metric
+    def metricDeterminantCreate(self, field: int | None = 0) -> tuple[Vec, DM]:
+        """Create the determinant field for a Riemannian metric.
 
-        Input parameters:
-        + dm          - The DM of the metric field
-        - f           - The field number to use
+        Parameters
+        ----------
+        field
+            The field number to use.
 
-        Output parameter:
-        + determinant - The determinant field
-        - dmDet       - The corresponding DM
-
-        .seealso: DMPlexMetricCreateUniform(), DMPlexMetricCreateIsotropic(), DMPlexMetricCreate()
+        Returns
+        -------
+        determinant: Vec
+            The determinant field.
+        dmDet: DM
+            The corresponding DM
 
         See Also
         --------
-        petsc.DMPlexMetricDeterminantCreate
+        DMPlex.metricCreateUniform, DMPlex.metricCreateIsotropic,, DMPlex.metricCreate, petsc.DMPlexMetricDeterminantCreate
 
         """
         cdef PetscInt  ival = asInt(field)
@@ -2698,34 +2694,40 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMetricDeterminantCreate(self.dm, ival, &determinant.vec, &dmDet.dm) )
         return (determinant, dmDet)
 
-    def metricEnforceSPD(self, Vec metric, Vec ometric, Vec determinant, restrictSizes=False, restrictAnisotropy=False):
-        """DMPlexMetricEnforceSPD - Enforce symmetric positive-definiteness of a metric
+    def metricEnforceSPD(self, Vec metric, Vec ometric, Vec determinant, restrictSizes: bool | None = False, restrictAnisotropy: bool | None = False) -> tuple[Vec, Vec]:
+        """Enforce symmetric positive-definiteness of a metric.
 
-        Input parameters:
-        + dm                 - The DM
-        . metricIn           - The metric
-        . restrictSizes      - Should maximum/minimum metric magnitudes be enforced?
-        - restrictAnisotropy - Should maximum anisotropy be enforced?
+        Parameters
+        ---------
+        metric
+            The metric.
+        ometric
+            The output metric.
+        determinant
+            The output determinant.
+        restrictSizes
+            Flag indicating whether maximum/minimum metric magnitudes should be enforced.
+        restrictAnisotropy
+            Flag indicating whether maximum anisotropy should be enforced.
 
-        Output parameter:
-        + metricOut          - The metric
-        - determinant        - Its determinant
+        Returns
+        -------
+        ometric: Vec
+            The output metric.
+        determinant: Vec
+            The output determinant.
 
-        Notes:
-
-        Relevant command line options:
-
-        + -dm_plex_metric_isotropic - Is the metric isotropic?
-        . -dm_plex_metric_uniform   - Is the metric uniform?
-        . -dm_plex_metric_h_min     - Minimum tolerated metric magnitude
-        . -dm_plex_metric_h_max     - Maximum tolerated metric magnitude
-        - -dm_plex_metric_a_max     - Maximum tolerated anisotropy
-
-        .seealso: `DMPlexMetricNormalize`, `DMPlexMetricIntersection`
+        Notes
+        -----
+        ``-dm_plex_metric_isotropic`` sets the flag indicating whether the metric is isotropic.\n
+        ``-dm_plex_metric_uniform`` sets the flag indicating whether the metric is uniform.\n
+        ``-dm_plex_metric_h_min`` sets the minimum tolerated metric magnitude.\n
+        ``-dm_plex_metric_h_max`` sets the maximum tolerated metric magnitude.\n
+        ``-dm_plex_metric_a_max`` sets the maximum tolerated anisotropy.\n
 
         See Also
         --------
-        petsc.DMPlexMetricEnforceSPD
+        DMPlex.metricNormalize, DMPlex.metricIntersection, petsc_options, petsc.DMPlexMetricEnforceSPD
 
         """
         cdef PetscBool bval_rs = asBool(restrictSizes)
@@ -2734,36 +2736,43 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMetricEnforceSPD(self.dm, metric.vec, bval_rs, bval_ra, ometric.vec, determinant.vec) )
         return (ometric, determinant)
 
-    def metricNormalize(self, Vec metric, Vec ometric, Vec determinant, restrictSizes=True, restrictAnisotropy=True):
-        """DMPlexMetricNormalize - Apply L-p normalization to a metric
+    def metricNormalize(self, Vec metric, Vec ometric, Vec determinant, restrictSizes: bool | None = True, restrictAnisotropy: bool | None = True) -> tuple[Vec, Vec]:
+        """Apply L-p normalization to a metric.
 
-        Input parameters:
-        + dm                 - The DM
-        . metricIn           - The unnormalized metric
-        . restrictSizes      - Should maximum/minimum metric magnitudes be enforced?
-        - restrictAnisotropy - Should maximum metric anisotropy be enforced?
+        Parameters
+        ----------
+        metric
+            The metric.
+        ometric
+            The output metric.
+        determinant
+            The output determinant.
+        restrictSizes
+            Flag indicating whether maximum/minimum metric magnitudes should be enforced.
+        restrictAnisotropy
+            Flag indicating whether maximum anisotropy should be enforced.
 
-        Output parameter:
-        . metricOut          - The normalized metric
+        Returns
+        -------
+        ometric: Vec
+            The output normalized metric.
+        determinant: Vec
+            The output determinant.
 
-        Notes:
-
-        Relevant command line options:
-
-        + -dm_plex_metric_isotropic                 - Is the metric isotropic?
-        . -dm_plex_metric_uniform                   - Is the metric uniform?
-        . -dm_plex_metric_restrict_anisotropy_first - Should anisotropy be restricted before normalization?
-        . -dm_plex_metric_h_min                     - Minimum tolerated metric magnitude
-        . -dm_plex_metric_h_max                     - Maximum tolerated metric magnitude
-        . -dm_plex_metric_a_max                     - Maximum tolerated anisotropy
-        . -dm_plex_metric_p                         - L-p normalization order
-        - -dm_plex_metric_target_complexity         - Target metric complexity
-
-        .seealso: `DMPlexMetricEnforceSPD`, `DMPlexMetricIntersection`
+        Notes
+        -----
+        ``-dm_plex_metric_isotropic`` sets the flag indicating whether the metric is isotropic.\n
+        ``-dm_plex_metric_uniform`` sets the flag indicating if the metric is uniform.\n
+        ``-dm_plex_metric_restrict_anisotropy_first`` sets the flag indicating if anisotropy should be restricted before normalization.\n
+        ``-dm_plex_metric_h_min`` sets the minimum tolerated metric magnitude.\n
+        ``-dm_plex_metric_h_max`` sets the maximum tolerated metric magnitude.\n
+        ``-dm_plex_metric_a_max`` sets the maximum tolerated anisotropy.\n
+        ``-dm_plex_metric_p`` sets the L-p normalization order.\n
+        ``-dm_plex_metric_target_complexity`` sets the target metric complexity.\n
 
         See Also
         --------
-        petsc.DMPlexMetricNormalize
+        DMPlex.metricEnforceSPD, DMPlex.metricIntersection, petsc_options, petsc.DMPlexMetricNormalize
 
         """
         cdef PetscBool bval_rs = asBool(restrictSizes)
@@ -2771,140 +2780,105 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexMetricNormalize(self.dm, metric.vec, bval_rs, bval_ra, ometric.vec, determinant.vec) )
         return (ometric, determinant)
 
-    def metricAverage2(self, Vec metric1, Vec metric2, Vec metricAvg):
-        """DMPlexMetricAverage2 - Compute the unweighted average of two metrics
+    def metricAverage2(self, Vec metric1, Vec metric2, Vec metricAvg) -> Vec:
+        """Compute and return the unweighted average of two metrics.
 
         Parameters
         ----------
-        dm
-            The DM
         metric1
-            The first metric to be averaged
+            The first metric to be averaged.
         metric2
-            The second metric to be averaged
-
-        Returns
-        -------
+            The second metric to be averaged.
         metricAvg
-            The averaged metric
-
-        .seealso: `DMPlexMetricAverage`, `DMPlexMetricAverage3`
+            The output averaged metric.
 
         See Also
         --------
-        petsc.DMPlexMetricAverage2
+        DMPlex.metricAverage, DMPlex.metricAverage3, petsc.DMPlexMetricAverage2
 
         """
         CHKERR( DMPlexMetricAverage2(self.dm, metric1.vec, metric2.vec, metricAvg.vec) )
         return metricAvg
 
-    def metricAverage3(self, Vec metric1, Vec metric2, Vec metric3, Vec metricAvg):
-        """DMPlexMetricAverage3 - Compute the unweighted average of three metrics
+    def metricAverage3(self, Vec metric1, Vec metric2, Vec metric3, Vec metricAvg) -> Vec:
+        """Compute and return the unweighted average of three metrics.
 
         Parameters
         ----------
-        dm
-            The DM
         metric1
-            The first metric to be averaged
+            The first metric to be averaged.
         metric2
-            The second metric to be averaged
+            The second metric to be averaged.
         metric3
-            The third metric to be averaged
-
-        Returns
-        -------
+            The third metric to be averaged.
         metricAvg
-            The averaged metric
-
-        .seealso: `DMPlexMetricAverage`, `DMPlexMetricAverage2`
+            The output averaged metric.
 
         See Also
         --------
-        petsc.DMPlexMetricAverage3
+        DMPlex.metricAverage, DMPlex.metricAverage2, petsc.DMPlexMetricAverage3
 
         """
         CHKERR( DMPlexMetricAverage3(self.dm, metric1.vec, metric2.vec, metric3.vec, metricAvg.vec) )
         return metricAvg
 
-    def metricIntersection2(self, Vec metric1, Vec metric2, Vec metricInt):
-        """DMPlexMetricIntersection2 - Compute the intersection of two metrics
+    def metricIntersection2(self, Vec metric1, Vec metric2, Vec metricInt) -> Vec:
+        """Compute and return the intersection of two metrics.
 
         Parameters
         ----------
-        dm
-            The DM
         metric1
-            The first metric to be intersected
+            The first metric to be intersected.
         metric2
-            The second metric to be intersected
-
-        Returns
-        -------
+            The second metric to be intersected.
         metricInt
-            The intersected metric
-
-        .seealso: `DMPlexMetricIntersection`, `DMPlexMetricIntersection3`
+            The output intersected metric.
 
         See Also
         --------
-        petsc.DMPlexMetricIntersection2
+        DMPlex.metricIntersection, DMPlex.metricIntersection3, petsc.DMPlexMetricIntersection2
 
         """
         CHKERR( DMPlexMetricIntersection2(self.dm, metric1.vec, metric2.vec, metricInt.vec) )
         return metricInt
 
-    def metricIntersection3(self, Vec metric1, Vec metric2, Vec metric3, Vec metricInt):
-        """DMPlexMetricIntersection3 - Compute the intersection of three metrics
+    def metricIntersection3(self, Vec metric1, Vec metric2, Vec metric3, Vec metricInt) -> Vec:
+        """Compute the intersection of three metrics.
 
         Parameters
         ----------
-        dm
-            The DM
         metric1
-            The first metric to be intersected
+            The first metric to be intersected.
         metric2
-            The second metric to be intersected
+            The second metric to be intersected.
         metric3
-            The third metric to be intersected
-
-        Returns
-        -------
+            The third metric to be intersected.
         metricInt
-            The intersected metric
-
-        .seealso: `DMPlexMetricIntersection`, `DMPlexMetricIntersection2`
+            The output intersected metric.
 
         See Also
         --------
-        petsc.DMPlexMetricIntersection3
+        DMPlex.metricIntersection, DMPlex.metricIntersection2, petsc.DMPlexMetricIntersection3
 
         """
         CHKERR( DMPlexMetricIntersection3(self.dm, metric1.vec, metric2.vec, metric3.vec, metricInt.vec) )
         return metricInt
 
-    def computeGradientClementInterpolant(self, Vec locX, Vec locC):
-        """DMPlexComputeGradientClementInterpolant - This function computes the L2 projection of the cellwise gradient of a function u onto P1
+    def computeGradientClementInterpolant(self, Vec locX, Vec locC) -> Vec:
+        """Compute and return the L2 projection of the cellwise gradient of a function onto P1.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM`
         locX
-            The coefficient vector u_h
-
-        Returns
-        -------
+            The coefficient vector of the function.
         locC
-            A `Vec` which holds the Clement interpolant of the gradient
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMProjectFunction`, `DMComputeL2Diff`, `DMPlexComputeL2FieldDiff`, `DMComputeL2GradientDiff`
+            The output `Vec` which holds the Clement interpolant of the gradient.
 
         See Also
         --------
-        petsc.DMPlexComputeGradientClementInterpolant
+        DM, DMPlex, DM.projectFunction, DM.computeL2Diff, DMPlex.computeL2FieldDiff, DM.computeL2GradientDiff, petsc.DMPlexComputeGradientClementInterpolant
 
         """
         CHKERR( DMPlexComputeGradientClementInterpolant(self.dm, locX.vec, locC.vec) )
@@ -2912,249 +2886,206 @@ cdef class DMPlex(DM):
 
     # View
 
-    def topologyView(self, Viewer viewer):
-        """DMPlexTopologyView - Saves a `DMPlex` topology into a file
+    def topologyView(self, Viewer viewer) -> None:
+        """Save a `DMPlex` topology into a file.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` whose topology is to be saved
         viewer
-            The `PetscViewer` to save it in
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexCoordinatesView`, `DMPlexLabelsView`, `DMPlexTopologyLoad`, `PetscViewer`
+            The `Viewer` for saving.
 
         See Also
         --------
-        petsc.DMPlexTopologyView
+        DM, DMPlex, DM.view, DMPlex.coordinatesView, DMPlex.labelsView, DMPlex.topologyLoad, Viewer, petsc.DMPlexTopologyView
 
         """
         CHKERR( DMPlexTopologyView(self.dm, viewer.vwr))
 
-    def coordinatesView(self, Viewer viewer):
-        """DMPlexCoordinatesView - Saves `DMPlex` coordinates into a file
+    def coordinatesView(self, Viewer viewer) -> None:
+        """Save `DMPlex` coordinates into a file.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` whose coordinates are to be saved
         viewer
-            The `PetscViewer` for saving
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexTopologyView`, `DMPlexLabelsView`, `DMPlexCoordinatesLoad`, `PetscViewer`
+            The `Viewer` for saving.
 
         See Also
         --------
-        petsc.DMPlexCoordinatesView
+        DM, DMPlex, DM.view, DMPlex.topologyView, DMPlex.labelsView, DMPlex.coordinatesLoad, Viewer, petsc.DMPlexCoordinatesView
 
         """
         CHKERR( DMPlexCoordinatesView(self.dm, viewer.vwr))
 
-    def labelsView(self, Viewer viewer):
-        """DMPlexLabelsView - Saves `DMPlex` labels into a file
+    def labelsView(self, Viewer viewer) -> None:
+        """Save `DMPlex` labels into a file.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` whose labels are to be saved
         viewer
-            The `PetscViewer` for saving
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexTopologyView`, `DMPlexCoordinatesView`, `DMPlexLabelsLoad`, `PetscViewer`
+            The `Viewer` for saving.
 
         See Also
         --------
-        petsc.DMPlexLabelsView
+        DM, DMPlex, DM.view, DMPlex.topologyView, DMPlex.coordinatesView, DMPlex.labelsLoad, Viewer, petsc.DMPlexLabelsView
 
         """
         CHKERR( DMPlexLabelsView(self.dm, viewer.vwr))
 
-    def sectionView(self, Viewer viewer, DM sectiondm):
-        """DMPlexSectionView - Saves a section associated with a `DMPlex`
+    def sectionView(self, Viewer viewer, DM sectiondm) -> None:
+        """Save a section associated with a `DMPlex`.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` that contains the topology on which the section to be saved is defined
         viewer
-            The `PetscViewer` for saving
+            The `Viewer` for saving.
         sectiondm
-            The `DM` that contains the section to be saved
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMView`, `DMPlexTopologyView`, `DMPlexCoordinatesView`, `DMPlexLabelsView`, `DMPlexGlobalVectorView`, `DMPlexLocalVectorView`, `PetscSectionView`, `DMPlexSectionLoad`, `PetscViewer`
+            The `DM` that contains the section to be saved.
 
         See Also
         --------
-        petsc.DMPlexSectionView
+        DM, DMPlex, DM.view, DMPlex.topologyView, DMPlex.coordinatesView, DMPlex.labelsView, DMPlex.globalVectorView, DMPlex.localVectorView, Section.View, DMPlex.sectionLoad, Viewer, petsc.DMPlexSectionView
 
         """
         CHKERR( DMPlexSectionView(self.dm, viewer.vwr, sectiondm.dm))
 
-    def globalVectorView(self, Viewer viewer, DM sectiondm, Vec vec):
-        """DMPlexGlobalVectorView - Saves a global vector
+    def globalVectorView(self, Viewer viewer, DM sectiondm, Vec vec) -> None:
+        """Save a global vector.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` that represents the topology
         viewer
-            The `PetscViewer` to save data with
+            The `Viewer` to save data with.
         sectiondm
-            The `DM` that contains the global section on which vec is defined
+            The `DM` that contains the global section on which ``vec`` is defined; may be the same as this `DMPlex` object.
         vec
-            The global vector to be saved
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyView`, `DMPlexSectionView`, `DMPlexLocalVectorView`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`
+            The global vector to be saved.
 
         See Also
         --------
-        petsc.DMPlexGlobalVectorView
+        DM, DMPlex, DMPlex.topologyView, DMPlex.sectionView, DMPlex.localVectorView, DMPlex.globalVectorLoad, DMPlex.localVectorLoad, petsc.DMPlexGlobalVectorView
 
         """
         CHKERR( DMPlexGlobalVectorView(self.dm, viewer.vwr, sectiondm.dm, vec.vec))
 
-    def localVectorView(self, Viewer viewer, DM sectiondm, Vec vec):
-        """DMPlexLocalVectorView - Saves a local vector
+    def localVectorView(self, Viewer viewer, DM sectiondm, Vec vec) -> None:
+        """Save a local vector.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` that represents the topology
         viewer
-            The `PetscViewer` to save data with
+            The `Viewer` to save data with.
         sectiondm
-            The `DM` that contains the local section on which `vec` is defined; may be the same as `dm`
+            The `DM` that contains the local section on which ``vec`` is defined; may be the same as this `DMPlex` object.
         vec
-            The local vector to be saved
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyView`, `DMPlexSectionView`, `DMPlexGlobalVectorView`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`
+            The local vector to be saved.
 
         See Also
         --------
-        petsc.DMPlexLocalVectorView
+        DM, DMPlex, DMPlex.topologyView, DMPlex.sectionView, DMPlex.globalVectorView, DMPlex.globalVectorLoad, DMPlex.localVectorLoad, petsc.DMPlexLocalVectorView
 
         """
         CHKERR( DMPlexLocalVectorView(self.dm, viewer.vwr, sectiondm.dm, vec.vec))
 
     # Load
 
-    def topologyLoad(self, Viewer viewer):
-        """DMPlexTopologyLoad - Loads a topology into a `DMPlex`
+    def topologyLoad(self, Viewer viewer) -> SF:
+        """Load a topology into this `DMPlex` object.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` into which the topology is loaded
         viewer
             The `PetscViewer` for the saved topology
 
         Returns
         -------
-        globalToLocalPointSF
-            The `PetscSF` that pushes points in [0, N) to the associated points in the loaded `DMPlex`, where N is the global number of points; `None` if unneeded
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexCoordinatesLoad`, `DMPlexLabelsLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
-        `PetscViewer`, `PetscSF`
+        sfxc: SF
+            The `SF` that pushes points in ``[0, N)`` to the associated points in the loaded `DMPlex`, where ``N`` is the global number of points.
 
         See Also
         --------
-        petsc.DMPlexTopologyLoad
+        DM, DMPlex, DM.load, DMPlex.coordinatesLoad, DMPlex.labelsLoad, DM.view, SF, Viewer, petsc.DMPlexTopologyLoad
 
         """
         cdef SF sf = SF()
         CHKERR( DMPlexTopologyLoad(self.dm, viewer.vwr, &sf.sf))
         return sf
 
-    def coordinatesLoad(self, Viewer viewer, SF sfxc):
-        """DMPlexCoordinatesLoad - Loads coordinates into a `DMPlex`
+    def coordinatesLoad(self, Viewer viewer, SF sfxc) -> None:
+        """Loads coordinates into this `DMPlex` object.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` into which the coordinates are loaded
         viewer
-            The `PetscViewer` for the saved coordinates
-        globalToLocalPointSF
-            The `PetscSF` returned by `DMPlexTopologyLoad` when loading dm from viewer
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexLabelsLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
-        `PetscSF`, `PetscViewer`
+            The `Viewer` for the saved coordinates.
+        sfxc
+            The `SF` returned by `DMPlex.topologyLoad` when loading this `DMPlex` from viewer.
 
         See Also
         --------
-        petsc.DMPlexCoordinatesLoad
+        DM, DMPlex, DM.load, DMPlex.topologyLoad, DMPlex.labelsLoad, DM.view, SF, Viewer, petsc.DMPlexCoordinatesLoad
 
         """
         CHKERR( DMPlexCoordinatesLoad(self.dm, viewer.vwr, sfxc.sf))
 
-    def labelsLoad(self, Viewer viewer, SF sfxc):
-        """DMPlexLabelsLoad - Loads labels into a `DMPlex`
+    def labelsLoad(self, Viewer viewer, SF sfxc) -> None:
+        """Load labels into this `DMPlex` object.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` into which the labels are loaded
         viewer
-            The `PetscViewer` for the saved labels
-        globalToLocalPointSF
-            The `PetscSF` returned by `DMPlexTopologyLoad` when loading `dm` from viewer
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexCoordinatesLoad`, `DMView`, `PetscViewerHDF5Open`, `PetscViewerPushFormat`,
-        `PetscSF`, `PetscViewer`
+            The `Viewer` for the saved labels.
+        sfxc
+            The `SF` returned by `DMPlex.topologyLoad` when loading this `DMPlex` from viewer.
 
         See Also
         --------
-        petsc.DMPlexLabelsLoad
+        DM, DMPlex, DM.load, DMPlex.topologyLoad, DMPlex.coordinatesLoad, DM.view, SF, Viewer, petsc.DMPlexLabelsLoad
 
         """
         CHKERR( DMPlexLabelsLoad(self.dm, viewer.vwr, sfxc.sf))
 
-    def sectionLoad(self, Viewer viewer, DM sectiondm, SF sfxc):
-        """DMPlexSectionLoad - Loads section into a `DMPlex`
+    def sectionLoad(self, Viewer viewer, DM sectiondm, SF sfxc) -> tuple[SF, SF]:
+        """Load section into a `DM`.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` that represents the topology
         viewer
-            The `PetscViewer` that represents the on-disk section (sectionA)
+            The `Viewer` that represents the on-disk section (``sectionA``).
         sectiondm
-            The `DM` into which the on-disk section (sectionA) is migrated
-        globalToLocalPointSF
-            The `PetscSF` returned by `DMPlexTopologyLoad(`) when loading dm from viewer
+            The `DM` into which the on-disk section (``sectionA``) is migrated.
+        sfxc
+            The `SF` returned by `DMPlex.topologyLoad` when loading this `DMPlex` from viewer.
 
         Returns
         -------
-        globalDofSF
-            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a global `Vec` associated with the `sectiondm`'s global section (`None` if not needed)
-        localDofSF
-            The `PetscSF` that migrates any on-disk `Vec` data associated with sectionA into a local `Vec` associated with the `sectiondm`'s local section (`None` if not needed)
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMLoad`, `DMPlexTopologyLoad`, `DMPlexCoordinatesLoad`, `DMPlexLabelsLoad`, `DMPlexGlobalVectorLoad`, `DMPlexLocalVectorLoad`, `PetscSectionLoad`, `DMPlexSectionView`, `PetscSF`, `PetscViewer`
+        gsf
+            The `SF` that migrates any on-disk `Vec` data associated with ``sectionA`` into a global `Vec` associated with the ``sectiondm``'s global section (`None` if not needed).
+        lsf
+            The `SF` that migrates any on-disk `Vec` data associated with ``sectionA`` into a local `Vec` associated with the ``sectiondm``'s local section (`None` if not needed).
 
         See Also
         --------
-        petsc.DMPlexSectionLoad
+        DM, DMPlex, DM.load, DMPlex.topologyLoad, DMPlex.coordinatesLoad, DMPlex.labelsLoad, DMPlex.globalVectorLoad, DMPlex.localVectorLoad, Section.load, DMPlex.sectionView, SF, Viewer, petsc.DMPlexSectionLoad
 
         """
         cdef SF gsf = SF()
@@ -3162,59 +3093,49 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexSectionLoad(self.dm, viewer.vwr, sectiondm.dm, sfxc.sf, &gsf.sf, &lsf.sf))
         return gsf, lsf
 
-    def globalVectorLoad(self, Viewer viewer, DM sectiondm, SF sf, Vec vec):
-        """DMPlexGlobalVectorLoad - Loads on-disk vector data into a global vector
+    def globalVectorLoad(self, Viewer viewer, DM sectiondm, SF sf, Vec vec) -> None:
+        """Load on-disk vector data into a global vector.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` that represents the topology
         viewer
-            The `PetscViewer` that represents the on-disk vector data
+            The `Viewer` that represents the on-disk vector data.
         sectiondm
-            The `DM` that contains the global section on which vec is defined
+            The `DM` that contains the global section on which vec is defined.
         sf
-            The `PetscSF` that migrates the on-disk vector data into vec
+            The `PetscSF` that migrates the on-disk vector data into vec.
         vec
-            The global vector to set values of
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyLoad`, `DMPlexSectionLoad`, `DMPlexLocalVectorLoad`, `DMPlexGlobalVectorView`, `DMPlexLocalVectorView`,
-        `PetscSF`, `PetscViewer`
+            The global vector to set values of.
 
         See Also
         --------
-        petsc.DMPlexGlobalVectorLoad
+        DM, DMPlex, DMPlex.topologyLoad, DMPlex.sectionLoad, DMPlex.localVectorLoad, DMPlex.globalVectorView, DMPlex.localVectorView, SF, Viewer, petsc.DMPlexGlobalVectorLoad
 
         """
         CHKERR( DMPlexGlobalVectorLoad(self.dm, viewer.vwr, sectiondm.dm, sf.sf, vec.vec))
 
-    def localVectorLoad(self, Viewer viewer, DM sectiondm, SF sf, Vec vec):
-        """
-DMPlexLocalVectorLoad - Loads on-disk vector data into a local vector
+    def localVectorLoad(self, Viewer viewer, DM sectiondm, SF sf, Vec vec) -> None:
+        """Load on-disk vector data into a local vector.
 
         Collective.
 
         Parameters
         ----------
-        dm
-            The `DM` that represents the topology
         viewer
-            The `PetscViewer` that represents the on-disk vector data
+            The `Viewer` that represents the on-disk vector data.
         sectiondm
-            The `DM` that contains the local section on which vec is defined
+            The `DM` that contains the local section on which vec is defined.
         sf
-            The `PetscSF` that migrates the on-disk vector data into vec
+            The `SF` that migrates the on-disk vector data into vec.
         vec
-            The local vector to set values of
-
-        .seealso: [](chapter_unstructured), `DM`, `DMPlex`, `DMPlexTopologyLoad`, `DMPlexSectionLoad`, `DMPlexGlobalVectorLoad`, `DMPlexGlobalVectorView`, `DMPlexLocalVectorView`,
+            The local vector to set values of.
         `PetscSF`, `PetscViewer`
 
         See Also
         --------
-        petsc.DMPlexLocalVectorLoad
+        DM, DMPlex, DMPlex.topologyLoad, DMPlex.sectionLoad, DMPlex.globalVectorLoad, DMPlex.globalVectorView, DMPlex.localVectorView, SF, Viewer, petsc.DMPlexLocalVectorLoad
 
         """
         CHKERR( DMPlexLocalVectorLoad(self.dm, viewer.vwr, sectiondm.dm, sf.sf, vec.vec))
