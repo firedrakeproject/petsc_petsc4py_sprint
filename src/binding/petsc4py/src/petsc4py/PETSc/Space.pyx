@@ -110,7 +110,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceGetDimension(self.space, &cdim))
         return toInt(cdim)
 
-    def getDegree(self) -> tuple(int, int):
+    def getDegree(self) -> tuple[int, int]:
         """Return the polynomial degrees that characterize this space.
 
         Returns
