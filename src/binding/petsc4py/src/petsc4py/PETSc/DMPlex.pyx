@@ -1533,7 +1533,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getSimplexOrBoxCells, DMPlex.getCellType, DMPlex.getHeightStratum, petsc.DMPlexIsSimplex
+        DM, DMPlex, DMPlex.getCellType, DMPlex.getHeightStratum, petsc.DMPlexIsSimplex
 
         """
         cdef PetscBool flag = PETSC_FALSE
