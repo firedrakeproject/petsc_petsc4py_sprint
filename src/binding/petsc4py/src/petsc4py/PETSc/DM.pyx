@@ -689,7 +689,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        petsc.copyDS
+        petsc.DMCopyDS
 
         """
         CHKERR( DMCopyDS(self.dm, dm.dm) )
@@ -820,14 +820,30 @@ cdef class DM(Object):
         CHKERR( PetscObjectDereference(<PetscObject>vl.vec) )
         CHKERR( DMRestoreLocalVector(self.dm, &vl.vec) )
 
-    def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
-        """
+    def globalToLocal(self, Vec vg, Vec vl, addv: insertmode | None) -> None:
+        """Update local vectors from global vector.
+
+        Neighbor-wise Collective
+
+        See Also
+        --------
+        petsc.DMGlobalToLocalBegin, petsc.DMGlobalToLocalEnd
+
         """
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMGlobalToLocalBegin(self.dm, vg.vec, im, vl.vec) )
         CHKERR( DMGlobalToLocalEnd  (self.dm, vg.vec, im, vl.vec) )
 
-    def localToGlobal(self, Vec vl, Vec vg, addv=None) -> None:
+    def localToGlobal(self, Vec vl, Vec vg, addv: insertmode | None) -> None:
+        """Update global vectors from local vector.
+
+        Neighbor-wise Collective
+
+        See Also
+        --------
+        petsc.DMLocalToGlobalBegin, petsc.DMLocalToGlobalEnd
+
+        """
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMLocalToGlobalBegin(self.dm, vl.vec, im, vg.vec) )
         CHKERR( DMLocalToGlobalEnd(self.dm, vl.vec, im, vg.vec) )
