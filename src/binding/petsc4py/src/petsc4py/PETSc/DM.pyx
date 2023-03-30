@@ -96,8 +96,8 @@ cdef class DM(Object):
         
         Notes
         -----
-        On using `Viewer.Type.HDF5` format, one can save  multiple petsc.DMPLEX meshes in a single HDF5 files.
-        This in turn requires one to name the petsc.DMPLEX object with petsc4py.Object.setName before saving it with DM.view and before loading it with DM.load for identification of the mesh object.
+        On using `Viewer.Type.HDF5` format, one can save  multiple `DMPlex` meshes in a single HDF5 files.
+        This in turn requires one to name the `DMPlex` object with `Object.setName` before saving it with `DM.view` and before loading it with `DM.load` for identification of the mesh object.
 
         See Also
         --------
