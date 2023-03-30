@@ -15,6 +15,7 @@ cdef class DMPlex(DM):
     """
 
     ReorderDefaultFlag = DMPlexReorderDefaultFlag
+    """Flag indicating whether `DMPlex` is reordered by default."""
 
     #
 
@@ -1520,7 +1521,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.distribute, DMPlex.isInterpolated, petsc.DMPlexIsDistributed
+        DM, DMPlex, DMPlex.distribute, petsc.DMPlexIsDistributed
 
         """
         cdef PetscBool flag = PETSC_FALSE
