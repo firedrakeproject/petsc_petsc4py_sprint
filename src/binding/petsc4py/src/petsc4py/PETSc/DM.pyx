@@ -155,7 +155,7 @@ cdef class DM(Object):
         CHKERR( DMClone(self.dm, &dm.dm) )
         return dm
 
-    def setType(self, dm_type: str) -> None:
+    def setType(self, dm_type: DM.Type | str) -> None:
         """Build a `DM`.
 
         Collective.
