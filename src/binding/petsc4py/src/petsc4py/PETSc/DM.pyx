@@ -505,9 +505,9 @@ cdef class DM(Object):
             The auxiliary vector.
         label
             The `DM` label.
-        value : int, optional
+        value
             Indicate the region.
-        part : int, optional
+        part
             The equation part, or 0 is unused.
 
         See Also
