@@ -312,7 +312,7 @@ class KSPConvergedReason(object):
         could not continue to enlarge the Krylov space.
     DIVERGED_NONSYMMETRIC
         It appears the operator or preconditioner is not symmetric and
-        this Krylov method (`Type.CG`, `Type.MINRES`, `Type.PCR`)
+        this Krylov method (`Type.CG`, `Type.MINRES`, `Type.CR`)
         requires symmetry.
     DIVERGED_INDEFINITE_PC
         It appears the preconditioner is indefinite (has both positive
@@ -378,7 +378,9 @@ cdef class KSP(Object):
         self.obj = <PetscObject*> &self.ksp
         self.ksp = NULL
 
-    def __call__(self, b, x=None):
+    def __call__(self, Vec b, x: Vec | None = None) -> Vec:
+        """
+        """
         if x is None: # XXX do this better
             x = self.getOperators()[0].createVecLeft()
         self.solve(b, x)
@@ -386,16 +388,22 @@ cdef class KSP(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer=None):
+    def view(self, viewer: Viewer | None = None):
+        """
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( KSPView(self.ksp, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """
+        """
         CHKERR( KSPDestroy(&self.ksp) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
+        """
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscKSP newksp = NULL
         CHKERR( KSPCreate(ccomm, &newksp) )
