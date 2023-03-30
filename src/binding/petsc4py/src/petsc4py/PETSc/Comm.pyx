@@ -5,9 +5,12 @@ cdef class Comm:
 
     Predefined instances:
 
-    - `COMM_NULL`: The *null* (or invalid) communicator.
-    - `COMM_SELF`: The *self* communicator.
-    - `COMM_WORLD`: The *world* communicator.
+    `COMM_NULL`
+        The *null* (or invalid) communicator.
+    `COMM_SELF`
+        The *self* communicator.
+    `COMM_WORLD`
+        The *world* communicator.
 
     See Also
     --------
