@@ -331,9 +331,9 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        name : str
+        name
             Name used to activate the viewing.
-        obj : Object
+        obj
             Object provides the prefix for the options database.
 
         See Also
