@@ -963,7 +963,25 @@ cdef class Mat(Object):
 
     #
 
-    def createScatter(self, Scatter scatter, comm=None):
+    def createScatter(self, Scatter scatter, comm: Comm | None = None) -> Self:
+        """Create a scattering matrix from a vector scatter.
+
+        The resulting matrix will have type `Mat.Type.MATSCATTER`.
+
+        Collective.
+
+        Parameters
+        ----------
+        scatter
+            Vector scatter.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.MATSCATTER, petsc.MatCreateScatter
+
+        """
         if comm is None: comm = scatter.getComm()
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscMat newmat = NULL
@@ -971,19 +989,80 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createNormal(self, Mat mat):
+    def createNormal(self, Mat mat) -> Self:
+        """Create a matrix representing AᵀA.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            The (possibly rectangular) matrix A.
+
+        Notes
+        -----
+        The product AᵀA is never actually formed. Instead A and Aᵀ are used
+        during `Mat.mult` etc.
+
+        See Also
+        --------
+        petsc.MATNORMAL, petsc.MatCreateNormal
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateNormal(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createTranspose(self, Mat mat):
+    def createTranspose(self, Mat mat) -> Self:
+        """Create a virtual matrix transpose that behaves like Aᵀ.
+
+        This sets the matrix to have type `Mat.Type.MATTRANSPOSEVIRTUAL`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            Matrix A to represent the transpose of.
+
+        Notes
+        -----
+        The transpose is never actually formed. Instead `Mat.multTranspose` is
+        called whenever the matrix-vector product is computed.
+
+        See Also
+        --------
+        Mat.createNormal, petsc.MatCreateTranspose
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateTranspose(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createNormalHermitian(self, Mat mat):
+    def createNormalHermitian(self, Mat mat) -> Self:
+        """Create a matrix representing (A*)ᵀA.
+
+        This sets the matrix to have type `Mat.Type.MATNORMALHERMITIAN`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            The (possibly rectangular) matrix A.
+
+        Notes
+        -----
+        The product (A*)ᵀA is never actually formed. Instead things are
+        computed on the fly during `Mat.mult` etc.
+
+        See Also
+        --------
+        petsc.MATNORMAL, petsc.MATNORMALHERMITIAN, petsc.MatCreateNormalHermitian
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateNormalHermitian(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
