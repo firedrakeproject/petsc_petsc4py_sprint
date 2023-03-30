@@ -12,7 +12,7 @@ performance factors) should not be copied.
 
 Docstring standards
 -------------------
-Docstrings are to be written in `numpydoc:format` format. 
+Docstrings are to be written in `numpydoc:format` format.
 
 The first line of a function or method docstring must be a short description of
 the method in imperative mood ("Return the norm of the matrix.") "Return" is
@@ -59,7 +59,7 @@ If a "Returns" section is required, the type of the returned items *must* be
 specified, even if this duplicates typing information.
 
 See Also
-........ 
+........
 
 If any of the following apply, then this section is required. The order of
 entries is as follows. Other links are permitted in this section if they add
@@ -76,7 +76,7 @@ the "See also" section. E.g. \`petsc.MatSetValues\`.
 End docstring with an empty line - "closing three quotation marks must be on a
 line by itself, preferably preceded by a blank line"
 
-.. warning:: 
+.. warning::
 
     The docstrings must not cause Sphinx warnings.
 
@@ -84,20 +84,21 @@ line by itself, preferably preceded by a blank line"
 Type hint standards
 -------------------
 
-If returning ``self``, use ``-> Self`` in function signature. 
+If returning ``self``, use ``-> Self`` in function signature.
 
 Type hints are not required when the static type signature includes a PETSc
 type (e.g. ``Vec x``). These will be automatically generated. This will also
 work for ``= None``. When using type hints, use spacing around the equals in
 any ``= None``.
- 
-Communicators in type signatures must use Python typing instead of static
-c-typing (i.e. ``comm: Comm`` not ``Comm comm``).
+
+Communicators in type signatures must use Python typing instead of c-typing
+(i.e. ``comm: Comm`` not ``Comm comm``). This is because communicators
+can come from ``mpi4py`` and not just the ``petsc4py.PETSc.Comm`` class.
 
 For petsc4py native types that are can be strings, the type is ``argument:
 KSP.Type | str`` (not eg: ``KSPType argument``). If the type is strictly an
 enum the ``| str`` can be omitted. Full signature example::
-    
+
     def setType(self, ksp_type: KSP.Type | str) -> None:
 
 If a NumPy is returned, use ``ArrayInt``/``ArrayReal``/``ArrayScalar`` as the
