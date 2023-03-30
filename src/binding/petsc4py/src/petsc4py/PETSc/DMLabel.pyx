@@ -299,7 +299,7 @@ cdef class DMLabel(Object):
         return iset
 
     def stratumHasPoint(self, value: int, point: int) -> bool:
-        """Return `True` if the stratum contains a point.
+        """Return whether the stratum contains a point.
 
         Not collective.
 
