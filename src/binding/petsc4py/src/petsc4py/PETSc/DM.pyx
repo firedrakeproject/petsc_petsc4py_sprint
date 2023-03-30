@@ -494,7 +494,7 @@ cdef class DM(Object):
 
     #
 
-    def setAuxiliaryVec(self, Vec aux, label: DMLabel | None, value: int | 0, part: int | 0) -> None:
+    def setAuxiliaryVec(self, Vec aux, label: DMLabel | None, value=0, part=0) -> None:
         """Set an auxiliary vector for a specific region.
 
         Not Collective.
@@ -520,7 +520,7 @@ cdef class DM(Object):
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
     
-    def getAuxiliaryVec(self, label: DMLabel | None, value: int | 0, part: int | 0) -> Vec:
+    def getAuxiliaryVec(self, label: DMLabel | None, value=0, part=0) -> Vec:
         """Return an auxiliary vector for a specific region.
 
         Not Collective
@@ -895,7 +895,7 @@ cdef class DM(Object):
         return cdm
 
     def getCoordinateSection(self) -> Section:
-        """Return the layout of the coodinate values over the mesh.
+        """Return coodinate values layout over the mesh.
 
         Collective.
 
@@ -910,28 +910,79 @@ cdef class DM(Object):
         return sec
 
     def setCoordinates(self, Vec c) -> None:
+        """Set a global vector that holds the coordinates.
+        Collective
+
+        See Also
+        --------
+        petsc.DMSetCoordinates
+
+        """
         CHKERR( DMSetCoordinates(self.dm, c.vec) )
 
-    def getCoordinates(self):
+    def getCoordinates(self) -> Vec:
+        """Return a global vector with the coordinates associated.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMGetCoordinates
+
+        """
         cdef Vec c = Vec()
         CHKERR( DMGetCoordinates(self.dm, &c.vec) )
         PetscINCREF(c.obj)
         return c
 
     def setCoordinatesLocal(self, Vec c) -> None:
+        """Set a local vector with the ghost point holding the coordinates.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMSetCoordinatesLocal
+
+        """
         CHKERR( DMSetCoordinatesLocal(self.dm, c.vec) )
 
-    def getCoordinatesLocal(self):
+    def getCoordinatesLocal(self) -> Vec:
+        """Return a local vector with the coordinates associated.
+
+        Collective the first time it is called.
+
+        See Also
+        --------
+        petsc.DMGetCoordinatesLocal
+
+        """
         cdef Vec c = Vec()
         CHKERR( DMGetCoordinatesLocal(self.dm, &c.vec) )
         PetscINCREF(c.obj)
         return c
 
-    def projectCoordinates(self, FE disc):
+    def projectCoordinates(self, FE disc) -> Self:
+        """Project coordinates to a different space.
+
+        See Also:
+        --------
+        petsc.DMProjectCoordinates
+
+        """
         CHKERR( DMProjectCoordinates(self.dm, disc.fe))
         return self
 
-    def getBoundingBox(self):
+    def getBoundingBox(self) -> tuple[tuple[float, float], ...]:
+        """Return the dimension of embedding space for coodinates values.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetBoundingBox
+
+        """
         cdef PetscInt i,dim=0
         CHKERR( DMGetCoordinateDim(self.dm, &dim) )
         cdef PetscReal gmin[3], gmax[3]
