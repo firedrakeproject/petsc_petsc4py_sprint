@@ -2527,25 +2527,144 @@ cdef class Mat(Object):
 
     # solve
 
-    def solveForward(self, Vec b, Vec x):
+    def solveForward(self, Vec b, Vec x) -> None:
+        """Solve Lx = b, given a factored matrix A = LU.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector.
+
+        See Also
+        --------
+        petsc.MatForwardSolve
+
+        """
         CHKERR( MatForwardSolve(self.mat, b.vec, x.vec) )
 
-    def solveBackward(self, Vec b, Vec x):
+    def solveBackward(self, Vec b, Vec x) -> None:
+        """Solve Ux=b, given a factored matrix A=LU.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector.
+
+        See Also
+        --------
+        petsc.MatBackwardSolve
+
+        """
         CHKERR( MatBackwardSolve(self.mat, b.vec, x.vec) )
 
-    def solve(self, Vec b, Vec x):
-        CHKERR( MatSolve(self.mat, b.vec, x.vec) )
+    def solve(self, Vec b, Vec x) -> None:
+        """Solve Ax=b, given a factored matrix.
 
-    def solveTranspose(self, Vec b, Vec x):
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+        Most users should employ the `KSP` interface for linear solvers instead
+        of working directly with matrix algebra routines.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, solveTranspose, petsc.MatSolve
+
+        """
+        CHKERR(MatSolve(self.mat, b.vec, x.vec) )
+
+    def solveTranspose(self, Vec b, Vec x) -> None:
+        """Solve Aᵀx=b, given a factored matrix.
+
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatSolve, petsc.MatSolveTranspose
+
+        """
         CHKERR( MatSolveTranspose(self.mat, b.vec, x.vec) )
 
-    def solveAdd(self, Vec b, Vec y, Vec x):
+    def solveAdd(self, Vec b, Vec y, Vec x) -> None:
+        """Solve x=y+A⁻¹b, given a factored matrix.
+
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        y
+            The vector to be added
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatSolve, petsc.MatSolveAdd
+
+        """
         CHKERR( MatSolveAdd(self.mat, b.vec, y.vec, x.vec) )
 
-    def solveTransposeAdd(self, Vec b, Vec y, Vec x):
+    def solveTransposeAdd(self, Vec b, Vec y, Vec x) -> None:
+        """Solve x=y+A⁻ᵀb, given a factored matrix.
+
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        y
+            The vector to be added
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatSolve, petsc.MatSolveTransposeAdd
+
+        """
         CHKERR( MatSolveTransposeAdd(self.mat, b.vec, y.vec, x.vec) )
 
-    def matSolve(self, Mat B, Mat X):
+    def matSolve(self, Mat B, Mat X) -> None:
+        """Solve AX=B, given a factored matrix A
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        B
+            The right-hand-side matrix of type `Type.DENSE`. Can be of type
+            `Type.AIJ` if using MUMPS.
+        X
+            The output solution matrix, must be different than ``B``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatMatSolve
+
+        """
         CHKERR( MatMatSolve(self.mat, B.mat, X.mat) )
 
     # dense matrices
