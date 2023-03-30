@@ -3,8 +3,7 @@
 class KSPType(object):
     """KSP Type.
 
-    An class modelling an ENUM. The following values are available as
-    attributes.
+    The available types are:
 
     `RICHARDSON`
         The preconditioned Richardson iterative method
@@ -231,8 +230,7 @@ class KSPType(object):
 class KSPNormType(object):
     """KSP norm type.
 
-    An class modelling an ENUM. The following values are available as
-    attributes.
+    The available norm types are:
 
     `NONE`
         Skips computing the norm, this should generally only be used if
@@ -266,9 +264,6 @@ class KSPNormType(object):
 
 class KSPConvergedReason(object):
     """KSP Converged Reason.
-
-    An class modelling an ENUM. The following values are available as
-    attributes.
 
     `CONVERGED_ITERATING`
         Still iterating
