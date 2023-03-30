@@ -722,7 +722,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceSetNumComponents(self.dualspace, cnc) )
 
     def getType(self) -> str:
-        """Return the `Type` name (as a string) from the object.
+        """Return the type of the dual space object.
 
         Not collective.
 
