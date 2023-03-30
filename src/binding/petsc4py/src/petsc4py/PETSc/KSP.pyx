@@ -631,7 +631,7 @@ cdef class KSP(Object):
         self.set_attr('__appctx__', appctx)
 
     def getAppCtx(self) -> Any:
-        """Get the user-defined context for the linear solver.
+        """Return the user-defined context for the linear solver.
 
         Not collective
 
@@ -645,7 +645,7 @@ cdef class KSP(Object):
     # --- discretization space ---
 
     def getDM(self) -> DM:
-        """Get the `DM` that may be used by some preconditioners.
+        """Return the `DM` that may be used by some preconditioners.
 
         Not collective.
 
@@ -680,10 +680,11 @@ cdef class KSP(Object):
         `setOperators`.
 
         A `DM` can only be used for solving one problem at a time
-        because information about the problem is stored on the DM, even
-        when not using interfaces like `DM.setKSPComputeOperators`. Use
-        `DM.clone` to get a distinct `DM` when solving different
-        problems using the same function space.
+        because information about the problem is stored on the `DM`,
+        even when not using interfaces like
+        `DM.setKSPComputeOperators`. Use `DM.clone` to get a distinct
+        `DM` when solving different problems using the same function
+        space.
 
         See also
         --------
@@ -844,7 +845,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetOperators(self.ksp, amat, pmat) )
 
     def getOperators(self) -> tuple[Mat, Mat]:
-        """Get the matrix associated with the linear system.
+        """Return the matrix associated with the linear system.
 
         Gets the matrix associated with the linear system and a
         (possibly) different one used to construct the preconditioner.
@@ -958,7 +959,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetTolerances(self.ksp, crtol, catol, cdivtol, cmaxits) )
 
     def getTolerances(self) -> tuple[float, float, float, int]:
-        """Get various tolerances used by the KSP convergence tests.
+        """Return various tolerances used by the KSP convergence tests.
 
         Gets the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence tests.
@@ -1051,7 +1052,7 @@ cdef class KSP(Object):
             self.set_attr('__converged__', None)
 
     def getConvergenceTest(self) -> KSPConvergenceTestFunction:
-        """Gets the function to be used to determine convergence.
+        """Returns the function to be used to determine convergence.
 
         Logically collective.
 
@@ -1130,7 +1131,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetResidualHistory(self.ksp, data, size, flag) )
 
     def getConvergenceHistory(self) -> ndarray:
-        """Get array containing the residual history.
+        """Return array containing the residual history.
 
         Not collective.
 
@@ -1211,7 +1212,7 @@ cdef class KSP(Object):
         monitorlist.append((monitor, args, kargs))
 
     def getMonitor(self) -> KSPMonitorFunction:
-        """Get function used to monitor the residual.
+        """Return function used to monitor the residual.
 
         Not collective.
 
@@ -1295,7 +1296,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetPCSide(self.ksp, side) )
 
     def getPCSide(self) -> PC.Side:
-        """Get the preconditioning side.
+        """Return the preconditioning side.
 
         Not collective.
 
@@ -1335,7 +1336,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetNormType(self.ksp, normtype) )
 
     def getNormType(self) -> NormType:
-        """Get the norm that is used for convergence testing.
+        """Return the norm that is used for convergence testing.
 
         Not collective.
 
@@ -1375,7 +1376,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetComputeEigenvalues(self.ksp, compute) )
 
     def getComputeEigenvalues(self) -> bool:
-        """Get flag indicating whether eigenvalues will be calculated.
+        """Return flag indicating whether eigenvalues will be calculated.
 
         Gets the flag indicating that the extreme eigenvalues values
         will be calculated via a Lanczos or Arnoldi process as the
@@ -1420,7 +1421,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetComputeSingularValues(self.ksp, compute) )
 
     def getComputeSingularValues(self) -> bool:
-        """Get flag indicating whether singular values will be calculated.
+        """Return flag indicating whether singular values will be calculated.
 
         Gets the flag indicating whether the extreme singular values
         will be calculated via a Lanczos or Arnoldi process as the
@@ -1804,7 +1805,7 @@ cdef class KSP(Object):
         return toBool(flag)
 
     def getRhs(self) -> Vec:
-        """Get the right-hand-side vector for the linear system.
+        """Return the right-hand-side vector for the linear system.
 
         Not collective.
 
@@ -1819,7 +1820,7 @@ cdef class KSP(Object):
         return vec
 
     def getSolution(self) -> Vec:
-        """Get the solution for the linear system to be solved.
+        """Return the solution for the linear system to be solved.
 
         Note that this may not be the solution that is stored during
         the iterative process.
