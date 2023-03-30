@@ -27,7 +27,8 @@ The initial description section can contain more information if this is useful.
 In particular, if there is a PETSc manual chapter about a class, then this
 should be referred to from here.
 
-Use double backticks around literals (like strings and numbers). E.g. \`\`2\`\`, \`\`"foo"\`\`.
+Use double backticks around literals (like strings and numbers). E.g.
+\`\`2\`\`, \`\`"foo"\`\`.
 
 Reference PETSc functions simply using backticks. eg: `petsc.KSP`. refers to
 the PETSc C documentation for KSP. Do **not** use URLs in docstrings. Always
@@ -94,8 +95,8 @@ Communicators in type signatures must use Python typing instead of static
 c-typing (i.e. ``comm: Comm`` not ``Comm comm``).
 
 For petsc4py native types that are can be strings, the type is ``argument:
-KSP.Type | str`` (not eg: ``KSPType argument``). If the type is strictly an enum
-the ``| str`` can be omitted. Full signature example::
+KSP.Type | str`` (not eg: ``KSPType argument``). If the type is strictly an
+enum the ``| str`` can be omitted. Full signature example::
     
     def setType(self, ksp_type: KSP.Type | str) -> None:
 
