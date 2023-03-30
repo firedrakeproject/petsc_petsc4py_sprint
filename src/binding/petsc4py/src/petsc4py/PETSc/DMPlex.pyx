@@ -666,7 +666,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexSetCellType(self.dm, cp, val) )
 
     def getCellType(self, p: int) -> DM.PolytopeType:
-        """Get the polytope type of a given cell.
+        """Return the polytope type of a given cell.
 
         Not collective.
 
@@ -686,7 +686,7 @@ cdef class DMPlex(DM):
         return toInt(ctype)
 
     def getCellTypeLabel(self) -> DMLabel:
-        """Get the `DMLabel` recording the polytope type of each cell.
+        """Return the `DMLabel` recording the polytope type of each cell.
 
         Not collective.
 
@@ -855,7 +855,7 @@ cdef class DMPlex(DM):
         CHKERR( DMPlexOrient(self.dm) )
 
     def getCellNumbering(self) -> IS:
-        """Get a global cell numbering for all cells on this process.
+        """Return a global cell numbering for all cells on this process.
 
         See Also
         --------
@@ -868,7 +868,7 @@ cdef class DMPlex(DM):
         return iset
 
     def getVertexNumbering(self) -> IS:
-        """Get a global vertex numbering for all vertices on this process.
+        """Return a global vertex numbering for all vertices on this process.
 
         See Also
         --------
@@ -895,7 +895,7 @@ cdef class DMPlex(DM):
         return iset
 
     def getDepth(self) -> int:
-        """Get the depth of the DAG representing this mesh.
+        """Return the depth of the DAG representing this mesh.
 
         Not collective.
 
@@ -909,7 +909,7 @@ cdef class DMPlex(DM):
         return toInt(depth)
 
     def getDepthStratum(self, svalue: int) -> tuple[int, int]:
-        """Get the bounds [``start``, ``end``) for all points at a certain depth.
+        """Return the bounds [``start``, ``end``) for all points at a certain depth.
 
         Not collective.
 
@@ -935,7 +935,7 @@ cdef class DMPlex(DM):
         return (toInt(sStart), toInt(sEnd))
 
     def getHeightStratum(self, svalue: int) -> tuple[int, int]:
-        """Get the bounds [``start``, ``end``) for all points at a certain height.
+        """Return the bounds [``start``, ``end``) for all points at a certain height.
 
         Not collective.
 
@@ -961,7 +961,7 @@ cdef class DMPlex(DM):
         return (toInt(sStart), toInt(sEnd))
 
     def getMeet(self, points: Sequence[int]) -> ArrayInt:
-        """Get an array for the meet of the set of points.
+        """Return an array for the meet of the set of points.
 
         Not collective.
 
@@ -987,7 +987,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexRestoreMeet(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
     def getJoin(self, points: Sequence[int]) -> ArrayInt:
-        """Get an array for the join of the set of points.
+        """Return an array for the join of the set of points.
 
         Not collective.
 
@@ -1013,7 +1013,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexRestoreJoin(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
     def getFullJoin(self, points: Sequence[int]) -> ArrayInt:
-        """Get an array for the join of the set of points.
+        """Return an array for the join of the set of points.
 
         Not collective.
 
@@ -1077,7 +1077,7 @@ cdef class DMPlex(DM):
         return out[::2],out[1::2]
 
     def vecGetClosure(self, Section sec, Vec vec, p: int) -> ArrayScalar:
-        """Get an array of the values on the closure of ``point``.
+        """Return an array of the values on the closure of ``point``.
 
         Not collective.
 
@@ -1105,7 +1105,7 @@ cdef class DMPlex(DM):
         return closure
 
     def getVecClosure(self, Section sec or None, Vec vec, point: int) -> ArrayScalar:
-        """Get an array of the values on the closure of 'point'.
+        """Return an array of the values on the closure of 'point'.
 
         Not collective.
 
@@ -1792,7 +1792,7 @@ cdef class DMPlex(DM):
         return sec
 
     def getPointLocal(self, point: int) -> tuple[int, int]:
-        """Get location of point data in local `Vec`.
+        """Return location of point data in local `Vec`.
 
         Not collective.
 
@@ -1819,7 +1819,7 @@ cdef class DMPlex(DM):
         return toInt(start), toInt(end)
 
     def getPointLocalField(self, point: int, field: int) -> tuple[int, int]:
-        """Get location of point field data in local `Vec`.
+        """Return location of point field data in local `Vec`.
 
         Not collective.
 
@@ -1849,7 +1849,7 @@ cdef class DMPlex(DM):
         return toInt(start), toInt(end)
 
     def getPointGlobal(self, point: int) -> tuple[int, int]:
-        """Get location of point data in global `Vec`.
+        """Return location of point data in global `Vec`.
 
         Not collective.
 
@@ -1876,7 +1876,7 @@ cdef class DMPlex(DM):
         return toInt(start), toInt(end)
 
     def getPointGlobalField(self, point: int, field: int) -> tuple[int, int]:
-        """Get location of point field data in global `Vec`.
+        """Return location of point field data in global `Vec`.
 
         Not collective.
 
