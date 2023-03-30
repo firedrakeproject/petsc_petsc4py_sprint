@@ -1929,7 +1929,42 @@ cdef class Mat(Object):
 
     # matrix-matrix product
 
-    def matMult(self, Mat mat, Mat result=None, fill=None):
+    def matMult(
+        self,
+        Mat mat,
+        result: Mat | None = None,
+        fill: float | None = None
+    ) -> Mat:
+        """Performs matrix-matrix multiplication C=AB.
+
+        Neighbor-wise collective.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The resultant matrix C, can be ``None``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatMatMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal rval = 2
         if result is None:
@@ -1940,7 +1975,42 @@ cdef class Mat(Object):
         CHKERR( MatMatMult(self.mat, mat.mat, reuse, rval, &result.mat) )
         return result
 
-    def matTransposeMult(self, Mat mat, Mat result=None, fill=None):
+    def matTransposeMult(
+        self,
+        Mat mat,
+        result: Mat | None = None,
+        fill: float | None = None
+    ):
+        """Perform matrix-matrix multiplication C=ABᵀ.
+
+        Neighbour-wise collective.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The resultant matrix C, can be ``None``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatMatTransposeMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal rval = 2
         if result is None:
@@ -1951,7 +2021,42 @@ cdef class Mat(Object):
         CHKERR( MatMatTransposeMult(self.mat, mat.mat, reuse, rval, &result.mat) )
         return result
 
-    def transposeMatMult(self, Mat mat, Mat result=None, fill=None):
+    def transposeMatMult(
+        self,
+        Mat mat,
+        result: Mat | None = None,
+        fill: float | None = None
+    ):
+        """Perform matrix-matrix multiplication C=AᵀB.
+
+        Neighbour-wise collective.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The resultant matrix C, can be ``None``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatTransposeMatMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal rval = 2
         if result is None:
@@ -1962,7 +2067,46 @@ cdef class Mat(Object):
         CHKERR( MatTransposeMatMult(self.mat, mat.mat, reuse, rval, &result.mat) )
         return result
 
-    def ptap(self, Mat P, Mat result=None, fill=None):
+    def ptap(
+        self,
+        Mat P,
+        result: Mat | None = None,
+        fill: float | None = None
+    ) -> Mat:
+        """Creates the matrix product C = PᵀAP.
+
+        Neighbour-wise collective.
+
+        Parameters
+        ----------
+        mat
+            The matrix P.
+        result
+            The resultant matrix C, can be ``None``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        An alternative approach to this function is to use
+        `productCreate` and set the desired options before the
+        computation is done.
+
+        See also
+        --------
+        petsc.MatPtAP
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal cfill = PETSC_DEFAULT
         if result is None:
