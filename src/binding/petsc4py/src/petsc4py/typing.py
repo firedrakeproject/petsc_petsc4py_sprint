@@ -75,6 +75,35 @@ ArrayComplex = NDArray[complex]
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
 
+# --- SNES ---
+
+SNESMonitorFunction = Callable[[SNES, int, float], None]
+"""`SNES` monitor callback."""
+
+SNESObjFunction = Callable[[SNES, Vec], None]
+"""`SNES` objective function callback."""
+
+SNESFunction = Callable[[SNES, Vec, Vec], None]
+"""`SNES` residual function callback."""
+
+SNESJacobianFunction = Callable[[SNES, Vec, Mat, Mat], None]
+"""`SNES` Jacobian callback."""
+
+SNESGuessFunction = Callable[[SNES, Vec], None]
+"""`SNES` initial guess callback."""
+
+SNESUpdateFunction = Callable[[SNES, int], None]
+"""`SNES` step update callback."""
+
+SNESLSPreFunction = Callable[[Vec, Vec], None]
+"""`SNES` linesearch pre-check update callback."""
+
+SNESNGSFunction = Callable[[SNES, Vec, Vec], None]
+"""`SNES` nonlinear Gauss-Seidel callback."""
+
+SNESConvergedFunction = Callable[[SNES, int, tuple[float, float, float]], SNES.ConvergedReason]
+"""`SNES` convergence test callback."""
+
 # --- TS ---
 
 TSRHSFunction = Callable[[TS, float, Vec, Vec], None]
