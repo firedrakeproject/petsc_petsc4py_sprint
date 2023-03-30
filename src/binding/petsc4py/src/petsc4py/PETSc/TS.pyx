@@ -133,7 +133,7 @@ cdef class TS(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer: Viewer=None) -> None:
+    def view(self, Viewer viewer=None) -> None:
         """Print the `TS` object.
 
         Collective.
@@ -155,7 +155,7 @@ cdef class TS(Object):
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( TSView(self.ts, cviewer) )
 
-    def load(self, Viewer viewer: Viewer) -> None:
+    def load(self, Viewer viewer) -> None:
         """Load a `TS` that has been stored in binary with `view`.
 
         Parameters
@@ -180,8 +180,8 @@ cdef class TS(Object):
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Create an empty `TS`. 
-        
+        """Create an empty `TS`.
+
         The problem type can then be set with `setProblemType` and the type of
         solver can then be set with `setType`.
 
@@ -290,7 +290,7 @@ cdef class TS(Object):
 
     def getType(self) -> str:
         """Return the `TS` type.
-        
+
         See Also
         --------
         petsc.TSGetType
@@ -301,7 +301,7 @@ cdef class TS(Object):
 
     def getRKType(self) -> str:
         """Return the `Type.RK` scheme.
-        
+
         See Also
         --------
         petsc.TSRKGetType
@@ -312,7 +312,7 @@ cdef class TS(Object):
 
     def getARKIMEXType(self) -> str:
         """Return the `Type.ARKIMEX` scheme.
-        
+
         See Also
         --------
         petsc.TSARKIMEXGetType
@@ -323,7 +323,7 @@ cdef class TS(Object):
 
     def setProblemType(self, ptype: ProblemType) -> None:
         """Set the type of problem to be solved.
-        
+
         Parameters
         ----------
         ptype
@@ -355,7 +355,7 @@ cdef class TS(Object):
         ----------
         eqtype
             The type of equation.
-        
+
         See Also
         --------
         petsc.TSSetEquationType
@@ -452,8 +452,8 @@ cdef class TS(Object):
     # --- user RHS Function/Jacobian routines ---
 
     def setRHSFunction(
-        self, 
-        function: TSRHSFunction, 
+        self,
+        function: TSRHSFunction,
         Vec f=None,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
@@ -486,7 +486,7 @@ cdef class TS(Object):
             CHKERR( TSSetRHSFunction(self.ts, fvec, NULL, NULL) )
 
     def setRHSJacobian(
-        self, 
+        self,
         jacobian: TSRHSJacobian,
         Mat J=None,
         Mat P=None,
@@ -537,7 +537,7 @@ cdef class TS(Object):
             The state vector.
         f
             The Vec into which the RHS is computed.
-        
+
         See Also
         --------
         petsc.TSComputeRHSFunction
@@ -556,7 +556,7 @@ cdef class TS(Object):
             The state vector.
         f
             The Vec into which the RHS is computed.
-    
+
         See Also
         --------
         petsc.TSComputeRHSFunctionLinear
@@ -648,9 +648,9 @@ cdef class TS(Object):
     # --- user Implicit Function/Jacobian routines ---
 
     def setIFunction(
-        self, 
-        function: TSIFunction, 
-        Vec f=None, 
+        self,
+        function: TSIFunction,
+        Vec f=None,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
         """Set the function representing the DAE to be solved.
@@ -687,11 +687,11 @@ cdef class TS(Object):
         self,
         jacobian: TSIJacobian,
         Mat J=None,
-        Mat P=None, 
+        Mat P=None,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
         """Set the function to compute the Jacobian.
-        
+
         Set the function to compute the matrix ``dF/dU + a*dF/dU_t`` where
         ``F(t,U,U_t)`` is the function provided with `setIFunction`.
 
@@ -730,7 +730,7 @@ cdef class TS(Object):
     def setIJacobianP(
         self,
         jacobian,
-        Mat J=None, 
+        Mat J=None,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
         """Set the function that computes the Jacobian of ``F`` with respect to
@@ -749,7 +749,7 @@ cdef class TS(Object):
             Additional positional arguments for ``jacobian``.
         kargs
             Additional keyword arguments for ``jacobian``.
-        
+
         See Also
         --------
         petsc.TSSetIJacobianP
@@ -934,12 +934,12 @@ cdef class TS(Object):
     def setI2Jacobian(
         self,
         jacobian: TSI2Jacobian,
-        Mat J=None, 
-        Mat P=None, 
+        Mat J=None,
+        Mat P=None,
         args=None,
         kargs=None) -> None:
         """Set the function to compute the Jacobian of the 2nd order DAE.
-        
+
         Logically collective.
 
         Parameters
@@ -1001,12 +1001,12 @@ cdef class TS(Object):
     def computeI2Jacobian(
         self,
         t: float,
-        Vec x, 
-        Vec xdot, 
-        Vec xdotdot, 
-        v: float, 
-        a: float, 
-        Mat J, 
+        Vec x,
+        Vec xdot,
+        Vec xdotdot,
+        v: float,
+        a: float,
+        Mat J,
         Mat P=None) -> None:
         """Evaluate the Jacobian of the DAE.
 
@@ -1093,7 +1093,7 @@ cdef class TS(Object):
 
     def getSolution(self) -> Vec:
         """Return the solution at the present timestep.
-        
+
         Not collective, but the vector is parallel if the `TS` is parallel. It
         is valid to call this routine inside the function that you are
         evaluating in order to move to the new timestep. This vector is not
@@ -1128,7 +1128,7 @@ cdef class TS(Object):
 
     def getSolution2(self) -> tuple[Vec, Vec]:
         """Return the solution and time derivative at the present timestep.
-        
+
         Not collective, but vectors are parallel if `TS` is parallel. It is
         valid to call this routine inside the function that you are evaluating
         in order to move to the new timestep. These vectors are not changed
@@ -1148,25 +1148,25 @@ cdef class TS(Object):
     # --- time span ---
 
     def setTimeSpan(self, tspan: Sequence[float]) -> None:
-        """Set the time span. 
-        
+        """Set the time span.
+
         Collective. The solution will be computed and stored for each time
         requested in the span. The times must be all increasing and correspond
         to the intermediate points for time integration.
         `ExactFinalTime.MATCHSTEP` must be used to make the last time step in
         each sub-interval match the intermediate points specified. The
         intermediate solutions are saved in a vector array that can be accessed
-        with `getTimeSpanSolutions`. 
+        with `getTimeSpanSolutions`.
 
         Parameters
         ----------
         tspan
             The sequence of time points.
-        
+
         Notes
         -----
         ``-ts_time_span <t0,...tf>`` sets the time span from the commandline
-        
+
         See Also
         --------
         petsc.TSSetTimeSpan
@@ -1311,7 +1311,7 @@ cdef class TS(Object):
     def getPrevTime(self) -> float:
         """Return the starting time of the previously completed step.
 
-        Not collective. 
+        Not collective.
 
         See Also
         --------
@@ -1671,7 +1671,7 @@ cdef class TS(Object):
         ----------
         option
             The exact final time option
-        
+
         Notes
         -----
         ``-ts_exact_final_time`` may be used to specify from the commandline.
@@ -1717,8 +1717,8 @@ cdef class TS(Object):
     # --- monitoring ---
 
     def setMonitor(
-        self, 
-        monitor: TSMonitorFunction, 
+        self,
+        monitor: TSMonitorFunction,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
         """Set an additional monitor to the `TS`.
@@ -1799,17 +1799,17 @@ cdef class TS(Object):
     # --- event handling ---
 
     def setEventHandler(
-        self, 
-        direction: Sequence[int], 
-        terminate: Sequence[bool], 
-        eventhandler: TSEventHandlerFunction, 
-        postevent: TSPostEventFunction=None, 
+        self,
+        direction: Sequence[int],
+        terminate: Sequence[bool],
+        eventhandler: TSEventHandlerFunction,
+        postevent: TSPostEventFunction=None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None) -> None:
         """Set a function used for detecting events.
 
         Logically collective.
-        
+
         Parameters
         ----------
         direction
@@ -1901,8 +1901,8 @@ cdef class TS(Object):
     # --- solving ---
 
     def setPreStep(
-        self, 
-        prestep: TSPreStepFunction, 
+        self,
+        prestep: TSPreStepFunction,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None) -> None:
         """Set a function to be called at the beginning of each time step.
@@ -1941,7 +1941,7 @@ cdef class TS(Object):
         """
         return self.get_attr('__prestep__')
 
-    def setPostStep(self, 
+    def setPostStep(self,
         poststep: TSPostStepFunction,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None) -> None:
@@ -2090,7 +2090,7 @@ cdef class TS(Object):
             the minimum step size
         hmax
             the maximum step size
-        
+
         Notes
         -----
         ``-ts_adapt_dt_min`` and ``-ts_adapt_dt_max`` may be used to set from the commandline.
@@ -2149,8 +2149,8 @@ cdef class TS(Object):
         CHKERR(TSRemoveTrajectory(self.ts))
 
     def getCostIntegral(self) -> Vec:
-        """Return a vector of values of the integral term in the cost functions. 
-                
+        """Return a vector of values of the integral term in the cost functions.
+
         See Also
         --------
         petsc.TSGetCostIntegral
@@ -2161,11 +2161,11 @@ cdef class TS(Object):
         return cost
 
     def setCostGradients(
-        self, 
-        vl: Vec | Sequence[Vec] | None, 
-        vm: Vec | Sequence[Vec] | None=None) -> None:
+        self,
+        vl: Vec | Sequence[Vec] | None,
+        vm: Vec | Sequence[Vec] | None = None) -> None:
         """Set the cost gradients.
-        
+
         Logically collective.
 
         Parameters
@@ -2225,9 +2225,9 @@ cdef class TS(Object):
         return (vl, vm)
 
     def setRHSJacobianP(
-        self, 
-        jacobianp: TSRHSJacobianP, 
-        Mat A=None, 
+        self,
+        jacobianp: TSRHSJacobianP,
+        Mat A=None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None) -> None:
         """Set the function that computes the Jacobian with respect to the parameters.
@@ -2244,7 +2244,7 @@ cdef class TS(Object):
             Additional positional arguments for ``jacobianp``.
         kargs
             Additional keyword arguments for ``jacobianp``.
-        
+
         See Also
         --------
         petsc.TSSetRHSJacobianP
@@ -2299,9 +2299,9 @@ cdef class TS(Object):
         return (toBool(fwd), qts)
 
     def setRHSJacobianP(
-        self, 
-        rhsjacobianp: TSRHSJacobianP, 
-        Mat A=None, 
+        self,
+        rhsjacobianp: TSRHSJacobianP,
+        Mat A=None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None) -> None:
         """Set the function that computes the Jacobian with respect to the parameters.
@@ -2316,7 +2316,7 @@ cdef class TS(Object):
             Additional positional arguments for ``rhsjacobianp``.
         kargs
             Additional keyword arguments for ``rhsjacobianp``.
-        
+
         See Also
         --------
         petsc.TSSetRHSJacobianP
@@ -2358,7 +2358,7 @@ cdef class TS(Object):
         ----------
         adjoint_steps
             The number of steps to take.
-        
+
         See Also
         --------
         petsc.TSAdjointSetSteps
@@ -2459,7 +2459,7 @@ cdef class TS(Object):
         ----------
         theta
             stage abscissa
-        
+
         Notes
         -----
         ``-ts_theta_theta`` can be used to set a value from the commandline.
@@ -2534,9 +2534,9 @@ cdef class TS(Object):
         CHKERR( TSAlphaSetRadius(self.ts, rval) )
 
     def setAlphaParams(
-        self, 
+        self,
         alpha_m: float | None=None,
-        alpha_f: float | None=None, 
+        alpha_f: float | None=None,
         gamma: float | None=None) -> None:
         """Set the algorithmic parameters for `Type.ALPHA`.
 

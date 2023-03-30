@@ -107,7 +107,7 @@ autosummary_context = {
 def _mangle_petsc_intersphinx():
     """Preprocess the keys in PETSc's intersphinx inventory.
 
-    PETSc have intersphinx keys of the form::
+    PETSc have intersphinx keys of the form:
 
         manualpages/Vec/VecShift
 
@@ -250,6 +250,7 @@ def _monkey_patch_returns():
         out = _parse_returns_section(*args, **kwargs)
         return [line.replace(":class:", ":any:") for line in out]
 
+
     NumpyDocstring._parse_returns_section = wrapper
 
 
@@ -270,18 +271,11 @@ def _monkey_patch_see_also():
     NumpyDocstring._parse_numpydoc_see_also_section = wrapper
 
 
-def _apply_monkey_patches():
-    """Modify Napoleon types after parsing to make references work."""
-    _monkey_patch_returns()
-    _monkey_patch_see_also()
-
-
-_apply_monkey_patches()
-
-
 def setup(app):
     _setup_mpi4py_typing()
     _patch_domain_python()
+    _monkey_patch_returns()
+    _monkey_patch_see_also()
     _setup_autodoc(app)
 
     try:

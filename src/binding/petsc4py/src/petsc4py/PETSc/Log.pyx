@@ -53,19 +53,20 @@ cdef class Log:
 
     @classmethod
     def begin(cls, all: bool = False):
-        """Turn on the logging of the objects and events.
+        """Turn on logging of objects and events.
 
         Logically Collective.
 
         Parameters
         ----------
         all
-            Wheter to enable extensive logging.
+            Whether to enable extensive logging.
 
         Notes
         -----
-        if all=True, an extensive logging is provided, which creates large log files and shows the program down.
-        if all=False, the default logging functions are used.
+        If ``all == True`` logging is extensive, which creates large log files and shows the program down.
+
+        If ``all == False``, the default logging functions are used.
         This logs flop rates and object creation and should not slow programs down too much. This routine may be called more than once.
 
         See Also
@@ -78,7 +79,7 @@ cdef class Log:
 
     @classmethod
     def view(cls, Viewer viewer=None) -> None:
-        """Print a summary of the logging.
+        """Print the log.
 
         Collective.
 
@@ -99,14 +100,14 @@ cdef class Log:
 
     @classmethod
     def logFlops(cls, flops: float) -> None:
-        """Add floating point operations to global counter.
+        """Add floating point operations to the global counter.
 
         Not Collective.
 
         Parameters
         ----------
         flops
-            Flop counter.
+            The number of flops to log.
 
         See Also
         --------
@@ -125,11 +126,15 @@ cdef class Log:
         Parameters
         ----------
         flops
-            Flop counter.
+            The number of flops to log.
+
+        Notes
+        -----
+        This method exists for backward compatibility.
 
         See Also
         --------
-        petsc.PetscLogFlops
+        logFlops, petsc.PetscLogFlops
 
         """
         cdef PetscLogDouble cflops=flops
@@ -177,7 +182,7 @@ cdef class Log:
 
     @classmethod
     def getCPUTime(cls) -> float:
-        """Get the CPU time.
+        """Return the CPU time.
 
         """
         cdef PetscLogDouble cputime=0
@@ -188,20 +193,6 @@ cdef class Log:
     def EventDecorator(cls, name=None, klass=None):
         """Decorate a function with a `PETSc` event.
 
-        Notes
-        -----
-        If no event name is specified it will default to the name of the function.
-        
-        Usage:
-            >>>@EventDecorator("My Function")
-            >>>def myfunc():
-            >>>    ...
-
-            >>>or
-
-            >>>@EventDecorator()
-            >>>def myfunc():
-            >>>    ...
         """
         def decorator(func):
             @functools.wraps(func)
@@ -217,14 +208,9 @@ cdef class Log:
 
     @classmethod
     def isActive(cls) -> bool:
-        """Check if logging is currently in progress.
+        """Return whether logging is currently in progress.
         
         Not Collective.
-
-        Returns
-        -------
-        bool
-            Inform if the logging is in progress
 
         See Also
         --------
@@ -330,11 +316,6 @@ cdef class LogStage:
         
         Not Collective.
 
-        Returns
-        -------
-        bool
-            The activity flag for logging.
-
         See Also
         --------
         petsc.PetscLogStageGetActive
@@ -345,14 +326,14 @@ cdef class LogStage:
         return toBool(flag)
 
     def setActive(self, flag: bool) -> None:
-        """Set if the stage is active.
+        """Activate or deactivate the current stage.
         
         Not Collective.
 
         Parameters
         ----------
         flag : bool
-            Activate for looging if True, else looging is not activated.
+            Log if True, disable looging if False.
 
         See Also
         --------
@@ -393,7 +374,7 @@ cdef class LogStage:
         Parameters
         ----------
         flag : bool
-            `True` if the stage is visible, `False` otherwise.
+            `True` to make the stage visible, `False` otherwise.
 
         See Also
         --------
@@ -587,14 +568,14 @@ cdef class LogEvent:
         raise NotImplementedError
 
     def setActive(self, flag: bool) -> None:
-        """Indicate if the event should be or not be logged.
+        """Indicate whether or not the event should logged.
 
         Not Collective
 
         Parameters
         ----------
         flag
-            Instruction will either activate or deactivate the event.
+            Activate or deactivate the event.
 
         See Also
         --------

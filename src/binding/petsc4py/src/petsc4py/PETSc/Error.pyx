@@ -1,6 +1,14 @@
 # --------------------------------------------------------------------
 
 class Error(RuntimeError):
+    """PETSc Error.
+
+    Attributes
+    ----------
+    ierr: int
+        PETSc error code.
+
+    """
 
     _traceback_ = []
 

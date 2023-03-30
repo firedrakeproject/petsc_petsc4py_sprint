@@ -36,6 +36,18 @@ cdef TSPostEventFunction
 cdef TSPreStepFunction
 cdef TSPostStepFunction
 
+# --- SNES ---
+
+cdef SNESMonitorFunction
+cdef SNESObjFunction
+cdef SNESFunction
+cdef SNESJacobianFunction
+cdef SNESGuessFunction
+cdef SNESUpdateFunction
+cdef SNESLSPreFunction
+cdef SNESNGSFunction
+cdef SNESConvergedFunction
+
 # --- TAO ---
 
 cdef TAOObjectiveFunction
@@ -50,3 +62,10 @@ cdef TAOResidualFunction
 cdef TAOJacobianResidualFunction
 cdef TAOVariableBoundsFunction
 cdef TAOConstraintsFunction
+
+# --- MPI ---
+
+cdef Intracomm
+cdef Datatype
+cdef Op
+

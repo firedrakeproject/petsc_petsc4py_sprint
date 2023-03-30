@@ -53,6 +53,8 @@ class EmbedSignature(CythonTransform):
                 annotation = None
             else:
                 annotation = arg.type.declaration_code('', for_display=1)
+                if arg.default and arg.default.is_none:
+                    annotation += ' | None'
         if arg.annotation:
             annotation = self._fmt_annotation(arg.annotation)
         annotation = self._select_format(annotation, None)
