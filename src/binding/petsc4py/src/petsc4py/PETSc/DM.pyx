@@ -393,9 +393,9 @@ cdef class DM(Object):
 
         Returns
         -------
-        toBool(uC)
+        toBool(uC) : bool
             This flag provides the variable influence starting with the cone operation if True.
-        toBool(uCl)
+        toBool(uCl) : boll
             This flag provides the variable influence using transitive closure.
         
         See Also
@@ -514,6 +514,13 @@ cdef class DM(Object):
         """Return an auxiliary vector for a specific region.
 
         Not Collective
+
+        Parameters
+        ----------
+        value : int, optional
+            Indicate the region.
+        part : int, optional
+            The equation part, or 0 is unused.
 
         See Also
         --------
