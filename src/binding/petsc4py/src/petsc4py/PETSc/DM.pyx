@@ -91,7 +91,7 @@ cdef class DM(Object):
         Parameters
         ----------
         viewer
-            Viewer used to display the DM, either `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
+            Viewer used to display the `DM`, either `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
         
         Notes
         -----
@@ -155,14 +155,9 @@ cdef class DM(Object):
         return dm
 
     def setType(self, dm_type: str) -> None:
-        """Set a `DM`.
+        """Build a `DM`.
 
         Collective.
-
-        Parameters
-        ----------
-        dm_type : str
-            Set the `DM` type.
 
         Notes
         -----
@@ -295,7 +290,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        prefix : str
+        prefix
             The string to append to the current prefix.
 
         See Also
@@ -377,9 +372,9 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        bool
+        useCone
             If True, the variable influence is set, starting with the cone operation.
-        bool
+        useClosure
             If True, the variable influence is set using transitive closure.
 
         See Also
@@ -398,9 +393,9 @@ cdef class DM(Object):
 
         Returns
         -------
-        toBool(uC) : bool
+        toBool(uC)
             This flag provides the variable influence starting with the cone operation if True.
-        toBool(uCl) : bool
+        toBool(uCl)
             This flag provides the variable influence using transitive closure.
         
         See Also
@@ -420,11 +415,11 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        field : int
+        field
             The field number.
-        bool
+        useCone
             If True, the variable influence is set, starting with the cone operation.
-        bool
+        useClosure
             If True, the variable influence is set using transitive closure.
 
         See Also
