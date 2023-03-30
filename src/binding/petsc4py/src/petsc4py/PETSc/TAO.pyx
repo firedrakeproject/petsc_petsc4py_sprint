@@ -1,7 +1,13 @@
 # --------------------------------------------------------------------
 
 class TAOType:
-    """TAO solver type."""
+    """TAO solver type.
+
+    See Also
+    --------
+    petsc.TaoType
+
+    """
     LMVM     = S_(TAOLMVM)
     NLS      = S_(TAONLS)
     NTR      = S_(TAONTR)
@@ -37,7 +43,13 @@ class TAOType:
     PYTHON   = S_(TAOPYTHON)
 
 class TAOConvergedReason:
-    """TAO solver termination reason."""
+    """TAO solver termination reason.
+
+    See Also
+    --------
+    petsc.TaoConvergedReason
+
+    """
     # iterating
     CONTINUE_ITERATING    = TAO_CONTINUE_ITERATING    # iterating
     CONVERGED_ITERATING   = TAO_CONTINUE_ITERATING    # iterating
@@ -132,8 +144,8 @@ cdef class TAO(Object):
         PetscCLEAR(self.obj); self.tao = newtao
         return self
 
-    def setType(self, tao_type: TAO.Type | str) -> None:
-        """Set the type of the TAO solver.
+    def setType(self, tao_type: Type | str) -> None:
+        """Set the type of the solver.
 
         Logically collective.
 
@@ -152,7 +164,7 @@ cdef class TAO(Object):
         CHKERR( TaoSetType(self.tao, ctype) )
 
     def getType(self) -> str:
-        """Return the type of the TAO solver object.
+        """Return the type of the solver.
 
         Not collective.
 
@@ -208,7 +220,7 @@ cdef class TAO(Object):
         return bytes2str(prefix)
 
     def setFromOptions(self) -> None:
-        """Configure the TAO solver from the options database.
+        """Configure the solver from the options database.
 
         Collective.
 
@@ -780,7 +792,7 @@ cdef class TAO(Object):
         """
         CHKERR( TaoComputeResidual(self.tao, x.vec, f.vec) )
 
-    def computeGradient(self, Vec x, Vec g):
+    def computeGradient(self, Vec x, Vec g) -> None:
         """Compute the gradient of the objective function.
 
         Collective.
@@ -1602,7 +1614,7 @@ cdef class TAO(Object):
 
         See Also
         --------
-        petsc_python_tao, setType, setPythonContext, TAO.Type.PYTHON
+        petsc_python_tao, setType, setPythonContext, Type.PYTHON
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -1654,8 +1666,8 @@ cdef class TAO(Object):
         py_type = str2bytes(py_type, &cval)
         CHKERR( TaoPythonSetType(self.tao, cval) )
 
-    def getPythonType(self):
-        """Return the full dotted Python name of the class used by the solver.
+    def getPythonType(self) -> str:
+        """Return the fully qualified Python name of the class used by the solver.
 
         Not collective.
 
@@ -1772,7 +1784,7 @@ cdef class TAO(Object):
             return self.getConvergedReason()
 
     property iterating:
-        """Boolean indicating if the solver is not converged yet."""
+        """Boolean indicating if the solver has not converged yet."""
         def __get__(self) -> bool:
             return self.reason == 0
 
