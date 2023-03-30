@@ -554,16 +554,11 @@ cdef class Mat(Object):
         size, bsize
             Matrix size attributes. See `Mat.setSizes` for usage information.
         nnz
-            The number of non-zeros per row. If an `int` is passed then this
-            is treated as the number of non-zeros for every row. If a 2-`tuple`
-            is passed then these correspond to the diagonal and off-diagonal
-            parts of the matrix. See `petsc.MatMPIAIJSetPreallocation` for
-            more information.
+            Non-zero preallocation pattern. See `Mat.setPreallocationNNZ` for
+            usage information.
         csr
-            Compressed sparse row (local) layout consisting of
-            ``(row_start, col)`` where ``row_start`` points to the start of
-            each row and ``col`` gives the column index for each entry. See
-            `petsc.MatMPIAIJSetPreallocationCSR` for more information.
+            Compressed sparse row layout information. See
+            `Mat.setPreallocationCSR` for usage information.
         comm
             MPI communicators, defaults to `Sys.getDefaultComm`.
 
@@ -626,6 +621,8 @@ cdef class Mat(Object):
     ) -> Self:
         """Create a sparse matrix in symmetric block AIJ format.
 
+        Collective.
+
         Parameters
         ----------
         size, bsize, nnz, csr, comm
@@ -648,7 +645,34 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def createAIJCRL(self, size, bsize=None, nnz=None, csr=None, comm=None):
+    def createAIJCRL(
+        self,
+        size: tuple | int,
+        bsize: int | None = None,
+        nnz: int | Sequence[int] | tuple | None = None,
+        csr: tuple[Sequence[int], Sequence[int]] | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse matrix with type `Mat.Type.AIJCRL`.
+
+        This is similar to `Mat.Type.AIJ` matrices but stores some additional
+        information that improves vectorisation for the matrix-vector product.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize, nnz, csr, comm
+            See `Mat.createAIJ` for information on the meaning of the
+            parameters.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.createAIJ, Mat.createBAIJ
+        petsc.MatCreateSeqAIJCRL, petsc.MatCreateMPIAIJCRL
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATAIJCRL, comm, size, bsize, &newmat)
@@ -657,14 +681,70 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def setPreallocationNNZ(self, nnz):
+    def setPreallocationNNZ(self, nnz: int | Sequence[int] | tuple) -> Self:
+        """Preallocate memory for the matrix with a non-zero pattern.
+
+        This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ`,
+        `Mat.Type.SBAIJ` and `Mat.Type.AIJIS` matrices.
+
+        Correct preallocation can result in a dramatic reduction in matrix
+        assembly time.
+
+        Collective.
+
+        Parameters
+        ----------
+        nnz
+            The number of non-zeros per row. If an `int` is passed then this
+            is treated as the number of non-zeros for every row. If a 2-`tuple`
+            is passed then these correspond to the diagonal and off-diagonal
+            parts of the matrix. See `petsc.MatMPIAIJSetPreallocation` for
+            more information.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.setPreallocationCSR, Mat.createAIJ
+        petsc.MatSeqAIJSetPreallocation
+        petsc.MatMPIAIJSetPreallocation
+
+        """
         cdef PetscBool done = PETSC_FALSE
         CHKERR( MatIsPreallocated(self.mat, &done) )
         # if done: raise Error(PETSC_ERR_ORDER)
         Mat_AllocAIJ_NNZ(self.mat, nnz)
         return self
 
-    def setPreallocationCSR(self, csr):
+    def setPreallocationCSR(
+        self,
+        csr: tuple[Sequence[int], Sequence[int]],
+    ) -> Self:
+        """Preallocate memory for the matrix with a CSR layout.
+
+        This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ` and
+        `Mat.Type.SBAIJ` matrices.
+
+        Correct preallocation can result in a dramatic reduction in matrix
+        assembly time.
+
+        Collective.
+
+        Parameters
+        ----------
+        csr
+            Compressed sparse row (local) layout consisting of
+            ``(row_start, col)`` where ``row_start`` points to the start of
+            each row and ``col`` gives the column index for each entry. See
+            `petsc.MatMPIAIJSetPreallocationCSR` for more information.
+
+        See Also
+        --------
+        manual/mat/#sec-matsparse
+        Mat.setPreallocationNNZ, Mat.createAIJ
+        petsc.MatSeqAIJSetPreallocationCSR
+        petsc.MatMPIAIJSetPreallocationCSR
+
+        """
         cdef PetscBool done = PETSC_FALSE
         CHKERR( MatIsPreallocated(self.mat, &done) )
         # if done: raise Error(PETSC_ERR_ORDER)
