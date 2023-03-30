@@ -84,7 +84,7 @@ cdef class DM(Object):
         CHKERR( DMView(self.dm, vwr) )
 
     def load(self, Viewer viewer) -> Self:
-        """Load a `DM` stored in binary.
+        """Return `DM` stored in binary.
 
         Collective.
 
@@ -107,7 +107,7 @@ cdef class DM(Object):
         return self
 
     def destroy(self) -> Self:
-        """Destroy the object.
+        """Return the object destroyed.
 
         Collective.
 
@@ -120,7 +120,7 @@ cdef class DM(Object):
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Create an empty `DM`.
+        """Return an empty `DM`.
 
         Collective.
         
@@ -141,14 +141,9 @@ cdef class DM(Object):
         return self
 
     def clone(self) -> DM:
-        """Clone a `DM`.
+        """Return `DM` cloned.
 
         Collective.
-
-        Returns
-        -------
-        DM
-            Object dm created by cloning from an original dm.
         
         See Also
         --------
@@ -183,7 +178,7 @@ cdef class DM(Object):
         CHKERR( DMSetType(self.dm, cval) )
 
     def getType(self) -> str:
-        """Get the `DM` type name.
+        """Return the `DM` type name.
 
         Not Collective.
 
@@ -197,7 +192,7 @@ cdef class DM(Object):
         return bytes2str(cval)
 
     def getDimension(self) -> int:
-        """Get the topological dimension of the `DM`.
+        """Return the topological dimension of the `DM`.
 
         Not Collective.
 
@@ -229,7 +224,7 @@ cdef class DM(Object):
         CHKERR( DMSetDimension(self.dm, cdim) )
 
     def getCoordinateDim(self) -> int:
-        """Get the dimension of embedding space for coordinates values.
+        """Return the dimension of embedding space for coordinates values.
 
         Not Collective.
 
@@ -345,6 +340,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMViewFromOptions
+
         """
         cdef const char *cname = NULL
         _ = str2bytes(name, &cname)
@@ -353,7 +349,7 @@ cdef class DM(Object):
         CHKERR( DMViewFromOptions(self.dm, cobj, cname) )
 
     def setUp(self) -> Self:
-        """Set the data structure.
+        """Return the data structure.
 
         Collective.
 
@@ -443,7 +439,7 @@ cdef class DM(Object):
         CHKERR( DMSetAdjacency(self.dm, f, uC, uCl) )
 
     def getFieldAdjacency(self, field: int):
-        """Get the flags for determining variable influence.
+        """Return the flags for determining variable influence.
 
         Not Collective.
 
@@ -468,7 +464,7 @@ cdef class DM(Object):
     #
 
     def createSubDM(self, fields: Sequence[int]):
-        """Creates an `IS` and `DM` encapsuling a subproblem.
+        """Return an `IS` and `DM` encapsuling a subproblem.
        
         Not collective.
 
