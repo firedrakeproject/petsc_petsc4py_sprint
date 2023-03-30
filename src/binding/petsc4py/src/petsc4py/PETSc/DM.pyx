@@ -437,7 +437,7 @@ cdef class DM(Object):
         cdef PetscBool uCl = useClosure
         CHKERR( DMSetAdjacency(self.dm, f, uC, uCl) )
 
-    def getFieldAdjacency(self, field: int):
+    def getFieldAdjacency(self, field: int) -> tuple[bool, bool]:
         """Return the flags for determining variable influence.
 
         Not Collective.
