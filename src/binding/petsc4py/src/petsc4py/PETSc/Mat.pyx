@@ -2808,12 +2808,30 @@ cdef class Mat(Object):
 
     # Nest
 
-    def getNestSize(self):
+    def getNestSize(self) -> tuple[int, int]:
+        """Return the number of rows and columns of the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNestGetSize
+
+        """
         cdef PetscInt nrows, ncols
         CHKERR( MatNestGetSize(self.mat, &nrows, &ncols) )
         return toInt(nrows), toInt(ncols)
 
-    def getNestISs(self):
+    def getNestISs(self) -> tuple[list[IS], list[IS]]:
+        """Return the `IS` sets partitioning the row and column spaces.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNestGetISs
+
+        """
         cdef PetscInt i, nrows =0, ncols = 0
         cdef PetscIS *cisrows = NULL
         cdef PetscIS *ciscols = NULL
@@ -2825,7 +2843,16 @@ cdef class Mat(Object):
         cdef object isetscols = [ref_IS(ciscols[i]) for i from 0 <= i < ncols]
         return isetsrows, isetscols
 
-    def getNestLocalISs(self):
+    def getNestLocalISs(self) -> tuple[list[IS], list[IS]]:
+        """Return the local `IS` sets partitioning the row and column spaces.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNestGetLocalISs
+
+        """
         cdef PetscInt i, nrows =0, ncols = 0
         cdef PetscIS *cisrows = NULL
         cdef PetscIS *ciscols = NULL
@@ -2837,7 +2864,23 @@ cdef class Mat(Object):
         cdef object isetscols = [ref_IS(ciscols[i]) for i from 0 <= i < ncols]
         return isetsrows, isetscols
 
-    def getNestSubMatrix(self, i, j):
+    def getNestSubMatrix(self, i: int, j: int) -> Mat:
+        """Return a single submatrix.
+
+        Not collective.
+
+        Parameters
+        ----------
+        i
+            The first index of the matrix within the nesting.
+        j
+            The second index of the matrix within the nesting.
+
+        See Also
+        --------
+        petsc.MatNestGetSubMat
+
+        """
         cdef Mat submat = Mat()
         cdef PetscInt idxm = asInt(i)
         cdef PetscInt jdxm = asInt(j)
