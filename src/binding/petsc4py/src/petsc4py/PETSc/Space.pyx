@@ -12,7 +12,7 @@ class SpaceType(object):
 # --------------------------------------------------------------------
 
 cdef class Space(Object):
-    """A PETSc object that manages a linear space."""
+    """Linear space object."""
     Type = SpaceType
 
     def __cinit__(self):
