@@ -125,7 +125,7 @@ cdef class FE(Object):
         isSimplex
             Flag for simplex reference cell, otherwise it's a tensor product.
         k
-            The degree k of the space.
+            The degree of the space.
         qorder
             The quadrature order or `DETERMINE` to use `Space` polynomial
             degree.
