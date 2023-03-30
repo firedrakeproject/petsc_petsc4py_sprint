@@ -736,7 +736,7 @@ cdef class DualSpace(Object):
         return bytes2str(cval)
 
     def setType(self, dualspace_type: Type | str) -> Self:
-        """Build a particular `DualSpace` based on its `Type`.
+        """Build a particular type of dual space.
 
         Collective.
 
