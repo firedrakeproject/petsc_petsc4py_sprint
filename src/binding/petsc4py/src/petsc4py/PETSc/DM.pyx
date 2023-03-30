@@ -84,7 +84,7 @@ cdef class DM(Object):
         CHKERR( DMView(self.dm, vwr) )
 
     def load(self, Viewer viewer) -> Self:
-        """Return `DM` stored in binary.
+        """Return a `DM` stored in binary.
 
         Collective.
 
@@ -107,7 +107,7 @@ cdef class DM(Object):
         return self
 
     def destroy(self) -> Self:
-        """Return the object destroyed.
+        """Destroy the object.
 
         Collective.
 
@@ -141,7 +141,7 @@ cdef class DM(Object):
         return self
 
     def clone(self) -> DM:
-        """Return `DM` cloned.
+        """Return the cloned `DM` .
 
         Collective.
         
@@ -263,8 +263,7 @@ cdef class DM(Object):
         Parameters
         ----------
         prefix : str
-            The prefix to prepend by searching through
-            the options database.
+            The prefix to prepend by searching through the options database.
 
         See Also
         --------
@@ -464,7 +463,7 @@ cdef class DM(Object):
     #
 
     def createSubDM(self, fields: Sequence[int]):
-        """Return an `IS` and `DM` encapsuling a subproblem.
+        """Return `IS` and `DM` encapsuling a subproblem.
        
         Not collective.
 
@@ -664,7 +663,7 @@ cdef class DM(Object):
         CHKERR( DMClearDS(self.dm) )
 
     def getDS(self) -> DS:
-        """Return the default `DS`.
+        """Return default `DS`.
 
         Not Collective.
 
@@ -679,7 +678,7 @@ cdef class DM(Object):
         return ds
 
     def copyDS(self, DM dm) -> None:
-        """Copy the discrete systems.
+        """Copy discrete systems.
 
         Collective.
 
@@ -691,7 +690,7 @@ cdef class DM(Object):
         CHKERR( DMCopyDS(self.dm, dm.dm) )
 
     def copyDisc(self, DM dm) -> None:
-        """Copy the fields and discrete systems.
+        """Copy fields and discrete systems.
 
         Collective.
 
@@ -719,7 +718,7 @@ cdef class DM(Object):
         return toInt(bs)
 
     def setVecType(self, vec_type: str) -> None:
-        """Sets the type of vector.
+        """Set the type of vector.
 
         Logically Collective.
 
@@ -733,7 +732,7 @@ cdef class DM(Object):
         CHKERR( DMSetVecType(self.dm, vtype) )
 
     def createGlobalVec(self) -> Vec:
-        """Create a global vector.
+        """Return a global vector.
 
         Collective.
 
@@ -747,7 +746,7 @@ cdef class DM(Object):
         return vg
 
     def createLocalVec(self) -> Vec:
-        """Creates a local vector.
+        """Return a local vector.
 
         Not Collective.
 
@@ -859,7 +858,7 @@ cdef class DM(Object):
         CHKERR( DMLocalToLocalEnd  (self.dm, vl.vec, im, vlg.vec) )
 
     def getLGMap(self) -> LGMap:
-        """Return the local to global mapping.
+        """Return local to global mapping.
 
         Collective.
 
@@ -1008,6 +1007,10 @@ cdef class DM(Object):
 
         Collective.
 
+        Notes
+        -----
+        Used if the mesh is periodic.
+
         See Also
         --------
         petsc.DMLocalizeCoordinates
@@ -1021,9 +1024,18 @@ cdef class DM(Object):
         
         Logically Collective.
 
+        Parameters
+        ----------
+        str
+            The matrix type.
+
+        Notes
+        -----
+        The option ``-dm_mat_type`` is used to set the matrix type.
+
         See Also
         --------
-        petsc.DMSetMatType
+        petsc_options, petsc.DMSetMatType
         
         """
         cdef PetscMatType mtype = NULL
