@@ -1472,7 +1472,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.create, DM.setAdjacency, DMPlex.getOverlap, petsc.DMPlexDistribute
+        DM, DMPlex, DMPlex.create, DM.setAdjacency, petsc.DMPlexDistribute
 
         """
         cdef PetscDM dmParallel = NULL
@@ -1507,7 +1507,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, SF, DMPlex.create, DM.setAdjacency, DMPlex.distribute, DMPlex.createOverlapLabel, DMPlex.getOverlap, petsc_options, petsc.DMPlexDistributeOverlap
+        DM, DMPlex, SF, DMPlex.create, DM.setAdjacency, DMPlex.distribute, DMPlex.createOverlapLabel, petsc_options, petsc.DMPlexDistributeOverlap
 
         """
         cdef PetscInt coverlap = asInt(overlap)
@@ -1525,7 +1525,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.distribute, DMPlex.getOverlap, DMPlex.isInterpolated, petsc.DMPlexIsDistributed
+        DM, DMPlex, DMPlex.distribute, DMPlex.isInterpolated, petsc.DMPlexIsDistributed
 
         """
         cdef PetscBool flag = PETSC_FALSE
