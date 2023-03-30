@@ -494,17 +494,13 @@ cdef class DM(Object):
 
     #
 
-    def setAuxiliaryVec(self, Vec aux, label=None, value=0, part=0) -> None:
+    def setAuxiliaryVec(self, Vec aux, label: DMLabel | None=None, value=0, part=0) -> None:
         """Set an auxiliary vector for a specific region.
 
         Not Collective.
 
         Parameters
         ----------
-        aux : Vec
-            This variable holds the auxiliary field data.
-        label : str, optional
-            Vector label indicating the region.
         value : int, optional
             Indicate the region.
         part : int, optional
@@ -524,17 +520,13 @@ cdef class DM(Object):
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
     
-    def getAuxiliaryVec(self, label=None, value=0, part=0) -> Vec:
+    def getAuxiliaryVec(self, label: DMLabel | None=None, value=0, part=0) -> Vec:
         """Return an auxiliary vector for a specific region.
 
         Not Collective
 
         Parameters
         ----------
-        aux : Vec
-            This variable holds the auxiliary field data.
-        label : str, optional
-            Vector label indicating the region.
         value : int, optional
             Indicate the region.
         part : int, optional
@@ -556,16 +548,43 @@ cdef class DM(Object):
         CHKERR( DMGetAuxiliaryVec(self.dm, clbl, cvalue, cpart, &aux.vec) )
         return aux
 
-    def setNumFields(self, numFields):
+    def setNumFields(self, numFields: int) -> None:
+        """Set the number of fields in the `DM`.
+
+        Logically Collective.
+        
+        See Also
+        --------
+        petsc.DMSetNumFields
+
+        """
         cdef PetscInt cnum = asInt(numFields)
         CHKERR( DMSetNumFields(self.dm, cnum) )
 
-    def getNumFields(self):
+    def getNumFields(self) -> int:
+        """Return the number of fields in the `DM`.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.DMGetNumFields
+
+        """
         cdef PetscInt cnum = 0
         CHKERR( DMGetNumFields(self.dm, &cnum) )
         return toInt(cnum)
 
     def setField(self, index, Object field, label=None) -> None:
+        """Set the discretization object.
+
+        Logically Collective.
+
+        See Also
+        --------
+        petsc.DMSetField
+
+        """
         cdef PetscInt     cidx = asInt(index)
         cdef PetscObject  cobj = field.obj[0]
         cdef PetscDMLabel clbl = NULL
