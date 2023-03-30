@@ -64,6 +64,8 @@ cdef TAOVariableBoundsFunction
 cdef TAOConstraintsFunction
 
 # --- MPI ---
+
+cdef Intracomm
 cdef Datatype
 cdef Op
 
