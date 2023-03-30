@@ -1446,40 +1446,145 @@ cdef class KSP(Object):
 
     # --- initial guess ---
 
-    def setInitialGuessNonzero(self, bint flag):
+    def setInitialGuessNonzero(self, bint flag) -> None:
+        """Tell the iterative solver that the initial guess is nonzero
+
+        Otherwise KSP assumes the initial guess is to be zero (and thus
+        zeros it out before solving).
+
+        Logically collective.
+
+        Parameters
+        ----------
+        flag
+            ``True`` indicates the guess is non-zero, ``False``
+            indicates the guess is zero.
+
+        See also
+        --------
+        petsc.KSPSetInitialGuessNonzero
+
+        """
         cdef PetscBool guess_nonzero = PETSC_FALSE
         if flag: guess_nonzero = PETSC_TRUE
         CHKERR( KSPSetInitialGuessNonzero(self.ksp, guess_nonzero) )
 
-    def getInitialGuessNonzero(self):
+    def getInitialGuessNonzero(self) -> bool:
+        """Determine whether the KSP solver uses a zero initial guess.
+
+        Not collective.
+
+        See also
+        --------
+        petsc.KSPGetInitialGuessNonzero
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( KSPGetInitialGuessNonzero(self.ksp, &flag) )
         return toBool(flag)
 
-    def setInitialGuessKnoll(self, bint flag):
+    def setInitialGuessKnoll(self, bint flag) -> None:
+        """Tell solver to use `PC.apply` to compute the initial guess.
+
+        This is the Knoll trick.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        flag
+            ``True`` uses Knoll trick.
+
+        See also
+        --------
+        petsc.KSPSetInitialGuessKnoll
+
+        """
         cdef PetscBool guess_knoll = PETSC_FALSE
         if flag: guess_knoll = PETSC_TRUE
         CHKERR( KSPSetInitialGuessKnoll(self.ksp, guess_knoll) )
 
-    def getInitialGuessKnoll(self):
+    def getInitialGuessKnoll(self) -> bool:
+        """Determine whether the KSP solver is using the Knoll trick.
+
+        This uses the Knoll trick; using `PC.apply` to compute the
+        initial guess.
+
+        See also
+        --------
+        petsc.KSPGetInitialGuessKnoll
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( KSPGetInitialGuessKnoll(self.ksp, &flag) )
         return toBool(flag)
 
     def setUseFischerGuess(self, model, size):
+        """Use the Paul Fischer algorithm to compute initial guesses.
+
+        Use the Paul Fischer algorithm or its variants to compute
+        initial guesses for a set of solves with related right hand
+        sides.
+
+        Parameters
+        ----------
+        model
+            Use model ``1``, model ``2``, model ``3``, any other number
+            to turn it off.
+        size
+            Size of subspace used to generate initial guess.
+
+        See also
+        --------
+        petsc.KSPSetUseFischerGuess
+
+        """
         cdef PetscInt ival1 = asInt(model)
         cdef PetscInt ival2 = asInt(size)
         CHKERR( KSPSetUseFischerGuess(self.ksp, ival1, ival2) )
 
     # --- solving ---
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Set up internal data structures for an iterative solver.
+
+        Collective.
+
+        See also
+        --------
+        petsc.KSPSetUp
+
+        """
         CHKERR( KSPSetUp(self.ksp) )
 
-    def reset(self):
+    def reset(self) -> None:
+        """Resets a KSP context.
+
+        Resets a KSP context to the kspsetupcalled = 0 state and
+        removes any allocated Vecs and Mats.
+
+        Collective.
+
+        See also
+        --------
+        petsc.KSPReset
+
+        """
         CHKERR( KSPReset(self.ksp) )
 
-    def setUpOnBlocks(self):
+    def setUpOnBlocks(self) -> None:
+        """Set up the preconditioner for each block in a block method.
+
+        Methods include: block Jacobi, block Gauss-Seidel, and
+        overlapping Schwarz methods.
+
+        Collective.
+
+        See also
+        --------
+        petsc.KSPSetUpOnBlocks
+
+        """
         CHKERR( KSPSetUpOnBlocks(self.ksp) )
 
     def solve(self, Vec b, Vec x) -> None:
@@ -1565,13 +1670,65 @@ cdef class KSP(Object):
         if x is not None: x_vec = x.vec
         CHKERR( KSPSolve(self.ksp, b_vec, x_vec) )
 
-    def solveTranspose(self, Vec b, Vec x):
+    def solveTranspose(self, Vec b, Vec x) -> None:
+        """Solve the transpose of a linear system.
+
+        Collective.
+
+        Parameters
+        ----------
+        b
+            Right hand side vector
+        x
+            Solution vector
+
+        Notes
+        -----
+        For complex numbers this solve the non-Hermitian transpose
+        system.
+
+        See also
+        --------
+        solve, petsc.KSPSolveTranspose
+
+        """
         CHKERR( KSPSolveTranspose(self.ksp, b.vec, x.vec) )
 
-    def matSolve(self, Mat B, Mat X):
+    def matSolve(self, Mat B, Mat X) -> None:
+        """Solve a linear system with multiple right-hand sides.
+
+        These are stored as a `Mat.Type.MATDENSE`. Unlike `solve`,
+        ``B`` and ``X`` must be different matrices.
+
+        Parameters
+        ----------
+        B
+            Block of right-hand sides
+        X
+            Block of solutions
+
+        See also
+        --------
+        solve, petsc.KSPMatSolve
+
+        """
         CHKERR( KSPMatSolve(self.ksp, B.mat, X.mat) )
 
-    def matSolveTranspose(self, Mat B, Mat X):
+    def matSolveTranspose(self, Mat B, Mat X) -> None:
+        """Solve the transpose of a linear system with multiple RHS.
+
+        Parameters
+        ----------
+        B
+            Block of right-hand sides
+        X
+            Block of solutions
+
+        See also
+        --------
+        solveTranspose, petsc.KSPMatSolve
+
+        """
         CHKERR( KSPMatSolveTranspose(self.ksp, B.mat, X.mat) )
 
     def setIterationNumber(self, its):
