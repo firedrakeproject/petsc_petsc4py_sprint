@@ -10,14 +10,14 @@ cdef class DMInterpolation:
         self.destroy()
 
     def create(self, comm=None):
-        """TODO.
+        """Creates a DMInterpolationInfo context.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+comm - the communicator
+
 
         See also
         --------
@@ -30,9 +30,9 @@ cdef class DMInterpolation:
         self.dminterp = new
 
     def destroy(self):
-        """TODO.
+        """Destroys a DMInterpolationInfo context.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -47,9 +47,15 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationDestroy(&self.dminterp))
 
     def evaluate(self, DM dm, Vec x):
-        """TODO.
+        """Using the input from dm and x, calculates interpolated field values at the interpolation points.
 
-        Not collective.
+ctx - The DMInterpolationInfo context
+dm - The DM
+x - The local vector containing the field to be interpolated
+Output Parameter
+v - The vector containing the interpolated values
+
+A suitable v can be obtained using DMInterpolationGetVector().
 
         Parameters
         ----------
@@ -66,9 +72,16 @@ cdef class DMInterpolation:
         return v
 
     def getCoordinates(self):
-        """TODO.
+        """Gets a Vec with the coordinates of each interpolation point
 
-        Not collective.
+Output Parameter
+coordinates - the coordinates of interpolation points
+Note
+The local vector entries correspond to interpolation points lying on this process, according to the associated DM. This is a borrowed vector that the user should not destroy.
+
+
+
+        Collective.
 
         Parameters
         ----------
@@ -85,14 +98,16 @@ cdef class DMInterpolation:
         return coords
 
     def getDim(self):
-        """TODO.
+        """Gets the spatial dimension for the interpolation context
+
+.
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+Input Parameter
+ctx - the context
+Output Parameter
+dim - the spatial dimension
 
         See also
         --------
@@ -104,14 +119,16 @@ cdef class DMInterpolation:
         return toInt(cdim)
 
     def getDof(self):
-        """TODO.
+        """Gets the number of fields interpolated at a point for the interpolation context
+
+.
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+Input Parameter
+ctx - the context
+Output Parameter
+dof - the number of fields
 
         See also
         --------
@@ -123,14 +140,15 @@ cdef class DMInterpolation:
         return toInt(cdof)
 
     def setDim(self, dim):
-        """TODO.
+        """Sets the spatial dimension for the interpolation context
+
+.
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+Input Parameters
+ctx - the context
+dim - the spatial dimension
 
         See also
         --------
@@ -141,14 +159,16 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationSetDim(self.dminterp, cdim) )
 
     def setDof(self, dof):
-        """TODO.
+        """Sets the number of fields interpolated at a point for the interpolation context
+
+.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+ctx - the context
+dof - the number of fields
 
         See also
         --------
@@ -159,14 +179,18 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationSetDof(self.dminterp, cdof) )
 
     def setUp(self, DM dm, redundantPoints=False, ignoreOutsideDomain=False):
-        """TODO.
+        """Compute spatial indices for point location during interpolation
 
-        Not collective.
+.
+
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+ctx - the context
+dm - the DM for the function space used for interpolation
+redundantPoints - If PETSC_TRUE, all processes are passing in the same array of points. Otherwise, points need to be communicated among processes.
+ignoreOutsideDomain - If PETSC_TRUE, ignore points outside the domain, otherwise return an error
 
         See also
         --------
@@ -178,14 +202,18 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationSetUp(self.dminterp, dm.dm, credundantPoints, cignoreOutsideDomain) )
 
     def getVector(self):
-        """TODO.
+        """Gets a Vec which can hold all the interpolated field values
 
-        Not collective.
+.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
+
+Input Parameter
+ctx - the context
+Output Parameter
+v - a vector capable of holding the interpolated field values
+Note
+This vector should be returned using DMInterpolationRestoreVector().
 
         See also
         --------
@@ -197,9 +225,15 @@ cdef class DMInterpolation:
         return vec
 
     def restoreVector(self, Vec vec):
-        """TODO.
+        """Returns a Vec which can hold all the interpolated field values
 
-        Not collective.
+.
+
+        Collective.
+
+Input Parameters
+ctx - the context
+v - a vector capable of holding the interpolated field values
 
         Parameters
         ----------
