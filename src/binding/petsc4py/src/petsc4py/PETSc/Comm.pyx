@@ -58,7 +58,7 @@ cdef class Comm:
     def destroy(self) -> None:
         """Destroy the communicator.
 
-        Collective
+        Collective.
 
         See Also
         --------
