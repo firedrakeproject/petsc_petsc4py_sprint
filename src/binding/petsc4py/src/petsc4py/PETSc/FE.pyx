@@ -455,10 +455,10 @@ cdef class FE(Object):
 
         Parameters
         ----------
-        obj
-            Optional object that provides the options prefix.
         name
             Command line option name.
+        obj
+            Optional object that provides the options prefix.
 
         See also
         --------
