@@ -3102,56 +3102,325 @@ cdef class Vec(Object):
         PetscINCREF(cmap.obj)
         return cmap
 
-    def setValueLocal(self, index, value, addv=None):
+    def setValueLocal(
+        self,
+        index: int,
+        value: ScalarType,
+        addv: InsertMode | int | None = None,
+    ):
+        """Insert or add a single value in the vector using a local numbering.
+
+        Not collective.
+
+        Parameters
+        ----------
+        index
+            Location to write to.
+        value
+            Value to insert at ``index``.
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entry with new
+              value (default).
+
+            - `InsertMode.ADD_VALUES` Add new value to existing one.
+
+        Notes
+        -----
+        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        must be called after all calls of this method are completed.
+
+        Multiple calls to `Vec.setValueLocal` cannot be made with different
+        values for ``addv`` without intermediate calls to `Vec.assemblyBegin`
+        and `Vec.assemblyEnd`.
+
+        See Also
+        --------
+        Vec.setValuesLocal, petsc.VecSetValuesLocal
+
+        """
         cdef PetscInt    ival = asInt(index)
         cdef PetscScalar sval = asScalar(value)
         cdef PetscInsertMode caddv = insertmode(addv)
         CHKERR( VecSetValuesLocal(self.vec, 1, &ival, &sval, caddv) )
 
-    def setValuesLocal(self, indices, values, addv=None):
+    def setValuesLocal(
+        self,
+        indices: Sequence[int],
+        values: Sequence[ScalarType],
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Insert or add multiple values in the vector with a local numbering.
+
+        Not collective.
+
+        Parameters
+        ----------
+        indices
+            Locations to write to. Any negative indices are ignored.
+        values
+            Values to insert at ``indices``.
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+        Notes
+        -----
+        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        must be called after all calls of this method are completed.
+
+        Multiple calls to `Vec.setValuesLocal` cannot be made with different
+        values for ``addv`` without intermediate calls to `Vec.assemblyBegin`
+        and `Vec.assemblyEnd`.
+
+        See Also
+        --------
+        Vec.setValueLocal, petsc.VecSetValuesLocal
+
+        """
         vecsetvalues(self.vec, indices, values, addv, 0, 1)
 
-    def setValuesBlockedLocal(self, indices, values, addv=None):
+    def setValuesBlockedLocal(
+        self,
+        indices: Sequence[int],
+        values: Sequence[ScalarType],
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Insert or add blocks of values in the vector with a local numbering.
+
+        Equivalent to ``x[bs*indices[i]+j] = y[bs*i+j]`` for
+        ``0 <= i < len(indices)``, ``0 <= j < bs`` and ``bs`` `Vec.block_size`.
+
+        Not collective.
+
+        Parameters
+        ----------
+        indices
+            Block indices to write to. Any negative indices are ignored.
+        values
+            Values to insert at ``indices``. Should have length
+            ``len(indices) * vec.block_size``.
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+        Notes
+        -----
+        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        must be called after all calls of this method are completed.
+
+        Multiple calls to `Vec.setValuesBlockedLocal` cannot be made with
+        different values for ``addv`` without intermediate calls to
+        `Vec.assemblyBegin` and `Vec.assemblyEnd`.
+
+        See Also
+        --------
+        Vec.setValuesBlocked, Vec.setValuesLocal
+        petsc.VecSetValuesBlockedLocal
+
+        """
         vecsetvalues(self.vec, indices, values, addv, 1, 1)
 
-    def assemblyBegin(self):
+    def assemblyBegin(self) -> None:
+        """Begin assembling the vector.
+
+        This routine should be called after completing all calls to
+        `Vec.setValues`.
+
+        Collective.
+
+        See Also
+        --------
+        Vec.assemblyEnd, Vec.setValues, petsc.VecAssemblyBegin
+
+        """
         CHKERR( VecAssemblyBegin(self.vec) )
 
-    def assemblyEnd(self):
+    # FIXME I don't understand what is happening re viewing the vector
+    # post assembly
+    def assemblyEnd(self) -> None:
+        """Finish assembling the vector.
+
+        This routine should be called after `Vec.assemblyBegin`.
+
+        Collective.
+
+        Notes
+        -----
+        The vector can be viewed after assembly. See `petsc_options` and
+        `petsc.VecAssemblyEnd` for information on the right keys for the
+        options database.
+
+        See Also
+        --------
+        Vec.assemblyBegin, petsc.VecAssemblyEnd
+
+        """
         CHKERR( VecAssemblyEnd(self.vec) )
 
-    def assemble(self):
+    def assemble(self) -> None:
+        """Assemble the vector in one step.
+
+        To interleave communication and computation `Vec.assemblyBegin` and
+        `Vec.assemblyEnd` should be used instead.
+
+        Collective.
+
+        See Also
+        --------
+        Vec.assemblyBegin, Vec.assemblyEnd
+
+        """
         CHKERR( VecAssemblyBegin(self.vec) )
         CHKERR( VecAssemblyEnd(self.vec) )
 
     # --- methods for strided vectors ---
 
-    def strideScale(self, field, alpha):
+    def strideScale(self, field: int, alpha: ScalarType) -> None:
+        """Scale a component of the vector.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        field
+            Component index. Must be between ``0`` and `Vec.block_size`.
+        alpha
+            Factor to multiple the component entries by.
+
+        See Also
+        --------
+        Vec.strideSum, Vec.strideMin, Vec.strideMax, petsc.VecStrideScale
+
+        """
         cdef PetscInt    ival = asInt(field)
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( VecStrideScale(self.vec, ival, sval) )
 
-    def strideSum(self, field):
+    def strideSum(self, field: int) -> ScalarType:
+        """Sum subvector entries.
+
+        Equivalent to ``sum(x[field], x[field+bs], x[field+2*bs], ...)`` where
+        ``bs`` is `Vec.block_size`.
+
+        Collective.
+
+        Parameters
+        ----------
+        field
+            Component index. Must be between ``0`` and `Vec.block_size`.
+
+        See Also
+        --------
+        Vec.strideScale, Vec.strideMin, Vec.strideMax, petsc.VecStrideSum
+
+        """
         cdef PetscInt    ival = asInt(field)
         cdef PetscScalar sval = 0
         CHKERR( VecStrideSum(self.vec, ival, &sval) )
         return toScalar(sval)
 
-    def strideMin(self, field):
+    def strideMin(self, field: int) -> tuple[int, float]:
+        """Return the minimum of entries in a subvector.
+
+        Equivalent to ``min(x[field], x[field+bs], x[field+2*bs], ...)`` where
+        ``bs`` is `Vec.block_size`.
+
+        Collective.
+
+        Parameters
+        ----------
+        field
+            Component index. Must be between ``0`` and `Vec.block_size`.
+
+        Returns
+        -------
+        int
+            Location of minimum.
+        float
+            Minimum value.
+
+        See Also
+        --------
+        Vec.strideScale, Vec.strideSum, Vec.strideMax, petsc.VecStrideMin
+
+        """
         cdef PetscInt  ival1 = asInt(field)
         cdef PetscInt  ival2 = 0
         cdef PetscReal rval  = 0
         CHKERR( VecStrideMin(self.vec, ival1, &ival2, &rval) )
         return (toInt(ival2), toReal(rval))
 
-    def strideMax(self, field):
+    def strideMax(self, field: int) -> tuple[int, float]:
+        """Return the maximum of entries in a subvector.
+
+        Equivalent to ``max(x[field], x[field+bs], x[field+2*bs], ...)`` where
+        ``bs`` is `Vec.block_size`.
+
+        Collective.
+
+        Parameters
+        ----------
+        field
+            Component index. Must be between ``0`` and `Vec.block_size`.
+
+        Returns
+        -------
+        int
+            Location of maximum.
+        float
+            Maximum value.
+
+        See Also
+        --------
+        Vec.strideScale, Vec.strideSum, Vec.strideMin, petsc.VecStrideMax
+
+        """
         cdef PetscInt  ival1 = asInt(field)
         cdef PetscInt  ival2 = 0
         cdef PetscReal rval  = 0
         CHKERR( VecStrideMax(self.vec, ival1, &ival2, &rval) )
         return (toInt(ival2), toReal(rval))
 
-    def strideNorm(self, field, norm_type=None):
+    def strideNorm(
+        self,
+        field: int,
+        norm_type: NormType | int | None = None,
+    ) -> float | tuple[float, float]:
+        """Return the norm of entries in a subvector.
+
+        Equivalent to ``norm(x[field], x[field+bs], x[field+2*bs], ...)`` where
+        ``bs`` is `Vec.block_size`.
+
+        Collective.
+
+        Parameters
+        ----------
+        field
+            Component index. Must be between ``0`` and `Vec.block_size`.
+        norm_type
+            The norm type. See `Vec.norm` for more information.
+
+        Returns
+        -------
+        float | tuple[float, float]
+            The computed norm. A 2-tuple is returned if `NormType.NORM_1_AND_2`
+            is specified.
+
+        See Also
+        --------
+        Vec.strideScale, Vec.strideSum, petsc.VecStrideNorm
+
+        """
         cdef PetscInt ival = asInt(field)
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2
         cdef PetscNormType ntype = PETSC_NORM_2
@@ -3161,12 +3430,92 @@ cdef class Vec(Object):
         if ntype != norm_1_2: return toReal(rval[0])
         else: return (toReal(rval[0]), toReal(rval[1]))
 
-    def strideScatter(self, field, Vec vec, addv=None):
+    def strideScatter(
+        self,
+        field: int,
+        Vec vec,
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Scatter entries into a component of another vector.
+
+        The current vector is expected to be single-component
+        (`Vec.block_size` of ``1``) and the target vector is expected to be
+        multi-component.
+
+        Collective.
+
+        Parameters
+        ----------
+        field
+            Component index of ``vec``. Must be between ``0`` and
+            `Vec.block_size`.
+        vec
+            Multi-component vector to be scattered into. 
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+            - `InsertMode.MAX_VALUES` Keep the maximum value in for each
+              entry.
+
+        Notes
+        -----
+        The parallel layouts of the vectors must match.
+
+        See Also
+        --------
+        Vec.strideGather, petsc.VecStrideScatter
+
+        """
         cdef PetscInt ival = asInt(field)
         cdef PetscInsertMode caddv = insertmode(addv)
         CHKERR( VecStrideScatter(self.vec, ival, vec.vec, caddv) )
 
-    def strideGather(self, field, Vec vec, addv=None):
+    def strideGather(
+        self,
+        field: int,
+        Vec vec,
+        addv: InsertMode | int | None = None,
+    ) -> None:
+        """Insert component values into a single-component vector.
+
+        The current vector is expected to be multi-component (`Vec.block_size`
+        greater than ``1``) and the target vector is expected to be
+        single-component.
+
+        Collective.
+
+        Parameters
+        ----------
+        field
+            Component index of the current vector. Must be between ``0`` and
+            `Vec.block_size`.
+        vec
+            Single-component vector to be inserted into. 
+        addv
+            Insertion mode. Possible values are:
+
+            - `InsertMode.INSERT_VALUES` Replace existing entries with new
+              values (default).
+
+            - `InsertMode.ADD_VALUES` Add new values to existing ones.
+
+            - `InsertMode.MAX_VALUES` Keep the maximum value in for each
+              entry.
+
+        Notes
+        -----
+        The parallel layouts of the vectors must match.
+
+        See Also
+        --------
+        Vec.strideScatter, petsc.VecStrideScatter
+
+        """
         cdef PetscInt ival = asInt(field)
         cdef PetscInsertMode caddv = insertmode(addv)
         CHKERR( VecStrideGather(self.vec, ival, vec.vec, caddv) )
