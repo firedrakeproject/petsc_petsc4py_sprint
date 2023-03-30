@@ -47,7 +47,7 @@ cdef class DMLabel(Object):
         name
             The label name.
         comm
-            The MPI communicator, usually `PETSC_COMM_SELF`.
+            The MPI communicator, usually `COMM_SELF`.
 
         See also
         --------
@@ -284,7 +284,7 @@ cdef class DMLabel(Object):
         return toInt(numValues)
 
     def getValueIS(self) -> IS:
-        """Return an `IS` of all values that the `DMlabel` takes.
+        """Return an `IS` of all values that the `DMLabel` takes.
 
         Not collective.
 
@@ -487,7 +487,7 @@ cdef class DMLabel(Object):
     def hasPoint(self, point: int) -> bool:
         """Determine whether a label contains a point.
 
-        The user must call `CreateIndex` before this function.
+        The user must call `createIndex` before this function.
 
         Not collective.
 
@@ -617,7 +617,7 @@ cdef class DMLabel(Object):
         return section, iset
 
     def getNonEmptyStratumValuesIS(self) -> IS:
-        """Return an `IS` of all values that the `DMlabel` takes.
+        """Return an `IS` of all values that the `DMLabel` takes.
 
         Not collective.
 
