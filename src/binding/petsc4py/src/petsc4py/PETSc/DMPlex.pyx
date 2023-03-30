@@ -1543,7 +1543,7 @@ cdef class DMPlex(DM):
         return toBool(flag)
 
     def distributeGetDefault(self) -> bool:
-        """Get flag indicating whether the `DM` should be distributed by default.
+        """Return a flag indicating whether the `DM` should be distributed by default.
 
         Not collective.
 
