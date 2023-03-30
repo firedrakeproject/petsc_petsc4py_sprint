@@ -273,7 +273,7 @@ cdef class DMStag(DM):
 
         See also
         --------
-        petsc.TODO
+        ``TODO``
 
         """
         return self.getDimension()
@@ -765,10 +765,6 @@ cdef class DMStag(DM):
         TODO
             TODO.
 
-        See also
-        --------
-        petsc.TODO
-
         """
         raise NotImplementedError('getVecArray for DMStag not yet implemented in petsc4py')
 
@@ -782,65 +778,61 @@ cdef class DMStag(DM):
         TODO
             TODO.
 
-        See also
-        --------
-        petsc.TODO
-
         """
         raise NotImplementedError('get1dCoordinatecArrays for DMStag not yet implemented in petsc4py')
 
     property dim:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getDim()
 
     property dofs:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getDof()
 
     property entries_per_element:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getEntriesPerElement()
 
     property global_sizes:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getGlobalSizes()
 
     property local_sizes:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getLocalSizes()
 
     property proc_sizes:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getProcSizes()
 
     property boundary_types:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getBoundaryTypes()
 
     property stencil_type:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getStencilType()
 
     property stencil_width:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getStencilWidth()
 
     property corners:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getCorners()
 
     property ghost_corners:
-        """TODO."""
+        # TODO: docstring
         def __get__(self):
             return self.getGhostCorners()
 
