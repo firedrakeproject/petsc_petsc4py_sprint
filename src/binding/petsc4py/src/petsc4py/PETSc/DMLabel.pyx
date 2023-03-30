@@ -38,7 +38,7 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelView(self.dmlabel, vwr) )
 
     def create(self, name: str, comm: Comm | None = None) -> Self:
-        """Create a DMLabel object, which is a multimap.
+        """Create a `DMLabel` object, which is a multimap.
 
         Collective.
 
@@ -113,8 +113,8 @@ cdef class DMLabel(Object):
         """Set the value a label assigns to a point.
 
         If the value is the same as the label's default value (which is
-        initially -1, and can be changed with `setDefaultValue`), this function
-        will do nothing.
+        initially ``-1``, and can be changed with `setDefaultValue`), this
+        function will do nothing.
 
         Not collective.
 
@@ -138,7 +138,8 @@ cdef class DMLabel(Object):
         """Return the value a label assigns to a point.
 
         If no value was assigned, a default value will be returned
-        The default value, initially -1, can be changed with `setDefaultValue`.
+        The default value, initially ``-1``, can be changed with
+        `setDefaultValue`.
 
         Not collective.
 
@@ -161,7 +162,7 @@ cdef class DMLabel(Object):
         """Return the default value returned by `getValue`.
 
         The default value is returned if a point has not been explicitly given
-        a value. When a label is created, it is initialized to -1.
+        a value. When a label is created, it is initialized to ``-1``.
 
         Not collective.
 
@@ -178,7 +179,7 @@ cdef class DMLabel(Object):
         """Set the default value returned by `getValue`.
 
         The value is used if a point has not been explicitly given a value.
-        When a label is created, the default value is initialized to -1.
+        When a label is created, the default value is initialized to ``-1``.
 
         Not collective.
 
@@ -485,7 +486,7 @@ cdef class DMLabel(Object):
         return toBool(cexists)
 
     def hasPoint(self, point: int) -> bool:
-        """Determine whether a label contains a point.
+        """Determine whether the label contains a point.
 
         The user must call `createIndex` before this function.
 
@@ -573,7 +574,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelDistribute
+        petsc.DMLabelDistribute, gather
 
         """
         cdef DMLabel new = DMLabel()
@@ -581,7 +582,7 @@ cdef class DMLabel(Object):
         return new
 
     def gather(self, SF sf) -> DMLabel:
-        """Gather all label values from leafs into roots.
+        """Gather all label values from leaves into roots.
 
         This is the inverse operation to `distribute`.
 
@@ -594,7 +595,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelGather
+        petsc.DMLabelGather, distribute
 
         """
         cdef DMLabel new = DMLabel()
