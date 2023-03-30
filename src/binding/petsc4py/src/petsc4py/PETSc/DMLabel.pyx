@@ -1,6 +1,6 @@
 
 cdef class DMLabel(Object):
-    """Object which encapsulates a subset of the mesh from a `DM`."""
+    """A subset of the mesh from a `DM`."""
     def __cinit__(self):
         self.obj = <PetscObject*> &self.dmlabel
         self.dmlabel  = NULL
@@ -167,7 +167,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelGetDefaultValue
+        petsc.DMLabelGetDefaultValue, setDefaultValue
 
         """
         cdef PetscInt cvalue = 0
@@ -189,7 +189,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelSetDefaultValue
+        petsc.DMLabelSetDefaultValue, getDefaultValue
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -217,7 +217,7 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelClearValue(self.dmlabel, cpoint, cvalue) )
 
     def addStratum(self, value: int) -> None:
-        """Adds a new stratum value in a `DMLabel`.
+        """Add a new stratum value in a `DMLabel`.
 
         Parameters
         ----------
@@ -233,7 +233,7 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelAddStratum(self.dmlabel, cvalue) )
 
     def addStrata(self, strata: Sequence[int]) -> None:
-        """Adds new stratum values in a `DMLabel`.
+        """Add new stratum values in a `DMLabel`.
 
         Not collective.
 
@@ -253,14 +253,14 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelAddStrata(self.dmlabel, numStrata, istrata) )
 
     def addStrataIS(self, IS iset) -> None:
-        """Adds new stratum values in a `DMLabel`.
+        """Add new stratum values in a `DMLabel`.
 
         Not collective.
 
         Parameters
         ----------
         iset
-            Index set with stratum values. TODO:?
+            Index set with stratum values.
 
         See also
         --------
@@ -270,7 +270,7 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelAddStrataIS(self.dmlabel, iset.iset) )
 
     def getNumValues(self) -> int:
-        """Get the number of values that the `DMLabel` takes.
+        """Return the number of values that the `DMLabel` takes.
 
         Not collective.
 
@@ -284,7 +284,7 @@ cdef class DMLabel(Object):
         return toInt(numValues)
 
     def getValueIS(self) -> IS:
-        """Get an `IS` of all values that the `DMlabel` takes.
+        """Return an `IS` of all values that the `DMlabel` takes.
 
         Not collective.
 
@@ -361,7 +361,7 @@ cdef class DMLabel(Object):
         return toInt(csize)
 
     def getStratumIS(self, stratum: int) -> IS:
-        """Get an IS with the stratum points.
+        """Return an IS with the stratum points.
 
         Not collective.
 
@@ -485,7 +485,7 @@ cdef class DMLabel(Object):
         return toBool(cexists)
 
     def hasPoint(self, point: int) -> bool:
-        """Determine whether a label assigns a value to a point.
+        """Determine whether a label contains a point.
 
         The user must call `CreateIndex` before this function.
 
@@ -601,7 +601,7 @@ cdef class DMLabel(Object):
         CHKERR( DMLabelGather(self.dmlabel, sf.sf, &new.dmlabel) )
         return new
 
-    def convertToSection(self) -> tuple(Section, IS):
+    def convertToSection(self) -> tuple[Section, IS]:
         """Return a (`Section`, `IS`) tuple that encodes the label.
 
         Not collective.
