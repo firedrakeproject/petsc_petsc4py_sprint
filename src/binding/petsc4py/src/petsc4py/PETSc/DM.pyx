@@ -180,7 +180,7 @@ cdef class DM(Object):
     def getType(self) -> str:
         """Return the `DM` type name.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -194,7 +194,7 @@ cdef class DM(Object):
     def getDimension(self) -> int:
         """Return the topological dimension of the `DM`.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -226,7 +226,7 @@ cdef class DM(Object):
     def getCoordinateDim(self) -> int:
         """Return the dimension of embedding space for coordinates values.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -240,7 +240,7 @@ cdef class DM(Object):
     def setCoordinateDim(self, dim: int) -> None:
         """Set the dimension of embedding space for coordinates values.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -258,7 +258,7 @@ cdef class DM(Object):
     def setOptionsPrefix(self, prefix: str) -> None:
         """Set the prefix prepend to all `DM` options.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -277,7 +277,7 @@ cdef class DM(Object):
     def getOptionsPrefix(self) -> str:
         """Return the prefix prepended to all `DM` options.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -291,7 +291,7 @@ cdef class DM(Object):
     def appendOptionsPrefix(self, prefix: str) -> None:
         """Append an additional string to an already existing prefix.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -373,7 +373,7 @@ cdef class DM(Object):
     def setBasicAdjacency(self, useCone: bool, useClosure: bool) -> None:
         """Set the flags for determining variable influence.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -399,7 +399,7 @@ cdef class DM(Object):
         Returns
         -------
         toBool(uC) : bool
-            This flag provides the variable influence starting with the cone operation if True.
+            This flag provides the variable influence starting with the cone operation if `True`.
         toBool(uCl) : bool
             This flag provides the variable influence using transitive closure.
         
@@ -416,16 +416,16 @@ cdef class DM(Object):
     def setFieldAdjacency(self, field: int, useCone: bool, useClosure: bool) -> None:
         """Set the flags for determining variable influence.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
         field
             The field number.
         useCone
-            If True, the variable influence is set, starting with the cone operation.
+            If `True`, the variable influence is set, starting with the cone operation.
         useClosure
-            If True, the variable influence is set using transitive closure.
+            If `True`, the variable influence is set using transitive closure.
 
         See Also
         --------
@@ -440,7 +440,7 @@ cdef class DM(Object):
     def getFieldAdjacency(self, field: int) -> tuple[bool, bool]:
         """Return the flags for determining variable influence.
 
-        Not Collective.
+        Not collective.
 
         Paramters
         ---------
@@ -450,7 +450,7 @@ cdef class DM(Object):
         Returns
         -------
         toBool(uC) : bool
-            This flag provides the variable influence starting with the cone operation if True.
+            This flag provides the variable influence starting with the cone operation if `True`.
         toBool(uCl) : bool
             This flag provides the variable influence using transitive closure.
         
@@ -497,7 +497,7 @@ cdef class DM(Object):
     def setAuxiliaryVec(self, Vec aux, label: DMLabel | None, value=0, part=0) -> None:
         """Set an auxiliary vector for a specific region.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -557,7 +557,7 @@ cdef class DM(Object):
     def setNumFields(self, numFields: int) -> None:
         """Set the number of fields in the `DM`.
 
-        Logically Collective.
+        Logically collective.
         
         See Also
         --------
@@ -570,7 +570,7 @@ cdef class DM(Object):
     def getNumFields(self) -> int:
         """Return the number of fields in the `DM`.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -584,7 +584,7 @@ cdef class DM(Object):
     def setField(self, index: int, Object field, label=None) -> None:
         """Set the discretization object for a given `DM` field.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -607,7 +607,7 @@ cdef class DM(Object):
     def getField(self, index: int) -> tuple[Object,None]:
         """Return the discretization object for a given `DM` field.
         
-        Not Collective.
+        Not collective.
         
         Parameters
         ----------
@@ -632,7 +632,7 @@ cdef class DM(Object):
     def addField(self, Object field, label=None) -> None:
         """Add a field to a `DM` object.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ---------
@@ -688,7 +688,7 @@ cdef class DM(Object):
     def clearDS(self) -> None:
         """Remove all discrete systems from the `DM`.
 
-        Logically Collective.
+        Logically collective.
 
         See Also
         --------
@@ -700,7 +700,7 @@ cdef class DM(Object):
     def getDS(self) -> DS:
         """Return default `DS`.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -755,7 +755,7 @@ cdef class DM(Object):
     def setVecType(self, vec_type: str) -> None:
         """Set the type of vector.
 
-        Logically Collective.
+        Logically collective.
 
         See Also
         --------
@@ -783,7 +783,7 @@ cdef class DM(Object):
     def createLocalVec(self) -> Vec:
         """Return a local vector.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -812,7 +812,7 @@ cdef class DM(Object):
     def restoreGlobalVec(self, Vec vg) -> None:
         """Restore a global vector.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -825,7 +825,7 @@ cdef class DM(Object):
     def getLocalVec(self) -> Vec:
         """Return a local vector.
 
-        Not Collective
+        Not collective
 
         See Also
         --------
@@ -840,7 +840,7 @@ cdef class DM(Object):
     def restoreLocalVec(self, Vec vl) -> None:
         """Restore a local vector.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -858,7 +858,7 @@ cdef class DM(Object):
     def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
         """Update local vectors from global vector.
 
-        Neighbor-wise Collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -879,7 +879,7 @@ cdef class DM(Object):
     def localToGlobal(self, Vec vl, Vec vg, addv=None) -> None:
         """Update global vectors from local vector.
 
-        Neighbor-wise Collective
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -900,7 +900,7 @@ cdef class DM(Object):
     def localToLocal(self, Vec vl, Vec vlg, addv=None) -> None:
         """Mapp the values from a local vector to another local vector.
 
-        Neighbor-wise Collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -999,7 +999,7 @@ cdef class DM(Object):
     def setCoordinatesLocal(self, Vec c) -> None:
         """Set a local vector with the ghost point holding the coordinates.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1047,7 +1047,7 @@ cdef class DM(Object):
     def getBoundingBox(self) -> tuple[tuple[float, float], ...]:
         """Return the dimension of embedding space for coodinates values.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -1064,7 +1064,7 @@ cdef class DM(Object):
     def getLocalBoundingBox(self) -> tuple[tuple[float, float], ...]:
         """Return the bounding box for the piece of the `DM`.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -1098,7 +1098,7 @@ cdef class DM(Object):
     def setMatType(self, mat_type: str) -> None:
         """Set matrix type to be used by `DM.createMat`.
         
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -1314,7 +1314,7 @@ cdef class DM(Object):
     def getRefineLevel(self) -> int:
         """Return the number of refinements that have generated this `DM` from some initial `DM`.
        
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -1328,7 +1328,7 @@ cdef class DM(Object):
     def setRefineLevel(self, level: int) -> None:
         """Set the number of refinements.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1346,7 +1346,7 @@ cdef class DM(Object):
     def getCoarsenLevel(self) -> int:
         """Return the number of coarsenings.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -1410,7 +1410,7 @@ cdef class DM(Object):
     def getLabel(self, name: str) -> DMLabel:
         """Return the label of a given name.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -1551,7 +1551,7 @@ cdef class DM(Object):
     def getNumLabels(self) -> int:
         """Return the number of labels defined by on the `DM`.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -1565,7 +1565,7 @@ cdef class DM(Object):
     def getLabelName(self, index: int) -> str:
         """Return the name of nth label.
         
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1585,7 +1585,7 @@ cdef class DM(Object):
     def hasLabel(self, name: str) -> bool:
         """Determine whether the `DM` has a label.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1606,7 +1606,7 @@ cdef class DM(Object):
     def createLabel(self, name: str) -> None:
         """Create a label of the given name if it does not already exit in the `DM`.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1625,7 +1625,7 @@ cdef class DM(Object):
     def removeLabel(self, name: str) -> None:
         """Remove and destroy the label by name.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1647,7 +1647,7 @@ cdef class DM(Object):
     def getLabelValue(self, name: str, point: int) -> int:
         """Return the value in `DMLabel` for the given point.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1670,7 +1670,7 @@ cdef class DM(Object):
     def setLabelValue(self, name: str, point: int, value: int) -> None:
         """Set a point to a `DMLabel` with a give value.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1694,7 +1694,7 @@ cdef class DM(Object):
     def clearLabelValue(self, name: str, point: int, value: int) -> None:
         """Remove a point from a `DMLabel` with given value.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1718,7 +1718,7 @@ cdef class DM(Object):
     def getLabelSize(self, name: str) -> int:
         """Return the number of values that the `DMLabel` takes.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1739,7 +1739,7 @@ cdef class DM(Object):
     def getLabelIdIS(self, name: str) -> IS:
         """Return an `IS` of all values that the `DMLabel` takes.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1760,7 +1760,7 @@ cdef class DM(Object):
     def getStratumSize(self, name: str, value: int) -> int:
         """Return the number of points in a label stratum.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1784,7 +1784,7 @@ cdef class DM(Object):
     def getStratumIS(self, name: str, value: int) -> IS:
         """Return the points in a label stratum.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1808,7 +1808,7 @@ cdef class DM(Object):
     def clearLabelStratum(self, name: str, value: int) -> None:
         """Remove all points from a stratum.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1830,14 +1830,14 @@ cdef class DM(Object):
     def setLabelOutput(self, name: str, output: bool) -> None:
         """Set if a given lable should be saved to a view.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
         name
             The label name.
         output
-            If True, it is save the label to the viewer.
+            If `True`, it is save the label to the viewer.
 
         See Also
         --------
@@ -1852,7 +1852,7 @@ cdef class DM(Object):
     def getLabelOutput(self, name: str) -> bool:
         """Return the output flag for a given label.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -1960,7 +1960,7 @@ cdef class DM(Object):
 
         """Set `SNES` residual evaluation function.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
