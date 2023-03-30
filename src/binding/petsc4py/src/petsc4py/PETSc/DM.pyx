@@ -965,7 +965,7 @@ cdef class DM(Object):
     def projectCoordinates(self, FE disc) -> Self:
         """Project coordinates to a different space.
 
-        See Also:
+        See Also
         --------
         petsc.DMProjectCoordinates
 
