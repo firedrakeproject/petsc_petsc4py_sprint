@@ -1728,39 +1728,83 @@ cdef class KSP(Object):
         """
         CHKERR( KSPMatSolveTranspose(self.ksp, B.mat, X.mat) )
 
-    def setIterationNumber(self, its):
+    def setIterationNumber(self, int its) -> None:
+        """Use `its` property.
+
+        """
         cdef PetscInt ival = asInt(its)
         CHKERR( KSPSetIterationNumber(self.ksp, ival) )
 
-    def getIterationNumber(self):
+    def getIterationNumber(self) -> int:
+        """Use `its` property.
+
+        """
         cdef PetscInt ival = 0
         CHKERR( KSPGetIterationNumber(self.ksp, &ival) )
         return toInt(ival)
 
-    def setResidualNorm(self, rnorm):
+    def setResidualNorm(self, float rnorm) -> None:
+        """Use `norm` property.
+
+        """
         cdef PetscReal rval = asReal(rnorm)
         CHKERR( KSPSetResidualNorm(self.ksp, rval) )
 
-    def getResidualNorm(self):
+    def getResidualNorm(self) -> float:
+        """Use `norm` property.
+
+        """
         cdef PetscReal rval = 0
         CHKERR( KSPGetResidualNorm(self.ksp, &rval) )
         return toReal(rval)
 
-    def setConvergedReason(self, reason):
+    def setConvergedReason(self, KSP.ConvergedReason reason):
+        """Use `reason` property.
+
+        """
         cdef PetscKSPConvergedReason val = reason
         CHKERR( KSPSetConvergedReason(self.ksp, val) )
 
-    def getConvergedReason(self):
+    def getConvergedReason(self) -> KSP.ConvergedReason:
+        """Use `reason` property.
+
+        """
         cdef PetscKSPConvergedReason reason = KSP_CONVERGED_ITERATING
         CHKERR( KSPGetConvergedReason(self.ksp, &reason) )
         return reason
 
-    def setErrorIfNotConverged(self, bint flag):
+    def setErrorIfNotConverged(self, bint flag) -> None:
+        """Cause `solve` to generate an error.
+
+        Occurs if the solver has not converged as soon as the error is
+        detected.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        flag
+            ``True`` enables this behaviour
+
+        See also
+        --------
+        petsc.KSPSetErrorIfNotConverged
+
+        """
         cdef PetscBool ernc = PETSC_FALSE
         if flag: ernc = PETSC_TRUE
         CHKERR( KSPSetErrorIfNotConverged(self.ksp, ernc) )
 
-    def getErrorIfNotConverged(self):
+    def getErrorIfNotConverged(self) -> bool:
+        """Will `solve` generate an error if the solver does not converge?
+
+        Not collective
+
+        See also
+        --------
+        petsc.KSPGetErrorIfNotConverged
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( KSPGetErrorIfNotConverged(self.ksp, &flag) )
         return toBool(flag)
@@ -1953,8 +1997,28 @@ cdef class KSP(Object):
 
     # --- Python ---
 
-    def createPython(self, context=None, comm=None) -> Self:
-        """
+    def createPython(
+        self,
+        context: Any | None = None,
+        comm: Comm | None = None
+    ) -> Self:
+        """Create an solver of Python type.
+
+        Collective.
+
+        Parameters
+        ----------
+        context
+            An instance of the Python class implementing the required
+            methods.
+        comm
+            The communicator associated with the object. Defaults to
+            `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc_python_ksp, setType, setPythonContext, Type.PYTHON
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscKSP newksp = NULL
@@ -1964,23 +2028,59 @@ cdef class KSP(Object):
         CHKERR( KSPPythonSetContext(self.ksp, <void*>context) )
         return self
 
-    def setPythonContext(self, context) -> None:
-        """
+    def setPythonContext(self, context: Any | None = None) -> None:
+        """Set the instance of the Python class implementing Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_ksp, getPythonContext
+
         """
         CHKERR( KSPPythonSetContext(self.ksp, <void*>context) )
 
-    def getPythonContext(self):
+    def getPythonContext(self) -> Any | None:
+        """Return the instance of the Python class implementing Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_ksp, setPythonContext
+
+        """
         cdef void *context = NULL
         CHKERR( KSPPythonGetContext(self.ksp, &context) )
         if context == NULL: return None
         else: return <object> context
 
-    def setPythonType(self, py_type):
+    def setPythonType(self, py_type: str) -> None:
+        """Set the fully qualified Python name of the class to be used.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_python_ksp, setPythonContext, getPythonType,
+        petsc.TaoPythonSetType
+
+        """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
         CHKERR( KSPPythonSetType(self.ksp, cval) )
 
-    def getPythonType(self):
+    def getPythonType(self) -> str:
+        """Return the fully qualified Python name of the class used by the solver.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_ksp, setPythonContext, setPythonType,
+        petsc.TaoPythonGetType
+
+        """
         cdef const char *cval = NULL
         CHKERR( KSPPythonGetType(self.ksp, &cval) )
         return bytes2str(cval)
@@ -1988,7 +2088,14 @@ cdef class KSP(Object):
     # --- application context ---
 
     property appctx:
-        def __get__(self):
+        """The solver application context.
+
+        See also
+        --------
+        petsc.KSPGetApplicationContext, petsc.KSPSetApplicationContext
+
+        """
+        def __get__(self) -> Any:
             return self.getAppCtx()
         def __set__(self, value):
             self.setAppCtx(value)
@@ -1996,7 +2103,14 @@ cdef class KSP(Object):
     # --- discretization space ---
 
     property dm:
-        def __get__(self):
+        """ The solver data manager (DM).
+
+        See also
+        --------
+        petsc.KSPGetDM, petsc.KSPSetDM
+
+        """
+        def __get__(self) -> DM:
             return self.getDM()
         def __set__(self, value):
             self.setDM(value)
@@ -2004,33 +2118,76 @@ cdef class KSP(Object):
     # --- vectors ---
 
     property vec_sol:
-        def __get__(self):
+        """The solver solution vector.
+
+        See also
+        --------
+        petsc.KSPGetSolution
+
+        """
+        def __get__(self) -> Vec:
             return self.getSolution()
 
     property vec_rhs:
-        def __get__(self):
+        """The solver right hand side vector.
+
+        See also
+        --------
+        petsc.KSPGetRhs
+
+        """
+        def __get__(self) -> Vec:
             return self.getRhs()
 
     # --- operators ---
 
     property mat_op:
-        def __get__(self):
+        """The solver system matrix operator.
+
+        See also
+        --------
+        getOperators, petsc.KSPGetOperators
+
+        """
+        def __get__(self) -> Mat:
             return self.getOperators()[0]
 
     property mat_pc:
-        def __get__(self):
+        """The solver preconditioner operator.
+
+        See also
+        --------
+        getOperators, petsc.KSPGetOperators
+
+        """
+        def __get__(self) -> Mat:
             return self.getOperators()[1]
 
     # --- initial guess ---
 
     property guess_nonzero:
-        def __get__(self):
+        """Whether guess is non-zero
+
+        See also
+        --------
+        getInitialGuessNonzero, setInitialGuessNonzero
+
+        """
+        def __get__(self) -> bool:
             return self.getInitialGuessNonzero()
         def __set__(self, value):
             self.setInitialGuessNonzero(value)
 
     property guess_knoll:
-        def __get__(self):
+        """Whether solver uses Knoll trick
+
+        See also
+        --------
+        getInitialGuessKnoll, setInitialGuessKnoll,
+        petsc.KSPGetInitialGuessKnoll, petsc.KSPSetInitialGuessKnoll
+
+        """
+        def __get__(self) -> bool:
             return self.getInitialGuessKnoll()
         def __set__(self, value):
             self.setInitialGuessKnoll(value)
@@ -2038,17 +2195,38 @@ cdef class KSP(Object):
     # --- preconditioner ---
 
     property pc:
-        def __get__(self):
+        """The preconditioner for the solver.
+
+        See also
+        --------
+        getPC, setPC
+
+        """
+        def __get__(self) -> PC:
             return self.getPC()
 
     property pc_side:
-        def __get__(self):
+        """The side on which preconditioning is performed.
+
+        See also
+        --------
+        getPCSide, setPCSide
+
+        """
+        def __get__(self) -> PC.Side:
             return self.getPCSide()
         def __set__(self, value):
             self.setPCSide(value)
 
     property norm_type:
-        def __get__(self):
+        """The norm used by the solver.
+
+        See also
+        --------
+        getNormType, setNormType
+
+        """
+        def __get__(self) -> normType:
             return self.getNormType()
         def __set__(self, value):
             self.setNormType(value)
@@ -2056,25 +2234,53 @@ cdef class KSP(Object):
     # --- tolerances ---
 
     property rtol:
-        def __get__(self):
+        """The relative tolerance of the solver.
+
+        See also
+        --------
+        getTolerances, setTolerances
+
+        """
+        def __get__(self) -> float:
             return self.getTolerances()[0]
         def __set__(self, value):
             self.setTolerances(rtol=value)
 
     property atol:
-        def __get__(self):
+        """The absolute tolerance of the solver.
+
+        See also
+        --------
+        getTolerances, setTolerances
+
+        """
+        def __get__(self) -> float:
             return self.getTolerances()[1]
         def __set__(self, value):
             self.setTolerances(atol=value)
 
     property divtol:
-        def __get__(self):
+        """The divergence tolerance of the solver.
+
+        See also
+        --------
+        getTolerances, setTolerances
+
+        """
+        def __get__(self) -> float:
             return self.getTolerances()[2]
         def __set__(self, value):
             self.setTolerances(divtol=value)
 
     property max_it:
-        def __get__(self):
+        """The maximum number of iteration the solver may take.
+
+        See also
+        --------
+        getTolerances, setTolerances
+
+        """
+        def __get__(self) -> int:
             return self.getTolerances()[3]
         def __set__(self, value):
             self.setTolerances(max_it=value)
@@ -2082,39 +2288,78 @@ cdef class KSP(Object):
     # --- iteration ---
 
     property its:
-        def __get__(self):
+        """The current number of iterations the solver has taken.
+
+        See also
+        --------
+        getIterationNumber, setIterationNumber
+
+        """
+        def __get__(self) -> int:
             return self.getIterationNumber()
         def __set__(self, value):
             self.setIterationNumber(value)
 
     property norm:
-        def __get__(self):
+        """The the norm of the residual at the current iteration.
+
+        See also
+        --------
+        getResidualNorm, setResidualNorm
+
+        """
+        def __get__(self) -> float:
             return self.getResidualNorm()
         def __set__(self, value):
             self.setResidualNorm(value)
 
     property history:
-        def __get__(self):
+        """The convergence history of the solver.
+
+        This is an array of norms at each iteration.
+
+        See also
+        --------
+        getConvergenceHistory
+
+        """
+        def __get__(self) -> ndarray:
             return self.getConvergenceHistory()
 
     # --- convergence ---
 
     property reason:
-        def __get__(self):
+        """The reason for convergence.
+
+        See also
+        --------
+        getConvergedReason, setConvergedReason
+
+        """
+        def __get__(self) -> KSP.ConvergedReason:
             return self.getConvergedReason()
         def __set__(self, value):
             self.setConvergedReason(value)
 
     property iterating:
-        def __get__(self):
+        """Whether the solver is still iterating.
+
+        """
+        def __get__(self) -> bool:
             return self.reason == 0
 
     property converged:
-        def __get__(self):
+        """Whether the solver has converged.
+
+        """
+        def __get__(self) -> bool:
             return self.reason > 0
 
     property diverged:
-        def __get__(self):
+        """Whether the solver has diverged.
+
+        """
+        def __get__(self) -> bool:
             return self.reason < 0
 
 # --------------------------------------------------------------------
