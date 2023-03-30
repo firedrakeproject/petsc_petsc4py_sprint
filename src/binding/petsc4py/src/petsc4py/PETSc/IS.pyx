@@ -333,8 +333,7 @@ cdef class IS(Object):
         return self
 
     def buildTwoSided(self, IS toindx=None) -> IS:
-        """Return an index set that describes where each element will be mapped
-        globally over all ranks.
+        """Create an index set describing a global mapping.
 
         This function generates an index set that contains new numbers from
         remote or local on the index set.
@@ -683,13 +682,23 @@ cdef class IS(Object):
         Parameters
         ----------
         nmin
-            Minimum index that can be found in the complement index set.
+            Minimum index that can be found in the local part of the complement
+            index set.
         nmax
-            Maximum index that can be found in the complement index set.
+            One greater than the maximum index that can be found in the local
+            part of the complement index set.
+
+        Notes
+        -----
+        For a parallel index set, this will generate the local part of the
+        complement on each process.
+
+        To generate the entire complement (on each process) of a parallel
+        index set, first call `IS.allGather` and then call this method.
 
         See Also
         --------
-        petsc.ISComplement
+        IS.allGather, petsc.ISComplement
 
         """
         cdef PetscInt cnmin = asInt(nmin)
