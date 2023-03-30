@@ -42,7 +42,7 @@ from petsc4py import PETSc
 
 OptDB = PETSc.Options()
 
-# Grid size and spacing using a default value of ``5```. The user can specify a
+# Grid size and spacing using a default value of ``5``. The user can specify a
 # different number of points in each direction by passing the ``-n`` option to
 # the script.
 
