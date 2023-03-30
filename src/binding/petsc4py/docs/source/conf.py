@@ -10,12 +10,14 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 import os
+import shutil
 import sys
 import typing
 import datetime
 import importlib
 import sphobjinv
 import functools
+import pylit
 from sphinx.ext.napoleon.docstring import NumpyDocstring
 
 sys.path.insert(0, os.path.abspath('.'))
@@ -250,7 +252,6 @@ def _monkey_patch_returns():
         out = _parse_returns_section(*args, **kwargs)
         return [line.replace(":class:", ":any:") for line in out]
 
-
     NumpyDocstring._parse_returns_section = wrapper
 
 
@@ -269,6 +270,56 @@ def _monkey_patch_see_also():
         return [line.replace(":obj:", ":any:") for line in out]
 
     NumpyDocstring._parse_numpydoc_see_also_section = wrapper
+
+
+def _apply_monkey_patches():
+    """Modify Napoleon types after parsing to make references work."""
+    _monkey_patch_returns()
+    _monkey_patch_see_also()
+
+
+_apply_monkey_patches()
+
+
+def _process_demos(*demos):
+    # Convert demo .py files to rst. Also copy the .py file so it can be
+    # linked from the demo rst file.
+    try:
+        os.mkdir("demo")
+    except FileExistsError:
+        pass
+    for demo in demos:
+        demo_dir = os.path.join("demo", os.path.dirname(demo))
+        demo_src = os.path.join(os.pardir, os.pardir, "demo", demo)
+        try:
+            os.mkdir(demo_dir)
+        except FileExistsError:
+            pass
+        with open(demo_src, "r") as infile:
+            with open(os.path.join(
+                os.path.join("demo", os.path.splitext(demo)[0] + ".rst")), "w"
+            ) as outfile:
+                converter = pylit.Code2Text(infile)
+                outfile.write(str(converter))
+        demo_copy_name = os.path.join(demo_dir, os.path.basename(demo))
+        shutil.copyfile(demo_src, demo_copy_name)
+        html_static_path.append(demo_copy_name)
+    with open(os.path.join("demo", "demo.rst"), "w") as demofile:
+        demofile.write("""
+PETSC4py demos
+==============
+
+.. toctree::
+
+""")
+        for demo in demos:
+            demofile.write("    " + os.path.splitext(demo)[0] + "\n")
+        demofile.write("\n")
+
+html_static_path=[]
+_process_demos(
+    "poisson2d/poisson2d.py"
+)
 
 
 def setup(app):
