@@ -630,7 +630,7 @@ cdef class DM(Object):
 
         Logically Collective.
 
-        Paramters
+        Parameters
         ---------
         The discretization object.
 
@@ -1674,7 +1674,7 @@ cdef class DM(Object):
         point
             The mesh point.
         value
-            The label value for this point.
+            The label value for the point.
 
         See Also
         --------
@@ -1698,7 +1698,7 @@ cdef class DM(Object):
         point
             The mesh point.
         value
-            The label value for this point.
+            The label value for the point.
 
         See Also
         --------
