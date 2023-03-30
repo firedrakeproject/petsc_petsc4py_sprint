@@ -894,7 +894,7 @@ cdef class PC(Object):
         ----------
         nsd
             The number of subdomains for all processes.
-        is_
+        is\_
             Defines the subdomains for all processes or `None` to determine
             internally.
         is_local
@@ -929,8 +929,8 @@ cdef class PC(Object):
 
         Not collective.
 
-        SeeAlso
-        -------
+        See Also
+        --------
         petsc.PCASMGetSubKSP
 
         """
