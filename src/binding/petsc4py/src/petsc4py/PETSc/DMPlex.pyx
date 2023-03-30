@@ -2412,7 +2412,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DMPlex.metricSetMinimumMagnitude, DMPlexMetric.getMaximumMagnitude, petsc.DMPlexMetricGetMinimumMagnitude
+        DMPlex.metricSetMinimumMagnitude, DMPlex.metricGetMaximumMagnitude, petsc.DMPlexMetricGetMinimumMagnitude
 
         """
         cdef PetscReal h_min = 0
