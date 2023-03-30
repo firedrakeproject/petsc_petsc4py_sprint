@@ -3,117 +3,182 @@
 class KSPType(object):
     """KSP Type.
 
+    An class modelling an ENUM. The following values are available as
+    attributes.
+
+    RICHARDSON
+        The preconditioned Richardson iterative method
+        `petsc.KSPRICHARDSON`.
+    CHEBYSHEV
+        The preconditioned Chebyshev iterative method.
+        `petsc.CHEBYSHEV`.
+    CG
+        The Preconditioned Conjugate Gradient (PCG) iterative method.
+        `petsc.CG`
+    GROPPCG
+        A pipelined conjugate gradient method (Gropp).
+         `petsc.KSPGROPPCG`
+    PIPECG
+        A pipelined conjugate gradient method.
+        `petsc.KSPPIPECG`
+    PIPECGRR
+        Pipelined Conjugate Gradients with Residual Replacement.
+        `petsc.KSPPIPECGRR`
+    PIPELCG
+        Deep pipelined (length l) Conjugate Gradient method.
+        `petsc.KSPPIPELCG`
+    PIPEPRCG
+        Pipelined predict-and-recompute conjugate gradient method.
+        `petsc.KSPPIPEPRCG`
+    PIPECG2
+        Pipelined conjugate gradient method with a single non-blocking
+        reduction per two iterations. `petsc.KSPPIPECG2`
+    CGNE
+        Applies the preconditioned conjugate gradient method to the
+        normal equations without explicitly forming AᵀA. `petsc.KSPCGNE`
+    NASH
+        Conjugate gradient method subject to a constraint
+        on the solution norm. `petsc.KSPNASH`
+    STCG
+        Conjugate gradient method subject to a constraint on the
+        solution norm. `petsc.KSPSTCG`
+    GLTR
+        Conjugate gradient method subject to a constraint on the
+        solution norm. `petsc.KSPGLTR`
+    FCG
+        Flexible Conjugate Gradient method (FCG). Unlike most KSP
+        methods this allows the preconditioner to be nonlinear.
+        `petsc.KSPFCG`
+    PIPEFCG
+        Pipelined, Flexible Conjugate Gradient method.
+        `petsc.KSPPIPEFCG`
+    GMRES
+        Generalized Minimal Residual method with restart.
+        `petsc.KSPGMRES`
+    PIPEFGMRES
+        Pipelined (1-stage) Flexible Generalized Minimal Residual
+        method. `petsc.KSPPIPEFGMRES`
+    FGMRES
+        Implements the Flexible Generalized Minimal Residual method.
+        `petsc.KSPFGMRES`
+    LGMRES
+        Augments the standard Generalized Minimal Residual method
+        approximation space with approximations to the error from
+        previous restart cycles. `petsc.LGMRES`
+    DGMRES
+        Deflated Generalized Minimal Residual method. In this
+        implementation, the adaptive strategy allows to switch to the
+        deflated GMRES when the stagnation occurs. `petsc.KSPDGMRES`
+    PGMRES
+        Pipelined Generalized Minimal Residual method.
+        `petsc.KSPPGMRES`
+    TCQMR
+        A variant of Quasi Minimal Residual (QMR).
+        `petsc.KSPTCQMR`
+    BCGS
+        Stabilized version of Biconjugate Gradient (BiCGStab) method.
+        `petsc.KSPBCGS`
+    IBCGS
+        Improved Stabilized version of BiConjugate Gradient (IBiCGStab)
+        method in an alternative form to have only a single global
+        reduction operation instead of the usual 3 (or 4).
+        `petsc.KSPIBCGS`
+    QMRCGS
+        Quasi- Minimal Residual variant of the Bi-CGStab algorithm
+        (QMRCGStab) method. `petsc.KSPQMRCGS`
+    FBCGS
+        Flexible Stabilized version of BiConjugate Gradient (BiCGStab)
+        method. `petsc.KSPFBCGS`
+    FBCGSR
+        A mathematically equivalent variant of flexible stabilized
+        BiConjugate Gradient (BiCGStab). `petsc.KSPFBCGSR`
+    BCGSL
+        Variant of the L-step stabilized BiConjugate Gradient
+        (BiCGStab(L)) algorithm. Uses "L-step" Minimal Residual (MR)
+        polynomials. The variation concerns cases when some parameters
+        are negative due to round-off. `petsc.KSPBCGSL`
+    PIPEBCGS
+        Pipelined stabilized BiConjugate Gradient (BiCGStab) method.
+        `petsc.KSPPIPEBCGS`
+    CGS
+        Conjugate Gradient Squared method.
+        `petsc.KSPCGS`
+    TFQMR
+        A Transpose Tree Quasi- Minimal Residual (QMR).
+        `petsc.KSPCR`
+    CR
+        (Preconditioned) Conjugate Residuals (CR) method.
+        `petsc.KSPCR`
+    PIPECR
+        Pipelined Conjugate Residual (CR) method.
+        `petsc.KSPPIPECR`
+    LSQR
+        Least squares solver.
+        `petsc.KSPLSQR`
+    PREONLY
+        Applies ONLY the preconditioner exactly once. This may be used
+        in inner iterations, where it is desired to allow multiple
+        iterations as well as the "0-iteration" case. It is commonly
+        used with the direct solver preconditioners like PCLU and
+        PCCHOLESKY. There is an alias of KSPNONE.
+        `petsc.KSPPREONLY`
+    NONE
+        No solver
+        ``KSPNONE``
+    QCG
+        Conjugate Gradient (CG) method subject to a constraint on the
+        solution norm. `petsc.KSPQCG`
+    BICG
+        Implements the Biconjugate gradient method (BiCG).
+        Similar to running the conjugate gradient on the normal equations.
+        `petsc.BICG`
+    MINRES
+        Minimum Residual (MINRES) method.
+        `petsc.KSPMINRES`
+    SYMMLQ
+        Symmetric LQ method (SymmLQ). Uses LQ decomposition (lower
+        trapezoidal).
+        `petsc.KSPSYMMLQ`
+    LCD
+        Left Conjugate Direction (LCD) method.
+        `petsc.KSPLCD`
+    PYTHON
+        Python shell solver. Call Python function to implement solver.
+        `petsc.KSPPYTHON`
+    GCR
+        Preconditioned flexible Generalized Conjugate Residual (GCR)
+        method.
+        `petsc.KSPGCR`
+    PIPEGCR
+        Pipelined Generalized Conjugate Residual method.
+        `petsc.KSPPIPEGCR`
+    TSIRM
+        Two-Stage Iteration with least-squares Residual Minimization
+        method. `petsc.KSPTSIRM`
+    CGLS
+        Conjugate Gradient method for Least-Squares problems. Supports
+        non-square (rectangular) matrices. `petsc.KSPCGLS`
+    FETIDP
+        Dual-Primal (DP) Finite Element Tearing and Interconnect (FETI)
+        method. `petsc.KSPFETIDP`
+    HPDDM
+        Interface with the HPDDM library. This KSP may be used to
+        further select methods that are currently not implemented
+        natively in PETSc, e.g., GCRODR, a recycled Krylov
+        method which is similar to KSPLGMRES. `petsc.KSPHPDDM`
+
     Notes
     -----
     `KSP Type <https://petsc.org/release/docs/manualpages/KSP/KSPType/>`__
     `KSP Type table <https://petsc.org/release/docs/manual/ksp/#tab-kspdefaults>`__
     `Pieplined KSP methods <https://petsc.org/release/docs/manual/ksp/#sec-pipelineksp>`__
     `Flexible KSP methods <https://petsc.org/release/docs/manual/ksp/#sec-flexibleksp>`__
+
     See Also
     --------
     petsc_options, petsc.KSP
 
     """
-    # Attributes
-    # ----------
-    # RICHARDSON
-    #   The preconditioned Richardson iterative method
-    #   `petsc.KSPRICHARDSON`.
-    # CHEBYSHEV
-    #   The preconditioned Chebyshev iterative method.
-    #   `petsc.CHEBYSHEV`.
-    # CG
-    #   The Preconditioned Conjugate Gradient (PCG) iterative method.
-    #   `petsc.CG`
-    # GROPPCG
-    #   A pipelined conjugate gradient method (Gropp).
-    #    `petsc.KSPGROPPCG`
-    # PIPECG
-    #   A pipelined conjugate gradient method.
-    #   `petsc.KSPPIPECG`
-    # PIPECGRR
-    #   Pipelined Conjugate Gradients with Residual Replacement.
-    #   `petsc.KSPPIPECGRR`
-    # PIPELCG
-    #   Deep pipelined (length l) Conjugate Gradient method.
-    #   `petsc.KSPPIPELCG`
-    # PIPEPRCG
-    #   Pipelined predict-and-recompute conjugate gradient method.
-    #   `petsc.KSPPIPEPRCG`
-    # PIPECG2
-    #   Pipelined conjugate gradient method with a single non-blocking
-    #   reduction per two iterations. `petsc.KSPPIPECG2`
-    # CGNE
-    #   Applies the preconditioned conjugate gradient method to the
-    #   normal equations without explicitly forming AᵀA. `petsc.KSPCGNE`
-    # NASH
-    #   Conjugate gradient method subject to a constraint
-    #   on the solution norm. `petsc.KSPNASH`
-    # STCG
-    #   Code to run conjugate gradient method subject to a constraint
-    #   on the solution norm. `petsc.KSPSTCG`
-    # GLTR
-    #   Code to run conjugate gradient method subject to a constraint
-    #   on the solution norm. `petsc.KSPGLTR`
-    # FCG
-    #   Implements the Flexible Conjugate Gradient method (FCG).
-    #   Unlike most KSP methods this allows the preconditioner to be
-    #   nonlinear. `petsc.KSPFCG`
-    # PIPEFCG
-    #   Implements a Pipelined, Flexible Conjugate Gradient method.
-    #   `petsc.KSPPIPEFCG`
-    # GMRES
-    #   Implements the Generalized Minimal Residual method with restart.
-    #   `petsc.KSPGMRES`
-    # PIPEFGMRES
-    #   Implements the Pipelined (1-stage) Flexible Generalized Minimal
-    #   Residual method. `petsc.KSPPIPEFGMRES`
-    # FGMRES
-    #   Implements the Flexible Generalized Minimal Residual method.
-    #   `petsc.KSPFGMRES`
-    # LGMRES
-    #   Augments the standard GMRES approximation space with
-    #   approximations to the error from previous restart cycles.
-    #   `petsc.LGMRES`
-    # DGMRES
-    #   Implements the deflated GMRES.
-    #   In this implementation, the adaptive strategy allows to switch
-    #   to the deflated GMRES when the stagnation occurs.
-    #   `petsc.KSPDGMRES`
-    # PGMRES
-    #   Implements the Pipelined Generalized Minimal Residual method.
-    #   `petsc.KSPPGMRES`
-    # TCQMR
-    #   A variant of QMR (quasi minimal residual).
-    #   `petsc.KSPTCQMR`
-    # BCGS
-    #   Implements the BiCGStab (Stabilized version of Biconjugate
-    #   Gradient) method. `petsc.KSPBCGS`
-    # IBCGS
-    # QMRCGS
-    # FBCGS
-    # FBCGSR
-    # BCGSL
-    # PIPEBCGS
-    # CGS
-    # TFQMR
-    # CR
-    # PIPECR
-    # LSQR
-    # PREONLY
-    # NONE
-    # QCG
-    # BICG
-    # MINRES
-    # SYMMLQ
-    # LCD
-    # PYTHON
-    # GCR
-    # PIPEGCR
-    # TSIRM
-    # CGLS
-    # FETIDP
-    # HPDDM
     RICHARDSON = S_(KSPRICHARDSON)
     CHEBYSHEV  = S_(KSPCHEBYSHEV)
     CG         = S_(KSPCG)
@@ -200,6 +265,77 @@ class KSPNormType(object):
     NATURAL          = NORM_NATURAL
 
 class KSPConvergedReason(object):
+    """KSP Converged Reason.
+
+    An class modelling an ENUM. The following values are available as
+    attributes.
+
+    ### Still iterating
+    CONVERGED_ITERATING
+        Still iterating
+    ITERATING
+        Still iterating
+    ### Converged
+    CONVERGED_RTOL_NORMAL
+        Undocumented.
+    CONVERGED_ATOL_NORMAL
+        Undocumented.
+    CONVERGED_RTOL
+        ∥r∥ <= rtolnorm(b) or rtolnorm(b - Ax₀)
+    CONVERGED_ATOL
+        ∥r∥ <= atol
+    CONVERGED_ITS
+        Used by the `Type.PREONLY` solver after the single iteration of the
+        preconditioner is applied. Also used when the
+        `petsc.KSPConvergedSkip` convergence test routine is set in KSP.
+    CONVERGED_NEG_CURVE
+        Undocumented.
+    CONVERGED_STEP_LENGTH
+        Undocumented.
+    CONVERGED_HAPPY_BREAKDOWN
+        Undocumented.
+
+    ### Diverged
+    DIVERGED_NULL
+        Undocumented.
+    DIVERGED_MAX_IT
+        Ran out of iterations before any convergence criteria was
+        reached.
+    DIVERGED_DTOL
+        norm(r) >= dtol*norm(b)
+    DIVERGED_BREAKDOWN
+        A breakdown in the Krylov method was detected so the method
+        could not continue to enlarge the Krylov space. Could be due to
+        a singular matrix or preconditioner. In KSPHPDDM, this is also
+        returned when some search directions within a block are
+        colinear.
+    DIVERGED_BREAKDOWN_BICG
+        A breakdown in the KSPBICG method was detected so the method
+        could not continue to enlarge the Krylov space.
+    DIVERGED_NONSYMMETRIC
+        It appears the operator or preconditioner is not symmetric and
+        this Krylov method (`Type.CG`, `Type.MINRES`, `Type.PCR`)
+        requires symmetry.
+    DIVERGED_INDEFINITE_PC
+        It appears the preconditioner is indefinite (has both positive
+        and negative eigenvalues) and this Krylov method (`Type.CG`)
+        requires it to be positive definite.
+    DIVERGED_NANORINF
+        Undocumented.
+    DIVERGED_INDEFINITE_MAT
+        Undocumented.
+    DIVERGED_PCSETUP_FAILED
+        It was not possible to build or use the requested
+        preconditioner. This is usually due to a zero pivot in a
+        factorization. It can also result from a failure in a
+        subpreconditioner inside a nested preconditioner such as
+        `PC.FIELDSPLIT`.
+
+    See also
+    --------
+    `petsc.KSPConvergedReason`
+
+    """
     #iterating
     CONVERGED_ITERATING       = KSP_CONVERGED_ITERATING
     ITERATING                 = KSP_CONVERGED_ITERATING
