@@ -1,7 +1,8 @@
 # Poisson in 2D
 # =============
 #
-# Solve a constant coefficient Poisson problem on a regular grid
+# Solve a constant coefficient Poisson problem on a regular grid. The source
+# code for this demo can be `downloaded here <../../_static/poisson2d.py>`__
 #
 # .. math::
 #
@@ -151,3 +152,16 @@ ksp.solve(b, x)
 # script.
 
 x.viewFromOptions('-view_sol')
+
+# Things to try
+# -------------
+#
+# - Show the solution with ``-view_sol``.
+# - Show the matrix with ``-view_mat``.
+# - Change the resolution with ``-n``.
+# - Use a direct solver by passing ``-ksp_type preonly -pc_type lu``.
+# - Run in parallel on two processors using:
+#
+#   .. code-block:: console
+#
+#       mpiexec -n 2 python poisson2d.py

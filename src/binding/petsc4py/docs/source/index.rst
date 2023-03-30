@@ -41,7 +41,6 @@ PETSc for Python
    :maxdepth: 2
 
    overview
-   tutorial
    demo/demo
    petsc_options
    petsc_python_types
