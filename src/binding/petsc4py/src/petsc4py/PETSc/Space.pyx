@@ -221,7 +221,7 @@ cdef class Space(Object):
     #    return array_r(cnpoints*cdim, B), array_r(cnpoints*cnc, D), array_r(, H)
 
     def getType(self) -> str:
-        """Return the `Type` (as a string) from the object.
+        """Return the type of the space object.
 
         Not collective.
 
