@@ -805,7 +805,7 @@ cdef class KSP(Object):
     def setOperators(self, Mat A=None, Mat P=None) -> None:
         """Set matrix associated with the linear system.
 
-        Sets the matrix associated with the linear system and a
+        Set the matrix associated with the linear system and a
         (possibly) different one from which the preconditioner will be
         built.
 
@@ -847,7 +847,7 @@ cdef class KSP(Object):
     def getOperators(self) -> tuple[Mat, Mat]:
         """Return the matrix associated with the linear system.
 
-        Gets the matrix associated with the linear system and a
+        Return the matrix associated with the linear system and a
         (possibly) different one used to construct the preconditioner.
 
         Collective.
@@ -874,7 +874,7 @@ cdef class KSP(Object):
     def setPC(self, PC pc) -> None:
         """Set the preconditioner.
 
-        Sets the preconditioner to be used to calculate the application
+        Set the preconditioner to be used to calculate the application
         of the preconditioner on a vector.
 
         Collective.
@@ -917,7 +917,7 @@ cdef class KSP(Object):
     ) -> None:
         """Set various tolerances used by the KSP convergence testers.
 
-        Sets the relative, absolute, divergence, and maximum iteration
+        Set the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence testers.
 
         Logically collective.
@@ -961,7 +961,7 @@ cdef class KSP(Object):
     def getTolerances(self) -> tuple[float, float, float, int]:
         """Return various tolerances used by the KSP convergence tests.
 
-        Gets the relative, absolute, divergence, and maximum iteration
+        Return the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence tests.
 
         Not collective.
@@ -1169,7 +1169,7 @@ cdef class KSP(Object):
     ) -> None:
         """Set additional function to monitor the residual.
 
-        Sets an ADDITIONAL function to be called at every iteration to
+        Set an ADDITIONAL function to be called at every iteration to
         monitor the residual/error etc.
 
         Logically collective
@@ -1197,7 +1197,7 @@ cdef class KSP(Object):
 
         See also
         --------
-        petsc_options, getMonitor ,monitor, monitorCancel,
+        petsc_options, getMonitor, monitor, monitorCancel,
         petsc.KSPMonitorSet
 
         """
@@ -1241,7 +1241,7 @@ cdef class KSP(Object):
     cancelMonitor = monitorCancel
 
     def monitor(self, int its, float rnorm) -> None:
-        """Run the user provided monitor routines, if they exist
+        """Run the user provided monitor routines, if they exist.
 
         Collective.
 
@@ -1262,14 +1262,14 @@ cdef class KSP(Object):
     # --- customization ---
 
     def setPCSide(self, side: PC.Side) -> None:
-        """Sets the preconditioning side.
+        """Set the preconditioning side.
 
         Logically collective.
 
         Parameters
         ----------
         side
-            The preconditioning side (see `PC.Side`)
+            The preconditioning side (see `PC.Side`).
 
         Notes
         -----
@@ -1310,12 +1310,12 @@ cdef class KSP(Object):
         return side
 
     def setNormType(self, normtype: NormType) -> None:
-        """Sets the norm that is used for convergence testing.
+        """Set the norm that is used for convergence testing.
 
         Parameters
         ----------
         normtype
-            The norm type to use (see `NormType`)
+            The norm type to use (see `NormType`).
 
         Notes
         -----
@@ -1353,7 +1353,7 @@ cdef class KSP(Object):
     def setComputeEigenvalues(self, bint flag) -> None:
         """Set a flag to compute eigenvalues.
 
-        Sets a flag so that the extreme eigenvalues values will be
+        Set a flag so that the extreme eigenvalues values will be
         calculated via a Lanczos or Arnoldi process as the linear
         system is solved.
 
@@ -1378,7 +1378,7 @@ cdef class KSP(Object):
     def getComputeEigenvalues(self) -> bool:
         """Return flag indicating whether eigenvalues will be calculated.
 
-        Gets the flag indicating that the extreme eigenvalues values
+        Return the flag indicating that the extreme eigenvalues values
         will be calculated via a Lanczos or Arnoldi process as the
         linear system is solved.
 
@@ -1396,7 +1396,7 @@ cdef class KSP(Object):
     def setComputeSingularValues(self, bint flag) -> None:
         """Set flag to calculate singular values.
 
-        Sets a flag so that the extreme singular values will be
+        Set a flag so that the extreme singular values will be
         calculated via a Lanczos or Arnoldi process as the linear
         system is solved.
 
@@ -1423,7 +1423,7 @@ cdef class KSP(Object):
     def getComputeSingularValues(self) -> bool:
         """Return flag indicating whether singular values will be calculated.
 
-        Gets the flag indicating whether the extreme singular values
+        Return the flag indicating whether the extreme singular values
         will be calculated via a Lanczos or Arnoldi process as the
         linear system is solved.
 
@@ -1439,7 +1439,7 @@ cdef class KSP(Object):
     # --- initial guess ---
 
     def setInitialGuessNonzero(self, bint flag) -> None:
-        """Tell the iterative solver that the initial guess is nonzero
+        """Tell the iterative solver that the initial guess is nonzero.
 
         Otherwise KSP assumes the initial guess is to be zero (and thus
         zeros it out before solving).
@@ -1580,7 +1580,7 @@ cdef class KSP(Object):
         CHKERR( KSPSetUpOnBlocks(self.ksp) )
 
     def solve(self, Vec b, Vec x) -> None:
-        """Solves linear system.
+        """Solve the linear system.
 
         Collective.
 
@@ -1619,7 +1619,7 @@ cdef class KSP(Object):
 
         Ax = b where b = bₚ + bₜ where bₜ is not in the range of A
         (and hence by the fundamental theorem of linear algebra is in
-        the nullspace(A'), see `Mat.setNullSpace`
+        the nullspace(Aᵀ), see `Mat.setNullSpace`.
 
         KSP first removes bₜ producing the linear system Ax = bₚ (which
         has multiple solutions) and solves this to find the ∥x∥
@@ -1631,9 +1631,9 @@ cdef class KSP(Object):
         nullspace(A).
 
         We recommend always using `Type.GMRES` for such singular
-        systems. If nullspace(A) = nullspace(A') (note symmetric
+        systems. If nullspace(A) = nullspace(Aᵀ) (note symmetric
         matrices always satisfy this property) then both left and right
-        preconditioning will work If nullspace(A) != nullspace(A') then
+        preconditioning will work If nullspace(A) != nullspace(Aᵀ) then
         left preconditioning will work but right preconditioning may
         not work (or it may).
 
@@ -1670,9 +1670,9 @@ cdef class KSP(Object):
         Parameters
         ----------
         b
-            Right hand side vector
+            Right hand side vector.
         x
-            Solution vector
+            Solution vector.
 
         Notes
         -----
@@ -1695,9 +1695,9 @@ cdef class KSP(Object):
         Parameters
         ----------
         B
-            Block of right-hand sides
+            Block of right-hand sides.
         X
-            Block of solutions
+            Block of solutions.
 
         See also
         --------
@@ -1712,9 +1712,9 @@ cdef class KSP(Object):
         Parameters
         ----------
         B
-            Block of right-hand sides
+            Block of right-hand sides.
         X
-            Block of solutions
+            Block of solutions.
 
         See also
         --------
@@ -1779,7 +1779,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            `True` enables this behaviour
+            `True` enables this behaviour.
 
         See also
         --------
@@ -1793,7 +1793,7 @@ cdef class KSP(Object):
     def getErrorIfNotConverged(self) -> bool:
         """Will `solve` generate an error if the solver does not converge?
 
-        Not collective
+        Not collective.
 
         See also
         --------
@@ -1805,7 +1805,7 @@ cdef class KSP(Object):
         return toBool(flag)
 
     def getRhs(self) -> Vec:
-        """Return the right-hand-side vector for the linear system.
+        """Return the right hand side vector for the linear system.
 
         Not collective.
 
@@ -1930,7 +1930,7 @@ cdef class KSP(Object):
         Returns
         -------
         eigen: ArrayComplex
-            An array of eigenvalues
+            An array of eigenvalues.
 
         See also
         --------
@@ -1975,7 +1975,7 @@ cdef class KSP(Object):
     def setGMRESRestart(self, int restart) -> None:
         """Set number of iterations at which KSP restarts.
 
-        Suitable KSPs are: KSPGMRES, KSPFGMRES and KSPLGMRES
+        Suitable KSPs are: KSPGMRES, KSPFGMRES and KSPLGMRES.
 
         Parameters
         ----------
@@ -2098,7 +2098,7 @@ cdef class KSP(Object):
     # --- discretization space ---
 
     property dm:
-        """ The solver data manager (DM).
+        """ The solver data manager.
 
         See also
         --------
@@ -2161,7 +2161,7 @@ cdef class KSP(Object):
     # --- initial guess ---
 
     property guess_nonzero:
-        """Whether guess is non-zero
+        """Whether guess is non-zero.
 
         See also
         --------
@@ -2174,7 +2174,7 @@ cdef class KSP(Object):
             self.setInitialGuessNonzero(value)
 
     property guess_knoll:
-        """Whether solver uses Knoll trick
+        """Whether solver uses Knoll trick.
 
         See also
         --------
