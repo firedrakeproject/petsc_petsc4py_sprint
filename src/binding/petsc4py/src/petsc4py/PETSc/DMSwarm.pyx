@@ -32,7 +32,7 @@ cdef class DMSwarm(DM):
     PICLayoutType = DMSwarmPICLayoutType
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Create an empty DM object and set its type to `DMSWARM`. TODO:
+        """Create an empty DM object and set its type to `DMSwarm`. TODO:
 
         DMs are the abstract objects in PETSc that mediate between meshes and
         discretizations and the algebraic solvers, time integrators, and
@@ -177,8 +177,10 @@ cdef class DMSwarm(DM):
 
         Parameters
         ----------
-nlocal - the length of each registered field
-buffer - the length of the buffer used to efficient dynamic re-sizing
+        nlocal
+            TODO the length of each registered field
+        buffer
+            TODO the length of the buffer used to efficient dynamic re-sizing
 
         See also
         --------
@@ -235,12 +237,11 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
 
         Returns
         -------
-        TODO:
-        blocksize
-            the number of each data type
-        type
+        blocksize : None
+            TODO the number of each data type
+        type : None
             the data type
-        data
+        data : None
             pointer to raw array
 
 
@@ -271,14 +272,16 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
 
         Not collective.
 
-        Parameters
-        ----------
-        fieldname
-            TODO the textual name to identify this field
         Output parameters
         blocksize TODO the number of each data type
         type TODO the data type
         data TODO pointer to raw array
+
+        Parameters
+        ----------
+        fieldname
+            TODO the textual name to identify this field
+
 
         See also
         --------
@@ -292,7 +295,7 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         CHKERR( DMSwarmRestoreField(self.dm, cfieldname, &blocksize, &ctype, <void**> 0) )
 
     def vectorDefineField(self, fieldname):
-        """Set the field from which to define a `Vec` object when `createLocalVector`, or `createGlobalVector` is called.
+        """Set the field from which to define a `Vec` object when `DM.createLocalVec`, or `DM.createGlobalVec` is called.
 
         Collective.
 
@@ -354,7 +357,7 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         CHKERR( DMSwarmRemovePoint(self.dm) )
 
     def removePointAtIndex(self, index: int) -> None:
-        """Remove a specific point from the DMSWARM
+        """Remove a specific point from the `DMSwarm`
 
         Not collective.
 
@@ -504,7 +507,7 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
         Parameters
         ----------
         stype
-            TODO the DMSWARM type (e.g. DMSWARM_PIC)
+            TODO the `DMSwarm` type (e.g. DMSWARM_PIC)
 
         See also
         --------
@@ -753,7 +756,7 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
     def sortGetIsValid(self) -> bool:
         """Return flag indicating whether the sort context is up-to-date.
 
-        Returns the `isvalid` flag associated with a `DMSwarm` point sorting context.
+        Returns the ``isvalid`` flag associated with a `DMSwarm` point sorting context.
 
         Not collective.
 
@@ -800,10 +803,14 @@ buffer - the length of the buffer used to efficient dynamic re-sizing
 
         Parameters
         ----------
-        nfields - the number of swarm fields to project
-        fieldnames - the textual names of the swarm fields to project
-        fields - an array of ``Vec``s of length nfields
-        reuse - flag indicating whether the array and contents of fields should be re-used or internally allocated
+        nfields
+            TODO the number of swarm fields to project
+        fieldnames
+            TODO the textual names of the swarm fields to project
+        fields
+            TODO an array of `Vec` s of length nfields
+        reuse
+            TODO flag indicating whether the array and contents of fields should be re-used or internally allocated
 
         See also
         --------
