@@ -50,8 +50,9 @@ class DMPolytopeType(object):
 # --------------------------------------------------------------------
 
 cdef class DM(Object):
-    """Manage an abstract grid object and its iteractions with the algebraic solvers.
+    """An object describing a computational grid or mesh.
 
+    DM is documented in `the PETSc manual <petsc:chapter_dmbase>`.
     """
 
     Type         = DMType
