@@ -8,7 +8,7 @@ class FEType(object):
 # --------------------------------------------------------------------
 
 cdef class FE(Object):
-    """PETSc object that manages a finite element space."""
+    """A PETSc object that manages a finite element space."""
 
     Type = FEType
 
