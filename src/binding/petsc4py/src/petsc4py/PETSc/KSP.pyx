@@ -1806,15 +1806,15 @@ cdef class KSP(Object):
         Parameters
         ----------
         right
-            Number of right hand `Vec`s to allocate.
+            Number of right hand vectors to allocate.
         left
-            Number of left hand `Vec`s to allocate.
+            Number of left hand vectors to allocate.
 
         Returns
         -------
-        R
+        R: list[Vec]
             List of correctly allocated right hand vectors.
-        L
+        L: list[Vec]
             List of correctly allocated left hand vectors.
 
         """
@@ -1853,7 +1853,7 @@ cdef class KSP(Object):
 
         Returns
         -------
-        x
+        x: Vec
             Correctly allocated solution vector.
 
         """
@@ -1874,7 +1874,7 @@ cdef class KSP(Object):
 
         Returns
         -------
-        x
+        x: Vec
             Correctly allocated residual vector.
 
         """
@@ -1890,7 +1890,7 @@ cdef class KSP(Object):
 
         Returns
         -------
-        eigen
+        eigen: ArrayComplex
             An array of eigenvalues
 
         See also
@@ -1916,9 +1916,9 @@ cdef class KSP(Object):
 
         Returns
         -------
-        smax
+        smax: float
             The maximum singular value.
-        smin
+        smin: float
             The minimum singular value.
 
         See also
@@ -1953,7 +1953,9 @@ cdef class KSP(Object):
 
     # --- Python ---
 
-    def createPython(self, context=None, comm=None):
+    def createPython(self, context=None, comm=None) -> Self:
+        """
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscKSP newksp = NULL
         CHKERR( KSPCreate(ccomm, &newksp) )
@@ -1962,7 +1964,9 @@ cdef class KSP(Object):
         CHKERR( KSPPythonSetContext(self.ksp, <void*>context) )
         return self
 
-    def setPythonContext(self, context):
+    def setPythonContext(self, context) -> None:
+        """
+        """
         CHKERR( KSPPythonSetContext(self.ksp, <void*>context) )
 
     def getPythonContext(self):
