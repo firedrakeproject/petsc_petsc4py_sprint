@@ -111,7 +111,7 @@ cdef class FE(Object):
         PetscCLEAR(self.obj); self.fe = newfe
         return self
 
-    def createLagrange(self, dim: int, nc: int, isSimplex: bool, k: int, qorder: int = DETERMINE, comm=None) -> Self:
+    def createLagrange(self, dim: int, nc: int, isSimplex: bool, k: int, qorder: int = DETERMINE, comm: Comm | None = None) -> Self:
         """Create a `FE` for the basic Lagrange space of degree k.
 
         Collective.
