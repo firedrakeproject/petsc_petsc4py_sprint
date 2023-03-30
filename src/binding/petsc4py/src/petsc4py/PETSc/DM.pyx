@@ -584,7 +584,7 @@ cdef class DM(Object):
         assert label is None
         CHKERR( DMSetField(self.dm, cidx, clbl, cobj) )
 
-    def getField(self, inde: int) -> tuple[Object,None]:
+    def getField(self, index: int) -> tuple[Object,None]:
         """Return the discretization object.
         
         Not Collective.
@@ -602,46 +602,129 @@ cdef class DM(Object):
         cdef Object field = subtype_Object(cobj)()
         field.obj[0] = cobj
         PetscINCREF(field.obj)
-        return (field, None)
+        return (field, None) # TODO REVIEW
 
     def addField(self, Object field, label=None) -> None:
+        """Add a field to a `DM` object.
+
+        Logically Collective.
+
+        See Also
+        --------
+        petsc.DMAddField
+
+        """
         cdef PetscObject  cobj = field.obj[0]
         cdef PetscDMLabel clbl = NULL
         assert label is None
         CHKERR( DMAddField(self.dm, clbl, cobj) )
 
     def clearFields(self) -> None:
+        """Remove all fields from the `DM`.
+
+        Logically Collective
+
+        See Also
+        --------
+        petsc.DMClearFields
+
+        """
         CHKERR( DMClearFields(self.dm) )
 
     def copyFields(self, DM dm) -> None:
+        """Copy the discretizations.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCopyFields
+
+        """
         CHKERR( DMCopyFields(self.dm, dm.dm) )
 
     def createDS(self) -> None:
+        """Create discrete systems.
+        
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCreateDS
+
+        """
         CHKERR( DMCreateDS(self.dm) )
 
     def clearDS(self) -> None:
+        """Remove all discrete systems from the `DM`.
+
+        Logically Collective.
+
+        See Also
+        --------
+        petsc.DMClearDS
+
+        """
         CHKERR( DMClearDS(self.dm) )
 
-    def getDS(self):
+    def getDS(self) -> DS:
+        """Return the default `DS`.
+
+        Not Collective.
+
+        See Also
+        --------
+        petsc.getDS
+        
+        """
         cdef DS ds = DS()
         CHKERR( DMGetDS(self.dm, &ds.ds) )
         PetscINCREF(ds.obj)
         return ds
 
     def copyDS(self, DM dm) -> None:
+        """Copy the discrete systems.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.copyDS
+
+        """
         CHKERR( DMCopyDS(self.dm, dm.dm) )
 
     def copyDisc(self, DM dm) -> None:
+        """Copy the fields and discrete systems.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCopyDisc
+
+        """
         CHKERR( DMCopyDisc(self.dm, dm.dm) )
 
     #
 
-    def getBlockSize(self):
+    def getBlockSize(self) -> int:
+        """Return the inherent block size associated with a `DM`.
+
+        Not Collective
+
+        See Also
+        --------
+        petsc.DMGetBlockSize
+
+        """
         cdef PetscInt bs = 1
         CHKERR( DMGetBlockSize(self.dm, &bs) )
         return toInt(bs)
 
     def setVecType(self, vec_type) -> None:
+        """
+        """
         cdef PetscVecType vtype = NULL
         vec_type = str2bytes(vec_type, &vtype)
         CHKERR( DMSetVecType(self.dm, vtype) )
