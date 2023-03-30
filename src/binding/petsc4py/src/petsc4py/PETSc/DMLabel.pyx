@@ -25,8 +25,8 @@ cdef class DMLabel(Object):
 
         Parameters
         ----------
-        TODO
-            TODO.
+        viewer
+            A `Viewer` to display the graph.
 
         See also
         --------
@@ -47,7 +47,7 @@ cdef class DMLabel(Object):
         name
             The label name.
         comm
-            The communicator, usually `PETSC_COMM_SELF`.
+            The MPI communicator, usually `PETSC_COMM_SELF`.
 
         See also
         --------
@@ -63,7 +63,7 @@ cdef class DMLabel(Object):
         return self
 
     def duplicate(self) -> DMLabel:
-        """Duplicates the `DMLabel`.
+        """Duplicate the `DMLabel`.
 
         Collective.
 
@@ -77,7 +77,7 @@ cdef class DMLabel(Object):
         return new
 
     def reset(self) -> None:
-        """Destroys internal data structures in the `DMLabel`.
+        """Destroy internal data structures in the `DMLabel`.
 
         Not collective.
 
@@ -106,15 +106,15 @@ cdef class DMLabel(Object):
 
         """
         cdef PetscInt cvalue = asInt(value)
-        CHKERR( DMLabelInsertIS(self.dmlabel, iset.iset, cvalue)  )
+        CHKERR( DMLabelInsertIS(self.dmlabel, iset.iset, cvalue) )
         return self
 
     def setValue(self, point: int, value: int) -> None:
         """Set the value a label assigns to a point.
 
         If the value is the same as the label's default value (which is
-        initially -1, and can be changed with `setDefaultValue` to something
-        different), then this function will do nothing.
+        initially -1, and can be changed with `setDefaultValue`), this function
+        will do nothing.
 
         Not collective.
 
@@ -127,7 +127,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelSetValue, setDefaultValue
+        petsc.DMLabelSetValue, getValue, setDefaultValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -149,7 +149,7 @@ cdef class DMLabel(Object):
 
         See also
         --------
-        petsc.DMLabelGetValue, setDefaultValue
+        petsc.DMLabelGetValue, setValue, setDefaultValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -158,7 +158,7 @@ cdef class DMLabel(Object):
         return toInt(cvalue)
 
     def getDefaultValue(self) -> int:
-        """Get the default value returned by `getValue`
+        """Return the default value returned by `getValue`.
 
         The default value is returned if a point has not been explicitly given
         a value. When a label is created, it is initialized to -1.
