@@ -12,7 +12,7 @@ class SpaceType(object):
 # --------------------------------------------------------------------
 
 cdef class Space(Object):
-
+    """A PETSc object that manages a linear space"""
     Type = SpaceType
 
     def __cinit__(self):
@@ -32,7 +32,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceSetUp(self.space) )
 
     def create(self, comm: Comm | None = None):
-        """Creates an empty `Space` object.
+        """Create an empty `Space` object.
 
         The type can then be set with `setType`.
 
@@ -56,7 +56,7 @@ cdef class Space(Object):
         return self
 
     def destroy(self) -> Self:
-        """Destroys the `Space` object
+        """Destroy the `Space` object.
 
         Collective.
 
@@ -139,7 +139,7 @@ cdef class Space(Object):
             The degree of the largest polynomial space contained in the space.
         maxDegree
             The degree of the largest polynomial space containing the space.
-            One of degree and maxDegree can be `PETSC_DETERMINE`. TODO: None?
+            One of degree and maxDegree can be `DETERMINE`. TODO: None?
 
         See also
         --------
@@ -221,7 +221,7 @@ cdef class Space(Object):
     #    return array_r(cnpoints*cdim, B), array_r(cnpoints*cnc, D), array_r(, H)
 
     def getType(self) -> str:
-        """Gets the `Space.Type` (as a string) from the object.
+        """Return the `Space.Type` (as a string) from the object.
 
         Not collective.
 
@@ -461,7 +461,7 @@ cdef class Space(Object):
         CHKERR( PetscSpacePolynomialSetTensor(self.space, ctensor) )
 
     def setPointPoints(self, Quad quad) -> None:
-        """Sets the evaluation points for the space to based on a quad.
+        """Set the evaluation points for the space to based on a quad.
 
         Sets the evaluation points for the space to coincide with the points of a quadrature rule.
 
@@ -528,9 +528,12 @@ cdef class Space(Object):
 
         Parameters
         ----------
-A - the PetscSpace object
-obj - Optional object, provides the options prefix
-name - command line option name
+        A
+            TODO the PetscSpace object
+        obj
+            TODO Optional object, provides the options prefix
+        name
+            TODO command line option name
 
         See also
         --------
@@ -575,7 +578,7 @@ cdef class DualSpace(Object):
         CHKERR( PetscDualSpaceSetUp(self.dualspace) )
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Creates an empty `DualSpace` object. The type can then be set with `setType`.
+        """Create an empty `DualSpace` object. The type can then be set with `setType`.
 
         Collective.
 
@@ -596,7 +599,7 @@ cdef class DualSpace(Object):
         return self
 
     def view(self, Viewer viewer=None) -> None:
-        """Views a `DualSpace`.
+        """View a `DualSpace`.
 
         Collective.
 
@@ -628,7 +631,7 @@ cdef class DualSpace(Object):
         return self
 
     def duplicate(self) -> DualSpace:
-        """Creates a duplicate `DualSpace` object that is not setup.
+        """Create a duplicate `DualSpace` object that is not setup.
 
         Collective.
 
@@ -643,9 +646,8 @@ cdef class DualSpace(Object):
     def getDM(self) -> DM:
         """Get the `DM` representing the reference cell of a `DualSpace`.
 
-        Output Parameter
-dm - The reference cell, that is a DM that consists of a single cell
-
+        Returns
+        dm TODO The reference cell, that is a DM that consists of a single cell
 
         Not collective.
 
@@ -704,14 +706,12 @@ dm - The reference cell, that is a DM that consists of a single cell
         return toInt(cncomps)
 
     def setNumComponents(self, nc: int) -> None:
-        """TODO
-
-        Not collective.
+        """Set the number of components for this space.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        nc
+            The number of components
 
         See also
         --------
@@ -722,7 +722,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         CHKERR( PetscDualSpaceSetNumComponents(self.dualspace, cnc) )
 
     def getType(self) -> str:
-        """Gets the `DualSpace.Type` name (as a string) from the object.
+        """Return the `Type` name (as a string) from the object.
 
         Not collective.
 
@@ -736,7 +736,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         return bytes2str(cval)
 
     def setType(self, dualspace_type: DualSpace.Type | str) -> Self:
-        """Builds a particular `DualSpace` based on its `DualSpaceType`.
+        """Build a particular `DualSpace` based on its `Type`.
 
         Collective.
 
@@ -756,7 +756,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         return self
 
     def getOrder(self) -> int:
-        """Get the order of the dual space.
+        """Return the order of the dual space.
 
         Not collective.
 
@@ -788,7 +788,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         CHKERR( PetscDualSpaceSetOrder(self.dualspace, corder) )
 
     def getNumDof(self) -> ArrayInt:
-        """Get the number of degrees of freedom for each spatial dimension.
+        """Return the number of degrees of freedom for each spatial dimension.
 
         Not collective.
 
@@ -807,7 +807,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         return array_i(cdim + 1, cndof)
 
     def getFunctional(self, i: int) -> Quad:
-        """Get the i-th basis functional in the dual space.
+        """Return the i-th basis functional in the dual space.
 
         Not collective.
 
@@ -827,7 +827,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         return functional
 
     def getInteriorDimension(self) -> int:
-        """Get the interior dimension of the dual space.
+        """Return the interior dimension of the dual space.
 
         The interior dimension of the dual space, i.e. the number of basis
         functionals assigned to the interior of the reference domain.
@@ -876,7 +876,7 @@ dm - The reference cell, that is a DM that consists of a single cell
         CHKERR( PetscDualSpaceLagrangeSetContinuity(self.dualspace, ccontinuous))
 
     def getLagrangeTensor(self) -> bool:
-        """Get the tensor nature of the dual space.
+        """Return the tensor nature of the dual space.
 
         Not collective.
 
@@ -953,9 +953,12 @@ dm - The reference cell, that is a DM that consists of a single cell
 
         Parameters
         ----------
-A - the PetscDualSpace object
-obj - Optional object, provides the options prefix
-name - command line option name
+        A
+            TODO the PetscDualSpace object
+        obj
+            TODO Optional object, provides the options prefix
+        name
+            TODO command line option name
 
         See also
         --------
