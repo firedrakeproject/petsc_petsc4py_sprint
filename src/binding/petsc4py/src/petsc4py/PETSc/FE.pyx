@@ -8,6 +8,7 @@ class FEType(object):
 # --------------------------------------------------------------------
 
 cdef class FE(Object):
+    """PETSc object that manages a finite element space."""
 
     Type = FEType
 
@@ -16,7 +17,7 @@ cdef class FE(Object):
         self.fe = NULL
 
     def view(self, Viewer viewer=None) -> None:
-        """View a `FE` object
+        """View a `FE` object.
 
         Collective.
 
@@ -35,7 +36,7 @@ cdef class FE(Object):
         CHKERR( PetscFEView(self.fe, vwr) )
 
     def destroy(self) -> Self:
-        """Destroys the `FE` object
+        """Destroy the `FE` object.
 
         Collective.
 
@@ -48,7 +49,7 @@ cdef class FE(Object):
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Creates an empty `FE` object.
+        """Create an empty `FE` object.
 
         The type can then be set with `setType`.
 
@@ -57,8 +58,7 @@ cdef class FE(Object):
         Parameters
         ----------
         comm
-            The communicator for the `FE` object
-
+            The communicator for the `FE` object.
 
         See also
         --------
@@ -71,7 +71,8 @@ cdef class FE(Object):
         PetscCLEAR(self.obj); self.fe = newfe
         return self
 
-    def createDefault(self, dim: int, nc: int, isSimplex: bool, qorder: int, prefix: str = None, comm: Comm | None = None) -> Self:
+    # TODO:
+    def createDefault(self, dim: int, nc: int, isSimplex: bool, qorder: int = DETERMINE, prefix: str = None, comm: Comm | None = None) -> Self:
         """Create a `FE` for basic FEM computation.
 
         Collective.
@@ -85,10 +86,10 @@ cdef class FE(Object):
         isSimplex
             Flag for simplex reference cell, otherwise its a tensor product.
         qorder
-            The quadrature order or PETSC_DETERMINE (TODO: in params)to use `Space`
-            polynomial degree.
+            The quadrature order or `DETERMINE` to use `Space` polynomial
+            degree.
         prefix
-            The options prefix, or None.
+            The options prefix, or `None`.
         comm
             The MPI communicator.
 
@@ -110,7 +111,7 @@ cdef class FE(Object):
         PetscCLEAR(self.obj); self.fe = newfe
         return self
 
-    def createLagrange(self, dim: int, nc: int, isSimplex: bool, k: int, qorder: int, comm=None) -> Self:
+    def createLagrange(self, dim: int, nc: int, isSimplex: bool, k: int, qorder: int = DETERMINE, comm=None) -> Self:
         """Create a `FE` for the basic Lagrange space of degree k.
 
         Collective.
@@ -126,10 +127,10 @@ cdef class FE(Object):
         k
             The degree k of the space.
         qorder
-            The quadrature order or PETSC_DETERMINE TODO: to use `Space`
-            polynomial degree.
+            The quadrature order or `DETERMINE` to use `Space` polynomial
+            degree.
         comm
-            The MPI comm.
+            The MPI communicator.
 
         See also
         --------
@@ -154,7 +155,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFEGetQuadrature
+        petsc.PetscFEGetQuadrature, setQuadrature
 
         """
         cdef Quad quad = Quad()
@@ -196,7 +197,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFEGetNumComponents
+        petsc.PetscFEGetNumComponents, setNumComponents
 
         """
         cdef PetscInt comp = 0
@@ -204,7 +205,7 @@ cdef class FE(Object):
         return toInt(comp)
 
     def setNumComponents(self, comp: int) -> None:
-        """Sets the number of field components in the element.
+        """Set the number of field components in the element.
 
         Not collective.
 
@@ -215,7 +216,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFESetNumComponents
+        petsc.PetscFESetNumComponents, getNumComponents
 
         """
         cdef PetscInt ccomp = asInt(comp)
@@ -224,14 +225,14 @@ cdef class FE(Object):
     def getNumDof(self) -> ndarray:
         """Return the number of dofs.
 
-        Return the number of dofs (dual basis vectors) associated to mesh
+        Return the number of dofs (dual basis vectors) associated with mesh
         points on the reference cell of a given dimension.
 
         Not collective.
 
         See also
         --------
-        petsc.PetscFEGetDimension, petsc.PetscFEGetNumDof
+        petsc.PetscFEGetNumDof
 
         """
         cdef const PetscInt *numDof = NULL
@@ -258,7 +259,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFEGetTileSizes
+        petsc.PetscFEGetTileSizes, setTileSizes
 
         """
         cdef PetscInt blockSize = 0, numBlocks = 0
@@ -267,7 +268,7 @@ cdef class FE(Object):
         return toInt(blockSize), toInt(numBlocks), toInt(batchSize), toInt(numBatches)
 
     def setTileSizes(self, blockSize: int, numBlocks: int, batchSize: int, numBatches: int) -> None:
-        """Sets the tile sizes for evaluation.
+        """Set the tile sizes for evaluation.
 
         Not collective.
 
@@ -284,7 +285,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFESetTileSizes
+        petsc.PetscFESetTileSizes, getTileSizes
 
         """
         cdef PetscInt cblockSize = asInt(blockSize), cnumBlocks = asInt(numBlocks)
@@ -298,7 +299,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFEGetFaceQuadrature
+        petsc.PetscFEGetFaceQuadrature, setFaceQuadrature
 
         """
         cdef Quad quad = Quad()
@@ -306,7 +307,7 @@ cdef class FE(Object):
         return quad
 
     def setQuadrature(self, Quad quad) -> Self:
-        """Sets the `Quad` used to calculate inner products.
+        """Set the `Quad` used to calculate inner products.
 
         Not collective.
 
@@ -317,7 +318,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFESetQuadrature
+        petsc.PetscFESetQuadrature, getQuadrature
 
         """
         CHKERR( PetscFESetQuadrature(self.fe, quad.quad) )
@@ -335,13 +336,13 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFESetFaceQuadrature
+        petsc.PetscFESetFaceQuadrature, getFaceQuadrature
 
         """
         CHKERR( PetscFESetFaceQuadrature(self.fe, quad.quad) )
         return self
 
-    def setType(self, fe_type) -> Self:
+    def setType(self, fe_type: Type) -> Self:
         """Build a particular `FE`.
 
         Collective.
@@ -349,7 +350,7 @@ cdef class FE(Object):
         Parameters
         ----------
         fe_type
-            The kind of FEM space. TODO: params
+            The kind of FEM space.
 
         See also
         --------
@@ -362,13 +363,13 @@ cdef class FE(Object):
         return self
 
     def getBasisSpace(self) -> Space:
-        """Return the `Space` used for the approximation of the solution for the `FE`.
+        """Return the `Space` used for the approximation of the `FE` solution.
 
         Not collective.
 
         See also
         --------
-        petsc.PetscFEGetBasisSpace
+        petsc.PetscFEGetBasisSpace, setBasisSpace
 
         """
         cdef Space sp = Space()
@@ -376,7 +377,7 @@ cdef class FE(Object):
         return sp
 
     def setBasisSpace(self, Space sp) -> None:
-        """Sets the `Space` used for the approximation of the solution.
+        """Set the `Space` used for the approximation of the solution.
 
         Not collective.
 
@@ -387,7 +388,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFESetBasisSpace
+        petsc.PetscFESetBasisSpace, getBasisSpace
 
         """
         CHKERR( PetscFESetBasisSpace(self.fe, sp.space ) )
@@ -423,7 +424,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFEGetDualSpace, DualSpace
+        petsc.PetscFEGetDualSpace, setDualSpace, DualSpace
 
         """
         cdef DualSpace dspace = DualSpace()
@@ -431,7 +432,7 @@ cdef class FE(Object):
         return dspace
 
     def setDualSpace(self, DualSpace dspace) -> None:
-        """Sets the `DualSpace` used to define the inner product.
+        """Set the `DualSpace` used to define the inner product.
 
         Not collective.
 
@@ -442,7 +443,7 @@ cdef class FE(Object):
 
         See also
         --------
-        petsc.PetscFESetDualSpace, DualSpace
+        petsc.PetscFESetDualSpace, getDualSpace, DualSpace
 
         """
         CHKERR( PetscFESetDualSpace(self.fe, dspace.dualspace) )
@@ -455,9 +456,9 @@ cdef class FE(Object):
         Parameters
         ----------
         obj
-            TODO Optional object that provides the options prefix
+            Optional object that provides the options prefix.
         name
-            TODO command line option name
+            Command line option name.
 
         See also
         --------
