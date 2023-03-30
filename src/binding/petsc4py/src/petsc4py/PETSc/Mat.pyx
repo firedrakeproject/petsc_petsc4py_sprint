@@ -2079,12 +2079,12 @@ cdef class Mat(Object):
 
         Parameters
         ----------
-        mat
+        P
             The matrix P.
         result
             The resultant matrix C, can be ``None``.
         fill
-            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(P)), use
             ``None`` if you do not have a good estimate. If the
             result is a dense matrix this is irrelevant.
 
@@ -2117,7 +2117,53 @@ cdef class Mat(Object):
         CHKERR( MatPtAP(self.mat, P.mat, reuse, cfill, &result.mat) )
         return result
 
-    def rart(self, Mat R, Mat result=None, fill=None):
+    def rart(
+        self,
+        Mat R,
+        result: Mat | None = None,
+        fill: flaot | None = None
+    ) -> Mat:
+        """Create the matrix product C = RARᵀ.
+
+        Neighbour-wise collective.
+
+        Parameters
+        ----------
+        R
+            The projection matrix.
+        result
+            The resultant matrix C, can be ``None``.
+        fill
+            Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
+            you do not have a good estimate. If the result is a dense
+            matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        An alternative approach to this function is to use
+        `productCreate` and set the desired options before the
+        computation is done.
+
+        This routine is currently only implemented for pairs of
+        `MatType.AIJ` matrices and classes which inherit from
+        `MatType.AIJ. Due to PETSc sparse matrix block row distribution
+        among processes, parallel `petsc.MatRARt` is implemented via
+        explicit transpose of R, which could be very expensive. We
+        recommend using `ptap`.
+
+        See also
+        --------
+        petsc.MatRARt
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal cfill = PETSC_DEFAULT
         if result is None:
@@ -2128,7 +2174,40 @@ cdef class Mat(Object):
         CHKERR( MatRARt(self.mat, R.mat, reuse, cfill, &result.mat) )
         return result
 
-    def matMatMult(self, Mat B, Mat C, Mat result=None, fill=None):
+    def matMatMult(
+        self,
+        Mat B,
+        Mat C,
+        result: Mat | None = None,
+        fill: float | None = None
+    ) -> Mat:
+        """Perform matrix-matrix-matrix multiplication D=ABC.
+
+        Neighbour-wise collective.
+
+        Parameters
+        ----------
+        B
+            The middle matrix B.
+        C
+            The right hand matrix C.
+        result
+            The resultant matrix D, can be ``None``.
+        fill
+            Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
+            you do not have a good estimate. If the result is a dense
+            matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix D.
+
+        See also
+        --------
+        petsc.MatMatMatMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal cfill = PETSC_DEFAULT
         if result is None:
@@ -2139,7 +2218,31 @@ cdef class Mat(Object):
         CHKERR( MatMatMatMult(self.mat, B.mat, C.mat, reuse, cfill, &result.mat) )
         return result
 
-    def kron(self, Mat mat, Mat result=None):
+    def kron(
+        self,
+        Mat mat,
+        result: Mat | None = None
+    ) -> Mat:
+        """Compute C, the Kronecker product of A and B.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The resultant matrix C, can be ``None``.
+
+
+        Returns
+        -------
+        result: Mat
+            The resultant matrix C, the Kronecker product of A and B.
+
+        See also
+        --------
+        petsc.MatSeqAIJKron
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         if result is None:
             result = Mat()
@@ -2148,11 +2251,32 @@ cdef class Mat(Object):
         CHKERR( MatSeqAIJKron(self.mat, mat.mat, reuse, &result.mat) )
         return result
 
-    def bindToCPU(self, flg):
+    def bindToCPU(self, flg: bool) -> None:
+        """Mark a matrix to temporarily stay on the CPU.
+
+        Once marked, perform computations on the CPU.
+
+        Parameters
+        ----------
+        flg
+            Bind to the CPU if ``True``
+
+        See also
+        --------
+        petsc.MatBindToCPU
+
+        """
         cdef PetscBool bindFlg = asBool(flg)
         CHKERR( MatBindToCPU(self.mat, bindFlg) )
 
-    def boundToCPU(self):
+    def boundToCPU(self) -> bool:
+        """Query if a matrix is bound to the CPU.
+
+        See also
+        --------
+        petsc.MatBoundToCPU
+
+        """
         cdef PetscBool flg = PETSC_TRUE
         CHKERR( MatBoundToCPU(self.mat, &flg) )
         return toBool(flg)
