@@ -632,7 +632,8 @@ cdef class DM(Object):
 
         Parameters
         ---------
-        The discretization object.
+        field
+            The discretization object.
 
         See Also
         --------
