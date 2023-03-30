@@ -81,7 +81,7 @@ cdef class Quad(Object):
         Returns
         -------
         points : ArrayReal
-            The quadrature points.
+            The coordinates of the quadrature points.
         weights : ArrayReal
             The quadrature weights.
 
