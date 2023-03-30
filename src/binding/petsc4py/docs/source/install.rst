@@ -44,3 +44,8 @@ The resulting HTML files will be in :file:`_build/html`.
 .. note::
 
   Building the documentation requires Python 3.11 or later.
+
+.. note::
+
+  All new code must include documentation in accordance with the `documentation
+  standard <documentation_standards>`
