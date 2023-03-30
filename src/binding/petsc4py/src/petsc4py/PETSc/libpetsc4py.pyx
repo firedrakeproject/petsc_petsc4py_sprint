@@ -1829,7 +1829,7 @@ cdef PetscErrorCode KSPSolve_Python_default(
         if ksp.reason: break
         KSPPreStep_Python(ksp)
         #
-        KSPStep_Python(ksp, B, X)
+        KSPStep_Python(ksp, B, X) # FIXME? B?
         CHKERR( KSPBuildResidual(ksp, t, v, &R) )
         CHKERR( VecNorm(R, PETSC_NORM_2, &rnorm) )
         ksp.iter += 1

@@ -11,10 +11,6 @@ from petsc4py.PETSc import Viewer
 
 class MatPythonProtocol:
 
-    def __init__(self) -> None:
-        """Initialize the Python object."""
-        ...
-
     def mult(self, A: Mat, x: Vec, y: Vec) -> None:
         """Matrix vector multiplication: y = A @ x."""
         ...

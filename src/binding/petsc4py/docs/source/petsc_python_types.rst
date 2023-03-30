@@ -5,7 +5,7 @@ PETSc Python types
 
 Here we discuss details about Python-aware PETSc types that can be used within the library.
 
-In particular, we discuss matrices, preconditioners, Krylov solvers, and nonlinear solvers.
+In particular, we discuss matrices, preconditioners, Krylov solvers, nonlinear solvers and ODE integrators.
 
 The low-level, Cython implementation exposing the Python methods is contained in
 
@@ -74,12 +74,27 @@ We can run the script used to test our matrix class and use our preconditioner b
 PETSc Python linear solver type
 ===============================
 
+The protocol for the `petsc4py.PETSc.KSP.Type.PYTHON` Krylov solver is:
+
+.. literalinclude:: ../../demo/python_types/ksppython_protocol.py
+
 .. _petsc_python_snes:
 
 PETSc Python nonlinear solver type
 ==================================
 
+TODO
+
+.. _petsc_python_ts:
+
+PETSc Python ode-integrator type
+================================
+
+TODO
+
 .. _petsc_python_tao:
 
 PETSc Python optimization solver type
 =====================================
+
+TODO

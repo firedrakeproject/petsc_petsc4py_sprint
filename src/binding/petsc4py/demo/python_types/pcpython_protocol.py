@@ -9,10 +9,6 @@ from petsc4py.PETSc import Viewer
 
 class PCPythonProtocol:
 
-    def __init__(self) -> None:
-        """Initialize the Python object."""
-        ...
-
     def apply(self, pc: PC, b: Vec, x: Vec) -> None:
         """Apply the preconditioner on vector b, return in x."""
         ...
