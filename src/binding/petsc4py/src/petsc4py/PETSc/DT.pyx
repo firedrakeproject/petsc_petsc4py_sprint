@@ -98,6 +98,9 @@ cdef class Quad(Object):
         CHKERR( PetscQuadratureGetData(self.quad, &cdim, &cnc, &cnpoints, &cpoints, &cweights))
         return array_r(cnpoints*cdim, cpoints), array_r(cnpoints*cnc, cweights)
 
+    # FIXME:
+    # def setData(???)
+
     def getNumComponents(self) -> int:
         """Return the number of components for functions to be integrated.
 
