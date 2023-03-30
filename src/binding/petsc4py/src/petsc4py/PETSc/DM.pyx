@@ -1020,7 +1020,7 @@ cdef class DM(Object):
         CHKERR( DMLocalizeCoordinates(self.dm) )
     #
 
-    def setMatType(self, mat_type: ) -> None:
+    def setMatType(self, mat_type: str) -> None:
         """Set matrix type to be used by `DM.createMat`.
         
         Logically Collective.
@@ -1034,34 +1034,88 @@ cdef class DM(Object):
         mat_type = str2bytes(mat_type, &mtype)
         CHKERR( DMSetMatType(self.dm, mtype) )
 
-    def createMat(self):
+    def createMat(self) -> Mat:
+        """Return an empty matrix.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCreateMatrix
+
+        """
         cdef Mat mat = Mat()
         CHKERR( DMCreateMatrix(self.dm, &mat.mat) )
         return mat
 
-    def createMassMatrix(self, DM dmf):
+    def createMassMatrix(self, DM dmf) -> Mat:
+        """Return the mass matrix between two `DM` objects.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCreateMassMatrix
+
+        """
         cdef Mat mat = Mat()
         CHKERR( DMCreateMassMatrix(self.dm, dmf.dm, &mat.mat) )
         return mat
 
-    def createInterpolation(self, DM dm):
+    def createInterpolation(self, DM dm) -> tuple[Mat,Vec]:
+        """Return the interpolation matrix between two `DM` objects.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCreateInterpolation
+
+        """
         cdef Mat A = Mat()
         cdef Vec scale = Vec()
         CHKERR( DMCreateInterpolation(self.dm, dm.dm,
                                    &A.mat, &scale.vec))
         return(A, scale)
 
-    def createInjection(self, DM dm):
+    def createInjection(self, DM dm) -> Mat:
+        """Return the injection matrix between two `DM` objects.
+
+        Collective
+
+        See Also
+        --------
+        petsc.DMCreateInjection
+
+        """
         cdef Mat inject = Mat()
         CHKERR( DMCreateInjection(self.dm, dm.dm, &inject.mat) )
         return inject
 
-    def createRestriction(self, DM dm):
+    def createRestriction(self, DM dm) -> Mat:
+        """Return restriction matrix between two `DM` objects.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMCreateRestriction
+
+        """
         cdef Mat mat = Mat()
         CHKERR( DMCreateRestriction(self.dm, dm.dm, &mat.mat) )
         return mat
 
-    def convert(self, dm_type):
+    def convert(self, dm_type: str) -> DM:
+        """Convert a `DM` to another `DM`.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.DMConvert
+
+        """
         cdef PetscDMType cval = NULL
         dm_type = str2bytes(dm_type, &cval)
         cdef PetscDM newdm = NULL
