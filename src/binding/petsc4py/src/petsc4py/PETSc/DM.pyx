@@ -497,6 +497,10 @@ cdef class DM(Object):
 
         Parameters
         ----------
+        aux
+            The auxiliary vector.
+        label
+            The `DM`label.
         value : int, optional
             Indicate the region.
         part : int, optional
@@ -517,12 +521,14 @@ cdef class DM(Object):
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
     
     def getAuxiliaryVec(self, label: DMLabel | None, value=0, part=0) -> Vec:
-        """Return an auxiliary vector for a specific region.
+        """Return an auxiliary vector for region.
 
         Not Collective
 
         Parameters
         ----------
+        label : DMLabel
+            The `DM` label.
         value : int, optional
             Indicate the region.
         part : int, optional
