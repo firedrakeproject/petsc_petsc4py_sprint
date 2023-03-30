@@ -1724,14 +1724,17 @@ cdef class Vec(Object):
 
         Not collective.
 
+        Common return values include:
+
+        - 1: ``PETSC_OFFLOAD_CPU`` - CPU has valid entries
+        - 2: ``PETSC_OFFLOAD_GPU`` - GPU has valid entries
+        - 3: ``PETSC_OFFLOAD_BOTH`` - both CPU and GPU have valid entries
+
         Returns
         -------
         int
             Enum value from `petsc.PetscOffloadMask` describing the offloading
-            status. Common values include:
-            - 1: ``PETSC_OFFLOAD_CPU`` - CPU has valid entries
-            - 2: ``PETSC_OFFLOAD_GPU`` - GPU has valid entries
-            - 3: ``PETSC_OFFLOAD_BOTH`` - both CPU and GPU have valid entries
+            status. 
 
         See Also
         --------
