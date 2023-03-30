@@ -601,7 +601,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DM.DMPolytopeType.composeOrientation, DM.DMPolytopeType.composeOrientationInv, DMPlex.create, DMPlex.getCone, DMPlex.setCone, DMPlex.setChart, petsc.DMPlexGetConeOrientation
+        DM, DMPlex, DMPlex.create, DMPlex.getCone, DMPlex.setCone, DMPlex.setChart, petsc.DMPlexGetConeOrientation
 
         """
         cdef PetscInt cp = asInt(p)
@@ -643,7 +643,7 @@ cdef class DMPlex(DM):
         assert norie == ncone
         CHKERR( DMPlexSetConeOrientation(self.dm, cp, iorie) )
 
-    def setCellType(self, p: int, ctype: DMPolytopeType) -> None:
+    def setCellType(self, p: int, ctype: DM.PolytopeType) -> None:
         """Set the polytope type of a given cell.
 
         Not collective.
@@ -664,7 +664,7 @@ cdef class DMPlex(DM):
         cdef PetscDMPolytopeType val = ctype
         CHKERR( DMPlexSetCellType(self.dm, cp, val) )
 
-    def getCellType(self, p: int) -> int:
+    def getCellType(self, p: int) -> DM.PolytopeType:
         """Get the polytope type of a given cell.
 
         Not collective.
@@ -676,7 +676,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPolytopeType, DMPlex.getCellTypeLabel, DMPlex.getDepth, petsc.DMPlexGetCellType
+        DM, DMPlex, DM.PolytopeType, DMPlex.getCellTypeLabel, DMPlex.getDepth, petsc.DMPlexGetCellType
 
         """
         cdef PetscInt cp = asInt(p)
@@ -803,6 +803,13 @@ cdef class DMPlex(DM):
 
         Not collective.
 
+        Returns
+        -------
+        maxConeSize: int
+            The maximum number of in-edges.
+        maxSupportSize: int
+            The maximum number of out-edges.
+
         See Also
         --------
         DM, DMPlex, DMPlex.create, DMPlex.setConeSize, DMPlex.setChart, petsc.DMPlexGetMaxSizes
@@ -911,7 +918,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         svalue
-            The requested depth
+            The requested depth.
+
+        Returns
+        -------
+        pStart: int
+            The first stratum point.
+        pEnd: int
+            The upper bound for stratum points.
 
         See Also
         --------
@@ -930,7 +944,14 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         svalue
-            The requested height
+            The requested height.
+
+        Returns
+        -------
+        pStart: int
+            The first stratum point.
+        pEnd: int
+            The upper bound for stratum points.
 
         See Also
         --------
@@ -1020,7 +1041,7 @@ cdef class DMPlex(DM):
             CHKERR( DMPlexRestoreJoin(self.dm, numPoints, ipoints, &numCoveringPoints, &coveringPoints) )
 
     def getTransitiveClosure(self, p: int, useCone: bool | None = True) -> tuple[ArrayInt, ArrayInt]:
-        """Return the points on the transitive closure of the in-edges or out-edges for this point in the DAG.
+        """Return the points and point orientations on the transitive closure of the in-edges or out-edges for this point in the DAG.
 
         Not collective.
 
@@ -1029,7 +1050,14 @@ cdef class DMPlex(DM):
         p
             The mesh point.
         useCone
-            `True` for the closure, otherwise return the star, defaults to `True`.
+            `True` for the closure, otherwise return the star.
+
+        Returns
+        -------
+        points: ArrayInt
+            The points.
+        orientations: ArrayInt
+            The orientations.
 
         See Also
         --------
@@ -1509,7 +1537,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getSimplexOrBoxCells, DMPlex.getCellType, DMPlex.getHeightStratum, petsc.DMPolytopeTypeGetNumVertices, petsc.DMPlexIsSimplex
+        DM, DMPlex, DMPlex.getSimplexOrBoxCells, DMPlex.getCellType, DMPlex.getHeightStratum, petsc.DMPlexIsSimplex
 
         """
         cdef PetscBool flag = PETSC_FALSE
@@ -1542,7 +1570,7 @@ cdef class DMPlex(DM):
 
         Parameters
         ----------
-        dist
+        flag
             Flag indicating whether the `DMPlex` should be distributed by default.
 
         See Also
@@ -1636,6 +1664,13 @@ cdef class DMPlex(DM):
         newvec
             The new data in a local vector.
 
+        Returns
+        -------
+        newSection: Section
+            The `SF` describing the new data layout.
+        newVec: Vec
+            The new data in a local vector.
+
         See Also
         --------
         DMPlex, DMPlex.distribute, petsc.DMPlexDistributeField
@@ -1681,7 +1716,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, IS, DM.refine, DMPlex.setRefinementUniform, DMPlex.getSubpointIS, petsc.DMPlexCreateCoarsePointIS
+        DM, DMPlex, IS, DM.refine, DMPlex.setRefinementUniform, petsc.DMPlexCreateCoarsePointIS
 
         """
         cdef IS fpoint = IS()
@@ -1884,7 +1919,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, Section, DMPlex.gecGetClosure, petsc.DMPlexCreateClosureIndex
+        DM, DMPlex, Section, DMPlex.vecGetClosure, petsc.DMPlexCreateClosureIndex
 
         """
         cdef PetscSection csec = sec.sec if sec is not None else NULL
@@ -2848,7 +2883,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DM.projectFunction, petsc.DMPlexComputeGradientClementInterpolant
+        DM, DMPlex, petsc.DMPlexComputeGradientClementInterpolant
 
         """
         CHKERR( DMPlexComputeGradientClementInterpolant(self.dm, locX.vec, locC.vec) )
