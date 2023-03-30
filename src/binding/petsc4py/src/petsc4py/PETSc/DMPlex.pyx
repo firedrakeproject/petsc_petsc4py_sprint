@@ -1834,7 +1834,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.getPointLocal, Section.getOffset, Petsc.sectionGetDof, petsc.DMPlexGetPointLocalField
+        DM, DMPlex, DMPlex.getPointLocal, Section.getOffset, petsc.DMPlexGetPointLocalField
 
         """
         cdef PetscInt start = 0, end = 0
