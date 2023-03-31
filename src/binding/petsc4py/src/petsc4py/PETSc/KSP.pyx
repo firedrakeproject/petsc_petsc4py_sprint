@@ -694,7 +694,7 @@ cdef class KSP(Object):
         """
         CHKERR( KSPSetDM(self.ksp, dm.dm) )
 
-    def setDMActive(self, bint flag: bool) -> None:
+    def setDMActive(self, flag: bool) -> None:
         """`DM` should be used to generate system matrix & RHS vector.
 
         Logically collective
@@ -715,8 +715,7 @@ cdef class KSP(Object):
         PETSc.KSP, DM, setDM, petsc.KSPSetDMActive
 
         """
-        cdef PetscBool cflag = PETSC_FALSE
-        if flag: cflag = PETSC_TRUE
+        cdef PetscBool cflag = asBool(flag)
         CHKERR( KSPSetDMActive(self.ksp, cflag) )
 
     # --- operators and preconditioner ---
@@ -742,7 +741,7 @@ cdef class KSP(Object):
 
         Notes
         -----
-        The routine you provide will be called EACH you call `solve`
+        The routine you provide will be called each time you call `solve`
         to prepare the new right hand side for that solve.
 
         See also
