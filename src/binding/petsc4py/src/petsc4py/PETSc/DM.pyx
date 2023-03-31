@@ -771,14 +771,14 @@ cdef class DM(Object):
         CHKERR( DMGetBlockSize(self.dm, &bs) )
         return toInt(bs)
 
-    def setVecType(self, vec_type: str) -> None:
+    def setVecType(self, vec_type: Vec.Type | str) -> None:
         """Set the type of vector.
 
         Logically collective.
 
         See Also
         --------
-        petsc.DMSetVecType
+        Vec.Type, petsc.DMSetVecType
 
         """
         cdef PetscVecType vtype = NULL
