@@ -167,7 +167,7 @@ cdef class DMStag(DM):
 
     # Setters
 
-    def setStencilWidth(self,swidth: int) -> None:
+    def setStencilWidth(self, swidth: int) -> None:
         """Set elementwise stencil width.
 
         Logically collective; stencilWidth must contain common value.
@@ -513,7 +513,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGhostCorners(self.dm, &x, &y, &z, &m, &n, &p) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
-    def getLocalSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getLocalSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]: #TODO: ?
         """Return local elementwise sizes.
 
         Not collective.
@@ -590,15 +590,10 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetNumRanks(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getStencilType(self):
+    def getStencilType(self) -> StencilType:
         """Return elementwise ghost/halo stencil type.
 
         Not collective.
-
-        Output Parameter
-        stencilType
-            The elementwise ghost stencil type: DMSTAG_STENCIL_BOX,
-            DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE.
 
         See also
         --------
@@ -910,7 +905,7 @@ cdef class DMStag(DM):
 
     # Location slot related functions
 
-    def getLocationSlot(self, loc, c: int) -> int:
+    def getLocationSlot(self, loc: StencilLocation, c: int) -> int:
         """Return index to use in accessing raw local arrays.
 
         Not collective.
@@ -942,7 +937,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocationSlot(self.dm, sloc, comp, &slot) )
         return toInt(slot)
 
-    def getProductCoordinateLocationSlot(self, loc) -> None:
+    def getProductCoordinateLocationSlot(self, loc: StencilLocation) -> None:
         """Return slot for use with local product coordinate arrays.
 
         Not collective.
@@ -981,7 +976,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetProductCoordinateLocationSlot(self.dm, sloc, &slot) )
         return toInt(slot)
 
-    def getLocationDof(self, loc) -> int:
+    def getLocationDof(self, loc: StencilLocation) -> int:
         """Return number of DOF associated with a given point in a DMSTAG grid.
 
         Not collective.
@@ -1067,7 +1062,7 @@ cdef class DMStag(DM):
         PetscCLEAR(newdm.obj); newdm.dm = newda
         return newdm
 
-    def VecSplitToDMDA(self, Vec vec, loc, c: int):
+    def VecSplitToDMDA(self, Vec vec, loc: StencilLocation, c: int):
         """Create a DMDA and Vec from a subgrid of a DMSTAG and its Vec.
 
         Collective.
@@ -1126,8 +1121,8 @@ cdef class DMStag(DM):
             return self.getDof()
 
     property entries_per_element:
-        # TODO: docstring
-        def __get__(self):
+        # The number of entries per element in the local representation.
+        def __get__(self) -> int:
             return self.getEntriesPerElement()
 
     property global_sizes:
@@ -1151,13 +1146,13 @@ cdef class DMStag(DM):
             return self.getBoundaryTypes()
 
     property stencil_type:
-        # TODO: docstring
-        def __get__(self):
+        # Elementwise ghost/halo stencil type.
+        def __get__(self) -> StencilType:
             return self.getStencilType()
 
     property stencil_width:
-        # TODO: docstring
-        def __get__(self):
+        # Elementwise stencil width.
+        def __get__(self) -> int:
             return self.getStencilWidth()
 
     property corners:
