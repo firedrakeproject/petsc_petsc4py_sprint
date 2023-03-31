@@ -606,7 +606,7 @@ cdef class DM(Object):
         assert label is None
         CHKERR( DMSetField(self.dm, cidx, clbl, cobj) )
 
-    def getField(self, index: int) -> tuple[Object,None]:
+    def getField(self, index: int) -> tuple[Object, None]:
         """Return the discretization object for a given `DM` field.
         
         Not collective.
@@ -614,7 +614,7 @@ cdef class DM(Object):
         Parameters
         ----------
         index
-            The field number
+            The field number.
 
         See Also
         --------
