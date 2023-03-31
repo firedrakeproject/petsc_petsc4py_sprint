@@ -666,9 +666,14 @@ cdef class DM(Object):
         CHKERR( DMClearFields(self.dm) )
 
     def copyFields(self, DM dm) -> None:
-        """Copy the discretizations of a `DM` into another `DM`.
+        """Copy the discretizations of this `DM` into another `DM`.
 
         Collective.
+
+        Parameters
+        ----------
+        dm
+            The `DM` that the fields are copied into.
 
         See Also
         --------
