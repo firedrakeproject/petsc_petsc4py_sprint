@@ -12,7 +12,7 @@ cdef class DMInterpolation:
     def create(self, comm: Comm | None = None) -> None:
         """Create a `DMInterpolation` context.
 
-        The context is stored under `self.dminterp`.
+        The context is stored under `self.dminterp`.  #TODO:?
 
         Collective.
 

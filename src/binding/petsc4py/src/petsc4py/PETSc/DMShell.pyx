@@ -1,8 +1,8 @@
 cdef class DMShell(DM):
-"""TODO"""
+"""TODO:"""
 
     def create(self, comm: Comm | None = None) -> Self:
-        """TODO.
+        """TODO:
 
         Collective.
 
@@ -23,19 +23,14 @@ cdef class DMShell(DM):
         return self
 
     def setMatrix(self, Mat mat) -> None:
-        """Set a template matrix associated with the DMSHELL.
+        """Set a template matrix.
 
         Collective.
-
-        Developer Note
-        To avoid circular references, if J is already associated to the same
-        DM, then MatDuplicate(SHARE_NONZERO_PATTERN) is called, followed by
-        removing the DM reference from the private template.
 
         Parameters
         ----------
         mat
-            template matrix
+            The template matrix.
 
         See also
         --------
@@ -45,7 +40,7 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetMatrix(self.dm, mat.mat) )
 
     def setGlobalVector(self, Vec gv) -> None:
-        """Set a template global vector associated with the DMSHELL.
+        """Set a template global vector.
 
         Logically collective.
 
@@ -62,7 +57,7 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetGlobalVector(self.dm, gv.vec) )
 
     def setLocalVector(self, Vec lv) -> None:
-        """Set a template local vector associated with the DMSHELL.
+        """Set a template local vector.
 
         Logically collective.
 
@@ -78,15 +73,24 @@ cdef class DMShell(DM):
         """
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
 
-    def setCreateGlobalVector(self, create_gvec, args=None, kargs=None) -> None:
-        """Set the routine to create a global vector associated with the DMSHELL.
+    def setCreateGlobalVector(
+        self,
+        create_gvec,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
+        """Set the routine to create a global vector.
 
         Logically collective.
 
         Parameters
         ----------
-        func
+        create_gvec
             The creation routine.
+        args
+            Additional positional arguments for ``create_gvec``.
+        kargs
+            Additional keyword arguments for ``create_gvec``.
 
         See also
         --------
@@ -102,15 +106,24 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateGlobalVector(self.dm, NULL) )
 
-    def setCreateLocalVector(self, create_lvec, args=None, kargs=None) -> None:
-        """Set the routine to create a local vector associated with the DMSHELL.
+    def setCreateLocalVector(
+        self,
+        create_lvec,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
+        """Set the routine to create a local vector associated with the `DMShell`.
 
         Logically collective.
 
         Parameters
         ----------
-        func
+        create_lvec
             The creation routine.
+        args
+            Additional positional arguments for ``create_lvec``.
+        kargs
+            Additional keyword arguments for ``create_lvec``.
 
         See also
         --------
@@ -126,8 +139,15 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateLocalVector(self.dm, NULL) )
 
-    def setGlobalToLocal(self, begin, end, begin_args=None, begin_kargs=None,
-                         end_args=None, end_kargs=None):
+    def setGlobalToLocal(
+        self,
+        begin,
+        end,
+        begin_args: tuple[Any, ...] | None = None,
+        begin_kargs: dict[str, Any] | None = None,
+        end_args: tuple[Any, ...] | None = None,
+        end_kargs: dict[str, Any] | None = None,
+    ):
         """Set the routines used to perform a global to local scatter.
 
         If these functions are not provided but DMShellSetGlobalToLocalVecScatter()
@@ -139,11 +159,19 @@ cdef class DMShell(DM):
         Parameters
         ----------
         dm
-            The DMSHELL.
+            The `DMShell`.
         begin
             The routine that begins the global to local scatter.
         end
             The routine that ends the global to local scatter.
+        begin_args
+            Additional positional arguments for ``begin``.
+        begin_kargs
+            Additional keyword arguments for ``begin``.
+        end_args
+            Additional positional arguments for ``end``.
+        end_kargs
+            Additional keyword arguments for ``end``.
 
         See also
         --------
@@ -182,8 +210,15 @@ cdef class DMShell(DM):
         """
         CHKERR( DMShellSetGlobalToLocalVecScatter(self.dm, gtol.sct) )
 
-    def setLocalToGlobal(self, begin, end, begin_args=None, begin_kargs=None,
-                         end_args=None, end_kargs=None):
+    def setLocalToGlobal(
+        self,
+        begin,
+        end,
+        begin_args: tuple[Any, ...] | None = None,
+        begin_kargs: dict[str, Any] | None = None,
+        end_args: tuple[Any, ...] | None = None,
+        end_kargs: dict[str, Any] | None = None,
+    ):
         """Set the routines used to perform a local to global scatter.
 
         If these functions are not provided but DMShellSetLocalToGlobalVecScatter()
@@ -198,6 +233,14 @@ cdef class DMShell(DM):
             The routine that begins the local to global scatter.
         end
             The routine that ends the local to global scatter.
+        begin_args
+            Additional positional arguments for ``begin``.
+        begin_kargs
+            Additional keyword arguments for ``begin``.
+        end_args
+            Additional positional arguments for ``end``.
+        end_kargs
+            Additional keyword arguments for ``end``.
 
         See also
         --------
@@ -236,8 +279,17 @@ cdef class DMShell(DM):
         """
         CHKERR( DMShellSetLocalToGlobalVecScatter(self.dm, ltog.sct) )
 
-    def setLocalToLocal(self, begin, end, begin_args=None, begin_kargs=None,
-                        end_args=None, end_kargs=None):
+    def setLocalToLocal(
+        self,
+        begin,
+        end,
+        begin_args=None,
+        begin_kargs=None,
+        end_args=None,
+        end_kargs=None,
+        # args: tuple[Any, ...] | None = None,
+        # kargs: dict[str, Any] | None = None,
+    ):
         """Set the routines used to perform a local to local scatter.
 
         Logically collective on dm.
@@ -251,6 +303,14 @@ cdef class DMShell(DM):
             The routine that begins the local to local scatter.
         end
             The routine that ends the local to local scatter.
+        begin_args
+            Additional positional arguments for ``begin``.
+        begin_kargs
+            Additional keyword arguments for ``begin``.
+        end_args
+            Additional positional arguments for ``end``.
+        end_kargs
+            Additional keyword arguments for ``end``.
 
         See also
         --------
@@ -292,15 +352,24 @@ cdef class DMShell(DM):
         """
         CHKERR( DMShellSetLocalToLocalVecScatter(self.dm, ltol.sct) )
 
-    def setCreateMatrix(self, create_matrix, args=None, kargs=None):
-        """Set the routine to create a matrix associated with the DMSHELL.
+    def setCreateMatrix(
+        self,
+        create_matrix,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ):
+        """Set the routine to create a matrix associated with the `DMShell`.
 
         Logically collective.
 
         Parameters
         ----------
-        func
+        create_matrix
             The function to create a matrix.
+        args
+            Additional positional arguments for ``create_matrix``.
+        kargs
+            Additional keyword arguments for ``create_matrix``.
 
         See also
         --------
@@ -316,8 +385,13 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateMatrix(self.dm, NULL) )
 
-    def setCoarsen(self, coarsen, args=None, kargs=None):
-        """Set the routine used to coarsen the DMSHELL.
+    def setCoarsen(
+        self,
+        coarsen,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ):
+        """Set the routine used to coarsen the `DMShell`.
 
         Logically collective.
 
@@ -325,6 +399,10 @@ cdef class DMShell(DM):
         ----------
         coarsen
             The routine that coarsens the DM.
+        args
+            Additional positional arguments for ``coarsen``.
+        kargs
+            Additional keyword arguments for ``coarsen``.
 
         See also
         --------
@@ -340,8 +418,13 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCoarsen(self.dm, NULL) )
 
-    def setRefine(self, refine, args=None, kargs=None):
-        """Set the routine used to refine the DMSHELL.
+    def setRefine(
+        self,
+        refine,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ):
+        """Set the routine used to refine the `DMShell`.
 
         Logically collective.
 
@@ -349,6 +432,10 @@ cdef class DMShell(DM):
         ----------
         refine
             The routine that refines the DM.
+        args
+            Additional positional arguments for ``refine``.
+        kargs
+            Additional keyword arguments for ``refine``.
 
         See also
         --------
@@ -364,15 +451,24 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetRefine(self.dm, NULL) )
 
-    def setCreateInterpolation(self, create_interpolation, args=None, kargs=None):
+    def setCreateInterpolation(
+        self,
+        create_interpolation,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ):
         """Set the routine used to create the interpolation operator.
 
         Logically collective.
 
         Parameters
         ----------
-        interp
+        create_interpolation
             The routine to create the interpolation.
+        args
+            Additional positional arguments for ``create_interpolation``.
+        kargs
+            Additional keyword arguments for ``create_interpolation``.
 
         See also
         --------
@@ -388,15 +484,24 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateInterpolation(self.dm, NULL) )
 
-    def setCreateInjection(self, create_injection, args=None, kargs=None):
+    def setCreateInjection(
+        self,
+        create_injection,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ):
         """Set the routine used to create the injection operator.
 
         Logically collective.
 
         Parameters
         ----------
-        inject
+        create_injection
             The routine to create the injection.
+        args
+            Additional positional arguments for ``create_injection``.
+        kargs
+            Additional keyword arguments for ``create_injection``.
 
         See also
         --------
@@ -412,15 +517,24 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateInjection(self.dm, NULL) )
 
-    def setCreateRestriction(self, create_restriction, args=None, kargs=None):
+    def setCreateRestriction(
+        self,
+        create_restriction,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
         """Set the routine used to create the restriction operator.
 
         Logically collective.
 
         Parameters
         ----------
-        striction TODO: was it like that in docs
+        create_restriction TODO: was it striction in docs
             The routine to create the restriction
+        args
+            Additional positional arguments for ``create_restriction``.
+        kargs
+            Additional keyword arguments for ``create_restriction``.
 
         See also
         --------
@@ -436,8 +550,13 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateRestriction(self.dm, NULL) )
 
-    def setCreateFieldDecomposition(self, decomp, args=None, kargs=None):
-        """Set the routine used to create a decomposition of fields for the DMSHELL.
+    def setCreateFieldDecomposition(
+        self,
+        decomp,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
+        """Set the routine used to create a decomposition of fields for the `DMShell`.
 
         Logically collective.
 
@@ -445,6 +564,10 @@ cdef class DMShell(DM):
         ----------
         decomp
             The routine to create the decomposition
+        args
+            Additional positional arguments for ``decomp``.
+        kargs
+            Additional keyword arguments for ``decomp``.
 
         See also
         --------
@@ -460,8 +583,13 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateFieldDecomposition(self.dm, NULL) )
 
-    def setCreateDomainDecomposition(self, decomp, args=None, kargs=None):
-        """Set the routine used to create a domain decomposition for the DMSHELL.
+    def setCreateDomainDecomposition(
+        self,
+        decomp,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
+        """Set the routine used to create a domain decomposition for the `DMShell`.
 
         Logically collective.
 
@@ -469,6 +597,10 @@ cdef class DMShell(DM):
         ----------
         decomp
             The routine to create the decomposition.
+        args
+            Additional positional arguments for ``decomp``.
+        kargs
+            Additional keyword arguments for ``decomp``.
 
         See also
         --------
@@ -484,8 +616,13 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateDomainDecomposition(self.dm, NULL) )
 
-    def setCreateDomainDecompositionScatters(self, scatter, args=None, kargs=None):
-        """Set the routine used to create the scatter contexts for domain decomposition with a DMSHELL.
+    def setCreateDomainDecompositionScatters(
+        self,
+        scatter,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
+        """Set the routine used to create the scatter contexts for domain decomposition with a `DMShell`.
 
         Logically collective.
 
@@ -493,6 +630,10 @@ cdef class DMShell(DM):
         ----------
         scatter
             The routine to create the scatters.
+        args
+            Additional positional arguments for ``scatter``.
+        kargs
+            Additional keyword arguments for ``scatter``.
 
         See also
         --------
@@ -508,8 +649,13 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateDomainDecompositionScatters(self.dm, NULL) )
 
-    def setCreateSubDM(self, create_subdm, args=None, kargs=None):
-        """Set the routine used to create a sub DM from the DMSHELL.
+    def setCreateSubDM(
+        self,
+        create_subdm,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+    ) -> None:
+        """Set the routine used to create a sub DM from the `DMShell`.
 
         Logically collective.
 
@@ -517,6 +663,10 @@ cdef class DMShell(DM):
         ----------
         subdm
             The routine to create the decomposition.
+        args
+            Additional positional arguments for ``subdm``.
+        kargs
+            Additional keyword arguments for ``subdm``.
 
         See also
         --------
