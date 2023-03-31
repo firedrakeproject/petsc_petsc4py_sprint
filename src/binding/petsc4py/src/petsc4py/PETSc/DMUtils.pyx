@@ -149,7 +149,7 @@ cdef class DMInterpolation:
         self,
         DM dm,
         redundantPoints: bool | None = False,
-        ignoreOutsideDomain: bool | None = False
+        ignoreOutsideDomain: bool | None = False,
     ) -> None:
         """Compute spatial indices for point location during interpolation.
 

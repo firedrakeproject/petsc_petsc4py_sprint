@@ -358,8 +358,7 @@ cdef class DMStag(DM):
     def getDim(self):
         """TODO.
 
-        Not collective
-    .
+        Not collective.
 
         Parameters
         ----------

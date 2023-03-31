@@ -51,7 +51,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.DMShellSetGlobalVector
+        petsc.DMShellSetGlobalVector, setLocalVector
 
         """
         CHKERR( DMShellSetGlobalVector(self.dm, gv.vec) )
@@ -68,7 +68,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.DMShellSetLocalVector
+        petsc.DMShellSetLocalVector, setGlobalVector
 
         """
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
@@ -94,7 +94,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.DMShellSetCreateGlobalVector
+        petsc.DMShellSetCreateGlobalVector, setCreateLocalVector
 
         """
         if create_gvec is not None:
@@ -109,10 +109,32 @@ cdef class DMShell(DM):
     def setCreateLocalVector(
         self,
         create_lvec,
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:# TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:# TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:# TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
+        # TODO:
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
-        """Set the routine to create a local vector associated with the `DMShell`.
+        """Set the routine to create a local vector.
 
         Logically collective.
 
@@ -127,7 +149,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.DMShellSetCreateLocalVector
+        petsc.DMShellSetCreateLocalVector, setCreateGlobalVector
 
         """
         if create_lvec is not None:
@@ -154,7 +176,7 @@ cdef class DMShell(DM):
         is called then DMGlobalToLocalBeginDefaultShell() / DMGlobalToLocalEndDefaultShell()
         are used to to perform the transfers.
 
-        Logically collective on dm.
+        Logically collective on the DM.
 
         Parameters
         ----------
@@ -196,7 +218,7 @@ cdef class DMShell(DM):
     def setGlobalToLocalVecScatter(self, Scatter gtol):
         """Sets a VecScatter context for global to local communication.
 
-        Logically collective on dm.
+        Logically collective on the DM.
 
         Parameters
         ----------
@@ -225,7 +247,7 @@ cdef class DMShell(DM):
         is called then DMLocalToGlobalBeginDefaultShell() / DMLocalToGlobalEndDefaultShell()
         are used to to perform the transfers.
 
-        Logically collective on dm.
+        Logically collective on the DM.
 
         Parameters
         ----------
@@ -265,7 +287,7 @@ cdef class DMShell(DM):
     def setLocalToGlobalVecScatter(self, Scatter ltog):
         """Set a VecScatter context for local to global communication.
 
-        Logically collective on dm.
+        Logically collective on the DM.
 
         Parameters
         ----------
@@ -292,10 +314,12 @@ cdef class DMShell(DM):
     ):
         """Set the routines used to perform a local to local scatter.
 
-        Logically collective on dm.
+        Logically collective on the DM.
 
         Note
-        If these functions are not provided but DMShellSetLocalToLocalVecScatter() is called then DMLocalToLocalBeginDefaultShell()/DMLocalToLocalEndDefaultShell() are used to to perform the transfers
+        If these functions are not provided but `setLocalToLocalVecScatter` is
+        called then DMLocalToLocalBeginDefaultShell / DMLocalToLocalEndDefaultShell
+        are used to to perform the transfers.
 
         Parameters
         ----------
@@ -339,7 +363,6 @@ cdef class DMShell(DM):
 
         Logically collective.
 
-
         Parameters
         ----------
         ltol
@@ -358,7 +381,7 @@ cdef class DMShell(DM):
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ):
-        """Set the routine to create a matrix associated with the `DMShell`.
+        """Set the routine to create a matrix.
 
         Logically collective.
 
@@ -406,7 +429,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.DMShellSetCoarsen
+        petsc.DMShellSetCoarsen, setRefine
 
         """
         if coarsen is not None:
@@ -439,7 +462,7 @@ cdef class DMShell(DM):
 
         See also
         --------
-        petsc.DMShellSetRefine
+        petsc.DMShellSetRefine, setCoarsen
 
         """
         if refine is not None:

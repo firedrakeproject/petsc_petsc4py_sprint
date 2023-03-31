@@ -288,7 +288,7 @@ cdef class FE(Object):
         blockSize: int,
         numBlocks: int,
         batchSize: int,
-        numBatches: int
+        numBatches: int,
     ) -> None:
         """Set the tile sizes for evaluation.
 
