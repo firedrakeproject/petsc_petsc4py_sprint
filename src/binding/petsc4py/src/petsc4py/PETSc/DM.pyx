@@ -879,7 +879,7 @@ cdef class DM(Object):
         CHKERR( PetscObjectDereference(<PetscObject>vl.vec) )
         CHKERR( DMRestoreLocalVector(self.dm, &vl.vec) )
 
-    def globalToLocal(self, Vec vg, Vec vl, addv=None) -> None:
+    def globalToLocal(self, Vec vg, Vec vl, addv: InsertMode | None = None) -> None:
         """Update local vectors from global vector.
 
         Neighborwise collective.
@@ -890,6 +890,8 @@ cdef class DM(Object):
             The global vector.
         vl
             The local vector.
+        addv
+            `InsertMode.INSERT_VALUES` or `InsertMode.ADD_VALUES`.
 
         See Also
         --------
