@@ -581,7 +581,7 @@ cdef class DM(Object):
         CHKERR( DMGetNumFields(self.dm, &cnum) )
         return toInt(cnum)
 
-    def setField(self, index: int, Object field, label=None) -> None:
+    def setField(self, index: int, Object field, label: str | None = None) -> None:
         """Set the discretization object for a given `DM` field.
 
         Logically collective.
@@ -592,6 +592,8 @@ cdef class DM(Object):
             The field number.
         field
             The discretization object.
+        label
+            The name of the label indicating the support of the field, or `None` for the entire mesh, currently must be `None`.
 
         See Also
         --------
