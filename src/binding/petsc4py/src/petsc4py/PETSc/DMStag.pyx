@@ -47,13 +47,13 @@ cdef class DMStag(DM):
         dim,
         dofs=None,
         sizes=None,
-        boundary_types=None,
+        boundary_types=None, # DM.BoundaryType
         stencil_type=None,
         stencil_width=None,
         proc_sizes=None,
         ownership_ranges=None,
         comm=None,
-        setUp=False
+        setUp: bool | None = False,
     ):
         """TODO
         Create an object to manage data living on the elements and vertices of a parallelized regular 1D grid.
@@ -168,7 +168,7 @@ cdef class DMStag(DM):
 
     # Setters
 
-    def setStencilWidth(self,swidth):
+    def setStencilWidth(self,swidth: int) -> None:
         """Set elementwise stencil width.
 
         Logically collective; stencilWidth must contain common value.
@@ -189,7 +189,7 @@ cdef class DMStag(DM):
         cdef PetscInt sw = asInt(swidth)
         CHKERR( DMStagSetStencilWidth(self.dm, sw) )
 
-    def setStencilType(self, stenciltype):
+    def setStencilType(self, stenciltype: StencilType) -> None:
         """Set elementwise ghost/halo stencil type.
 
         Logically collective; stencilType must contain common value.
@@ -208,7 +208,7 @@ cdef class DMStag(DM):
         cdef PetscDMStagStencilType stype = asStagStencil(stenciltype)
         CHKERR( DMStagSetStencilType(self.dm, stype) )
 
-    def setBoundaryTypes(self, boundary_types):
+    def setBoundaryTypes(self, boundary_types: DM.BoundaryType) -> None:
         """Set DMSTAG boundary types.
 
         Logically collective; boundaryType0, boundaryType1, and boundaryType2
@@ -238,7 +238,7 @@ cdef class DMStag(DM):
         asBoundary(boundary_types, &btx, &bty, &btz)
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
-    def setDof(self, dofs):
+    def setDof(self, dofs) -> None:
         """Set dof/stratum.
 
         Logically collective; dof0, dof1, dof2, and dof3 must contain common values.
@@ -269,7 +269,7 @@ cdef class DMStag(DM):
         gdim = asDofs(gdofs, &dof0, &dof1, &dof2, &dof3)
         CHKERR( DMStagSetDOF(self.dm, dof0, dof1, dof2, dof3) )
 
-    def setGlobalSizes(self, sizes):
+    def setGlobalSizes(self, sizes) -> None:
         """Set global element counts in each direction.
 
         Logically collective; N0, N1, and N2 must contain common values.
@@ -298,7 +298,7 @@ cdef class DMStag(DM):
         gdim = asStagDims(gsizes, &M, &N, &P)
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
-    def setProcSizes(self, sizes):
+    def setProcSizes(self, sizes) -> None:
         """Set ranks in each direction in the global rank grid.
 
         Logically collective; nRanks0, nRanks1, and nRanks2 must contain common values.
@@ -327,7 +327,7 @@ cdef class DMStag(DM):
         pdim = asStagDims(psizes, &m, &n, &p)
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
-    def setOwnershipRanges(self, ranges):
+    def setOwnershipRanges(self, ranges) -> None:
         """Set elements per rank in each direction.
 
         Logically collective; lx, ly, and lz must contain common values.
@@ -376,7 +376,7 @@ cdef class DMStag(DM):
         """
         return self.getDimension()
 
-    def getEntriesPerElement(self):
+    def getEntriesPerElement(self) -> int:
         """Return number of entries per element in the local representation.
 
         Notes
@@ -398,7 +398,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetEntriesPerElement(self.dm, &epe) )
         return toInt(epe)
 
-    def getStencilWidth(self):
+    def getStencilWidth(self) -> int:
         """Return elementwise stencil width.
 
         Not collective.
@@ -732,7 +732,15 @@ cdef class DMStag(DM):
 
     # Coordinate-related functions
 
-    def setUniformCoordinatesExplicit(self, xmin=0, xmax=1, ymin=0, ymax=1, zmin=0, zmax=1):
+    def setUniformCoordinatesExplicit(
+        self,
+        xmin: float | None = 0,
+        xmax: float | None = 1,
+        ymin: float | None = 0,
+        ymax: float | None = 1,
+        zmin: float | None = 0,
+        zmax: float | None = 1,
+    ) -> None:
         """Set DMSTAG coordinates to be a uniform grid, storing all values.
 
         Collective. TODO:?
@@ -776,7 +784,15 @@ cdef class DMStag(DM):
         cdef PetscReal _zmin = asReal(zmin), _zmax = asReal(zmax)
         CHKERR( DMStagSetUniformCoordinatesExplicit(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
-    def setUniformCoordinatesProduct(self, xmin=0, xmax=1, ymin=0, ymax=1, zmin=0, zmax=1):
+    def setUniformCoordinatesProduct(
+        self,
+        xmin: float | None = 0,
+        xmax: float | None = 1,
+        ymin: float | None = 0,
+        ymax: float | None = 1,
+        zmin: float | None = 0,
+        zmax: float | None = 1,
+    ) -> None:
         """Create uniform coordinates, as a product of 1D arrays.
 
         Set the coordinate DM to be a DMPRODUCT of 1D DMSTAG objects, each of
@@ -823,7 +839,15 @@ cdef class DMStag(DM):
         cdef PetscReal _zmin = asReal(zmin), _zmax = asReal(zmax)
         CHKERR( DMStagSetUniformCoordinatesProduct(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
-    def setUniformCoordinates(self, xmin=0, xmax=1, ymin=0, ymax=1, zmin=0, zmax=1):
+    def setUniformCoordinates(
+        self,
+        xmin: float | None = 0,
+        xmax: float | None = 1,
+        ymin: float | None = 0,
+        ymax: float | None = 1,
+        zmin: float | None = 0,
+        zmax: float | None = 1,
+    ) -> None:
         """Set DMSTAG coordinates to be a uniform grid.
 
         Collective.
@@ -869,17 +893,15 @@ cdef class DMStag(DM):
         cdef PetscReal _zmin = asReal(zmin), _zmax = asReal(zmax)
         CHKERR( DMStagSetUniformCoordinates(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
-    def setCoordinateDMType(self, dmtype):
+    def setCoordinateDMType(self, dmtype: DM.Type) -> None:
         """Set DM type to store coordinates.
 
         Logically collective; dmtype must contain common value.
 
         Parameters
         ----------
-        dm
-            The DMSTAG object.
         dmtype
-            DMtype for coordinates, either DMSTAG or DMPRODUCT.
+            `DM.Type` for coordinates, either DMSTAG or DMPRODUCT.
 
         See also
         --------
@@ -892,7 +914,7 @@ cdef class DMStag(DM):
 
     # Location slot related functions
 
-    def getLocationSlot(self, loc, c):
+    def getLocationSlot(self, loc, c: int) -> int:
         """Return index to use in accessing raw local arrays.
 
         Not collective.
@@ -924,7 +946,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocationSlot(self.dm, sloc, comp, &slot) )
         return toInt(slot)
 
-    def getProductCoordinateLocationSlot(self, loc):
+    def getProductCoordinateLocationSlot(self, loc) -> None:
         """Return slot for use with local product coordinate arrays.
 
         Not collective.
@@ -963,7 +985,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetProductCoordinateLocationSlot(self.dm, sloc, &slot) )
         return toInt(slot)
 
-    def getLocationDof(self, loc):
+    def getLocationDof(self, loc) -> int:
         """Return number of DOF associated with a given point in a DMSTAG grid.
 
         Not collective.
@@ -986,7 +1008,7 @@ cdef class DMStag(DM):
 
     # Random other functions
 
-    def migrateVec(self, Vec vec, DM dmTo, Vec vecTo):
+    def migrateVec(self, Vec vec, DM dmTo, Vec vecTo) -> None:
         """Transfer a vector associated with a DMSTAG to a vector associated with a compatible DMSTAG.
 
         Collective.
@@ -1011,7 +1033,7 @@ cdef class DMStag(DM):
         """
         CHKERR( DMStagMigrateVec(self.dm, vec.vec, dmTo.dm, vecTo.vec ) )
 
-    def createCompatibleDMStag(self, dofs):
+    def createCompatibleDMStag(self, dofs) -> DM:
         """Create a compatible DMSTAG with different dof/stratum.
 
         Collective.
@@ -1049,7 +1071,7 @@ cdef class DMStag(DM):
         PetscCLEAR(newdm.obj); newdm.dm = newda
         return newdm
 
-    def VecSplitToDMDA(self, Vec vec, loc, c):
+    def VecSplitToDMDA(self, Vec vec, loc, c: int):
         """Create a DMDA and Vec from a subgrid of a DMSTAG and its Vec.
 
         Collective.
@@ -1090,15 +1112,11 @@ cdef class DMStag(DM):
         return (da,davec)
 
     def getVecArray(self, Vec vec):
-        """TODO.
-
-        """
+        """**Not implemented.**"""
         raise NotImplementedError('getVecArray for DMStag not yet implemented in petsc4py')
 
     def get1dCoordinatecArrays(self):
-        """TODO.
-
-        """
+        """**Not implemented.**"""
         raise NotImplementedError('get1dCoordinatecArrays for DMStag not yet implemented in petsc4py')
 
     property dim:
