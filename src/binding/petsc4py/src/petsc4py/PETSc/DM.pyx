@@ -833,6 +833,11 @@ cdef class DM(Object):
 
         Not collective.
 
+        Parameters
+        ----------
+        vg
+            The global vector.
+
         See Also
         --------
         petsc.DMRestoreGlobalVector
@@ -844,7 +849,7 @@ cdef class DM(Object):
     def getLocalVec(self) -> Vec:
         """Return a local vector.
 
-        Not collective
+        Not collective.
 
         See Also
         --------
