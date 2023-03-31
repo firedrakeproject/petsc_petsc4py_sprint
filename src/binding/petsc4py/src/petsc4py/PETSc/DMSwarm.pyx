@@ -24,7 +24,7 @@ class DMSwarmPICLayoutType(object):
 
 cdef class DMSwarm(DM):
     """
-    A DM object used to represent arrays of data (fields) of arbitrary type.
+    A `DM` object used to represent arrays of data (fields) of arbitrary type.
     """
     Type = DMSwarmType
     MigrateType = DMSwarmMigrateType
@@ -60,7 +60,7 @@ cdef class DMSwarm(DM):
     def createGlobalVectorFromField(self, fieldname: str) -> Vec:
         """Create a global `Vec` object associated with a given field.
 
-        The vector must be returned using a matching call to
+        The vector must be returned to the `DMSwarm` using a matching call to
         `destroyGlobalVectorFromField`.
 
         Collective.
@@ -104,7 +104,8 @@ cdef class DMSwarm(DM):
     def createLocalVectorFromField(self, fieldname: str) -> Vec:
         """Create a local `Vec` object associated with a given field.
 
-        The vector must be returned using a matching call to `destroyLocalVectorFromField`.
+        The vector must be returned to the `DMSwarm` using a matching call
+        to `destroyLocalVectorFromField`.
 
         Collective.
 
@@ -228,7 +229,8 @@ cdef class DMSwarm(DM):
 
         The returned array contains underlying values of the field.
 
-        The array must be returned using a matching call to `restoreField`.
+        The array must be returned to the `DMSwarm` using a matching call to 
+        `restoreField`.
 
         Not collective.
 
@@ -236,6 +238,12 @@ cdef class DMSwarm(DM):
         ----------
         fieldname
             The textual name to identify this field.
+
+        Returns
+        -------
+        `numpy.ndarray`
+            The type of the entries in the array will match the type of the
+            field.
 
         See also
         --------
