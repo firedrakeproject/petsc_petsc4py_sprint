@@ -902,7 +902,7 @@ cdef class DM(Object):
         CHKERR( DMGlobalToLocalBegin(self.dm, vg.vec, im, vl.vec) )
         CHKERR( DMGlobalToLocalEnd  (self.dm, vg.vec, im, vl.vec) )
 
-    def localToGlobal(self, Vec vl, Vec vg, addv=None) -> None:
+    def localToGlobal(self, Vec vl, Vec vg, addv: InsertMode | None = None) -> None:
         """Update global vectors from local vector.
 
         Neighborwise collective.
@@ -913,6 +913,8 @@ cdef class DM(Object):
             The global vector.
         vl
             The local vector.
+        addv
+            If `InsertMode.INSERT_VALUES`, then no parallel communication is used, while, if `InsertMode.ADD_VALUES`, then all ghost points from the same base point accumulate into that base point.
 
         See Also
         --------
