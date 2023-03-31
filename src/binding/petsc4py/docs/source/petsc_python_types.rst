@@ -17,7 +17,7 @@ The scripts can be found in
 .. _petsc_python_mat:
 
 PETSc Python matrix type
-========================
+------------------------
 
 PETSc provides a convenient way to compute the action of linear operators coded
 in Python through the `petsc4py.PETSc.Mat.Type.PYTHON` type.
@@ -38,7 +38,7 @@ which needs to access the diagonal of the matrix.
 .. _petsc_python_pc:
 
 PETSc Python preconditioner type
-================================
+--------------------------------
 
 The protocol for the `petsc4py.PETSc.PC.Type.PYTHON` preconditioner is:
 
@@ -74,7 +74,7 @@ arguments to specify that our preconditioner should be used:
 .. _petsc_python_ksp:
 
 PETSc Python linear solver type
-===============================
+-------------------------------
 
 The protocol for the `petsc4py.PETSc.KSP.Type.PYTHON` Krylov solver is:
 
@@ -83,20 +83,20 @@ The protocol for the `petsc4py.PETSc.KSP.Type.PYTHON` Krylov solver is:
 .. _petsc_python_snes:
 
 PETSc Python nonlinear solver type
-==================================
+----------------------------------
 
 TODO
 
 .. _petsc_python_ts:
 
 PETSc Python ode-integrator type
-================================
+--------------------------------
 
 TODO
 
 .. _petsc_python_tao:
 
 PETSc Python optimization solver type
-=====================================
+-------------------------------------
 
 TODO
