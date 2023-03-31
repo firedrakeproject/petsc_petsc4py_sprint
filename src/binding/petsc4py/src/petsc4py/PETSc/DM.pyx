@@ -1164,9 +1164,14 @@ cdef class DM(Object):
         return mat
 
     def createMassMatrix(self, DM dmf) -> Mat:
-        """Return the mass matrix between two `DM` objects.
+        """Return the mass matrix between this `DM` and the given `DM`.
 
         Collective.
+
+        Parameters
+        ----------
+        dmf
+            The second `DM`.
 
         See Also
         --------
