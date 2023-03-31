@@ -206,9 +206,10 @@ class MatSORType(object):
 cdef class Mat(Object):
     """Matrix object.
 
+    Mat is described in the `PETSc manual <petsc:manual/ts>`.
+
     See Also
     --------
-    manual/mat
     petsc.Mat
 
     """
@@ -440,7 +441,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        poisson2d
         Mat.setBlockSize, Mat.setBlockSizes
         petsc.MatSetSizes, petsc.MatSetBlockSize, petsc.MatSetBlockSizes
 
@@ -486,7 +486,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        mat.setBlockSize, mat.setSizes, petsc.MatSetBlockSizes
+        setBlockSize, setSizes, petsc.MatSetBlockSizes
 
         """
         cdef PetscInt rbs = asInt(row_bsize)
@@ -544,8 +544,10 @@ cdef class Mat(Object):
         """Create a sparse unblocked matrix, optionally preallocating.
 
         To preallocate the matrix the user can either pass ``nnz`` or ``csr``
-        describing the sparsity. If neither is set then preallocation will
-        not occur.
+        describing the sparsity. If neither is set then preallocation will not
+        occur. Consult the `PETSc manual <petsc:sec_matsparse>` for
+        more information.
+
 
         Collective.
 
@@ -564,7 +566,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.createBAIJ
         petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ, petsc.MatCreateAIJ
         petsc.MatSeqAIJSetPreallocation, petsc.MatSeqAIJSetPreallocationCSR
@@ -598,7 +599,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.createAIJ
         petsc.MATBAIJ, petsc.MATSEQBAIJ, petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
 
@@ -632,7 +632,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.createAIJ, Mat.createBAIJ
         petsc.MatCreateSBAIJ
 
@@ -668,7 +667,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.createAIJ, Mat.createBAIJ
         petsc.MatCreateSeqAIJCRL, petsc.MatCreateMPIAIJCRL
 
@@ -685,7 +683,7 @@ cdef class Mat(Object):
         """Preallocate memory for the matrix with a non-zero pattern.
 
         This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ`,
-        `Mat.Type.SBAIJ` and `Mat.Type.AIJIS` matrices.
+        `Mat.Type.SBAIJ` matrices.
 
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
@@ -703,7 +701,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.setPreallocationCSR, Mat.createAIJ
         petsc.MatSeqAIJSetPreallocation
         petsc.MatMPIAIJSetPreallocation
@@ -736,7 +733,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.setPreallocationNNZ, Mat.createAIJ
         petsc.MatSeqAIJSetPreallocationCSR
         petsc.MatMPIAIJSetPreallocationCSR
@@ -777,7 +773,6 @@ cdef class Mat(Object):
 
         See Also
         --------
-        manual/mat/#sec-matsparse
         Mat.createAIJ
         petsc.MatCreateSeqAIJWithArrays, petsc.MatCreateMPIAIJWithArrays
         petsc.MatCreateMPIAIJWithSplitArrays
@@ -966,7 +961,7 @@ cdef class Mat(Object):
     def createScatter(self, Scatter scatter, comm: Comm | None = None) -> Self:
         """Create a scattering matrix from a vector scatter.
 
-        The resulting matrix will have type `Mat.Type.MATSCATTER`.
+        The resulting matrix will have type `Mat.Type.SCATTER`.
 
         Collective.
 
@@ -1017,7 +1012,7 @@ cdef class Mat(Object):
     def createTranspose(self, Mat mat) -> Self:
         """Create a virtual matrix transpose that behaves like Aᵀ.
 
-        This sets the matrix to have type `Mat.Type.MATTRANSPOSEVIRTUAL`.
+        This sets the matrix to have type `Mat.Type.TRANSPOSE`.
 
         Collective.
 
@@ -1044,7 +1039,7 @@ cdef class Mat(Object):
     def createNormalHermitian(self, Mat mat) -> Self:
         """Create a matrix representing (A*)ᵀA.
 
-        This sets the matrix to have type `Mat.Type.MATNORMALHERMITIAN`.
+        This sets the matrix to have type `Mat.Type.NORMALHERMITIAN`.
 
         Collective.
 
@@ -1072,7 +1067,7 @@ cdef class Mat(Object):
     def createHermitianTranspose(self, Mat mat) -> Self:
         """Create a virtual matrix transpose that behaves like (A*)ᵀ.
 
-        This sets the matrix to have type `Mat.Type.MATHERMITIANTRANSPOSEVIRTUAL`.
+        This sets the matrix to have type `Mat.Type.HERMITIANTRANSPOSE`.
 
         Collective.
 
@@ -1084,7 +1079,7 @@ cdef class Mat(Object):
         Notes
         -----
         The Hermitian transpose is never actually formed. Instead
-        `Mat.multHermitianTranspose` is called whenever the matrix-vector
+        `petsc.MatMultHermitianTranspose` is called whenever the matrix-vector
         product is computed.
 
         See Also
@@ -1101,7 +1096,7 @@ cdef class Mat(Object):
     def createLRC(self, Mat A, Mat U, Vec c, Mat V) -> Self:
         """Create a matrix representing A + UCVᵀ.
 
-        This sets the matrix to have type `Mat.Type.MATLRC`.
+        This sets the matrix to have type `Mat.Type.LRC`.
 
         Collective.
 
@@ -1151,7 +1146,7 @@ cdef class Mat(Object):
     def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None) -> Self:
         """Create a virtual matrix that acts as a submatrix.
 
-        This sets the matrix type to `Mat.Type.MATSUBMATRIX`.
+        This sets the matrix type to `Mat.Type.SUBMATRIX`.
 
         Collective.
 
@@ -1186,7 +1181,7 @@ cdef class Mat(Object):
 
         Each submatrix is stored separately.
 
-        The resulting matrix has type `Mat.Type.MATNEST`.
+        The resulting matrix has type `Mat.Type.NEST`.
 
         Collective.
 
@@ -1258,7 +1253,7 @@ cdef class Mat(Object):
         bs: int | None = None,
         rtol: float | None = None,
     ) -> Self:
-        """Create a `Mat.Type.MATH2OPUS` sampling from a provided operator.
+        """Create a `Mat.Type.H2OPUS` sampling from a provided operator.
 
         Serial execution only.
 
@@ -2216,7 +2211,7 @@ cdef class Mat(Object):
     def matTransposeMult(
         self,
         Mat mat,
-        result: Mat | None = None,
+        Mat result=None,
         fill: float | None = None
     ):
         """Perform matrix-matrix multiplication C=ABᵀ.
@@ -2262,7 +2257,7 @@ cdef class Mat(Object):
     def transposeMatMult(
         self,
         Mat mat,
-        result: Mat | None = None,
+        Mat result=None,
         fill: float | None = None
     ):
         """Perform matrix-matrix multiplication C=AᵀB.
@@ -2308,7 +2303,7 @@ cdef class Mat(Object):
     def ptap(
         self,
         Mat P,
-        result: Mat | None = None,
+        Mat result=None,
         fill: float | None = None
     ) -> Mat:
         """Creates the matrix product C = PᵀAP.
@@ -2337,7 +2332,7 @@ cdef class Mat(Object):
         for the string "Fill ratio" to see the value actually needed.
 
         An alternative approach to this function is to use
-        `productCreate` and set the desired options before the
+        `petsc.MatProductCreate` and set the desired options before the
         computation is done.
 
         See also
@@ -2358,8 +2353,8 @@ cdef class Mat(Object):
     def rart(
         self,
         Mat R,
-        result: Mat | None = None,
-        fill: flaot | None = None
+        Mat result=None,
+        fill: float | None = None
     ) -> Mat:
         """Create the matrix product C = RARᵀ.
 
@@ -2387,12 +2382,12 @@ cdef class Mat(Object):
         for the string "Fill ratio" to see the value actually needed.
 
         An alternative approach to this function is to use
-        `productCreate` and set the desired options before the
+        `petsc.MatProductCreate` and set the desired options before the
         computation is done.
 
         This routine is currently only implemented for pairs of
-        `MatType.AIJ` matrices and classes which inherit from
-        `MatType.AIJ. Due to PETSc sparse matrix block row distribution
+        `Type.AIJ` matrices and classes which inherit from
+        `Type.AIJ`. Due to PETSc sparse matrix block row distribution
         among processes, parallel `petsc.MatRARt` is implemented via
         explicit transpose of R, which could be very expensive. We
         recommend using `ptap`.
@@ -2416,7 +2411,7 @@ cdef class Mat(Object):
         self,
         Mat B,
         Mat C,
-        result: Mat | None = None,
+        Mat result=None,
         fill: float | None = None
     ) -> Mat:
         """Perform matrix-matrix-matrix multiplication D=ABC.
@@ -2459,7 +2454,7 @@ cdef class Mat(Object):
     def kron(
         self,
         Mat mat,
-        result: Mat | None = None
+        Mat result=None
     ) -> Mat:
         """Compute C, the Kronecker product of A and B.
 
