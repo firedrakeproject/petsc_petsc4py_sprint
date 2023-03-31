@@ -1183,9 +1183,14 @@ cdef class DM(Object):
         return mat
 
     def createInterpolation(self, DM dm) -> tuple[Mat,Vec]:
-        """Return the interpolation matrix between two `DM` objects.
+        """Return the interpolation matrix between this `DM` and the given `DM`.
 
         Collective.
+
+        Parameters
+        ----------
+        dm
+           The second, finer `DM`.
 
         See Also
         --------
