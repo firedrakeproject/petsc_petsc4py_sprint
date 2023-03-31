@@ -47,14 +47,14 @@ cdef class DMStag(DM):
         dim,
         dofs=None,
         sizes=None,
-        boundary_types=None, # DM.BoundaryType
-        stencil_type=None,
-        stencil_width=None,
+        boundary_types: None # DM.BoundaryType | None = None, # sequence? 0,1,2,3
+        stencil_type: StencilType | None = None,
+        stencil_width: int | None = None,
         proc_sizes=None,
         ownership_ranges=None,
-        comm=None,
+        comm: Comm | None = None,
         setUp: bool | None = False,
-    ):
+    ) -> Self:
         """TODO
         Create an object to manage data living on the elements and vertices of a parallelized regular 1D grid.
         Create an object to manage data living on the elements, faces, and vertices of a parallelized regular 2D grid.
@@ -63,7 +63,6 @@ cdef class DMStag(DM):
         Collective.
 
         notes
-        You must call DMSetUp() after this call before using the DM. If you wish to use the options database (see the keys above) to change values in the DMSTAG, you must call DMSetFromOptions() after this function but before DMSetUp().
 
         Parameters
         ----------
@@ -92,10 +91,10 @@ cdef class DMStag(DM):
         dof3
             number of degrees of freedom per element/3-cell
 
-        stencilType
-            ghost/halo region type: DMSTAG_STENCIL_BOX or DMSTAG_STENCIL_NONE
-        stencilWidth
-            width, in elements, of halo/ghost region
+        stencil_type
+            Ghost/halo region type.
+        stencil_width
+            Width, in elements, of halo/ghost region.
         lx
             array of local sizes, of length equal to the comm size, summing to M
 
@@ -173,12 +172,11 @@ cdef class DMStag(DM):
 
         Logically collective; stencilWidth must contain common value.
 
-        Note
-        The width value is not used when DMSTAG_STENCIL_NONE is specified.
+        The width value is not used when `StencilType.NONE` is specified.
 
         Parameters
         ----------
-        stencilWidth
+        swidth
             Stencil/halo/ghost width in elements.
 
         See also
@@ -192,13 +190,12 @@ cdef class DMStag(DM):
     def setStencilType(self, stenciltype: StencilType) -> None:
         """Set elementwise ghost/halo stencil type.
 
-        Logically collective; stencilType must contain common value.
+        Logically collective; stenciltype must contain common value.
 
         Parameters
         ----------
-        stencilType
-            The elementwise ghost stencil type: DMSTAG_STENCIL_BOX,
-            DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE.
+        stenciltype
+            The elementwise ghost stencil type.
 
         See also
         --------
@@ -208,7 +205,7 @@ cdef class DMStag(DM):
         cdef PetscDMStagStencilType stype = asStagStencil(stenciltype)
         CHKERR( DMStagSetStencilType(self.dm, stype) )
 
-    def setBoundaryTypes(self, boundary_types: DM.BoundaryType) -> None:
+    def setBoundaryTypes(self, boundary_types: DM.BoundaryType) -> None: # TODO: should be seq?
         """Set DMSTAG boundary types.
 
         Logically collective; boundaryType0, boundaryType1, and boundaryType2
@@ -243,8 +240,8 @@ cdef class DMStag(DM):
 
         Logically collective; dof0, dof1, dof2, and dof3 must contain common values.
 
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids.
 
         Parameters
         ----------
@@ -517,7 +514,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGhostCorners(self.dm, &x, &y, &z, &m, &n, &p) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
-    def getLocalSizes(self):
+    def getLocalSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return local elementwise sizes.
 
         Not collective.
@@ -544,7 +541,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getGlobalSizes(self):
+    def getGlobalSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return global element counts.
 
         Not collective.
@@ -572,7 +569,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGlobalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getProcSizes(self):
+    def getProcSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return number of ranks in each direction in the global grid decomposition.
 
         Not collective.
@@ -674,7 +671,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetBoundaryTypes(self.dm, &btx, &bty, &btz) )
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
-    def getIsFirstRank(self):
+    def getIsFirstRank(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return boolean value for whether this rank is first in each direction in the rank grid.
 
         Not collective.
@@ -702,7 +699,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetIsFirstRank(self.dm, &rank0, &rank1, &rank2) )
         return toStagDims(dim, rank0, rank1, rank2)
 
-    def getIsLastRank(self):
+    def getIsLastRank(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return boolean value for whether this rank is last in each direction in the rank grid.
 
         Not collective.
@@ -741,7 +738,7 @@ cdef class DMStag(DM):
         zmin: float | None = 0,
         zmax: float | None = 1,
     ) -> None:
-        """Set DMSTAG coordinates to be a uniform grid, storing all values.
+        """Set `DMStag` coordinates to be a uniform grid, storing all values.
 
         Collective. TODO:?
 

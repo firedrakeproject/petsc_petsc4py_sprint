@@ -1,6 +1,6 @@
 
 cdef class DMInterpolation:
-    """TODO."""
+    """TODO:"""
     cdef PetscDMInterpolation dminterp
 
     def __cinit__(self):
@@ -63,11 +63,12 @@ cdef class DMInterpolation:
         return v
 
     def getCoordinates(self) -> Vec:
-        """Get the coordinates of each interpolation point.
+        """Return the coordinates of each interpolation point.
 
         The local vector entries correspond to interpolation points lying on
-        this process, according to the associated DM. This is a borrowed vector
-        that the user should not destroy.
+        this process, according to the associated DM.
+
+        This is a borrowed vector that the user should not destroy. # TODO:
 
         Collective.
 
@@ -81,7 +82,7 @@ cdef class DMInterpolation:
         return coords
 
     def getDim(self) -> int:
-        """Return the spatial dimension for the interpolation context.
+        """Return the spatial dimension of the interpolation context.
 
         Not collective.
 
@@ -95,12 +96,9 @@ cdef class DMInterpolation:
         return toInt(cdim)
 
     def getDof(self) -> int:
-        """Return the number of fields interpolated at a point for the interpolation context.
+        """Return the number of fields interpolated at a point.
 
         Not collective.
-
-        Output Parameter
-        dof - the number of fields
 
         See also
         --------
@@ -130,14 +128,14 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationSetDim(self.dminterp, cdim) )
 
     def setDof(self, dof: int) -> None:
-        """Set the number of fields interpolated at a point for the interpolation context.
+        """Set the number of fields interpolated at a point.
 
         Not collective.
 
         Parameters
         ----------
         dof
-            the number of fields
+            The number of fields.
 
         See also
         --------
@@ -147,7 +145,12 @@ cdef class DMInterpolation:
         cdef PetscInt cdof = asInt(dof)
         CHKERR( DMInterpolationSetDof(self.dminterp, cdof) )
 
-    def setUp(self, DM dm, redundantPoints: bool | None = False, ignoreOutsideDomain: bool | None = False) -> None:
+    def setUp(
+        self,
+        DM dm,
+        redundantPoints: bool | None = False,
+        ignoreOutsideDomain: bool | None = False
+    ) -> None:
         """Compute spatial indices for point location during interpolation.
 
         Collective.
@@ -173,15 +176,11 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationSetUp(self.dminterp, dm.dm, credundantPoints, cignoreOutsideDomain) )
 
     def getVector(self) -> Vec:
-        """Return a Vec which can hold all the interpolated field values.
+        """Return a `Vec` which can hold all the interpolated field values.
+
+        This vector should be returned using `restoreVector`.
 
         Collective.
-
-        Output Parameter
-        v - a vector capable of holding the interpolated field values
-
-        Note
-        This vector should be returned using restoreVector().
 
         See also
         --------
@@ -199,7 +198,7 @@ cdef class DMInterpolation:
 
         Parameters
         ----------
-        v
+        vec
             A vector capable of holding the interpolated field values.
 
         See also
