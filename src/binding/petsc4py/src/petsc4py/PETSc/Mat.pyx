@@ -2170,7 +2170,7 @@ cdef class Mat(Object):
     def matMult(
         self,
         Mat mat,
-        result: Mat | None = None,
+        Mat result=None,
         fill: float | None = None
     ) -> Mat:
         """Performs matrix-matrix multiplication C=AB.
