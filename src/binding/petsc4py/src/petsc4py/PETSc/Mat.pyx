@@ -1324,7 +1324,37 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createIS(self, size, LGMap lgmapr=None, LGMap lgmapc=None, comm=None):
+    def createIS(
+        self,
+        size: MatSizeType,
+        LGMap lgmapr=None,
+        LGMap lgmapc=None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a matrix assembled on each process but not across processes.
+
+        The resulting matrix has type `Mat.Type.IS`.
+
+        Parameters
+        ----------
+        size
+            Matrix size. See `Mat.setSizes` for usage information. Note that
+            the block size is set to ``1``.
+        lgmapr
+            Local to global map for rows. If `None` then the local row space
+            matches the global row space.
+        lgmapc
+            Local to global map for columns. If `None` then the local column
+            space matches the global column space.
+        comm
+            MPI communicator, defaults to the communicator used for the
+            local to global maps.
+
+        See Also
+        --------
+        petsc.MATIS, petsc.MatCreateIS
+
+        """
         # communicator and sizes
         if comm is None and lgmapr is not None: comm = lgmapr.getComm()
         if comm is None and lgmapc is not None: comm = lgmapc.getComm()
@@ -1347,7 +1377,33 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createPython(self, size, context=None, comm=None):
+    def createPython(
+        self,
+        size: MatSizeType,
+        context: Any | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a Python matrix and attach a context object to it.
+
+        The resulting matrix has type `Mat.Type.PYTHON`.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Matrix size. See `Mat.setSizes` for usage information.
+        context
+            Python class that implements the required matrix methods. If
+            `None` then the context will not be set.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc_python_mat, petsc.MATPYTHON
+
+        """
         # communicator and sizes
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt rbs = 0, cbs = 0, m = 0, n = 0, M = 0, N = 0
@@ -1363,21 +1419,80 @@ cdef class Mat(Object):
         CHKERR( MatPythonSetContext(self.mat, <void*>context) )
         return self
 
-    def setPythonContext(self, context):
+    def setPythonContext(self, context: Any) -> None:
+        """Set the context object for a `Mat.Type.PYTHON` matrix.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        context
+            Python class that implements the required matrix methods.
+
+        See Also
+        --------
+        petsc_python_mat, Mat.getPythonContext, Mat.createPython
+
+        """
         CHKERR( MatPythonSetContext(self.mat, <void*>context) )
 
-    def getPythonContext(self):
+    def getPythonContext(self) -> Any | None:
+        """Return the context object attached to a `Mat.Type.PYTHON` matrix.
+
+        Not collective.
+
+        Returns
+        -------
+        typing.Any
+            The attached context object or `None` if not set.
+
+        See Also
+        --------
+        petsc_python_mat, Mat.setPythonContext, Mat.createPython
+
+        """
         cdef void *context = NULL
         CHKERR( MatPythonGetContext(self.mat, &context) )
         if context == NULL: return None
         else: return <object> context
 
-    def setPythonType(self, py_type):
+    def setPythonType(self, py_type: str) -> None:
+        """Set the type of a `Mat.Type.PYTHON` matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        py_type
+            Fully qualified dot separated path of the Python object to create.
+            The Python object is instantiated as part of this method.
+
+        See Also
+        --------
+        petsc_python_mat, Mat.getPythonType, Mat.createPython
+        petsc.MatPythonSetType
+
+        """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
         CHKERR( MatPythonSetType(self.mat, cval) )
 
-    def getPythonType(self):
+    def getPythonType(self) -> str:
+        """Return the type of a `Mat.Type.PYTHON` matrix.
+
+        Not collective.
+
+        Returns
+        -------
+        str
+            Fully qualified dot separated path of the created Python object.
+
+        See Also
+        --------
+        petsc_python_mat, Mat.setPythonType, Mat.createPython
+        petsc.MatPythonGetType
+
+        """
         cdef const char *cval = NULL
         CHKERR( MatPythonGetType(self.mat, &cval) )
         return bytes2str(cval)
