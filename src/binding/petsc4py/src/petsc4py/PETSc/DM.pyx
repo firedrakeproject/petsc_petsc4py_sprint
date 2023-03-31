@@ -722,9 +722,14 @@ cdef class DM(Object):
         return ds
 
     def copyDS(self, DM dm) -> None:
-        """Copy discrete systems.
+        """Copy the discrete systems for this `DM` into another `DM`.
 
         Collective.
+
+        Parameters
+        ----------
+        dm
+            The `DM` that the discrete fields are copied into.
 
         See Also
         --------
