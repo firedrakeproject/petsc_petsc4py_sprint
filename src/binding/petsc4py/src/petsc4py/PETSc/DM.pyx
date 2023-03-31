@@ -631,7 +631,7 @@ cdef class DM(Object):
         PetscINCREF(field.obj)
         return (field, None) # TODO REVIEW
 
-    def addField(self, Object field, label=None) -> None:
+    def addField(self, Object field, label: str | None = None) -> None:
         """Add a field to a `DM` object.
 
         Logically collective.
@@ -640,6 +640,8 @@ cdef class DM(Object):
         ---------
         field
             The discretization object.
+        label
+            The name of the label indicating the support of the field, or `None` for the entire mesh, currently must be `None`.
 
         See Also
         --------
