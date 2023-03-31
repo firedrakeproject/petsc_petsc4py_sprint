@@ -943,7 +943,7 @@ cdef class DM(Object):
         CHKERR( DMLocalToLocalEnd  (self.dm, vl.vec, im, vlg.vec) )
 
     def getLGMap(self) -> LGMap:
-        """Return the mapping from local to global mapping.
+        """Return local mapping to global mapping.
 
         Collective.
 
