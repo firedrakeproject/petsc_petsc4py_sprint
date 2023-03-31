@@ -997,7 +997,8 @@ cdef class DM(Object):
 
     def setCoordinates(self, Vec c) -> None:
         """Set a global vector that holds the coordinates.
-        Collective
+
+        Collective.
 
         Parameters
         ----------
