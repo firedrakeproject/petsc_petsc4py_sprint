@@ -743,6 +743,11 @@ cdef class DM(Object):
 
         Collective.
 
+        Parameters
+        ----------
+        dm
+            The `DM` that the fields and discrete systems are copied into.
+
         See Also
         --------
         petsc.DMCopyDisc
