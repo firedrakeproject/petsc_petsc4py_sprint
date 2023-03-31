@@ -925,8 +925,8 @@ cdef class DM(Object):
         CHKERR( DMLocalToGlobalBegin(self.dm, vl.vec, im, vg.vec) )
         CHKERR( DMLocalToGlobalEnd(self.dm, vl.vec, im, vg.vec) )
 
-    def localToLocal(self, Vec vl, Vec vlg, addv=None) -> None:
-        """Mapp the values from a local vector to another local vector.
+    def localToLocal(self, Vec vl, Vec vlg, addv: InsertMode | None = None) -> None:
+        """Map the values from a local vector to another local vector.
 
         Neighborwise collective.
 
@@ -936,6 +936,8 @@ cdef class DM(Object):
             The global vector.
         vl
             The local vector.
+        addv
+            `InsertMode.INSERT_VALUES` or `InsertMode.ADD_VALUES`.
 
         See Also
         --------
