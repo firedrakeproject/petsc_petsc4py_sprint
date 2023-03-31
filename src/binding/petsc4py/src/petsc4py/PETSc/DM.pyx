@@ -760,7 +760,7 @@ cdef class DM(Object):
     def getBlockSize(self) -> int:
         """Return the inherent block size associated with a `DM`.
 
-        Not Collective
+        Not collective.
 
         See Also
         --------
