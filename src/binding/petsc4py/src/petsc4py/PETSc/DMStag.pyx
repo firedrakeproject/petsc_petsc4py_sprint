@@ -38,7 +38,7 @@ class DMStagStencilLocation(object):
 # --------------------------------------------------------------------
 
 cdef class DMStag(DM):
-
+    """TODO"""
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
@@ -48,37 +48,30 @@ cdef class DMStag(DM):
         Create an object to manage data living on the elements, faces, and vertices of a parallelized regular 2D grid.
         Create an object to manage data living on the elements, faces, edges, and vertices of a parallelized regular 3D grid.
 
-
-
-.
-
         Collective.
 
-notes
-You must call DMSetUp() after this call before using the DM. If you wish to use the options database (see the keys above) to change values in the DMSTAG, you must call DMSetFromOptions() after this function but before DMSetUp().
-
-
+        notes
+        You must call DMSetUp() after this call before using the DM. If you wish to use the options database (see the keys above) to change values in the DMSTAG, you must call DMSetFromOptions() after this function but before DMSetUp().
 
         Parameters
         ----------
-bndx - boundary type: DM_BOUNDARY_NONE, DM_BOUNDARY_PERIODIC, or DM_BOUNDARY_GHOSTED
-M - global number of elements
-dof0 - number of degrees of freedom per vertex/0-cell
-dof1 - number of degrees of freedom per element/1-cell
+        bndx - boundary type: DM_BOUNDARY_NONE, DM_BOUNDARY_PERIODIC, or DM_BOUNDARY_GHOSTED
+        M - global number of elements
+        dof0 - number of degrees of freedom per vertex/0-cell
+        dof1 - number of degrees of freedom per element/1-cell
 
-dof0 - number of degrees of freedom per vertex/0-cell
-dof1 - number of degrees of freedom per face/1-cell
-dof2 - number of degrees of freedom per element/2-cell
+        dof0 - number of degrees of freedom per vertex/0-cell
+        dof1 - number of degrees of freedom per face/1-cell
+        dof2 - number of degrees of freedom per element/2-cell
 
-dof0 - number of degrees of freedom per vertex/0-cell
-dof1 - number of degrees of freedom per edge/1-cell
-dof2 - number of degrees of freedom per face/2-cell
-dof3 - number of degrees of freedom per element/3-cell
+        dof0 - number of degrees of freedom per vertex/0-cell
+        dof1 - number of degrees of freedom per edge/1-cell
+        dof2 - number of degrees of freedom per face/2-cell
+        dof3 - number of degrees of freedom per element/3-cell
 
-
-stencilType - ghost/halo region type: DMSTAG_STENCIL_BOX or DMSTAG_STENCIL_NONE
-stencilWidth - width, in elements, of halo/ghost region
-lx - array of local sizes, of length equal to the comm size, summing to M
+        stencilType - ghost/halo region type: DMSTAG_STENCIL_BOX or DMSTAG_STENCIL_NONE
+        stencilWidth - width, in elements, of halo/ghost region
+        lx - array of local sizes, of length equal to the comm size, summing to M
 
         See also
         --------
@@ -150,19 +143,17 @@ lx - array of local sizes, of length equal to the comm size, summing to M
     # Setters
 
     def setStencilWidth(self,swidth):
-        """set elementwise stencil width
+        """Set elementwise stencil width.
 
-.
+        Logically Collective; stencilWidth must contain common value.
 
-Logically Collective; stencilWidth must contain common value
-
+        Note
+        The width value is not used when DMSTAG_STENCIL_NONE is specified.
 
         Parameters
         ----------
-stencilWidth - stencil/halo/ghost width in elements
-Note
-The width value is not used when DMSTAG_STENCIL_NONE is specified.
-
+        stencilWidth
+            Stencil/halo/ghost width in elements.
 
         See also
         --------
@@ -173,15 +164,15 @@ The width value is not used when DMSTAG_STENCIL_NONE is specified.
         CHKERR( DMStagSetStencilWidth(self.dm, sw) )
 
     def setStencilType(self, stenciltype):
-        """set elementwise ghost/halo stencil type
+        """Set elementwise ghost/halo stencil type.
 
-.
+        Logically Collective; stencilType must contain common value.
 
-Logically Collective; stencilType must contain common value
-
-Input Parameters
-dm - the DMSTAG object
-stencilType - the elementwise ghost stencil type: DMSTAG_STENCIL_BOX, DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE
+        Parameters
+----------
+        stencilType
+            The elementwise ghost stencil type: DMSTAG_STENCIL_BOX,
+            DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE.
 
         See also
         --------
@@ -192,18 +183,22 @@ stencilType - the elementwise ghost stencil type: DMSTAG_STENCIL_BOX, DMSTAG_STE
         CHKERR( DMStagSetStencilType(self.dm, stype) )
 
     def setBoundaryTypes(self, boundary_types):
-        """set DMSTAG boundary types
+        """Set DMSTAG boundary types.
 
-.
+        Logically Collective; boundaryType0, boundaryType1, and boundaryType2
+        must contain common values.
 
-Logically Collective; boundaryType0, boundaryType1, and boundaryType2 must contain common values
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
 
-
-boundaryTypeX - boundary type for x direction
-boundaryTypeY - boundary type for y direction, not set for one dimensional problems
-boundaryTypeZ - boundary type for z direction, not set for one and two dimensional problems
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
+        Parameters
+        ----------
+        boundaryTypeX
+            Boundary type for x direction.
+        boundaryTypeY
+            Boundary type for y direction, not set for one dimensional problems.
+        boundaryTypeZ
+            Boundary type for z direction, not set for one and two dimensional problems.
 
 
         See also
@@ -218,21 +213,25 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
     def setDof(self, dofs):
-        """set dof/stratum
+        """Set dof/stratum.
 
-.
+        Logically Collective; dof0, dof1, dof2, and dof3 must contain common values.
 
-Logically Collective; dof0, dof1, dof2, and dof3 must contain common values
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
 
-Input Parameters
-dm - the DMSTAG object
-dof0 - the number of points per 0-cell (vertex/node)
-dof1 - the number of points per 1-cell (element in 1D, edge in 2D and 3D)
-dof2 - the number of points per 2-cell (element in 2D, face in 3D)
-dof3 - the number of points per 3-cell (element in 3D)
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
-
+        Parameters
+        ----------
+        dm
+            The DMSTAG object.
+        dof0
+            The number of points per 0-cell (vertex/node).
+        dof1
+            The number of points per 1-cell (element in 1D, edge in 2D and 3D).
+        dof2
+            The number of points per 2-cell (element in 2D, face in 3D).
+        dof3
+            The number of points per 3-cell (element in 3D).
 
         See also
         --------
@@ -245,20 +244,23 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
         CHKERR( DMStagSetDOF(self.dm, dof0, dof1, dof2, dof3) )
 
     def setGlobalSizes(self, sizes):
-        """set global element counts in each direction
+        """Set global element counts in each direction.
 
-.
+        Logically Collective; N0, N1, and N2 must contain common values.
 
-Logically Collective; N0, N1, and N2 must contain common values
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
 
-Input Parameters
-dm - the DMSTAG object
-N0 - global elementwise size in the x direction
-N1 - global elementwise size in the y direction
-N2 - global elementwise size in the z direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
-
+        Parameters
+        ----------
+        dm
+            The DMSTAG object.
+        N0
+            Global elementwise size in the x direction.
+        N1
+            Global elementwise size in the y direction.
+        N2
+            Global elementwise size in the z direction.
 
         See also
         --------
@@ -271,13 +273,12 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
     def setProcSizes(self, sizes):
-        """set ranks in each direction in the global rank grid
+        """Set ranks in each direction in the global rank grid.
 
-.
+        Logically Collective; nRanks0, nRanks1, and nRanks2 must contain common values.
 
-Logically Collective; nRanks0, nRanks1, and nRanks2 must contain common values
-
-Input Parameters
+Parameters
+----------
 dm - the DMSTAG object
 nRanks0 - number of ranks in the x direction
 nRanks1 - number of ranks in the y direction
@@ -854,7 +855,8 @@ xmax
 
 Logically Collective; dmtype must contain common value
 
-Input Parameters
+Parameters
+----------
 dm - the DMSTAG object
 dmtype - DMtype for coordinates, either DMSTAG or DMPRODUCT
 
@@ -904,7 +906,8 @@ Provides an appropriate index to use with DMStagVecGetArray() and friends. This 
 
 Not Collective
 
-Input Parameters
+Parameters
+----------
 dm - the DMSTAG object
 loc - the grid location
 Output Parameter
@@ -957,7 +960,8 @@ dof - the number of DOF (components) living at loc in dm
 
 Collective
 
-Input Parameters
+Parameters
+----------
 dm - the source DMSTAG object
 vec - the source vector, compatible with dm
 dmTo - the compatible destination DMSTAG object
@@ -1014,7 +1018,8 @@ In contrast to DMDACreateCompatibleDMDA(), coordinates are not reused.
 
 Collective
 
-Input Parameters
+Parameters
+----------
 dm - the DMSTAG object
 vec- Vec object associated with dm
 loc - which subgrid to extract (see DMStagStencilLocation)

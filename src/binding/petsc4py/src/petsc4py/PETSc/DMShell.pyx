@@ -1,14 +1,15 @@
 cdef class DMShell(DM):
+"""TODO"""
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
         """TODO.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        comm
+            The MPI communicator.
 
         See also
         --------
@@ -21,19 +22,20 @@ cdef class DMShell(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def setMatrix(self, Mat mat):
-        """sets a template matrix associated with the DMSHELL
-
-.
+    def setMatrix(self, Mat mat) -> None:
+        """Set a template matrix associated with the DMSHELL.
 
         Collective.
 
+        Developer Note
+        To avoid circular references, if J is already associated to the same
+        DM, then MatDuplicate(SHARE_NONZERO_PATTERN) is called, followed by
+        removing the DM reference from the private template.
+
         Parameters
         ----------
-J - template matrix
-Developer Note
-To avoid circular references, if J is already associated to the same DM, then MatDuplicate(SHARE_NONZERO_PATTERN) is called, followed by removing the DM reference from the private template.
-
+        mat
+            template matrix
 
         See also
         --------
@@ -42,17 +44,15 @@ To avoid circular references, if J is already associated to the same DM, then Ma
         """
         CHKERR( DMShellSetMatrix(self.dm, mat.mat) )
 
-    def setGlobalVector(self, Vec gv):
-        """sets a template global vector associated with the DMSHELL
+    def setGlobalVector(self, Vec gv) -> None:
+        """Set a template global vector associated with the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-X - template vector
+        gv
+            Template vector.
 
         See also
         --------
@@ -61,17 +61,15 @@ X - template vector
         """
         CHKERR( DMShellSetGlobalVector(self.dm, gv.vec) )
 
-    def setLocalVector(self, Vec lv):
-        """sets a template local vector associated with the DMSHELL
+    def setLocalVector(self, Vec lv) -> None:
+        """Set a template local vector associated with the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-X - template vector
+        lv
+            Template vector.
 
         See also
         --------
@@ -81,17 +79,14 @@ X - template vector
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
 
     def setCreateGlobalVector(self, create_gvec, args=None, kargs=None):
-        """sets the routine to create a global vector associated with the DMSHELL
+        """Set the routine to create a global vector associated with the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-func - the creation routine
+        func
+            The creation routine.
 
         See also
         --------
@@ -108,17 +103,14 @@ func - the creation routine
             CHKERR( DMShellSetCreateGlobalVector(self.dm, NULL) )
 
     def setCreateLocalVector(self, create_lvec, args=None, kargs=None):
-        """sets the routine to create a local vector associated with the DMSHELL
+        """Set the routine to create a local vector associated with the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-func - the creation routine
+        func
+            The creation routine.
 
         See also
         --------
@@ -136,22 +128,22 @@ func - the creation routine
 
     def setGlobalToLocal(self, begin, end, begin_args=None, begin_kargs=None,
                          end_args=None, end_kargs=None):
-        """Sets the routines used to perform a global to local scatter
+        """Set the routines used to perform a global to local scatter.
 
-.
+        If these functions are not provided but DMShellSetGlobalToLocalVecScatter()
+        is called then DMGlobalToLocalBeginDefaultShell() / DMGlobalToLocalEndDefaultShell()
+        are used to to perform the transfers.
 
-If these functions are not provided but DMShellSetGlobalToLocalVecScatter() is called then DMGlobalToLocalBeginDefaultShell()/DMGlobalToLocalEndDefaultShell() are used to to perform the transfers
-
-
-
-Logically Collective on dm
-
+        Logically collective on dm.
 
         Parameters
         ----------
-dm - the DMSHELL
-begin - the routine that begins the global to local scatter
-end - the routine that ends the global to local scatter
+        dm
+            The DMSHELL.
+        begin
+            The routine that begins the global to local scatter.
+        end
+            The routine that ends the global to local scatter.
 
         See also
         --------
@@ -174,16 +166,14 @@ end - the routine that ends the global to local scatter
         CHKERR( DMShellSetGlobalToLocal(self.dm, cbegin, cend) )
 
     def setGlobalToLocalVecScatter(self, Scatter gtol):
-        """Sets a VecScatter context for global to local communication
+        """Sets a VecScatter context for global to local communication.
 
-.
-
-Logically Collective on dm
-
+        Logically collective on dm.
 
         Parameters
         ----------
-gtol - the global to local VecScatter context
+        gtol
+            The global to local VecScatter context.
 
         See also
         --------
@@ -194,19 +184,20 @@ gtol - the global to local VecScatter context
 
     def setLocalToGlobal(self, begin, end, begin_args=None, begin_kargs=None,
                          end_args=None, end_kargs=None):
-        """Sets the routines used to perform a local to global scatter
+        """Set the routines used to perform a local to global scatter.
 
-If these functions are not provided but DMShellSetLocalToGlobalVecScatter() is called then DMLocalToGlobalBeginDefaultShell()/DMLocalToGlobalEndDefaultShell() are used to to perform the transfers
+        If these functions are not provided but DMShellSetLocalToGlobalVecScatter()
+        is called then DMLocalToGlobalBeginDefaultShell() / DMLocalToGlobalEndDefaultShell()
+        are used to to perform the transfers.
 
-.
-
-Logically Collective on dm
-
+        Logically collective on dm.
 
         Parameters
         ----------
-begin - the routine that begins the local to global scatter
-end - the routine that ends the local to global scatter
+        begin
+            The routine that begins the local to global scatter.
+        end
+            The routine that ends the local to global scatter.
 
         See also
         --------
@@ -229,16 +220,14 @@ end - the routine that ends the local to global scatter
         CHKERR( DMShellSetLocalToGlobal(self.dm, cbegin, cend) )
 
     def setLocalToGlobalVecScatter(self, Scatter ltog):
-        """Sets a VecScatter context for local to global communication
+        """Set a VecScatter context for local to global communication.
 
-.
-
-Logically Collective on dm
-
+        Logically collective on dm.
 
         Parameters
         ----------
-ltog - the local to global VecScatter context
+        ltog
+            The local to global VecScatter context.
 
         See also
         --------
@@ -249,20 +238,19 @@ ltog - the local to global VecScatter context
 
     def setLocalToLocal(self, begin, end, begin_args=None, begin_kargs=None,
                         end_args=None, end_kargs=None):
-        """Sets the routines used to perform a local to local scatter
+        """Set the routines used to perform a local to local scatter.
 
-.
+        Logically collective on dm.
 
-Logically Collective on dm
-
+        Note
+        If these functions are not provided but DMShellSetLocalToLocalVecScatter() is called then DMLocalToLocalBeginDefaultShell()/DMLocalToLocalEndDefaultShell() are used to to perform the transfers
 
         Parameters
         ----------
-begin - the routine that begins the local to local scatter
-end - the routine that ends the local to local scatter
-Note
-If these functions are not provided but DMShellSetLocalToLocalVecScatter() is called then DMLocalToLocalBeginDefaultShell()/DMLocalToLocalEndDefaultShell() are used to to perform the transfers
-
+        begin
+            The routine that begins the local to local scatter.
+        end
+            The routine that ends the local to local scatter.
 
         See also
         --------
@@ -287,17 +275,15 @@ If these functions are not provided but DMShellSetLocalToLocalVecScatter() is ca
         CHKERR( DMShellSetLocalToLocal(self.dm, cbegin, cend) )
 
     def setLocalToLocalVecScatter(self, Scatter ltol):
-        """Sets a VecScatter context for local to local communication
+        """Set a VecScatter context for local to local communication.
 
-.
-
-Logically Collective
+        Logically collective.
 
 
         Parameters
         ----------
-dm - the DMSHELL
-ltol - the local to local VecScatter context
+        ltol
+            The local to local VecScatter context.
 
         See also
         --------
@@ -307,14 +293,14 @@ ltol - the local to local VecScatter context
         CHKERR( DMShellSetLocalToLocalVecScatter(self.dm, ltol.sct) )
 
     def setCreateMatrix(self, create_matrix, args=None, kargs=None):
-        """sets the routine to create a matrix associated with the DMSHELL.
+        """Set the routine to create a matrix associated with the DMSHELL.
 
-Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-func - the function to create a matrix
+        func
+            The function to create a matrix.
 
         See also
         --------
@@ -331,17 +317,14 @@ func - the function to create a matrix
             CHKERR( DMShellSetCreateMatrix(self.dm, NULL) )
 
     def setCoarsen(self, coarsen, args=None, kargs=None):
-        """Set the routine used to coarsen the DMSHELL
+        """Set the routine used to coarsen the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-coarsen - the routine that coarsens the DM
+        coarsen
+            The routine that coarsens the DM.
 
         See also
         --------
@@ -358,16 +341,14 @@ coarsen - the routine that coarsens the DM
             CHKERR( DMShellSetCoarsen(self.dm, NULL) )
 
     def setRefine(self, refine, args=None, kargs=None):
-        """Set the routine used to refine the DMSHELL
+        """Set the routine used to refine the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-refine - the routine that refines the DM
+        refine
+            The routine that refines the DM.
 
         See also
         --------
@@ -384,17 +365,14 @@ refine - the routine that refines the DM
             CHKERR( DMShellSetRefine(self.dm, NULL) )
 
     def setCreateInterpolation(self, create_interpolation, args=None, kargs=None):
-        """Set the routine used to create the interpolation operator
+        """Set the routine used to create the interpolation operator.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-interp - the routine to create the interpolation
+        interp
+            The routine to create the interpolation.
 
         See also
         --------
@@ -411,17 +389,14 @@ interp - the routine to create the interpolation
             CHKERR( DMShellSetCreateInterpolation(self.dm, NULL) )
 
     def setCreateInjection(self, create_injection, args=None, kargs=None):
-        """Set the routine used to create the injection operator
+        """Set the routine used to create the injection operator.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-inject - the routine to create the injection
+        inject
+            The routine to create the injection.
 
         See also
         --------
@@ -438,16 +413,14 @@ inject - the routine to create the injection
             CHKERR( DMShellSetCreateInjection(self.dm, NULL) )
 
     def setCreateRestriction(self, create_restriction, args=None, kargs=None):
-        """Set the routine used to create the restriction operator
-.
+        """Set the routine used to create the restriction operator.
 
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-striction- the routine to create the restriction
+        striction TODO: was it like that in docs
+            The routine to create the restriction
 
         See also
         --------
@@ -464,17 +437,14 @@ striction- the routine to create the restriction
             CHKERR( DMShellSetCreateRestriction(self.dm, NULL) )
 
     def setCreateFieldDecomposition(self, decomp, args=None, kargs=None):
-        """Set the routine used to create a decomposition of fields for the DMSHELL
+        """Set the routine used to create a decomposition of fields for the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-decomp - the routine to create the decomposition
+        decomp
+            The routine to create the decomposition
 
         See also
         --------
@@ -493,14 +463,12 @@ decomp - the routine to create the decomposition
     def setCreateDomainDecomposition(self, decomp, args=None, kargs=None):
         """Set the routine used to create a domain decomposition for the DMSHELL.
 
-        Logically Collective
-
-.
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-decomp - the routine to create the decomposition
+        decomp
+            The routine to create the decomposition.
 
         See also
         --------
@@ -517,17 +485,14 @@ decomp - the routine to create the decomposition
             CHKERR( DMShellSetCreateDomainDecomposition(self.dm, NULL) )
 
     def setCreateDomainDecompositionScatters(self, scatter, args=None, kargs=None):
-        """Set the routine used to create the scatter contexts for domain decomposition with a DMSHELL
+        """Set the routine used to create the scatter contexts for domain decomposition with a DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-scatter - the routine to create the scatters
+        scatter
+            The routine to create the scatters.
 
         See also
         --------
@@ -544,17 +509,14 @@ scatter - the routine to create the scatters
             CHKERR( DMShellSetCreateDomainDecompositionScatters(self.dm, NULL) )
 
     def setCreateSubDM(self, create_subdm, args=None, kargs=None):
-        """Set the routine used to create a sub DM from the DMSHELL
+        """Set the routine used to create a sub DM from the DMSHELL.
 
-.
-
-Logically Collective
-
+        Logically collective.
 
         Parameters
         ----------
-dm - the DMSHELL
-subdm - the routine to create the decomposition
+        subdm
+            The routine to create the decomposition.
 
         See also
         --------
