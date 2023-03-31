@@ -849,7 +849,7 @@ cdef class DM(Object):
     def getLocalVec(self) -> Vec:
         """Return a local vector.
 
-        Not collective
+        Not collective.
 
         See Also
         --------
