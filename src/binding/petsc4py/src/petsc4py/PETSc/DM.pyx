@@ -1065,7 +1065,7 @@ cdef class DM(Object):
         Parameters
         ----------
         disc
-            The new coordinates discretization or ``NULL`` to ensure a coordinate.
+            The new coordinates discretization.
 
         See Also
         --------
