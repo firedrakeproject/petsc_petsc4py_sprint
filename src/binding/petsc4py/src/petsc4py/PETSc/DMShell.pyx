@@ -78,7 +78,7 @@ cdef class DMShell(DM):
         """
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
 
-    def setCreateGlobalVector(self, create_gvec, args=None, kargs=None):
+    def setCreateGlobalVector(self, create_gvec, args=None, kargs=None) -> None:
         """Set the routine to create a global vector associated with the DMSHELL.
 
         Logically collective.
@@ -102,7 +102,7 @@ cdef class DMShell(DM):
         else:
             CHKERR( DMShellSetCreateGlobalVector(self.dm, NULL) )
 
-    def setCreateLocalVector(self, create_lvec, args=None, kargs=None):
+    def setCreateLocalVector(self, create_lvec, args=None, kargs=None) -> None:
         """Set the routine to create a local vector associated with the DMSHELL.
 
         Logically collective.

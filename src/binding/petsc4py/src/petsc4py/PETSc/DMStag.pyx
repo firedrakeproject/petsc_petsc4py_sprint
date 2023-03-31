@@ -42,8 +42,20 @@ cdef class DMStag(DM):
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
-    def create(self, dim, dofs=None, sizes=None, boundary_types=None, stencil_type=None, stencil_width=None, proc_sizes=None, ownership_ranges=None, comm=None, setUp=False):
-        """v
+    def create(
+        self,
+        dim,
+        dofs=None,
+        sizes=None,
+        boundary_types=None,
+        stencil_type=None,
+        stencil_width=None,
+        proc_sizes=None,
+        ownership_ranges=None,
+        comm=None,
+        setUp=False
+    ):
+        """TODO
         Create an object to manage data living on the elements and vertices of a parallelized regular 1D grid.
         Create an object to manage data living on the elements, faces, and vertices of a parallelized regular 2D grid.
         Create an object to manage data living on the elements, faces, edges, and vertices of a parallelized regular 3D grid.
@@ -55,23 +67,37 @@ cdef class DMStag(DM):
 
         Parameters
         ----------
-        bndx - boundary type: DM_BOUNDARY_NONE, DM_BOUNDARY_PERIODIC, or DM_BOUNDARY_GHOSTED
-        M - global number of elements
-        dof0 - number of degrees of freedom per vertex/0-cell
-        dof1 - number of degrees of freedom per element/1-cell
+        bndx
+            boundary type: DM_BOUNDARY_NONE, DM_BOUNDARY_PERIODIC, or DM_BOUNDARY_GHOSTED
+        M
+            global number of elements
+        dof0
+            number of degrees of freedom per vertex/0-cell
+        dof1
+            number of degrees of freedom per element/1-cell
 
-        dof0 - number of degrees of freedom per vertex/0-cell
-        dof1 - number of degrees of freedom per face/1-cell
-        dof2 - number of degrees of freedom per element/2-cell
+        dof0
+            number of degrees of freedom per vertex/0-cell
+        dof1
+            number of degrees of freedom per face/1-cell
+        dof2
+            number of degrees of freedom per element/2-cell
 
-        dof0 - number of degrees of freedom per vertex/0-cell
-        dof1 - number of degrees of freedom per edge/1-cell
-        dof2 - number of degrees of freedom per face/2-cell
-        dof3 - number of degrees of freedom per element/3-cell
+        dof0
+            number of degrees of freedom per vertex/0-cell
+        dof1
+            number of degrees of freedom per edge/1-cell
+        dof2
+            number of degrees of freedom per face/2-cell
+        dof3
+            number of degrees of freedom per element/3-cell
 
-        stencilType - ghost/halo region type: DMSTAG_STENCIL_BOX or DMSTAG_STENCIL_NONE
-        stencilWidth - width, in elements, of halo/ghost region
-        lx - array of local sizes, of length equal to the comm size, summing to M
+        stencilType
+            ghost/halo region type: DMSTAG_STENCIL_BOX or DMSTAG_STENCIL_NONE
+        stencilWidth
+            width, in elements, of halo/ghost region
+        lx
+            array of local sizes, of length equal to the comm size, summing to M
 
         See also
         --------
@@ -145,7 +171,7 @@ cdef class DMStag(DM):
     def setStencilWidth(self,swidth):
         """Set elementwise stencil width.
 
-        Logically Collective; stencilWidth must contain common value.
+        Logically collective; stencilWidth must contain common value.
 
         Note
         The width value is not used when DMSTAG_STENCIL_NONE is specified.
@@ -166,10 +192,10 @@ cdef class DMStag(DM):
     def setStencilType(self, stenciltype):
         """Set elementwise ghost/halo stencil type.
 
-        Logically Collective; stencilType must contain common value.
+        Logically collective; stencilType must contain common value.
 
         Parameters
-----------
+        ----------
         stencilType
             The elementwise ghost stencil type: DMSTAG_STENCIL_BOX,
             DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE.
@@ -185,7 +211,7 @@ cdef class DMStag(DM):
     def setBoundaryTypes(self, boundary_types):
         """Set DMSTAG boundary types.
 
-        Logically Collective; boundaryType0, boundaryType1, and boundaryType2
+        Logically collective; boundaryType0, boundaryType1, and boundaryType2
         must contain common values.
 
         Note
@@ -215,7 +241,7 @@ cdef class DMStag(DM):
     def setDof(self, dofs):
         """Set dof/stratum.
 
-        Logically Collective; dof0, dof1, dof2, and dof3 must contain common values.
+        Logically collective; dof0, dof1, dof2, and dof3 must contain common values.
 
         Note
         Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
@@ -246,7 +272,7 @@ cdef class DMStag(DM):
     def setGlobalSizes(self, sizes):
         """Set global element counts in each direction.
 
-        Logically Collective; N0, N1, and N2 must contain common values.
+        Logically collective; N0, N1, and N2 must contain common values.
 
         Note
         Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
@@ -275,17 +301,21 @@ cdef class DMStag(DM):
     def setProcSizes(self, sizes):
         """Set ranks in each direction in the global rank grid.
 
-        Logically Collective; nRanks0, nRanks1, and nRanks2 must contain common values.
+        Logically collective; nRanks0, nRanks1, and nRanks2 must contain common values.
 
-Parameters
-----------
-dm - the DMSTAG object
-nRanks0 - number of ranks in the x direction
-nRanks1 - number of ranks in the y direction
-nRanks2 - number of ranks in the z direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
 
+        Parameters
+        ----------
+        dm
+            The DMSTAG object.
+        nRanks0
+            Number of ranks in the x direction.
+        nRanks1
+            Number of ranks in the y direction.
+        nRanks2
+            Number of ranks in the z direction.
 
         See also
         --------
@@ -298,20 +328,21 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
     def setOwnershipRanges(self, ranges):
-        """set elements per rank in each direction
+        """Set elements per rank in each direction.
 
-.
-Logically Collective; lx, ly, and lz must contain common values
+        Logically collective; lx, ly, and lz must contain common values.
 
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
 
         Parameters
         ----------
-lx - element counts for each rank in the x direction
-ly - element counts for each rank in the y direction
-lz - element counts for each rank in the z direction
-
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
-
+        lx
+            element counts for each rank in the x direction
+        ly
+            element counts for each rank in the y direction
+        lz
+            element counts for each rank in the z direction
 
         See also
         --------
@@ -330,7 +361,8 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
     def getDim(self):
         """TODO.
 
-        Not collective.
+        Not collective
+    .
 
         Parameters
         ----------
@@ -345,42 +377,17 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
         return self.getDimension()
 
     def getEntriesPerElement(self):
-        """get number of entries per element in the local representation
+        """Return number of entries per element in the local representation.
 
-Output Parameter
-entriesPerElement - number of entries associated with each element in the local representation
-Notes
-This is the natural block size for most local operations. In 1D it is equal to dof0
-+
-+
- dof1, in 2D it is equal to dof0
-+
-2
-+2
-dof1
-+
-+
- dof2, and in 3D it is equal to dof0
-+
-3
-+3
-dof1
-+
-3
-+3
-dof2
-+
-+
- dof3
+        Notes
+        This is the natural block size for most local operations. In 1D it is equal to dof0++dof1,
+        in 2D it is equal to dof0+2+2dof1++dof2, and in 3D it is equal to dof0+3+3dof1+3+3dof2++dof3.
 
-.
+        Output Parameter
+        entriesPerElement
+            Number of entries associated with each element in the local representation.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -392,16 +399,13 @@ dof2
         return toInt(epe)
 
     def getStencilWidth(self):
-        """get elementwise stencil width
+        """Return elementwise stencil width.
 
-.
+        Not collective.
 
-Not Collective
-
-Input Parameter
-dm - the DMSTAG object
-Output Parameter
-stencilWidth - stencil/halo/ghost width in elements
+        Output Parameter
+        stencilWidth
+            Stencil/halo/ghost width in elements.
 
         See also
         --------
@@ -413,23 +417,19 @@ stencilWidth - stencil/halo/ghost width in elements
         return toInt(swidth)
 
     def getDof(self):
-        """get number of DOF associated with each stratum of the grid
-
-.
+        """Get number of DOF associated with each stratum of the grid.
 
         Not collective.
 
-Output Parameters
-dof0 - the number of points per 0-cell (vertex/node)
-dof1 - the number of points per 1-cell (element in 1D, edge in 2D and 3D)
-dof2 - the number of points per 2-cell (element in 2D, face in 3D)
-dof3 - the number of points per 3-cell (element in 3D)
-
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Output Parameters
+        dof0
+            The number of points per 0-cell (vertex/node).
+        dof1
+            The number of points per 1-cell (element in 1D, edge in 2D and 3D).
+        dof2
+            The number of points per 2-cell (element in 2D, face in 3D).
+        dof3
+            The number of points per 3-cell (element in 3D).
 
         See also
         --------
@@ -442,28 +442,37 @@ dof3 - the number of points per 3-cell (element in 3D)
         return toDofs(dim+1,dof0,dof1,dof2,dof3)
 
     def getCorners(self):
-        """return global element indices of the local region (excluding ghost points)
-
-.
+        """Return global element indices of the local region (excluding ghost points).
 
         Not collective.
 
+        Notes
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
+
+        The number of extra partial elements is either 1 or 0. The value is 1
+        on right, top, and front non-periodic domain (“physical”) boundaries,
+        in the x, y, and z directions respectively, and otherwise 0.
+
         Output Parameters
-x - starting element index in first direction
-y - starting element index in second direction
-z - starting element index in third direction
-m - element width in first direction
-n - element width in second direction
-p - element width in third direction
-nExtrax - number of extra partial elements in first direction
-nExtray - number of extra partial elements in second direction
-nExtraz - number of extra partial elements in third direction
-Notes
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
-
-The number of extra partial elements is either 1 or 0. The value is 1 on right, top, and front non-periodic domain (“physical”) boundaries, in the x, y, and z directions respectively, and otherwise 0.
-
-
+        x
+            starting element index in first direction
+        y
+            starting element index in second direction
+        z
+            starting element index in third direction
+        m
+            element width in first direction
+        n
+            element width in second direction
+        p
+            element width in third direction
+        nExtrax
+            number of extra partial elements in first direction
+        nExtray
+            number of extra partial elements in second direction
+        nExtraz
+            number of extra partial elements in third direction
 
         See also
         --------
@@ -476,22 +485,27 @@ The number of extra partial elements is either 1 or 0. The value is 1 on right, 
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim], (asInt(nExtrax), asInt(nExtray), asInt(nExtraz))[:<Py_ssize_t>dim]
 
     def getGhostCorners(self):
-        """return global element indices of the local region, including ghost points
-
-.
+        """Return global element indices of the local region, including ghost points.
 
         Not collective.
 
-Output Parameters
-x - the starting element index in the first direction
-y - the starting element index in the second direction
-z - the starting element index in the third direction
-m - the element width in the first direction
-n - the element width in the second direction
-p - the element width in the third direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
 
+        Output Parameters
+        x
+            the starting element index in the first direction
+        y
+            the starting element index in the second direction
+        z
+            the starting element index in the third direction
+        m
+            the element width in the first direction
+        n
+            the element width in the second direction
+        p
+            the element width in the third direction
 
         See also
         --------
@@ -504,19 +518,21 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
     def getLocalSizes(self):
-        """get local elementwise sizes
-
-.
+        """Return local elementwise sizes.
 
         Not collective.
 
-Output Parameters
-m - local element counts (excluding ghosts) in the x direction
-n - local element counts (excluding ghosts) in the y direction
-p - local element counts (excluding ghosts) in the z direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
 
+        Output Parameters
+        m
+            local element counts (excluding ghosts) in the x direction
+        n
+            local element counts (excluding ghosts) in the y direction
+        p
+            local element counts (excluding ghosts) in the z direction
 
         See also
         --------
@@ -529,18 +545,21 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
         return toStagDims(dim, m, n, p)
 
     def getGlobalSizes(self):
-        """get global element counts
-
-.
+        """Return global element counts.
 
         Not collective.
 
-Output Parameters
-M - global element counts in the x direction
-N - global element counts in the y direction
-P - global element counts in the z direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
+
+        Output Parameters
+        M
+            global element counts in the x direction
+        N
+            global element counts in the y direction
+        P
+            global element counts in the z direction
 
 
         See also
@@ -554,15 +573,16 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
         return toStagDims(dim, m, n, p)
 
     def getProcSizes(self):
-        """get number of ranks in each direction in the global grid decomposition
-
-.
+        """Return number of ranks in each direction in the global grid decomposition.
 
         Not collective.
 
-nRanks0 - number of ranks in the x direction in the grid decomposition
-nRanks1 - number of ranks in the y direction in the grid decomposition
-nRanks2 - number of ranks in the z direction in the grid decomposition
+        nRanks0
+            number of ranks in the x direction in the grid decomposition
+        nRanks1
+            number of ranks in the y direction in the grid decomposition
+        nRanks2
+            number of ranks in the z direction in the grid decomposition
 
         See also
         --------
@@ -575,16 +595,14 @@ nRanks2 - number of ranks in the z direction in the grid decomposition
         return toStagDims(dim, m, n, p)
 
     def getStencilType(self):
-        """get elementwise ghost/halo stencil type
+        """Return elementwise ghost/halo stencil type.
 
-.
+        Not collective.
 
-Not Collective
-
-Input Parameter
-dm - the DMSTAG object
-Output Parameter
-stencilType - the elementwise ghost stencil type: DMSTAG_STENCIL_BOX, DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE
+        Output Parameter
+        stencilType
+            The elementwise ghost stencil type: DMSTAG_STENCIL_BOX,
+            DMSTAG_STENCIL_STAR, or DMSTAG_STENCIL_NONE.
 
         See also
         --------
@@ -596,30 +614,27 @@ stencilType - the elementwise ghost stencil type: DMSTAG_STENCIL_BOX, DMSTAG_STE
         return toStagStencil(stype)
 
     def getOwnershipRanges(self):
-        """get elements per rank in each direction
-
-.
+        """Return elements per rank in each direction.
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Notes
+        These correspond to the optional final arguments passed to
+        DMStagCreate1d(), DMStagCreate2d(), and DMStagCreate3d().
 
-            ouptut
-            lx - ownership along x direction (optional)
-ly - ownership along y direction (optional)
-lz - ownership along z direction (optional)
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
 
-Notes
-These correspond to the optional final arguments passed to DMStagCreate1d(), DMStagCreate2d(), and DMStagCreate3d().
+        In C you should not free these arrays, nor change the values in them.
+        They will only have valid values while the DMSTAG they came from still
+        exists (has not been destroyed).
 
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
-
-In C you should not free these arrays, nor change the values in them. They will only have valid values while the DMSTAG they came from still exists (has not been destroyed).
-
-
+        lx
+            ownership along x direction (optional)
+        ly
+            ownership along y direction (optional)
+        lz
+            ownership along z direction (optional)
 
         See also
         --------
@@ -634,17 +649,17 @@ In C you should not free these arrays, nor change the values in them. They will 
         return toStagOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getBoundaryTypes(self):
-        """get boundary types
-
-.
+        """Return boundary types.
 
         Not collective.
 
-Output Parameters
-boundaryTypeX - boundary type for x direction
-boundaryTypeY - boundary type for y direction, not set for one dimensional problems
-boundaryTypeZ - boundary type for z direction, not set for one and two dimensional problems
-
+        Output Parameters
+        boundaryTypeX
+            boundary type for x direction
+        boundaryTypeY
+            boundary type for y direction, not set for one dimensional problems
+        boundaryTypeZ
+            boundary type for z direction, not set for one and two dimensional problems
 
         See also
         --------
@@ -660,21 +675,21 @@ boundaryTypeZ - boundary type for z direction, not set for one and two dimension
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
     def getIsFirstRank(self):
-        """get boolean value for whether this rank is first in each direction in the rank grid
-
-.
+        """Return boolean value for whether this rank is first in each direction in the rank grid.
 
         Not collective.
 
-        Parameters
-        ----------
-Output Parameters
-isFirstRank0 - whether this rank is first in the x direction
-isFirstRank1 - whether this rank is first in the y direction
-isFirstRank2 - whether this rank is first in the z direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
 
+        Output Parameters
+        isFirstRank0
+            whether this rank is first in the x direction
+        isFirstRank1
+            whether this rank is first in the y direction
+        isFirstRank2
+            whether this rank is first in the z direction
 
         See also
         --------
@@ -688,25 +703,21 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
         return toStagDims(dim, rank0, rank1, rank2)
 
     def getIsLastRank(self):
-        """get boolean value for whether this rank is last in each direction in the rank grid
-
-.
+        """Return boolean value for whether this rank is last in each direction in the rank grid.
 
         Not collective.
 
-Output Parameters
-isFirstRank0 - whether this rank is last in the x direction
-isFirstRank1 - whether this rank is last in the y direction
-isFirstRank2 - whether this rank is last in the z direction
-Note
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. These arguments may be set to NULL in this case.
+        Note
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids. These arguments may be set to NULL in this case.
 
-
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Output Parameters
+        isFirstRank0
+            whether this rank is last in the x direction
+        isFirstRank1
+            whether this rank is last in the y direction
+        isFirstRank2
+            whether this rank is last in the z direction
 
         See also
         --------
@@ -722,28 +733,38 @@ Arguments corresponding to higher dimensions are ignored for 1D and 2D grids. Th
     # Coordinate-related functions
 
     def setUniformCoordinatesExplicit(self, xmin=0, xmax=1, ymin=0, ymax=1, zmin=0, zmax=1):
-        """set DMSTAG coordinates to be a uniform grid, storing all values
+        """Set DMSTAG coordinates to be a uniform grid, storing all values.
 
-.
+        Collective. TODO:?
 
-         collective.
+        Notes
+        DMSTAG supports 2 different types of coordinate DM: either another
+        DMSTAG, or a DMPRODUCT. If the grid is orthogonal, using DMPRODUCT
+        should be more efficient.
+
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids.
+
+        See the manual page for DMStagSetUniformCoordinates() for information
+        on how coordinates for dummy cells outside the physical domain boundary
+        are populated.
 
         Parameters
         ----------
-dm - the DMSTAG object
-xmin - minimum global coordinate value in the x direction
-xmax - maximum global coordinate values in the x direction
-ymin - minimum global coordinate value in the y direction
-ymax - maximum global coordinate value in the y direction
-zmin - minimum global coordinate value in the z direction
-zmax - maximum global coordinate value in the z direction
-Notes
-DMSTAG supports 2 different types of coordinate DM: either another DMSTAG, or a DMPRODUCT. If the grid is orthogonal, using DMPRODUCT should be more efficient.
-
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
-
-See the manual page for DMStagSetUniformCoordinates() for information on how coordinates for dummy cells outside the physical domain boundary are populated.
-
+        dm
+            the DMSTAG object
+        xmin
+            minimum global coordinate value in the x direction
+        xmax
+            maximum global coordinate values in the x direction
+        ymin
+            minimum global coordinate value in the y direction
+        ymax
+            maximum global coordinate value in the y direction
+        zmin
+            minimum global coordinate value in the z direction
+        zmax
+            maximum global coordinate value in the z direction
 
         See also
         --------
@@ -756,31 +777,41 @@ See the manual page for DMStagSetUniformCoordinates() for information on how coo
         CHKERR( DMStagSetUniformCoordinatesExplicit(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
     def setUniformCoordinatesProduct(self, xmin=0, xmax=1, ymin=0, ymax=1, zmin=0, zmax=1):
-        """create uniform coordinates, as a product of 1D arrays
+        """Create uniform coordinates, as a product of 1D arrays.
 
-Set the coordinate DM to be a DMPRODUCT of 1D DMSTAG objects, each of which have a coordinate DM (also a 1d DMSTAG) holding uniform coordinates.
+        Set the coordinate DM to be a DMPRODUCT of 1D DMSTAG objects, each of
+        which have a coordinate DM (also a 1d DMSTAG) holding uniform
+        coordinates.
 
-.
+        Collective.
 
-         collective.
+        Notes
+        -----
+        Arguments corresponding to higher dimensions are ignored for 1D and 2D
+        grids.
+
+        The per-dimension 1-dimensional DMSTAG objects that comprise the
+        product always have active 0-cells (vertices, element boundaries) and
+        1-cells (element centers).
+
+        See the manual page for DMStagSetUniformCoordinates() for information
+        on how coordinates for dummy cells outside the physical domain boundary
+        are populated.
 
         Parameters
         ----------
-xmin - minimum global coordinate value in the x direction
-xmax - maximum global coordinate values in the x direction
-ymin - minimum global coordinate value in the y direction
-ymax - maximum global coordinate value in the y direction
-zmin - minimum global coordinate value in the z direction
-zmax - maximum global coordinate value in the z direction
-
-Notes
------
-Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
-
-The per-dimension 1-dimensional DMSTAG objects that comprise the product always have active 0-cells (vertices, element boundaries) and 1-cells (element centers).
-
-See the manual page for DMStagSetUniformCoordinates() for information on how coordinates for dummy cells outside the physical domain boundary are populated.
-
+        xmin
+            minimum global coordinate value in the x direction
+        xmax
+            maximum global coordinate value in the x direction
+        ymin
+            minimum global coordinate value in the y direction
+        ymax
+            maximum global coordinate value in the y direction
+        zmin
+            minimum global coordinate value in the z direction
+        zmax
+            maximum global coordinate value in the z direction
 
         See also
         --------
@@ -793,50 +824,40 @@ See the manual page for DMStagSetUniformCoordinates() for information on how coo
         CHKERR( DMStagSetUniformCoordinatesProduct(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
     def setUniformCoordinates(self, xmin=0, xmax=1, ymin=0, ymax=1, zmin=0, zmax=1):
-        """set DMSTAG coordinates to be a uniform grid.
+        """Set DMSTAG coordinates to be a uniform grid.
 
-         collective.
+        Collective.
+
+        Notes
+        DMSTAG supports 2 different types of coordinate DM: DMSTAG and
+        DMPRODUCT. Arguments corresponding to higher dimensions are ignored for
+        1D and 2D grids.
+
+        Local coordinates are populated (using DMSetCoordinatesLocal()),
+        linearly extrapolated to ghost cells, including those outside the
+        physical domain. This is also done in case of periodic boundaries,
+        meaning that the same global point may have different coordinates in
+        different local representations, which are equivalent assuming a
+        periodicity implied by the arguments to this function, i.e. two points
+        are equivalent if their difference is a multiple of
+        ((xmax−xmin)) in the x direction,
+        ((ymax−−ymin)) in the y direction,
+        and((zmax−−zmin)) in the z direction.
 
         Parameters
         ----------
-xmin - minimum global coordinate value in the x direction
-xmax - maximum global coordinate values in the x direction
-ymin - minimum global coordinate value in the y direction
-ymax - maximum global coordinate value in the y direction
-zmin - minimum global coordinate value in the z direction
-zmax - maximum global coordinate value in the z direction
-Notes
-DMSTAG supports 2 different types of coordinate DM: DMSTAG and DMPRODUCT. Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
-
-Local coordinates are populated (using DMSetCoordinatesLocal()), linearly extrapolated to ghost cells, including those outside the physical domain. This is also done in case of periodic boundaries, meaning that the same global point may have different coordinates in different local representations, which are equivalent assuming a periodicity implied by the arguments to this function, i.e. two points are equivalent if their difference is a multiple of
-(
-(
-xmax
-−
-−
- xmin
-)
-)
- in the x direction,
-(
-(
- ymax
-−
-−
- ymin
-)
-)
- in the y direction, and
-(
-(
- zmax
-−
-−
- zmin
-)
-)
- in the z direction.
-
+        xmin
+            minimum global coordinate value in the x direction
+        xmax
+            maximum global coordinate values in the x direction
+        ymin
+            minimum global coordinate value in the y direction
+        ymax
+            maximum global coordinate value in the y direction
+        zmin
+            minimum global coordinate value in the z direction
+        zmax
+            maximum global coordinate value in the z direction
 
         See also
         --------
@@ -849,16 +870,16 @@ xmax
         CHKERR( DMStagSetUniformCoordinates(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
     def setCoordinateDMType(self, dmtype):
-        """set DM type to store coordinates
+        """Set DM type to store coordinates.
 
-.
+        Logically collective; dmtype must contain common value.
 
-Logically Collective; dmtype must contain common value
-
-Parameters
-----------
-dm - the DMSTAG object
-dmtype - DMtype for coordinates, either DMSTAG or DMPRODUCT
+        Parameters
+        ----------
+        dm
+            The DMSTAG object.
+        dmtype
+            DMtype for coordinates, either DMSTAG or DMPRODUCT.
 
         See also
         --------
@@ -872,21 +893,25 @@ dmtype - DMtype for coordinates, either DMSTAG or DMPRODUCT
     # Location slot related functions
 
     def getLocationSlot(self, loc, c):
-        """get index to use in accessing raw local arrays
-
-.
+        """Return index to use in accessing raw local arrays.
 
         Not collective.
 
+        Notes
+        Provides an appropriate index to use with DMStagVecGetArray() and
+        friends. This is required so that the user doesn't need to know about
+        the ordering of dof associated with each local element.
+
         Parameters
         ----------
-loc - location relative to an element
-c - component
-Output Parameter
-slot - index to use
-Notes
-Provides an appropriate index to use with DMStagVecGetArray() and friends. This is required so that the user doesn’t need to know about the ordering of dof associated with each local element.
+        loc
+            Location relative to an element.
+        c
+            Component.
 
+        Output Parameter
+        slot
+            index to use
 
         See also
         --------
@@ -900,24 +925,32 @@ Provides an appropriate index to use with DMStagVecGetArray() and friends. This 
         return toInt(slot)
 
     def getProductCoordinateLocationSlot(self, loc):
-        """get slot for use with local product coordinate arrays
+        """Return slot for use with local product coordinate arrays.
 
-.
+        Not collective.
 
-Not Collective
+        Notes
+        High-level helper function to get slot indices for 1D coordinate DMs,
+        for use with DMStagGetProductCoordinateArrays() and related functions.
 
-Parameters
-----------
-dm - the DMSTAG object
-loc - the grid location
-Output Parameter
-slot - the index to use in local arrays
-Notes
-High-level helper function to get slot indices for 1D coordinate DMs, for use with DMStagGetProductCoordinateArrays() and related functions.
+        For loc, one should use DMSTAG_LEFT, DMSTAG_ELEMENT, or DMSTAG_RIGHT
+        for “previous”, “center” and “next” locations, respectively, in each
+        dimension. One can equivalently use DMSTAG_DOWN or DMSTAG_BACK in place
+        of DMSTAG_LEFT, and DMSTAG_UP or DMSTACK_FRONT in place of DMSTAG_RIGHT.
 
-For loc, one should use DMSTAG_LEFT, DMSTAG_ELEMENT, or DMSTAG_RIGHT for “previous”, “center” and “next” locations, respectively, in each dimension. One can equivalently use DMSTAG_DOWN or DMSTAG_BACK in place of DMSTAG_LEFT, and DMSTAG_UP or DMSTACK_FRONT in place of DMSTAG_RIGHT;
+        This function checks that the coordinates are actually set up so that
+        using the slots from any of the 1D coordinate sub-DMs are valid for all
+        the 1D coordinate sub-DMs.
 
-This function checks that the coordinates are actually set up so that using the slots from any of the 1D coordinate sub-DMs are valid for all the 1D coordinate sub-DMs.
+        Parameters
+        ----------
+        dm
+            The DMSTAG object.
+        loc
+            The grid location.
+        Output Parameter
+        slot
+            the index to use in local arrays
 
 
         See also
@@ -931,15 +964,15 @@ This function checks that the coordinates are actually set up so that using the 
         return toInt(slot)
 
     def getLocationDof(self, loc):
-        """Get number of DOF associated with a given point in a DMSTAG grid
-
-.
+        """Return number of DOF associated with a given point in a DMSTAG grid.
 
         Not collective.
 
-loc - grid point (see DMStagStencilLocation)
-Output Parameter
-dof - the number of DOF (components) living at loc in dm
+        loc
+            grid point (see DMStagStencilLocation)
+        Output Parameter
+        dof
+            the number of DOF (components) living at loc in dm
 
         See also
         --------
@@ -954,21 +987,22 @@ dof - the number of DOF (components) living at loc in dm
     # Random other functions
 
     def migrateVec(self, Vec vec, DM dmTo, Vec vecTo):
-        """transfer a vector associated with a DMSTAG to a vector associated with a compatible DMSTAG
+        """Transfer a vector associated with a DMSTAG to a vector associated with a compatible DMSTAG.
 
-.
+        Collective.
 
-Collective
-
-Parameters
-----------
-dm - the source DMSTAG object
-vec - the source vector, compatible with dm
-dmTo - the compatible destination DMSTAG object
-vecTo - the destination vector, compatible with dmTo
-Notes
-Extra dof are ignored, and unfilled dof are zeroed. Currently only implemented to migrate global vectors to global vectors. For the definition of compatibility of DMs, see DMGetCompatibility().
-
+        Parameters
+        ----------
+        vec
+            The source vector, compatible with dm.
+        dmTo
+            The compatible destination DMSTAG object.
+        vecTo
+            The destination vector, compatible with dmTo.
+        Notes
+        Extra dof are ignored, and unfilled dof are zeroed. Currently only
+        implemented to migrate global vectors to global vectors. For the
+        definition of compatibility of DMs, see DMGetCompatibility().
 
         See also
         --------
@@ -978,24 +1012,28 @@ Extra dof are ignored, and unfilled dof are zeroed. Currently only implemented t
         CHKERR( DMStagMigrateVec(self.dm, vec.vec, dmTo.dm, vecTo.vec ) )
 
     def createCompatibleDMStag(self, dofs):
-        """create a compatible DMSTAG with different dof/stratum
-.
+        """Create a compatible DMSTAG with different dof/stratum.
 
         Collective.
 
         Parameters
         ----------
-dof0 - number of dof on the first stratum in the new DMSTAG
-dof1 - number of dof on the second stratum in the new DMSTAG
-dof2 - number of dof on the third stratum in the new DMSTAG
-dof3 - number of dof on the fourth stratum in the new DMSTAG
+        dof0
+            Number of dof on the first stratum in the new DMSTAG.
+        dof1
+            Number of dof on the second stratum in the new DMSTAG.
+        dof2
+            Number of dof on the third stratum in the new DMSTAG.
+        dof3
+            Number of dof on the fourth stratum in the new DMSTAG.
 
-Notes
-DOF supplied for strata too big for the dimension are ignored; these may be set to 0. For example, for a 2-dimensional DMSTAG, dof2 sets the number of dof per element, and dof3 is unused. For a 3-dimensional DMSTAG, dof3 sets the number of DOF per element.
+        Notes
+        DOF supplied for strata too big for the dimension are ignored; these
+        may be set to 0. For example, for a 2-dimensional DMSTAG, dof2 sets the
+        number of dof per element, and dof3 is unused. For a 3-dimensional
+        DMSTAG, dof3 sets the number of DOF per element.
 
-In contrast to DMDACreateCompatibleDMDA(), coordinates are not reused.
-
-
+        In contrast to DMDACreateCompatibleDMDA(), coordinates are not reused.
 
         See also
         --------
@@ -1012,26 +1050,28 @@ In contrast to DMDACreateCompatibleDMDA(), coordinates are not reused.
         return newdm
 
     def VecSplitToDMDA(self, Vec vec, loc, c):
-        """create a DMDA and Vec from a subgrid of a DMSTAG and its Vec
+        """Create a DMDA and Vec from a subgrid of a DMSTAG and its Vec.
 
-.
+        Collective.
 
-Collective
+        Notes
+        If a c value of -k is provided, the first k DOF for that position are extracted, padding with zero values if needed. If a non-negative value is provided, a single DOF is extracted.
 
-Parameters
-----------
-dm - the DMSTAG object
-vec- Vec object associated with dm
-loc - which subgrid to extract (see DMStagStencilLocation)
-c - which component to extract (see note below)
-Output Parameters
-pda - the DMDA
-pdavec - the new Vec
-Notes
-If a c value of -k is provided, the first k DOF for that position are extracted, padding with zero values if needed. If a non-negative value is provided, a single DOF is extracted.
+        The caller is responsible for destroying the created DMDA and Vec.
 
-The caller is responsible for destroying the created DMDA and Vec.
-
+        Parameters
+        ----------
+        vec
+            Vec object associated with dm.
+        loc
+            Which subgrid to extract (see DMStagStencilLocation).
+        c
+            Which component to extract (see note below).
+        Output Parameters
+        pda
+            the DMDA
+        pdavec
+            the new Vec
 
         See also
         --------
@@ -1052,25 +1092,11 @@ The caller is responsible for destroying the created DMDA and Vec.
     def getVecArray(self, Vec vec):
         """TODO.
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         """
         raise NotImplementedError('getVecArray for DMStag not yet implemented in petsc4py')
 
     def get1dCoordinatecArrays(self):
         """TODO.
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         """
         raise NotImplementedError('get1dCoordinatecArrays for DMStag not yet implemented in petsc4py')
