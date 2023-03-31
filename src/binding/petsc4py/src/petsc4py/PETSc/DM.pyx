@@ -524,23 +524,23 @@ cdef class DM(Object):
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
     
-    def getAuxiliaryVec(self, label: DMLabel | None, value=0, part=0) -> Vec:
+    def getAuxiliaryVec(self, label: str | None = None, value: int | None = 0, part: int | None = 0) -> Vec:
         """Return an auxiliary vector for region.
 
-        Not Collective
+        Not collective.
 
         Parameters
         ----------
-        label : DMLabel
-            The `DM` label.
-        value : int, optional
+        label
+            The name of the `DMLabel`.
+        value
             Indicate the region.
-        part : int, optional
+        part
             The equation part, or 0 is unused.
 
         See Also
         --------
-        petsc.DMGetLabel, petsc.DMGetAuxiliaryVec
+        DM.getLabel, petsc.DMGetAuxiliaryVec
 
         """
         cdef PetscInt cvalue = asInt(value)
