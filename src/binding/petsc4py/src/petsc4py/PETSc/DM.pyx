@@ -1126,14 +1126,14 @@ cdef class DM(Object):
         CHKERR( DMLocalizeCoordinates(self.dm) )
     #
 
-    def setMatType(self, mat_type: str) -> None:
+    def setMatType(self, mat_type: Mat.Type | str) -> None:
         """Set matrix type to be used by `DM.createMat`.
         
         Logically collective.
 
         Parameters
         ----------
-        str
+        mat_type
             The matrix type.
 
         Notes
