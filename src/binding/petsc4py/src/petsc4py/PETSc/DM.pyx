@@ -656,7 +656,7 @@ cdef class DM(Object):
     def clearFields(self) -> None:
         """Remove all fields from the `DM`.
 
-        Logically Collective
+        Logically collective.
 
         See Also
         --------
