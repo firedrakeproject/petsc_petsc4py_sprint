@@ -80,12 +80,6 @@ The protocol for the `petsc4py.PETSc.KSP.Type.PYTHON` Krylov solver is:
 
 .. literalinclude:: ../../demo/python_types/ksppython_protocol.py
 
-.. _petsc_python_pc:
-
-PETSc Python preconditioner type
-================================
-
-
 .. _petsc_python_snes:
 
 PETSc Python nonlinear solver type
