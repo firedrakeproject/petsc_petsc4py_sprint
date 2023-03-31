@@ -1129,7 +1129,7 @@ cdef class KSP(Object):
         self.set_attr('__history__', hist)
         CHKERR( KSPSetResidualHistory(self.ksp, data, size, flag) )
 
-    def getConvergenceHistory(self) -> ndarray:
+    def getConvergenceHistory(self) -> ArrayReal:
         """Return array containing the residual history.
 
         Not collective.
@@ -1144,7 +1144,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetResidualHistory(self.ksp, &data, &size) )
         return array_r(size, data)
 
-    def logConvergenceHistory(self, float rnorm):
+    def logConvergenceHistory(self, rnorm: float):
         """Add residual to convergence history.
 
         Parameters
@@ -1239,7 +1239,7 @@ cdef class KSP(Object):
 
     cancelMonitor = monitorCancel
 
-    def monitor(self, int its, float rnorm) -> None:
+    def monitor(self, its: int, rnorm: float) -> None:
         """Run the user provided monitor routines, if they exist.
 
         Collective.
