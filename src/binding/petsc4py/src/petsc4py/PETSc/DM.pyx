@@ -743,6 +743,11 @@ cdef class DM(Object):
 
         Collective.
 
+        Parameters
+        ----------
+        dm
+            The `DM` that the fields and discrete systems are copied into.
+
         See Also
         --------
         petsc.DMCopyDisc
@@ -755,7 +760,7 @@ cdef class DM(Object):
     def getBlockSize(self) -> int:
         """Return the inherent block size associated with a `DM`.
 
-        Not Collective
+        Not collective.
 
         See Also
         --------
@@ -766,14 +771,14 @@ cdef class DM(Object):
         CHKERR( DMGetBlockSize(self.dm, &bs) )
         return toInt(bs)
 
-    def setVecType(self, vec_type: str) -> None:
+    def setVecType(self, vec_type: Vec.Type | str) -> None:
         """Set the type of vector.
 
         Logically collective.
 
         See Also
         --------
-        petsc.DMSetVecType
+        Vec.Type, petsc.DMSetVecType
 
         """
         cdef PetscVecType vtype = NULL
