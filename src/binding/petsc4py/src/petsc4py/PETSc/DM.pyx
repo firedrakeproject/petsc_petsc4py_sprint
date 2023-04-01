@@ -1404,6 +1404,11 @@ cdef class DM(Object):
         """Adapt a `DM` based on a `DMLabel`.
 
         Collective.
+        
+        Parameters
+        ----------
+        label
+            The name of the `DMLabel`.
 
         See Also
         --------
