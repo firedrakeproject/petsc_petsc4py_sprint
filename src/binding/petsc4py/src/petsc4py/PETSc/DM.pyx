@@ -1223,9 +1223,14 @@ cdef class DM(Object):
         return inject
 
     def createRestriction(self, DM dm) -> Mat:
-        """Return the restriction matrix between two `DM` objects.
+        """Return the restriction matrix between this `DM` and the given `DM`.
 
         Collective.
+
+        Parameters
+        ----------
+        dm
+            The second, finer `DM` object.
 
         See Also
         --------
