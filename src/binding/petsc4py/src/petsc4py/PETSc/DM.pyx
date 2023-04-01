@@ -1341,7 +1341,7 @@ cdef class DM(Object):
         return hierarchy
 
     def coarsenHierarchy(self, nlevels: int) -> list:
-        """Return a `DM` object coarsed.
+        """Coarsen this `DM` and return the coarsened `DM` hierarchy.
 
         Collective.
 
