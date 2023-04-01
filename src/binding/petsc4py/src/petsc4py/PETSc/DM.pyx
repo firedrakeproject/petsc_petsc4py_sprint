@@ -1204,9 +1204,14 @@ cdef class DM(Object):
         return(A, scale)
 
     def createInjection(self, DM dm) -> Mat:
-        """Return the injection matrix between two `DM` objects.
+        """Return the injection matrix between this `DM` and the given `DM`.
 
-        Collective
+        Collective.
+
+        Parameters
+        ----------
+        dm
+            The second, finer `DM` object.
 
         See Also
         --------
