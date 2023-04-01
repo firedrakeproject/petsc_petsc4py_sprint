@@ -1289,7 +1289,7 @@ cdef class DM(Object):
         return dm
 
     def coarsen(self, comm: Comm | None = None) -> DM:
-        """Return a coarsens `DM` object.
+        """Return a coarsened `DM` object.
 
         Collective.
 
