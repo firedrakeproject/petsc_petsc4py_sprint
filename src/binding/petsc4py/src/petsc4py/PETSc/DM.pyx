@@ -1241,14 +1241,19 @@ cdef class DM(Object):
         CHKERR( DMCreateRestriction(self.dm, dm.dm, &mat.mat) )
         return mat
 
-    def convert(self, dm_type: str) -> DM:
+    def convert(self, dm_type: DM.Type | str) -> DM:
         """Return a `DM` converted to another `DM`.
 
         Collective.
 
+        Parameters
+        ----------
+        dm_type
+            The new `DM.Type`, use ``“same”`` for the same type.
+
         See Also
         --------
-        petsc.DMConvert
+        DM.Type, petsc.DMConvert
 
         """
         cdef PetscDMType cval = NULL
