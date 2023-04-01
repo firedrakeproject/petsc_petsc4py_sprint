@@ -1314,9 +1314,9 @@ cdef class DM(Object):
         return dm
 
     def refineHierarchy(self, nlevels: int) -> list:
-        """Return a `DM` object refined.
+        """Refine this `DM` and return the refined `DM` hierarchy.
 
-        Collective
+        Collective.
 
         Parameters
         ----------
