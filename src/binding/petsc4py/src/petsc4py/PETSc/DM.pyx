@@ -1267,7 +1267,7 @@ cdef class DM(Object):
     def refine(self, comm: Comm | None = None) -> DM:
         """Return `DM` object refined.
 
-        Collective
+        Collective.
 
         Parameters
         ----------
