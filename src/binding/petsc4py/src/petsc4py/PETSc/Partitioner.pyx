@@ -12,7 +12,7 @@ class PartitionerType(object):
 # --------------------------------------------------------------------
 
 cdef class Partitioner(Object):
-    """TODO."""
+    """A graph partitioner."""
 
     Type = PartitionerType
 
@@ -21,15 +21,14 @@ cdef class Partitioner(Object):
         self.part = NULL
 
     def view(self, Viewer viewer=None) -> None:
-        """View a PetscPartitioner
-
+        """View the partitioner.
 
         Collective.
 
         Parameters
         ----------
-        v
-            The viewer.
+        viewer
+            A `Viewer` to display the graph.
 
         See also
         --------
@@ -41,7 +40,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerView(self.part, vwr) )
 
     def destroy(self) -> Self:
-        """Destroy a PetscPartitioner object.
+        """Destroy the partitioner object.
 
         Collective.
 
@@ -54,18 +53,20 @@ cdef class Partitioner(Object):
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Create an empty PetscPartitioner object. The type can then be set with PetscPartitionerSetType().
+        """Create an empty partitioner object.
+
+        The type can be set with `setType`.
 
         Collective.
 
         Parameters
         ----------
         comm
-            The communicator for the PetscPartitioner object.
+            The MPI communicator.
 
         See also
         --------
-        petsc.PetscPartitionerCreate
+        petsc.PetscPartitionerCreate, setType
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -74,19 +75,19 @@ cdef class Partitioner(Object):
         PetscCLEAR(self.obj); self.part = newpart
         return self
 
-    def setType(self, part_type: Type) -> None:
-        """Build a particular PetscPartitioner.
+    def setType(self, part_type: Type | str) -> None:
+        """Build a particular type of the partitioner.
 
         Collective.
 
         Parameters
         ----------
-        name
+        part_type
             The kind of partitioner.
 
         See also
         --------
-        petsc.PetscPartitionerSetType
+        petsc.PetscPartitionerSetType, getType
 
         """
         cdef PetscPartitionerType cval = NULL
@@ -94,19 +95,13 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerSetType(self.part, cval) )
 
     def getType(self) -> Type:
-        """Return the PetscPartitioner type name (as a string) from the object.
+        """Return the partitioner type.
 
         Not collective.
 
-        Parameters
-        ----------
-        Input Parameter
-        part
-            The PetscPartitioner.
-
         See also
         --------
-        petsc.PetscPartitionerGetType
+        petsc.PetscPartitionerGetType, setType
 
         """
         cdef PetscPartitionerType cval = NULL
@@ -114,12 +109,7 @@ cdef class Partitioner(Object):
         return bytes2str(cval)
 
     def setFromOptions(self) -> None:
-        """Set parameters in a PetscPartitioner from the options database
-
-        Options Database Keys
-        -petscpartitioner_type - Sets the PetscPartitioner type; use -help for a list of available types
-        -petscpartitioner_use_vertex_weights - Uses weights associated with the graph vertices
-        -petscpartitioner_view_graph - View the graph each time PetscPartitionerPartition is called. Viewer can be customized, see PetscOptionsGetViewer()
+        """Set parameters in the partitioner from the options database.
 
         Collective.
 
@@ -131,7 +121,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerSetFromOptions(self.part) )
 
     def setUp(self) -> None:
-        """Construct data structures for the PetscPartitioner.
+        """Construct data structures for the partitioner.
 
         Collective.
 
@@ -143,7 +133,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerSetUp(self.part) )
 
     def reset(self) -> None:
-        """Reset data structures for the PetscPartitioner.
+        """Reset data structures of the partitioner.
 
         Collective.
 
@@ -162,24 +152,16 @@ cdef class Partitioner(Object):
     ) -> None:
         """Set an artificial partition for a mesh.
 
-        It is safe to free the sizes and points arrays after use in this routine.
-
         Collective.
 
         Parameters
         ----------
-        part
-            The PetscPartitioner.
-        size
-            The number of partitions.
         sizes
-            Array of length size (or NULL) providing the number of points in
-            each partition.
+            The number of points in each partition.
         points
-            Array of length sum(sizes) (may be NULL iff sizes is NULL), a
-            permutation of the points that groups those assigned to each
+            A permutation of the points that groups those assigned to each
             partition in order (i.e., partition 0 first, partition 1 next,
-            etc.)
+            etc.).
 
         See also
         --------

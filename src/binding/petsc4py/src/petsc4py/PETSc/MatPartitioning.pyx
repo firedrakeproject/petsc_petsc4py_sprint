@@ -84,22 +84,19 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningCreate(ccomm, &self.part) )
         return self
 
-    def setType(self, matpartitioning_type: Type) -> None:
-        """Set the type of partitioner to use
-
-        Options Database Key
-        -mat_partitioning_type - (for instance, parmetis), use -help for a list of available methods or see MatPartitioningType
+    def setType(self, matpartitioning_type: Type | str) -> None:
+        """Set the type of partitioner to use.
 
         Collective.
 
         Parameters
         ----------
-        type
-            A known method.
+        matpartitioning_type
+            The partitioner type.
 
         See also
         --------
-        petsc.MatPartitioningSetType
+        petsc.MatPartitioningSetType, getType
 
         """
         cdef PetscMatPartitioningType cval = NULL
@@ -113,7 +110,7 @@ cdef class MatPartitioning(Object):
 
         See also
         --------
-        petsc.MatPartitioningGetType
+        petsc.MatPartitioningGetType, setType
 
         """
         cdef PetscMatPartitioningType cval = NULL
