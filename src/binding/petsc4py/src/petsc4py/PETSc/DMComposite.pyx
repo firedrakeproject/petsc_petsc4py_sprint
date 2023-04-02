@@ -1,21 +1,19 @@
 # --------------------------------------------------------------------
 
 cdef class DMComposite(DM):
+    """A DM object that is used to manage data for a collection of DMs."""
 
     def create(self, comm: Comm | None = None) -> None:
-        """Create a DMCOMPOSITE, used to generate “composite” vectors made up of several subvectors.
+        """Create a composite object.
+
+        It is used to generate composite vectors made up of several subvectors.
 
         Collective.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        packer - the DMCOMPOSITE object
 
         Parameters
         ----------
         comm
-            The processors that will share the global vector.
+            The communicator of processors that will share the global vector.
 
         See also
         --------
@@ -28,16 +26,16 @@ cdef class DMComposite(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def addDM(self, DM dm, *args: TODO) -> None:
-        """Add a DM vector to a DMCOMPOSITE.
+    # TODO 1: *args type
+    # TODO 2: *args in Parameters block
+    # Should it just be Sequence[DM]?
+    def addDM(self, DM dm, *args) -> None:
+        """Add a DM vector to the composite.
 
         Collective.
-        Add DM to composite.
 
         Parameters
         ----------
-        dmc
-            The DMCOMPOSITE object.
         dm
             The DM object.
 
@@ -53,9 +51,7 @@ cdef class DMComposite(DM):
             CHKERR( DMCompositeAddDM(self.dm, dm.dm) )
 
     def getNumber(self) -> int:
-        """Return the number of DM objects in the DMCOMPOSITE representation.
-
-        Get number of sub-DMs contained in the `DMComposite`.
+        """Get number of sub-DMs contained in the composite.
 
         Not collective.
 
@@ -69,15 +65,10 @@ cdef class DMComposite(DM):
         return toInt(n)
     getNumberDM = getNumber
 
-    def getEntries(self) -> list[DM]:
-        """Return the DM for each entry in a DMCOMPOSITE.
-
-        Get tuple of sub-DMs contained in the `DMComposite`.
+    def getEntries(self) -> tuple[DM, ...]:
+        """Return sub-DMs contained in the composite.
 
         Not collective.
-
-        output
-        dms - array of sufficient length (see DMCompositeGetNumberDM()) to hold the individual DM
 
         See also
         --------
@@ -98,10 +89,8 @@ cdef class DMComposite(DM):
             entries.append(entry)
         return tuple(entries)
 
-    def scatter(self, Vec gvec, lvecs: TODO) -> None:
-        """Scatter from a global packed vector into its individual local vectors.
-
-        Scatter coupled global vector into split local vectors.
+    def scatter(self, Vec gvec, lvecs: Sequence[Vec]) -> None:
+        """Scatter coupled global vector into split local vectors.
 
         Collective.
 
@@ -110,11 +99,11 @@ cdef class DMComposite(DM):
         gvec
             The global vector.
         lvecs
-            Array of local vectors, NULL for any that are not needed.
+            Array of local vectors.
 
         See also
         --------
-        petsc.DMCompositeScatterArray
+        petsc.DMCompositeScatterArray, gather
 
         """
         cdef PetscInt i, n = 0
@@ -125,10 +114,8 @@ cdef class DMComposite(DM):
             clvecs[i] = (<Vec?>lvecs[<Py_ssize_t>i]).vec
         CHKERR( DMCompositeScatterArray(self.dm, gvec.vec, clvecs) )
 
-    def gather(self, Vec gvec, imode: InsertMode, lvecs: TODO) -> None:
-        """Gather into a global packed vector from its individual local vectors.
-
-        Gather split local vectors into coupled global vector.
+    def gather(self, Vec gvec, imode: InsertMode, lvecs: Sequence[Vec]) -> None:
+        """Gather split local vectors into a coupled global vector.
 
         Collective.
 
@@ -137,13 +124,13 @@ cdef class DMComposite(DM):
         gvec
             The global vector.
         imode
-            INSERT_VALUES or ADD_VALUES.
+            The insertion mode.
         lvecs
-            The individual sequential vectors, NULL for any that are not needed.
+            The individual sequential vectors.
 
         See also
         --------
-        petsc.DMCompositeGatherArray
+        petsc.DMCompositeGatherArray, scatter
 
         """
         cdef PetscInsertMode cimode = insertmode(imode)
@@ -156,20 +143,16 @@ cdef class DMComposite(DM):
         CHKERR( DMCompositeGatherArray(self.dm, cimode, gvec.vec, clvecs) )
 
     def getGlobalISs(self) -> list[IS]:
-        """Return the index sets for each composed object in a DMCOMPOSITE.
+        """Return the index sets for each composed object in the composite.
 
-        The is entries should be destroyed with ISDestroy(), the is array should be freed with PetscFree()
+        These could be used to extract a subset of vector entries for a
+        "multi-physics" preconditioner.
 
-        These could be used to extract a subset of vector entries for a “multi-physics” preconditioner
-
-        Use DMCompositeGetLocalISs() for index sets in the packed local numbering, and DMCompositeGetISLocalToGlobalMappings() for to map local sub-DM (including ghost) indices to packed global indices.
+        Use `getLocalISs` for index sets in the packed local numbering, and
+        `getLGMaps` for to map local sub-DM (including ghost) indices to packed
+        global indices.
 
         Collective.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        is - the array of index sets
 
         See also
         --------
@@ -189,20 +172,13 @@ cdef class DMComposite(DM):
     def getLocalISs(self) -> list[IS]:
         """Return index sets for each component of a composite local vector.
 
-        At present, a composite local vector does not normally exist. This function is used to provide index sets for MatGetLocalSubMatrix(). In the future, the scatters for each entry in the DMCOMPOSITE may be be merged into a single scatter to a composite local vector. The user should not typically need to know which is being done.
+        To get the composite global indices at all local points (including
+        ghosts), use `getLGMaps`.
 
-        To get the composite global indices at all local points (including ghosts), use DMCompositeGetISLocalToGlobalMappings().
-
-        To get index sets for pieces of the composite global vector, use DMCompositeGetGlobalISs().
-
-        Each returned IS should be destroyed with ISDestroy(), the array should be freed with PetscFree().
+        To get index sets for pieces of the composite global vector, use
+        `getGlobalISs`.
 
         Not collective.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        is - array of serial index sets for each each component of the DMCOMPOSITE
 
         See also
         --------
@@ -220,16 +196,12 @@ cdef class DMComposite(DM):
         return isets
 
     def getLGMaps(self) -> list[LGMap]:
-        """Return an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space.
+        """Return a local-to-global mapping for each DM in the composite.
 
-        Each entry of ltogs should be destroyed with ISLocalToGlobalMappingDestroy(), the ltogs array should be freed with PetscFree().
+        Note that this includes all the ghost points that individual ghosted
+        DMDA may have.
 
         Collective.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        ltogs - the individual mappings for each packed vector. Note that this includes all the ghost points that individual ghosted DMDA may have.
 
         See also
         --------
@@ -246,21 +218,21 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(clgm) )
         return lgms
 
-    def getAccess(self, Vec gvec, locs: Sequence[int] | None = None) -> _DMComposite_access: #TODO:ret type
-        """TODO.
-        Get access to specified parts of global vector.
+    # TODO: return type?
+    def getAccess(self, Vec gvec, locs: Sequence[int] | None = None):
+        """Get access to specified parts of global vector.
+
         Use via `with` context manager (PEP 343).
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc._DMComposite_access
+        gvec
+            The global vector.
+        locs
+            Locations at which access is requested (TODO?). If `None`, access
+            to all locations is requested.
 
         """
         return _DMComposite_access(self, gvec, locs)
