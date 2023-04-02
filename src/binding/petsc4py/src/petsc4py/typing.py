@@ -16,6 +16,7 @@ from .PETSc import (
     SNES,
     TS,
     TAO,
+    DM,
 )
 
 __all__ = [
@@ -24,6 +25,8 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "DMCoarsenHookFunction",
+    "DMRestrictHookFunction",
     "KSPRHSFunction",
     "KSPOperatorsFunction",
     "KSPConvergenceTestFunction",
@@ -79,6 +82,11 @@ ArrayComplex = NDArray[complex]
 
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
+
+# --- DM ---
+
+DMCoarsenHookFunction = Callable[[DM, DM], None]
+DMRestrictHookFunction = Callable[[DM, Mat, Vec, Mat, DM], None]
 
 # --- KSP ---
 
