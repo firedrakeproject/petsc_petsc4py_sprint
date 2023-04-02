@@ -1733,7 +1733,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetIterationNumber(self.ksp, &ival) )
         return toInt(ival)
 
-    def setResidualNorm(self, float rnorm) -> None:
+    def setResidualNorm(self, rnorm: float) -> None:
         """Use `norm` property.
 
         """
