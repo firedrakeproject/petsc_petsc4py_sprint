@@ -1781,8 +1781,7 @@ cdef class KSP(Object):
         petsc.KSPSetErrorIfNotConverged
 
         """
-        cdef PetscBool ernc = PETSC_FALSE
-        if flag: ernc = PETSC_TRUE
+        cdef PetscBool ernc = asBool(flag)
         CHKERR( KSPSetErrorIfNotConverged(self.ksp, ernc) )
 
     def getErrorIfNotConverged(self) -> bool:
