@@ -1,5 +1,5 @@
 cdef class DMShell(DM):
-"""A shell DM object, used to manage user-defined problem data."""
+    """A shell DM object, used to manage user-defined problem data."""
 
     def create(self, comm: Comm | None = None) -> Self:
         """Creates a shell DM object.
