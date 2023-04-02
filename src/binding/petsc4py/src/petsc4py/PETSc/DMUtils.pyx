@@ -1,6 +1,6 @@
 
 cdef class DMInterpolation:
-    """TODO:"""
+    """Interpolation on a mesh."""
     cdef PetscDMInterpolation dminterp
 
     def __cinit__(self):
@@ -11,8 +11,6 @@ cdef class DMInterpolation:
 
     def create(self, comm: Comm | None = None) -> None:
         """Create a `DMInterpolation` context.
-
-        The context is stored under `self.dminterp`.  #TODO:?
 
         Collective.
 
@@ -67,8 +65,6 @@ cdef class DMInterpolation:
 
         The local vector entries correspond to interpolation points lying on
         this process, according to the associated DM.
-
-        This is a borrowed vector that the user should not destroy. # TODO:
 
         Collective.
 
@@ -163,7 +159,7 @@ cdef class DMInterpolation:
             If `True`, all processes are passing in the same array of points.
             Otherwise, points need to be communicated among processes.
         ignoreOutsideDomain
-            If `True`, ignore points outside the domain, otherwise return an
+            Ignore points outside of the domain if `True`; otherwise, return an
             error.
 
         See also
