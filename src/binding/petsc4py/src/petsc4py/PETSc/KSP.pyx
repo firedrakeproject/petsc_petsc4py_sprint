@@ -1063,7 +1063,7 @@ cdef class KSP(Object):
         """
         return self.get_attr('__converged__')
 
-    def callConvergenceTest(self, int its, float rnorm):
+    def callConvergenceTest(self, its: int, rnorm: float) -> None:
         """Call the convergence test callback.
 
         Parameters
