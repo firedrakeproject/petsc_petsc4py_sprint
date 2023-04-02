@@ -1472,7 +1472,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetInitialGuessNonzero(self.ksp, &flag) )
         return toBool(flag)
 
-    def setInitialGuessKnoll(self, bint flag) -> None:
+    def setInitialGuessKnoll(self, flag: bool) -> None:
         """Tell solver to use `PC.apply` to compute the initial guess.
 
         This is the Knoll trick.
