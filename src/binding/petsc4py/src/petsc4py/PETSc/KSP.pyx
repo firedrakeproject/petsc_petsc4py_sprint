@@ -1370,8 +1370,7 @@ cdef class KSP(Object):
         getComputeEigenvalues, petsc.KSPSetComputeEigenvalues
 
         """
-        cdef PetscBool compute = PETSC_FALSE
-        if flag: compute = PETSC_TRUE
+        cdef PetscBool compute = asBool(flag)
         CHKERR( KSPSetComputeEigenvalues(self.ksp, compute) )
 
     def getComputeEigenvalues(self) -> bool:
