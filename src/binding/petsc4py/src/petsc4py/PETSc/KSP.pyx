@@ -1873,7 +1873,7 @@ cdef class KSP(Object):
         elif L:     return vecsl
         else:       return None
 
-    def buildSolution(self, Vec x=None):
+    def buildSolution(self, Vec x=None) -> Vec:
         """Create working solution vectors.
 
         Parameters
