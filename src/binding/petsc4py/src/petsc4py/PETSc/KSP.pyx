@@ -1435,7 +1435,7 @@ cdef class KSP(Object):
 
     # --- initial guess ---
 
-    def setInitialGuessNonzero(self, bint flag) -> None:
+    def setInitialGuessNonzero(self, flag: bool) -> None:
         """Tell the iterative solver that the initial guess is nonzero.
 
         Otherwise KSP assumes the initial guess is to be zero (and thus
