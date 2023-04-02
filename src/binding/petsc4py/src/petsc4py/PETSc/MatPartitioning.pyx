@@ -130,7 +130,7 @@ cdef class MatPartitioning(Object):
         ----------
         adj
             The adjacency matrix, this can be any `Mat.Type` but the natural
-            representation is `Mat.Type.MATMPIADJ`.
+            representation is `Mat.Type.MPIADJ`.
 
         See also
         --------
