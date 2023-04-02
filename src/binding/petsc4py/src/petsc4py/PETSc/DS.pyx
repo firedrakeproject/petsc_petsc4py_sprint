@@ -16,7 +16,7 @@ cdef class DS(Object):
         self.ds  = NULL
 
     def view(self, Viewer viewer=None):
-        """Views a PetscDS
+        """View a PetscDS
 
 Synopsis
 #include "petscds.h"
@@ -46,7 +46,7 @@ v - the viewer
         CHKERR( PetscDSView(self.ds, vwr) )
 
     def destroy(self):
-        """Destroys a PetscDS object
+        """Destroy a PetscDS object
 
 Synopsis
 #include "petscds.h"
@@ -74,7 +74,7 @@ prob - the PetscDS object to destroy
         return self
 
     def create(self, comm=None):
-        """Creates an empty PetscDS object. The type can then be set with PetscDSSetType().
+        """Create an empty PetscDS object. The type can then be set with PetscDSSetType().
 
 Synopsis
 #include "petscds.h"
@@ -107,7 +107,7 @@ ds - The PetscDS object
         return self
 
     def setType(self, ds_type):
-        """Builds a particular PetscDS
+        """Build a particular PetscDS
 
 Synopsis
 #include "petscds.h"
@@ -139,7 +139,7 @@ Options Database Key
         CHKERR( PetscDSSetType(self.ds, cval) )
 
     def getType(self):
-        """Gets the PetscDSType name (as a string) from the PetscDS
+        """Return the PetscDSType name (as a string) from the PetscDS
 
 Synopsis
 #include "petscds.h"
@@ -170,7 +170,7 @@ name - The PetscDSType name
         return bytes2str(cval)
 
     def setFromOptions(self):
-        """sets parameters in a PetscDS from the options database
+        """Set parameters in a PetscDS from the options database
 
 Synopsis
 #include "petscds.h"
@@ -233,7 +233,7 @@ prob - the PetscDS object to setup
     #
 
     def getSpatialDimension(self):
-        """Returns the spatial dimension of the PetscDS, meaning the topological dimension of the discretizations
+        """Return the spatial dimension of the PetscDS, meaning the topological dimension of the discretizations
 
 Synopsis
 #include "petscds.h"
@@ -264,7 +264,7 @@ dim - The spatial dimension
         return toInt(dim)
 
     def getCoordinateDimension(self):
-        """Returns the coordinate dimension of the PetscDS, meaning the dimension of the space into which the discretiaztions are embedded
+        """Return the coordinate dimension of the PetscDS, meaning the dimension of the space into which the discretiaztions are embedded
 
 Synopsis
 #include "petscds.h"
@@ -295,7 +295,7 @@ dimEmbed - The coordinate dimension
         return toInt(dim)
 
     def getNumFields(self):
-        """Returns the number of fields in the PetscDS
+        """Return the number of fields in the PetscDS
 
 Synopsis
 #include "petscds.h"
@@ -326,7 +326,7 @@ Nf - The number of fields
         return toInt(nf)
 
     def getFieldIndex(self, Object disc):
-        """Returns the index of the given field
+        """Return the index of the given field
 
 Synopsis
 #include "petscds.h"
@@ -358,7 +358,7 @@ f - The field number
         return toInt(field)
 
     def getTotalDimensions(self):
-        """Returns the total size of the approximation space for this system
+        """Return the total size of the approximation space for this system
 
 Synopsis
 #include "petscds.h"
@@ -389,7 +389,7 @@ dim - The total problem dimension
         return toInt(tdim)
 
     def getTotalComponents(self):
-        """Returns the total number of components in this system
+        """Return the total number of components in this system
 
 Synopsis
 #include "petscds.h"
@@ -420,7 +420,7 @@ dim - The total number of components
         return toInt(tcmp)
 
     def getDimensions(self):
-        """Returns the size of the approximation space for each field on an evaluation point
+        """Return the size of the approximation space for each field on an evaluation point
 
 Synopsis
 #include "petscds.h"
@@ -452,7 +452,7 @@ dimensions - The number of dimensions
         return array_i(nf, dims)
 
     def getComponents(self):
-        """Returns the number of components for each field on an evaluation point
+        """Return the number of components for each field on an evaluation point
 
 Synopsis
 #include "petscds.h"
@@ -484,7 +484,7 @@ components - The number of components
         return array_i(nf, cmps)
 
     def setDiscretisation(self, f, disc):
-        """Sets the discretization object for the given field
+        """Set the discretization object for the given field
 
 Synopsis
 #include "petscds.h"

@@ -17,7 +17,7 @@ cdef class AO(Object):
         self.ao = NULL
 
     def view(self, Viewer viewer=None):
-        """Displays an application ordering.
+        """Display an application ordering.
 
 Synopsis
 #include "petscao.h"
@@ -49,7 +49,7 @@ The user can open an alternative visualization context with PetscViewerASCIIOpen
         CHKERR( AOView(self.ao, cviewer) )
 
     def destroy(self):
-        """Destroys an application ordering.
+        """Destroy an application ordering.
 
 Synopsis
 #include "petscao.h"
@@ -70,7 +70,7 @@ ao - the application ordering context
         return self
 
     def createBasic(self, app, petsc=None, comm=None):
-        """Creates a basic application ordering using two integer arrays.
+        """Create a basic application ordering using two integer arrays.
 
 Synopsis
 #include "petscao.h"
@@ -131,7 +131,7 @@ The index sets isapp and ispetsc must contain the all the integers 0 to napp-1 (
         return self
 
     def createMemoryScalable(self, app, petsc=None, comm=None):
-        """Creates a memory scalable application ordering using two integer arrays.
+        """Create a memory scalable application ordering using two integer arrays.
 
 Synopsis
 #include "petscao.h"
@@ -194,7 +194,7 @@ Comparing with AOCreateBasicIS(), this routine trades memory with message commun
         return self
 
     def createMapping(self, app, petsc=None, comm=None):
-        """Creates an application mapping using two integer arrays.
+        """Create an application mapping using two integer arrays.
 
 Synopsis
 #include "petscao.h"
@@ -257,7 +257,7 @@ The index sets isapp and ispetsc need NOT contain the all the integers 0 to N-1,
         return self
 
     def getType(self):
-        """Gets the AO type name (as a string) from the AO.
+        """Return the AO type name (as a string) from the AO.
 
 Synopsis
 #include "petscao.h"
@@ -281,7 +281,7 @@ type - The AO type name
         return bytes2str(cval)
 
     def app2petsc(self, indices):
-        """Maps a set of integers in the application-defined ordering to the PETSc ordering.
+        """Map a set of integers in the application-defined ordering to the PETSc ordering.
 
 Synopsis
 #include "petscao.h"
@@ -338,7 +338,7 @@ Any integers in is that are negative are left unchanged. This allows one to conv
         return indices
 
     def petsc2app(self, indices):
-        """Maps a set of integers in the PETSc ordering to the application-defined ordering.
+        """Map a set of integers in the PETSc ordering to the application-defined ordering.
 
 Synopsis
 #include "petscao.h"

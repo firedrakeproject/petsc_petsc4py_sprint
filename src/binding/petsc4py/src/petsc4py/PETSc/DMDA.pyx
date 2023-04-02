@@ -186,7 +186,7 @@ cdef class DMDA(DM):
         return self.getDimension()
 
     def setDof(self, dof):
-        """Sets the number of degrees of freedom per vertex
+        """Set the number of degrees of freedom per vertex
 
 Synopsis
 #include "petscdmda.h"
@@ -270,7 +270,7 @@ Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not 
         return toInt(dof)
 
     def setSizes(self, sizes):
-        """Sets the number of grid points in the three dimensional directions
+        """Set the number of grid points in the three dimensional directions
 
 Synopsis
 #include "petscdmda.h"
@@ -341,7 +341,7 @@ Since the dimension may not yet have been set the code cannot error check for no
         return toDims(dim, M, N, P)
 
     def setProcSizes(self, proc_sizes):
-        """Sets the number of processes in each dimension
+        """Set the number of processes in each dimension
 
 Synopsis
 #include "petscdmda.h"
@@ -409,7 +409,7 @@ p - the number of Z procs (or PETSC_DECIDE)
         return toDims(dim, m, n, p)
 
     def setBoundaryType(self, boundary_type):
-        """Sets the type of ghost nodes on domain boundaries.
+        """Set the type of ghost nodes on domain boundaries.
 
 Synopsis
 #include "petscdmda.h"
@@ -469,7 +469,7 @@ bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
         return toDims(dim, btx, bty, btz)
 
     def setStencilType(self, stencil_type):
-        """Sets the type of the communication stencil
+        """Set the type of the communication stencil
 
 Synopsis
 #include "petscdmda.h"
@@ -523,7 +523,7 @@ stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
         return stype
 
     def setStencilWidth(self, stencil_width):
-        """Sets the width of the communication stencil
+        """Set the width of the communication stencil
 
 Synopsis
 #include "petscdmda.h"
@@ -673,7 +673,7 @@ width - The stencil width
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     def getOwnershipRanges(self):
-        """Gets the ranges of indices in the x, y and z direction that are owned by each process
+        """Return the ranges of indices in the x, y and z direction that are owned by each process
 
 Synopsis
 #include "petscdmda.h"
@@ -721,7 +721,7 @@ These numbers are NOT multiplied by the number of dof per node.
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getCorners(self):
-        """Returns the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
+        """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
 
 Synopsis
 #include "petscdmda.h"
@@ -764,7 +764,7 @@ The corner information is independent of the number of degrees of freedom per no
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
     def getGhostCorners(self):
-        """Returns the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
+        """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
 
 Synopsis
 #include "petscdmda.h"
@@ -809,7 +809,7 @@ The corner information is independent of the number of degrees of freedom per no
     #
 
     def setFieldName(self, field, name):
-        """Sets the names of individual field components in multicomponent vectors associated with a DMDA.
+        """Set the names of individual field components in multicomponent vectors associated with a DMDA.
 
 Synopsis
 #include "petscdmda.h"
@@ -844,7 +844,7 @@ It must be called after having called DMSetUp().
         CHKERR( DMDASetFieldName(self.dm, ival, cval) )
 
     def getFieldName(self, field):
-        """Gets the names of individual field components in multicomponent vectors associated with a DMDA.
+        """Return the names of individual field components in multicomponent vectors associated with a DMDA.
 
 Synopsis
 #include "petscdmda.h"
@@ -904,7 +904,7 @@ It must be called after having called DMSetUp().
                               xmin=0, xmax=1,
                               ymin=0, ymax=1,
                               zmin=0, zmax=1):
-        """Sets a DMDA coordinates to be a uniform grid
+        """Set a DMDA coordinates to be a uniform grid
 
 Synopsis
 #include "petscdmda.h"
@@ -940,7 +940,7 @@ zmin,zmax - extremes in the z direction (value ignored for 1 or 2 dimensional pr
                                           _zmin, _zmax) )
 
     def setCoordinateName(self, index, name):
-        """Sets the name of the coordinate directions associated with a DMDA, for example “x” or “y”
+        """Set the name of the coordinate directions associated with a DMDA, for example “x” or “y”
 
 Synopsis
 #include "petscdmda.h"
@@ -975,7 +975,7 @@ Must be called after having called DMSetUp().
         CHKERR( DMDASetCoordinateName(self.dm, ival, cval) )
 
     def getCoordinateName(self, index):
-        """Gets the name of a coordinate direction associated with a DMDA.
+        """Return the name of a coordinate direction associated with a DMDA.
 
 Synopsis
 #include "petscdmda.h"
@@ -1013,7 +1013,7 @@ It must be called after having called DMSetUp().
     #
 
     def createNaturalVec(self):
-        """Creates a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
+        """Create a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
 
 Synopsis
 #include "petscdmda.h"
@@ -1049,7 +1049,7 @@ The number of local entries in the vector on each process is the same as in a ve
         return vn
 
     def globalToNatural(self, Vec vg, Vec vn, addv=None):
-        """Maps values from the global vector to a global vector in the “natural” grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
+        """Map values from the global vector to a global vector in the “natural” grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
 
 Synopsis
 #include "petscdmda.h"
@@ -1090,7 +1090,7 @@ You must call DMDACreateNaturalVector() before using this routine
         CHKERR( DMDAGlobalToNaturalEnd  (self.dm, vg.vec, im, vn.vec) )
 
     def naturalToGlobal(self, Vec vn, Vec vg, addv=None):
-        """Maps values from a global vector in the “natural” ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
+        """Map values from a global vector in the “natural” ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
 
 Synopsis
 #include "petscdmda.h"
@@ -1128,7 +1128,7 @@ The global and natural vectors used here need not be the same as those obtained 
     #
 
     def getAO(self):
-        """Gets the application ordering context for a distributed array.
+        """Return the application ordering context for a distributed array.
 
 Synopsis
 #include "petscdmda.h"
@@ -1165,7 +1165,7 @@ Do NOT call AODestroy() on the ao returned by this function.
         return ao
 
     def getScatter(self):
-        """Gets the global-to-local, and local-to-local vector scatter contexts for a distributed array.
+        """Return the global-to-local, and local-to-local vector scatter contexts for a distributed array.
 
 Synopsis
 #include "petscdmda.h"
@@ -1253,7 +1253,7 @@ Pass PETSC_IGNORE to leave a value unchanged
                                       refine[2]) )
 
     def getRefinementFactor(self):
-        """Gets the ratios that the DMDA grid is refined
+        """Return the ratios that the DMDA grid is refined
 
 Synopsis
 #include "petscdmda.h"
@@ -1293,7 +1293,7 @@ Pass NULL for values you do not need
         return tuple([toInt(refine[i]) for 0 <= i < dim])
 
     def setInterpolationType(self, interp_type):
-        """Sets the type of interpolation that will be returned by DMCreateInterpolation()
+        """Set the type of interpolation that will be returned by DMCreateInterpolation()
 
 Synopsis
 #include "petscdmda.h"
@@ -1325,7 +1325,7 @@ You should call this on the coarser of the two DMDA you pass to DMCreateInterpol
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
     def getInterpolationType(self):
-        """Gets the type of interpolation that will be used by DMCreateInterpolation()
+        """Return the type of interpolation that will be used by DMCreateInterpolation()
 
 Synopsis
 #include "petscdmda.h"
@@ -1358,7 +1358,7 @@ ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported
     #
 
     def setElementType(self, elem_type):
-        """Sets the element type to be returned by DMDAGetElements()
+        """Set the element type to be returned by DMDAGetElements()
 
 Synopsis
 #include "petscdmda.h"
@@ -1388,7 +1388,7 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
         CHKERR( DMDASetElementType(self.dm, ival) )
 
     def getElementType(self):
-        """Gets the element type to be returned by DMDAGetElements()
+        """Return the element type to be returned by DMDAGetElements()
 
 Synopsis
 #include "petscdmda.h"
@@ -1419,7 +1419,7 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
         return <long>ival
 
     def getElements(self, elem_type=None):
-        """Gets an array containing the indices (in local coordinates) of all the local elements
+        """Return an array containing the indices (in local coordinates) of all the local elements
 
 Synopsis
 #include "petscdmda.h"
