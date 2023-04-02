@@ -1963,7 +1963,7 @@ cdef class KSP(Object):
 
     # --- GMRES ---
 
-    def setGMRESRestart(self, int restart) -> None:
+    def setGMRESRestart(self, restart: int) -> None:
         """Set number of iterations at which KSP restarts.
 
         Suitable KSPs are: KSPGMRES, KSPFGMRES and KSPLGMRES.
