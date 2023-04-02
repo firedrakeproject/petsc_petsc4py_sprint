@@ -1489,8 +1489,7 @@ cdef class KSP(Object):
         petsc.KSPSetInitialGuessKnoll
 
         """
-        cdef PetscBool guess_knoll = PETSC_FALSE
-        if flag: guess_knoll = PETSC_TRUE
+        cdef PetscBool guess_knoll = asBool(flag)
         CHKERR( KSPSetInitialGuessKnoll(self.ksp, guess_knoll) )
 
     def getInitialGuessKnoll(self) -> bool:
