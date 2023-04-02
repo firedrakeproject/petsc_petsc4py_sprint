@@ -20,6 +20,18 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+# --- DM ---
+
+cdef DMCoarsenHookFunction
+cdef DMRestrictHookFunction
+
+# --- KSP ---
+
+cdef KSPRHSFunction
+cdef KSPOperatorsFunction
+cdef KSPConvergenceTestFunction
+cdef KSPMonitorFunction
+
 # --- TS ---
 
 cdef TSRHSFunction

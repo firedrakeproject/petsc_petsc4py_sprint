@@ -12,9 +12,11 @@ from numpy.typing import (
 from .PETSc import (
     Vec,
     Mat,
+    KSP,
     SNES,
     TS,
     TAO,
+    DM,
 )
 
 __all__ = [
@@ -23,6 +25,12 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "DMCoarsenHookFunction",
+    "DMRestrictHookFunction",
+    "KSPRHSFunction",
+    "KSPOperatorsFunction",
+    "KSPConvergenceTestFunction",
+    "KSPMonitorFunction",
     "TSRHSFunction",
     "TSRHSJacobian",
     "TSRHSJacobianP",
@@ -74,6 +82,25 @@ ArrayComplex = NDArray[complex]
 
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
+
+# --- DM ---
+
+DMCoarsenHookFunction = Callable[[DM, DM], None]
+DMRestrictHookFunction = Callable[[DM, Mat, Vec, Mat, DM], None]
+
+# --- KSP ---
+
+KSPRHSFunction = Callable[[KSP, Vec], None]
+"""`PETSc.KSP` right hand side function callback."""
+
+KSPOperatorsFunction = Callable[[KSP, Mat, Mat], None]
+"""`PETSc.KSP` operators function callback."""
+
+KSPConvergenceTestFunction = Callable[[KSP, int, float], KSP.ConvergedReason]
+"""`PETSc.KSP` convergence test callback."""
+
+KSPMonitorFunction = Callable[[KSP, int, float], None]
+"""`PETSc.KSP` monitor callback."""
 
 # --- SNES ---
 
