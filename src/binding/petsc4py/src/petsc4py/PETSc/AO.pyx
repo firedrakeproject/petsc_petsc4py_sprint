@@ -19,10 +19,6 @@ cdef class AO(Object):
     def view(self, Viewer viewer=None):
         """Display an application ordering.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOView(AO ao, PetscViewer viewer)
-
 Collective
 
 Input Parameters
@@ -51,10 +47,6 @@ The user can open an alternative visualization context with PetscViewerASCIIOpen
     def destroy(self):
         """Destroy an application ordering.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AODestroy(AO *ao)
-
 Collective
 
 Input Parameter
@@ -72,10 +64,6 @@ ao - the application ordering context
     def createBasic(self, app, petsc=None, comm=None):
         """Create a basic application ordering using two integer arrays.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOCreateBasic(MPI_Comm comm, PetscInt napp, const PetscInt myapp[], const PetscInt mypetsc[], AO *aoout)
-
 Collective
 
 Input Parameters
@@ -89,10 +77,6 @@ Note
 The arrays myapp and mypetsc must contain the all the integers 0 to napp-1 with no duplicates; that is there cannot be any “holes” in the indices. Use AOCreateMapping() or AOCreateMappingIS() if you wish to have “holes” in the indices.
 
 Creates a basic application ordering using two IS index sets.
-
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOCreateBasicIS(IS isapp, IS ispetsc, AO *aoout)
 
 Collective
 
@@ -133,10 +117,6 @@ The index sets isapp and ispetsc must contain the all the integers 0 to napp-1 (
     def createMemoryScalable(self, app, petsc=None, comm=None):
         """Create a memory scalable application ordering using two integer arrays.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOCreateMemoryScalable(MPI_Comm comm, PetscInt napp, const PetscInt myapp[], const PetscInt mypetsc[], AO *aoout)
-
 Collective
 
 Input Parameters
@@ -150,10 +130,6 @@ Note
 The arrays myapp and mypetsc must contain the all the integers 0 to napp-1 with no duplicates; that is there cannot be any “holes” in the indices. Use AOCreateMapping() or AOCreateMappingIS() if you wish to have “holes” in the indices. Comparing with AOCreateBasic(), this routine trades memory with message communication.
 
 Creates a memory scalable application ordering using two index sets.
-
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOCreateMemoryScalableIS(IS isapp, IS ispetsc, AO *aoout)
 
 Collective
 
@@ -196,10 +172,6 @@ Comparing with AOCreateBasicIS(), this routine trades memory with message commun
     def createMapping(self, app, petsc=None, comm=None):
         """Create an application mapping using two integer arrays.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOCreateMapping(MPI_Comm comm, PetscInt napp, const PetscInt myapp[], const PetscInt mypetsc[], AO *aoout)
-
 Input Parameters
 comm - MPI communicator that is to share the AO
 napp - size of integer arrays
@@ -214,10 +186,6 @@ The arrays myapp and mypetsc need NOT contain the all the integers 0 to napp-1, 
 
 
 Creates an application mapping using two index sets.
-
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOCreateMappingIS(IS isapp, IS ispetsc, AO *aoout)
 
 Input Parameters
 comm - MPI communicator that is to share AO
@@ -259,10 +227,6 @@ The index sets isapp and ispetsc need NOT contain the all the integers 0 to N-1,
     def getType(self):
         """Return the AO type name (as a string) from the AO.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOGetType(AO ao, AOType *type)
-
 Not Collective
 
 Input Parameter
@@ -283,10 +247,6 @@ type - The AO type name
     def app2petsc(self, indices):
         """Map a set of integers in the application-defined ordering to the PETSc ordering.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOApplicationToPetsc(AO ao, PetscInt n, PetscInt ia[])
-
 Collective
 
 Input Parameters
@@ -302,10 +262,6 @@ Integers that are out of range are mapped to -1
 
 
 Maps an index set in the application-defined ordering to the PETSc ordering.
-
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOApplicationToPetscIS(AO ao, IS is)
 
 Collective
 
@@ -340,10 +296,6 @@ Any integers in is that are negative are left unchanged. This allows one to conv
     def petsc2app(self, indices):
         """Map a set of integers in the PETSc ordering to the application-defined ordering.
 
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOPetscToApplication(AO ao, PetscInt n, PetscInt ia[])
-
 Collective
 
 Input Parameters
@@ -358,10 +310,6 @@ Any integers in ia[] that are negative are left unchanged. This allows one to co
 Integers that are out of range are mapped to -1
 
 Maps an index set in the PETSc ordering to the application-defined ordering.
-
-Synopsis
-#include "petscao.h"
-PetscErrorCode AOPetscToApplicationIS(AO ao, IS is)
 
 Collective
 
