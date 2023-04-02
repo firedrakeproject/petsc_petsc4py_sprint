@@ -1506,7 +1506,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetInitialGuessKnoll(self.ksp, &flag) )
         return toBool(flag)
 
-    def setUseFischerGuess(self, model, size):
+    def setUseFischerGuess(self, model: int, size: int) -> None:
         """Use the Paul Fischer algorithm to compute initial guesses.
 
         Use the Paul Fischer algorithm or its variants to compute
