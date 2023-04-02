@@ -1,8 +1,8 @@
 cdef class DMShell(DM):
-"""TODO:"""
+"""A shell DM object, used to manage user-defined problem data."""
 
     def create(self, comm: Comm | None = None) -> Self:
-        """TODO:
+        """Creates a shell DM object.
 
         Collective.
 
@@ -150,10 +150,6 @@ cdef class DMShell(DM):
     ):
         """Set the routines used to perform a global to local scatter.
 
-        If these functions are not provided but DMShellSetGlobalToLocalVecScatter()
-        is called then DMGlobalToLocalBeginDefaultShell() / DMGlobalToLocalEndDefaultShell()
-        are used to to perform the transfers.
-
         Logically collective on the DM.
 
         Parameters
@@ -161,17 +157,17 @@ cdef class DMShell(DM):
         dm
             The `DMShell`.
         begin
-            The routine that begins the global to local scatter.
+            The routine which begins the global to local scatter.
         end
-            The routine that ends the global to local scatter.
+            The routine which ends the global to local scatter.
         begin_args
-            Additional positional arguments for ``begin``.
+            Additional positional arguments for **begin**.
         begin_kargs
-            Additional keyword arguments for ``begin``.
+            Additional keyword arguments for **begin**.
         end_args
-            Additional positional arguments for ``end``.
+            Additional positional arguments for **end**.
         end_kargs
-            Additional keyword arguments for ``end``.
+            Additional keyword arguments for **end**.
 
         See also
         --------
@@ -194,14 +190,14 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetGlobalToLocal(self.dm, cbegin, cend) )
 
     def setGlobalToLocalVecScatter(self, Scatter gtol):
-        """Sets a VecScatter context for global to local communication.
+        """Set a `Scatter` context for global to local communication.
 
         Logically collective on the DM.
 
         Parameters
         ----------
         gtol
-            The global to local VecScatter context.
+            The global to local `Scatter` context.
 
         See also
         --------
@@ -221,26 +217,22 @@ cdef class DMShell(DM):
     ):
         """Set the routines used to perform a local to global scatter.
 
-        If these functions are not provided but DMShellSetLocalToGlobalVecScatter()
-        is called then DMLocalToGlobalBeginDefaultShell() / DMLocalToGlobalEndDefaultShell()
-        are used to to perform the transfers.
-
         Logically collective on the DM.
 
         Parameters
         ----------
         begin
-            The routine that begins the local to global scatter.
+            The routine which begins the local to global scatter.
         end
-            The routine that ends the local to global scatter.
+            The routine which ends the local to global scatter.
         begin_args
-            Additional positional arguments for ``begin``.
+            Additional positional arguments for **begin**.
         begin_kargs
-            Additional keyword arguments for ``begin``.
+            Additional keyword arguments for **begin**.
         end_args
-            Additional positional arguments for ``end``.
+            Additional positional arguments for **end**.
         end_kargs
-            Additional keyword arguments for ``end``.
+            Additional keyword arguments for **end**.
 
         See also
         --------
@@ -263,14 +255,14 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetLocalToGlobal(self.dm, cbegin, cend) )
 
     def setLocalToGlobalVecScatter(self, Scatter ltog):
-        """Set a VecScatter context for local to global communication.
+        """Set a `Scatter` context for local to global communication.
 
         Logically collective on the DM.
 
         Parameters
         ----------
         ltog
-            The local to global VecScatter context.
+            The local to global `Scatter` context.
 
         See also
         --------
@@ -292,25 +284,20 @@ cdef class DMShell(DM):
 
         Logically collective on the DM.
 
-        Note
-        If these functions are not provided but `setLocalToLocalVecScatter` is
-        called then DMLocalToLocalBeginDefaultShell / DMLocalToLocalEndDefaultShell
-        are used to to perform the transfers.
-
         Parameters
         ----------
         begin
-            The routine that begins the local to local scatter.
+            The routine which begins the local to local scatter.
         end
-            The routine that ends the local to local scatter.
+            The routine which ends the local to local scatter.
         begin_args
-            Additional positional arguments for ``begin``.
+            Additional positional arguments for **begin**.
         begin_kargs
-            Additional keyword arguments for ``begin``.
+            Additional keyword arguments for **begin**.
         end_args
-            Additional positional arguments for ``end``.
+            Additional positional arguments for **end**.
         end_kargs
-            Additional keyword arguments for ``end``.
+            Additional keyword arguments for **end**.
 
         See also
         --------
@@ -335,14 +322,14 @@ cdef class DMShell(DM):
         CHKERR( DMShellSetLocalToLocal(self.dm, cbegin, cend) )
 
     def setLocalToLocalVecScatter(self, Scatter ltol):
-        """Set a VecScatter context for local to local communication.
+        """Set a ``Scatter`` context for local to local communication.
 
         Logically collective.
 
         Parameters
         ----------
         ltol
-            The local to local VecScatter context.
+            The local to local ``Scatter`` context.
 
         See also
         --------
@@ -397,11 +384,11 @@ cdef class DMShell(DM):
         Parameters
         ----------
         coarsen
-            The routine that coarsens the DM.
+            The routine which coarsens the DM.
         args
-            Additional positional arguments for ``coarsen``.
+            Additional positional arguments for **coarsen**.
         kargs
-            Additional keyword arguments for ``coarsen``.
+            Additional keyword arguments for **coarsen**.
 
         See also
         --------
@@ -430,11 +417,11 @@ cdef class DMShell(DM):
         Parameters
         ----------
         refine
-            The routine that refines the DM.
+            The routine which refines the DM.
         args
-            Additional positional arguments for ``refine``.
+            Additional positional arguments for **refine**.
         kargs
-            Additional keyword arguments for ``refine``.
+            Additional keyword arguments for **refine**.
 
         See also
         --------
@@ -465,9 +452,9 @@ cdef class DMShell(DM):
         create_interpolation
             The routine to create the interpolation.
         args
-            Additional positional arguments for ``create_interpolation``.
+            Additional positional arguments for **create_interpolation**.
         kargs
-            Additional keyword arguments for ``create_interpolation``.
+            Additional keyword arguments for **create_interpolation**.
 
         See also
         --------
@@ -498,9 +485,9 @@ cdef class DMShell(DM):
         create_injection
             The routine to create the injection.
         args
-            Additional positional arguments for ``create_injection``.
+            Additional positional arguments for **create_injection**.
         kargs
-            Additional keyword arguments for ``create_injection``.
+            Additional keyword arguments for **create_injection**.
 
         See also
         --------
@@ -531,9 +518,9 @@ cdef class DMShell(DM):
         create_restriction
             The routine to create the restriction
         args
-            Additional positional arguments for ``create_restriction``.
+            Additional positional arguments for **create_restriction**.
         kargs
-            Additional keyword arguments for ``create_restriction``.
+            Additional keyword arguments for **create_restriction**.
 
         See also
         --------
@@ -551,23 +538,22 @@ cdef class DMShell(DM):
 
     def setCreateFieldDecomposition(
         self,
-        decomp: Callable[[DM], tuple[list[str], list[IS], list[DM]]] | None,
-        # TODO: | None in tuple?
+        decomp: Callable[[DM], tuple[list[str] | None, list[IS] | None, list[DM] | None]] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
-        """Set the routine used to create a decomposition of fields for the `DMShell`.
+        """Set the routine used to create a field decomposition.
 
         Logically collective.
 
         Parameters
         ----------
         decomp
-            The routine to create the decomposition
+            The routine to create the decomposition.
         args
-            Additional positional arguments for ``decomp``.
+            Additional positional arguments for **decomp**.
         kargs
-            Additional keyword arguments for ``decomp``.
+            Additional keyword arguments for **decomp**.
 
         See also
         --------
@@ -585,12 +571,11 @@ cdef class DMShell(DM):
 
     def setCreateDomainDecomposition(
         self,
-        decomp: Callable[[DM], tuple[list[str], list[IS], list[IS], list[DM]]] | None,
-        # TODO: | None in tuple?
+        decomp: Callable[[DM], tuple[list[str] | None, list[IS] | None, list[IS] | None, list[DM] | None]] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
-        """Set the routine used to create a domain decomposition for the `DMShell`.
+        """Set the routine used to create a domain decomposition.
 
         Logically collective.
 
@@ -599,9 +584,9 @@ cdef class DMShell(DM):
         decomp
             The routine to create the decomposition.
         args
-            Additional positional arguments for ``decomp``.
+            Additional positional arguments for **decomp**.
         kargs
-            Additional keyword arguments for ``decomp``.
+            Additional keyword arguments for **decomp**.
 
         See also
         --------
@@ -623,7 +608,7 @@ cdef class DMShell(DM):
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
-        """Set the routine used to create the scatter contexts for domain decomposition with a `DMShell`.
+        """Set the routine used to create the scatter contexts for domain decomposition.
 
         Logically collective.
 
@@ -632,9 +617,9 @@ cdef class DMShell(DM):
         scatter
             The routine to create the scatters.
         args
-            Additional positional arguments for ``scatter``.
+            Additional positional arguments for **scatter**.
         kargs
-            Additional keyword arguments for ``scatter``.
+            Additional keyword arguments for **scatter**.
 
         See also
         --------
@@ -652,8 +637,7 @@ cdef class DMShell(DM):
 
     def setCreateSubDM(
         self,
-        create_subdm: Callable[[DM, list[int]], tuple[IS, DM]] | None,
-        # TODO: list of int or ArrayInt ?
+        create_subdm: Callable[[DM, Sequence[int]], tuple[IS, DM]] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -666,9 +650,9 @@ cdef class DMShell(DM):
         subdm
             The routine to create the decomposition.
         args
-            Additional positional arguments for ``subdm``.
+            Additional positional arguments for **subdm**.
         kargs
-            Additional keyword arguments for ``subdm``.
+            Additional keyword arguments for **subdm**.
 
         See also
         --------
