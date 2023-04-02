@@ -1894,7 +1894,7 @@ cdef class KSP(Object):
         CHKERR( KSPBuildSolution(self.ksp, x.vec, NULL) )
         return x
 
-    def buildResidual(self, Vec r=None):
+    def buildResidual(self, Vec r=None) -> Vec:
         """Create working residual vectors.
 
         Parameters
