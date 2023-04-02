@@ -14,8 +14,8 @@ dependencies (:mod:`mpi4py` is optional but highly recommended)::
 Install from the PETSc source tree
 ----------------------------------
 
-First `build PETSc <petsc:doc_install>`. Next :file:`cd` to the top of the PETSc
-source tree and set the `PETSC_DIR <petsc:doc_multi>` and `PETSC_ARCH
+First `build PETSc <petsc:doc_install>`. Next :file:`cd` to the top of the
+PETSc source tree and set the `PETSC_DIR <petsc:doc_multi>` and `PETSC_ARCH
 <petsc:doc_multi>` environment variables. Run::
 
   $ python -m pip install src/binding/petsc4py
@@ -44,3 +44,8 @@ The resulting HTML files will be in :file:`_build/html`.
 .. note::
 
   Building the documentation requires Python 3.11 or later.
+
+.. note::
+
+  All new code must include documentation in accordance with the `documentation
+  standard <documentation_standards>`
