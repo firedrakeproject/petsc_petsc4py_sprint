@@ -1764,10 +1764,7 @@ cdef class KSP(Object):
         return reason
 
     def setErrorIfNotConverged(self, flag: bool) -> None:
-        """Cause `solve` to generate an error.
-
-        Occurs if the solver has not converged as soon as the error is
-        detected.
+        """Cause `solve` to generate an error if not converged.
 
         Logically collective.
 
