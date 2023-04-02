@@ -13,7 +13,7 @@ class MatPartitioningType(object):
 # --------------------------------------------------------------------
 
 cdef class MatPartitioning(Object):
-    """TODO."""
+    """Object for managing the partitioning of a matrix or graph."""
 
     Type = MatPartitioningType
 
@@ -25,22 +25,14 @@ cdef class MatPartitioning(Object):
         return self.getValue()
 
     def view(self, Viewer viewer=None) -> None:
-        """Print the partitioning data structure.
-
-        The available visualization contexts include
-        PETSC_VIEWER_STDOUT_SELF - standard output (default)
-        PETSC_VIEWER_STDOUT_WORLD - synchronized standard output where only the
-        first processor opens the file. All other processors send their data to
-        the first processor to print.
-
-        The user can open alternative visualization contexts with
-        PetscViewerASCIIOpen() - output to a specified file
+        """View the partitioning data structure.
 
         Collective.
 
         Parameters
         ----------
-        viewer - optional visualization context
+        viewer
+            A `Viewer` to display the graph.
 
         See also
         --------
@@ -59,7 +51,7 @@ cdef class MatPartitioning(Object):
 
         See also
         --------
-        petsc.MatPartitioningDestroy
+        petsc.MatPartitioningDestroy, create
 
         """
         CHKERR( MatPartitioningDestroy(&self.part) )
@@ -73,11 +65,11 @@ cdef class MatPartitioning(Object):
         Parameters
         ----------
         comm
-            MPI communicator.
+            The MPI communicator.
 
         See also
         --------
-        petsc.MatPartitioningCreate
+        petsc.MatPartitioningCreate, destroy
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -85,7 +77,7 @@ cdef class MatPartitioning(Object):
         return self
 
     def setType(self, matpartitioning_type: Type | str) -> None:
-        """Set the type of partitioner to use.
+        """Set the type of the partitioner to use.
 
         Collective.
 
@@ -104,7 +96,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningSetType(self.part, cval) )
 
     def getType(self) -> Type:
-        """Return the Partitioning method type and name (as a string) from the partitioning context.
+        """Return the partitioning method.
 
         Not collective.
 
@@ -118,18 +110,9 @@ cdef class MatPartitioning(Object):
         return bytes2str(cval)
 
     def setFromOptions(self):
-        """Set various partitioning options from the options database for the partitioning object
-
-        If the partitioner has not been set by the user it uses one of the
-        installed partitioner such as ParMetis. If there are no installed
-        partitioners it does no repartioning.
+        """Set parameters in the partitioner from the options database.
 
         Collective.
-
-        Options Database Keys
-        -mat_partitioning_type - (for instance, parmetis), use -help for a list
-         of available methods
-        -mat_partitioning_nparts - number of subgraphs
 
         See also
         --------
@@ -146,8 +129,8 @@ cdef class MatPartitioning(Object):
         Parameters
         ----------
         adj
-            The adjacency matrix, this can be any MatType but the natural
-            representation is MATMPIADJ.
+            The adjacency matrix, this can be any `Mat.Type` but the natural
+            representation is `Mat.Type.MATMPIADJ`.
 
         See also
         --------
@@ -159,23 +142,10 @@ cdef class MatPartitioning(Object):
     def apply(self, IS partitioning) -> None:
         """Return a partitioning for the graph represented by a sparse matrix.
 
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        partitioning - the partitioning. For each local node this tells the
-        processor number that that node is assigned to.
-
-        Options Database Keys
-        -mat_partitioning_type - set the partitioning package or algorithm to use
-        -mat_partitioning_view - display information about the partitioning object
-        The user can define additional partitionings; see MatPartitioningRegister().
+        For each local node this tells the processor number that that node is
+        assigned to.
 
         Collective.
-
-        Parameters
-        ----------
-        matp
-            The matrix partitioning object.
 
         See also
         --------
