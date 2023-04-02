@@ -1763,7 +1763,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetConvergedReason(self.ksp, &reason) )
         return reason
 
-    def setErrorIfNotConverged(self, bint flag) -> None:
+    def setErrorIfNotConverged(self, flag: bool) -> None:
         """Cause `solve` to generate an error.
 
         Occurs if the solver has not converged as soon as the error is
