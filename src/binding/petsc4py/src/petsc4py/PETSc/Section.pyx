@@ -55,13 +55,13 @@ cdef class Section(Object):
 
         Typical calling sequence
 
-       PetscSectionCreate(MPI_Comm,PetscSection *);!
-       PetscSectionSetNumFields(PetscSection, numFields);
-       PetscSectionSetChart(PetscSection,low,high);
-       PetscSectionSetDof(PetscSection,point,numdof);
-       PetscSectionSetUp(PetscSection);
-       PetscSectionGetOffset(PetscSection,point,PetscInt *);
-       PetscSectionDestroy(PetscSection);
+        PetscSectionCreate(MPI_Comm,PetscSection *);!
+        PetscSectionSetNumFields(PetscSection, numFields);
+        PetscSectionSetChart(PetscSection,low,high);
+        PetscSectionSetDof(PetscSection,point,numdof);
+        PetscSectionSetUp(PetscSection);
+        PetscSectionGetOffset(PetscSection,point,PetscInt *);
+        PetscSectionDestroy(PetscSection);
 
         The PetscSection object and methods are intended to be used in the PETSc Vec and Mat implementations. The indices returned by the PetscSection are appropriate for the kind of Vec it is associated with. For example, if the vector being indexed is a local vector, we call the section a local section. If the section indexes a global vector, we call it a global section. For parallel vectors, like global vectors, we use negative indices to indicate dofs owned by other processes.
 
@@ -85,15 +85,14 @@ cdef class Section(Object):
     def clone(self) -> Section:
         """Create a shallow (if possible) copy of the PetscSection.
 
+        With standard PETSc terminology this should be called PetscSectionDuplicate()
+
         Collective.
 
-        Parameters
-        ----------
-        section - the PetscSection
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         newSection - the copy
-        Developer Note
-        With standard PETSc terminology this should be called PetscSectionDuplicate()
 
         See also
         --------
@@ -131,7 +130,9 @@ cdef class Section(Object):
     def getNumFields(self) -> int:
         """Return the number of fields in a PetscSection, or 0 if no fields were defined.
 
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         numFields - the number of fields defined, or 0 if none were defined
 
         Not collective.
@@ -166,15 +167,19 @@ cdef class Section(Object):
     def getFieldName(self, field: int) -> str:
         """Return the name of a field in the PetscSection.
 
+        Will error if the field number is out of range
+
         Not collective.
 
         Parameters
         ----------
-        field - the field number
+        field
+            The field number
+
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         fieldName - the field name
-        Note
-        Will error if the field number is out of range
 
         See also
         --------
@@ -195,8 +200,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        field - the field number
-        fieldName - the field name
+        field
+            The field number.
+        fieldName
+            The field name.
 
         See also
         --------
@@ -211,15 +218,20 @@ cdef class Section(Object):
     def getFieldComponents(self, field: int) -> int:
         """Return the number of field components for the given field.
 
+        This function is misnamed. There is a Num in PetscSectionGetNumFields() but not in this name
+
         Not collective.
 
         Parameters
         ----------
-        field - the field number
+        field
+            The field number.
+
+        ---------------------------------
         Output Parameter
-        numComp - the number of field components
-        Developer Note
-        This function is misnamed. There is a Num in PetscSectionGetNumFields() but not in this name
+        ---------------------------------
+        numComp
+            The number of field components.
 
         See also
         --------
@@ -237,8 +249,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        field - the field number
-        numComp - the number of field components
+        field
+            The field number.
+        numComp
+            The number of field components.
 
         See also
         --------
@@ -254,12 +268,11 @@ cdef class Section(Object):
 
         Not collective.
 
-        Parameters
-        ----------
-        s - the PetscSection
         Output Parameters
-        pStart - the first point
-        pEnd - one past the last point
+        pStart
+            The first point.
+        pEnd
+            One past the last point.
 
         See also
         --------
@@ -277,8 +290,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        pStart - the first point
-        pEnd - one past the last point
+        pStart
+            The first point.
+        pEnd
+            One past the last point.
 
         See also
         --------
@@ -294,7 +309,9 @@ cdef class Section(Object):
 
         Not collective.
 
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         perm - The permutation as an IS
 
         See also
@@ -314,7 +331,8 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        perm - the permutation of points
+        perm
+            The permutation of points.
 
         See also
         --------
@@ -326,15 +344,19 @@ cdef class Section(Object):
     def getDof(self, point: int) -> int:
         """Return the number of degrees of freedom associated with a given point.
 
+        In a global section, this size will be negative for points not owned by this process.
+
         Not collective.
 
         Parameters
         ----------
-        point - the point
+        point
+            The point.
+        ---------------------------------
         Output Parameter
-        numDof - the number of dof
-        Note
-        In a global section, this size will be negative for points not owned by this process.
+        ---------------------------------
+        numDof
+            The number of dof.
 
         See also
         --------
@@ -352,8 +374,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
-        numDof - the number of dof
+        point
+            The point.
+        numDof
+            The number of dof.
 
         See also
         --------
@@ -371,9 +395,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        s - the PetscSection
-        point - the point
-        numDof - the number of additional dof
+        point
+            The point.
+        numDof
+            The number of additional dof.
 
         See also
         --------
@@ -391,10 +416,15 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
-        field - the field
+        point
+            The point.
+        field
+            The field.
+        ---------------------------------
         Output Parameter
-        numDof - the number of dof
+        ---------------------------------
+        numDof
+            The number of dof.
 
         See also
         --------
@@ -413,9 +443,12 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
-        field - the field
-        numDof - the number of dof
+        point
+            The point.
+        field
+            The field.
+        numDof
+            The number of dof.
 
         See also
         --------
@@ -434,10 +467,12 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        s - the PetscSection
-        point - the point
-        field - the field
-        numDof - the number of dof
+        point
+            The point.
+        field
+            The field.
+        numDof
+            The number of dof.
 
         See also
         --------
@@ -456,9 +491,13 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
+        point
+            The point.
+        ---------------------------------
         Output Parameter
-        numDof - the number of dof which are fixed by constraints
+        ---------------------------------
+        numDof
+            The number of dof. which are fixed by constraints
 
         See also
         --------
@@ -476,8 +515,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
-        numDof - the number of dof which are fixed by constraints
+        point
+            The point.
+        numDof
+            The number of dof. which are fixed by constraints
 
         See also
         --------
@@ -495,9 +536,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        s - the PetscSection
-        point - the point
-        numDof - the number of additional dof which are fixed by constraints
+        point
+            The point.
+        numDof
+            The number of additional dof which are fixed by constraints.
 
         See also
         --------
@@ -515,10 +557,15 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
-        field - the field
+        point
+            The point.
+        field
+            The field.
+        ---------------------------------
         Output Parameter
-        numDof - the number of dof which are fixed by constraints
+        ---------------------------------
+        numDof
+            The number of dof. which are fixed by constraints
 
         See also
         --------
@@ -542,9 +589,12 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - the point
-        field - the field
-        numDof - the number of dof which are fixed by constraints
+        point
+            The point.
+        field
+            The field.
+        numDof
+            The number of dof. which are fixed by constraints
 
         See also
         --------
@@ -568,10 +618,12 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        s - the PetscSection
-        point - the point
-        field - the field
-        numDof - the number of additional dof which are fixed by constraints
+        point
+            The point.
+        field
+            The field.
+        numDof
+            The number of additional dof which are fixed by constraints.
 
         See also
         --------
@@ -590,10 +642,13 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        s - The PetscSection
-        point - The point
+        point
+            The point.
+        ---------------------------------
         Output Parameter
-        indices - The constrained dofs
+        ---------------------------------
+        indices
+            The constrained dofs.
 
         See also
         --------
@@ -615,8 +670,10 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - The point
-        indices - The constrained dofs
+        point
+            The point.
+        indices
+            The constrained dofs.
 
         See also
         --------
@@ -634,16 +691,21 @@ cdef class Section(Object):
     def getFieldConstraintIndices(self, point: int, field: int) -> ArrayInt:
         """Return the field dof numbers, in [0, fdof), which are constrained.
 
+        The indices array, which is provided by the caller, must have capacity to hold the number of constrained dofs, e.g., as returned by PetscSectionGetConstraintDof().
+
         Not collective.
 
         Parameters
         ----------
-        field - The field number
-        point - The point
+        field
+            The field number.
+        point
+            The point.
+        ---------------------------------
         Output Parameter
-        indices - The constrained dofs sorted in ascending order
-        Note
-        The indices array, which is provided by the caller, must have capacity to hold the number of constrained dofs, e.g., as returned by PetscSectionGetConstraintDof().
+        ---------------------------------
+        indices
+            The constrained dofs. sorted in ascending order
 
         See also
         --------
@@ -672,9 +734,12 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        point - The point
-        field - The field number
-        indices - The constrained dofs
+        point
+            The point.
+        field
+            The field number.
+        indices
+            The constrained dofs.
 
         See also
         --------
@@ -693,14 +758,8 @@ cdef class Section(Object):
     def getMaxDof(self) -> int:
         """Return the maximum number of degrees of freedom on any point in the PetscSection
 
-        Not collective.
-
-        Output Parameter
-        maxDof - the maximum dof
-        Note
         The returned number is up-to-date without need for PetscSectionSetUp().
 
-        Developer Note
         The returned number is calculated lazily and stashed.
 
         A call to PetscSectionInvalidateMaxDof_Internal() invalidates the stashed value.
@@ -708,6 +767,13 @@ cdef class Section(Object):
         PetscSectionInvalidateMaxDof_Internal() is called in PetscSectionSetDof(), PetscSectionAddDof() and PetscSectionReset()
 
         It should also be called every time atlasDof is modified directly.
+
+        Not collective.
+
+        ---------------------------------
+        Output Parameter
+        ---------------------------------
+        maxDof - the maximum dof
 
         See also
         --------
@@ -723,7 +789,9 @@ cdef class Section(Object):
 
         Not collective.
 
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         size - the size of an array which can hold all the dofs
 
         See also
@@ -738,7 +806,9 @@ cdef class Section(Object):
     def getConstrainedStorageSize(self) -> int:
         """Return the size of an array or local Vec capable of holding all unconstrained degrees of freedom in a PetscSection
 
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         size - the size of an array which can hold all unconstrained dofs
 
         Not collective.
@@ -755,15 +825,19 @@ cdef class Section(Object):
     def getOffset(self, point: int) -> int:
         """Return the offset into an array or Vec for the dof associated with the given point.
 
+        In a global section, this offset will be negative for points not owned by this process.
+
         Not collective.
 
         Parameters
         ----------
-        point - the point
+        point
+            The point.
+        ---------------------------------
         Output Parameter
-        offset - the offset
-        Note
-        In a global section, this offset will be negative for points not owned by this process.
+        ---------------------------------
+        offset
+            The offset.
 
         See also
         --------
@@ -777,14 +851,16 @@ cdef class Section(Object):
     def setOffset(self, point: int, offset: int) -> None:
         """Set the offset into an array or Vec for the dof associated with the given point.
 
+        The user usually does not call this function, but uses PetscSectionSetUp()
+
         Not collective.
 
         Parameters
         ----------
-        point - the point
-        offset - the offset
-        Note
-        The user usually does not call this function, but uses PetscSectionSetUp()
+        point
+            The point.
+        offset
+            The offset.
 
         See also
         --------
@@ -798,16 +874,21 @@ cdef class Section(Object):
     def getFieldOffset(self, point: int, field: int) -> int:
         """Return the offset into an array or Vec for the field dof associated with the given point.
 
+        In a global section, this offset will be negative for points not owned by this process.
+
         Not collective.
 
         Parameters
         ----------
-        point - the point
-        field - the field
+        point
+            The point.
+        field
+            The field.
+        ---------------------------------
         Output Parameter
-        offset - the offset
-        Note
-        In a global section, this offset will be negative for points not owned by this process.
+        ---------------------------------
+        offset
+            The offset.
 
         See also
         --------
@@ -823,16 +904,18 @@ cdef class Section(Object):
     def setFieldOffset(self, point: int, field: int, offset: int) -> None:
         """Set the offset into an array or Vec for the dof associated with the given field at a point.
 
-        Note
         The user usually does not call this function, but uses PetscSectionSetUp()
 
         Not collective.
 
         Parameters
         ----------
-        point - the point
-        field - the field
-        offset - the offset
+        point
+            The point.
+        field
+            The field.
+        offset
+            The offset.
 
         See also
         --------
@@ -865,18 +948,25 @@ cdef class Section(Object):
     def createGlobalSection(self, SF sf) -> Section:
         """Create a section describing the global field layout using the local section and a PetscSF describing the section point overlap.
 
-        Parameters
-        ----------
-        s - The PetscSection for the local field layout
-        sf - The PetscSF describing parallel layout of the section points (leaves are unowned local points)
-        includeConstraints - By default this is PETSC_FALSE, meaning that the global field vector will not possess constrained dofs
-        localOffsets - If PETSC_TRUE, use local rather than global offsets for the points
-        Output Parameter
-        gsection - The PetscSection for the global field layout
-        Notes
         If we have a set of local sections defining the layout of a set of local vectors, and also a PetscSF to determine which section points are shared and the ownership, we can calculate a global section defining the parallel data layout, and the associated global vector.
 
-        This gives negative sizes and offsets to points not owned by this process
+        This gives negative sizes and offsets to points not owned by this process.
+
+        Parameters
+        ----------
+        sf
+            The PetscSF describing parallel layout of the section points
+            (leaves are unowned local points).
+        includeConstraints
+            By default this is PETSC_FALSE, meaning that the global field
+            vector will not possess constrained dofs.
+        localOffsets
+            If PETSC_TRUE, use local rather than global offsets for the points.
+
+        ---------------------------------
+        Output Parameter
+        ---------------------------------
+        gsection - The PetscSection for the global field layout
 
         See also
         --------

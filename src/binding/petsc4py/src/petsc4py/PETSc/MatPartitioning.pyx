@@ -27,24 +27,20 @@ cdef class MatPartitioning(Object):
     def view(self, Viewer viewer=None) -> None:
         """Print the partitioning data structure.
 
-        Input Parameters
-        part - the partitioning context
-        viewer - optional visualization context
-        Note
         The available visualization contexts include
-
         PETSC_VIEWER_STDOUT_SELF - standard output (default)
-        PETSC_VIEWER_STDOUT_WORLD - synchronized standard output where only the first processor opens the file. All other processors send their data to the first processor to print.
-        The user can open alternative visualization contexts with
+        PETSC_VIEWER_STDOUT_WORLD - synchronized standard output where only the
+        first processor opens the file. All other processors send their data to
+        the first processor to print.
 
+        The user can open alternative visualization contexts with
         PetscViewerASCIIOpen() - output to a specified file
 
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        viewer - optional visualization context
 
         See also
         --------
@@ -59,15 +55,7 @@ cdef class MatPartitioning(Object):
     def destroy(self) -> Self:
         """Destroy the partitioning context.
 
-        Input Parameter
-        part - the partitioning context
-
         Collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -80,17 +68,12 @@ cdef class MatPartitioning(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create a partitioning context.
 
-        Input Parameter
-        comm - MPI communicator
-        Output Parameter
-        newp - location to put the context
-
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        comm
+            MPI communicator.
 
         See also
         --------
@@ -104,9 +87,6 @@ cdef class MatPartitioning(Object):
     def setType(self, matpartitioning_type: Type) -> None:
         """Set the type of partitioner to use
 
-        Input Parameters
-        part - the partitioning context.
-        type - a known method
         Options Database Key
         -mat_partitioning_type - (for instance, parmetis), use -help for a list of available methods or see MatPartitioningType
 
@@ -114,8 +94,8 @@ cdef class MatPartitioning(Object):
 
         Parameters
         ----------
-        TODO
-            TODO.
+        type
+            A known method.
 
         See also
         --------
@@ -129,17 +109,7 @@ cdef class MatPartitioning(Object):
     def getType(self) -> Type:
         """Return the Partitioning method type and name (as a string) from the partitioning context.
 
-        Input Parameter
-        partitioning - the partitioning context
-        Output Parameter
-        type - partitioner type
-
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -153,20 +123,16 @@ cdef class MatPartitioning(Object):
     def setFromOptions(self):
         """Set various partitioning options from the options database for the partitioning object
 
-        Input Parameter
-        part - the partitioning context.
-        Options Database Keys
-        -mat_partitioning_type - (for instance, parmetis), use -help for a list of available methods
-        -mat_partitioning_nparts - number of subgraphs
-        Note
-        If the partitioner has not been set by the user it uses one of the installed partitioner such as ParMetis. If there are no installed partitioners it does no repartioning.
+        If the partitioner has not been set by the user it uses one of the
+        installed partitioner such as ParMetis. If there are no installed
+        partitioners it does no repartioning.
 
         Collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Options Database Keys
+        -mat_partitioning_type - (for instance, parmetis), use -help for a list
+         of available methods
+        -mat_partitioning_nparts - number of subgraphs
 
         See also
         --------
@@ -178,16 +144,13 @@ cdef class MatPartitioning(Object):
     def setAdjacency(self, Mat adj) -> None:
         """Set the adjacency graph (matrix) of the thing to be partitioned.
 
-        Input Parameters
-        part - the partitioning context
-        adj - the adjacency matrix, this can be any MatType but the natural representation is MATMPIADJ
-
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        adj
+            The adjacency matrix, this can be any MatType but the natural
+            representation is MATMPIADJ.
 
         See also
         --------
@@ -199,10 +162,12 @@ cdef class MatPartitioning(Object):
     def apply(self, IS partitioning) -> None:
         """Return a partitioning for the graph represented by a sparse matrix.
 
-        Input Parameter
-        matp - the matrix partitioning object
+        ---------------------------------
         Output Parameter
-        partitioning - the partitioning. For each local node this tells the processor number that that node is assigned to.
+        ---------------------------------
+        partitioning - the partitioning. For each local node this tells the
+        processor number that that node is assigned to.
+
         Options Database Keys
         -mat_partitioning_type - set the partitioning package or algorithm to use
         -mat_partitioning_view - display information about the partitioning object
@@ -212,8 +177,8 @@ cdef class MatPartitioning(Object):
 
         Parameters
         ----------
-        TODO
-            TODO.
+        matp
+            The matrix partitioning object.
 
         See also
         --------

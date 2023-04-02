@@ -28,8 +28,8 @@ cdef class Partitioner(Object):
 
         Parameters
         ----------
-        part - the PetscPartitioner object to view
-        v - the viewer
+        v
+            The viewer.
 
         See also
         --------
@@ -56,17 +56,12 @@ cdef class Partitioner(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty PetscPartitioner object. The type can then be set with PetscPartitionerSetType().
 
-        Input Parameter
-        comm - The communicator for the PetscPartitioner object
-        Output Parameter
-        part - The PetscPartitioner object
-
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        comm
+            The communicator for the PetscPartitioner object.
 
         See also
         --------
@@ -82,16 +77,12 @@ cdef class Partitioner(Object):
     def setType(self, part_type: Type) -> None:
         """Build a particular PetscPartitioner.
 
-        Input Parameters
-        part - The PetscPartitioner object
-        name - The kind of partitioner
-
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        name
+            The kind of partitioner.
 
         See also
         --------
@@ -105,17 +96,13 @@ cdef class Partitioner(Object):
     def getType(self) -> Type:
         """Return the PetscPartitioner type name (as a string) from the object.
 
-        Input Parameter
-        part - The PetscPartitioner
-        Output Parameter
-        name - The PetscPartitioner type name
-
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        Input Parameter
+        part
+            The PetscPartitioner.
 
         See also
         --------
@@ -129,19 +116,12 @@ cdef class Partitioner(Object):
     def setFromOptions(self) -> None:
         """Set parameters in a PetscPartitioner from the options database
 
-        Input Parameter
-        part - the PetscPartitioner object to set options for
         Options Database Keys
         -petscpartitioner_type - Sets the PetscPartitioner type; use -help for a list of available types
         -petscpartitioner_use_vertex_weights - Uses weights associated with the graph vertices
         -petscpartitioner_view_graph - View the graph each time PetscPartitionerPartition is called. Viewer can be customized, see PetscOptionsGetViewer()
 
         Collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -153,15 +133,7 @@ cdef class Partitioner(Object):
     def setUp(self) -> None:
         """Construct data structures for the PetscPartitioner.
 
-        Input Parameter
-        part - the PetscPartitioner object to setup
-
         Collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -173,15 +145,7 @@ cdef class Partitioner(Object):
     def reset(self) -> None:
         """Reset data structures for the PetscPartitioner.
 
-        Input Parameter
-        part - the PetscPartitioner object to reset
-
         Collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -196,22 +160,26 @@ cdef class Partitioner(Object):
         sizes: Sequence[int] | None = None,
         points: Sequence[int] | None = None,
     ) -> None:
-        """Set an artificial partition for a mesh
+        """Set an artificial partition for a mesh.
 
-        Input Parameters
-        part - The PetscPartitioner
-        size - The number of partitions
-        sizes - array of length size (or NULL) providing the number of points in each partition
-        points - array of length sum(sizes) (may be NULL iff sizes is NULL), a permutation of the points that groups those assigned to each partition in order (i.e., partition 0 first, partition 1 next, etc.)
-        Note
         It is safe to free the sizes and points arrays after use in this routine.
 
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        part
+            The PetscPartitioner.
+        size
+            The number of partitions.
+        sizes
+            Array of length size (or NULL) providing the number of points in
+            each partition.
+        points
+            Array of length sum(sizes) (may be NULL iff sizes is NULL), a
+            permutation of the points that groups those assigned to each
+            partition in order (i.e., partition 0 first, partition 1 next,
+            etc.)
 
         See also
         --------

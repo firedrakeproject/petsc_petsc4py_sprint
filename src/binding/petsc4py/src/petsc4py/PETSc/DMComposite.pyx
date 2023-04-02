@@ -7,11 +7,15 @@ cdef class DMComposite(DM):
 
         Collective.
 
+        ---------------------------------
+        Output Parameter
+        ---------------------------------
+        packer - the DMCOMPOSITE object
+
         Parameters
         ----------
-        comm - the processors that will share the global vector
-        Output Parameter
-        packer - the DMCOMPOSITE object
+        comm
+            The processors that will share the global vector.
 
         See also
         --------
@@ -32,8 +36,10 @@ cdef class DMComposite(DM):
 
         Parameters
         ----------
-        dmc - the DMCOMPOSITE object
-        dm - the DM object
+        dmc
+            The DMCOMPOSITE object.
+        dm
+            The DM object.
 
         See also
         --------
@@ -53,11 +59,6 @@ cdef class DMComposite(DM):
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See also
         --------
         petsc.DMCompositeGetNumberDM
@@ -75,8 +76,7 @@ cdef class DMComposite(DM):
 
         Not collective.
 
-        Parameters
-        ----------
+        output
         dms - array of sufficient length (see DMCompositeGetNumberDM()) to hold the individual DM
 
         See also
@@ -107,11 +107,10 @@ cdef class DMComposite(DM):
 
         Parameters
         ----------
-        gvec - the global vector
-        lvecs - array of local vectors, NULL for any that are not needed
-        Note
-        This is a non-variadic alternative to DMCompositeScatter()
-
+        gvec
+            The global vector.
+        lvecs
+            Array of local vectors, NULL for any that are not needed.
 
         See also
         --------
@@ -135,9 +134,12 @@ cdef class DMComposite(DM):
 
         Parameters
         ----------
-        gvec - the global vector
-        imode - INSERT_VALUES or ADD_VALUES
-        lvecs - the individual sequential vectors, NULL for any that are not needed
+        gvec
+            The global vector.
+        imode
+            INSERT_VALUES or ADD_VALUES.
+        lvecs
+            The individual sequential vectors, NULL for any that are not needed.
 
         See also
         --------
@@ -156,18 +158,18 @@ cdef class DMComposite(DM):
     def getGlobalISs(self) -> list[IS]:
         """Return the index sets for each composed object in a DMCOMPOSITE.
 
-        Collective.
-
-        Parameters
-        ----------
-        Output Parameter
-        is - the array of index sets
-        Notes
         The is entries should be destroyed with ISDestroy(), the is array should be freed with PetscFree()
 
         These could be used to extract a subset of vector entries for a “multi-physics” preconditioner
 
         Use DMCompositeGetLocalISs() for index sets in the packed local numbering, and DMCompositeGetISLocalToGlobalMappings() for to map local sub-DM (including ghost) indices to packed global indices.
+
+        Collective.
+
+        ---------------------------------
+        Output Parameter
+        ---------------------------------
+        is - the array of index sets
 
         See also
         --------
@@ -187,9 +189,6 @@ cdef class DMComposite(DM):
     def getLocalISs(self) -> list[IS]:
         """Return index sets for each component of a composite local vector.
 
-        Output Parameter
-        is - array of serial index sets for each each component of the DMCOMPOSITE
-        Notes
         At present, a composite local vector does not normally exist. This function is used to provide index sets for MatGetLocalSubMatrix(). In the future, the scatters for each entry in the DMCOMPOSITE may be be merged into a single scatter to a composite local vector. The user should not typically need to know which is being done.
 
         To get the composite global indices at all local points (including ghosts), use DMCompositeGetISLocalToGlobalMappings().
@@ -199,6 +198,11 @@ cdef class DMComposite(DM):
         Each returned IS should be destroyed with ISDestroy(), the array should be freed with PetscFree().
 
         Not collective.
+
+        ---------------------------------
+        Output Parameter
+        ---------------------------------
+        is - array of serial index sets for each each component of the DMCOMPOSITE
 
         See also
         --------
@@ -218,12 +222,14 @@ cdef class DMComposite(DM):
     def getLGMaps(self) -> list[LGMap]:
         """Return an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space.
 
+        Each entry of ltogs should be destroyed with ISLocalToGlobalMappingDestroy(), the ltogs array should be freed with PetscFree().
+
         Collective.
 
+        ---------------------------------
         Output Parameter
+        ---------------------------------
         ltogs - the individual mappings for each packed vector. Note that this includes all the ghost points that individual ghosted DMDA may have.
-        Note
-        Each entry of ltogs should be destroyed with ISLocalToGlobalMappingDestroy(), the ltogs array should be freed with PetscFree().
 
         See also
         --------
