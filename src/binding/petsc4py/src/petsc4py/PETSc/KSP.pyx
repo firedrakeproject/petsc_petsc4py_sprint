@@ -1349,7 +1349,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetNormType(self.ksp, &normtype) )
         return normtype
 
-    def setComputeEigenvalues(self, bint flag) -> None:
+    def setComputeEigenvalues(self, flag: bool) -> None:
         """Set a flag to compute eigenvalues.
 
         Set a flag so that the extreme eigenvalues values will be
