@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 
 cdef class Section(Object):
-    """TODO."""
+    """Mapping from integers in a range to contiguous sets of integers."""
 
     def __cinit__(self):
         self.obj = <PetscObject*> &self.sec
@@ -12,21 +12,14 @@ cdef class Section(Object):
         self.sec = NULL
 
     def view(self, Viewer viewer=None) -> None:
-        """View a PetscSection.
-
-        PetscSectionView(), when viewer is of type PETSCVIEWERHDF5, only saves
-        distribution independent data, such as dofs, offsets, constraint dofs,
-        and constraint indices. Points that have negative dofs, for instance,
-        are not saved as they represent points owned by other processes. Point
-        numbering and rank assignment is currently not stored. The saved
-        section can be loaded with PetscSectionLoad().
+        """View the section.
 
         Collective.
 
         Parameters
         ----------
-        v
-                The viewer.
+        viewer
+            A `Viewer` to display the graph.
 
         See also
         --------
@@ -927,7 +920,7 @@ cdef class Section(Object):
         cdef PetscInt coffset = asInt(offset)
         CHKERR( PetscSectionSetFieldOffset(self.sec,cpoint,cfield,coffset) )
 
-    def getOffsetRange(self) -> tuple[int,int]]:
+    def getOffsetRange(self) -> tuple[int,int]:
         """Return the full range of offsets [start, end) for a PetscSection.
 
         Not collective.
