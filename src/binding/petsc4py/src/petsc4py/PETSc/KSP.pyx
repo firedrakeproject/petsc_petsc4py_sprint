@@ -1718,7 +1718,7 @@ cdef class KSP(Object):
         """
         CHKERR( KSPMatSolveTranspose(self.ksp, B.mat, X.mat) )
 
-    def setIterationNumber(self, int its) -> None:
+    def setIterationNumber(self, its: int) -> None:
         """Use `its` property.
 
         """
