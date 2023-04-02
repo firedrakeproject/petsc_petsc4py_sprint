@@ -11,7 +11,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionDestroy(&self.sec) )
         self.sec = NULL
 
-    def view(self, Viewer viewer=None, test=1, test=1, test=1, test=1, test=1, test=1):
+    def view(self, Viewer viewer=None):
         """View a PetscSection.
 
         PetscSectionView(), when viewer is of type PETSCVIEWERHDF5, only saves
@@ -101,7 +101,7 @@ cdef class Section(Object):
 
         """
         cdef Section sec = <Section>type(self)()
-        CHKERR(PetscSectionClone(self.sec, & sec.sec, test, test, test, test, test, test))
+        CHKERR( PetscSectionClone(self.sec, &sec.sec) )
         return sec
 
     def setUp(self):
