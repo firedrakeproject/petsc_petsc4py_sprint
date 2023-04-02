@@ -21,7 +21,7 @@ cdef class Partitioner(Object):
         self.part = NULL
 
     def view(self, Viewer viewer=None):
-        """Views a PetscPartitioner
+        """View a PetscPartitioner
 
 
         Collective.
@@ -41,7 +41,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerView(self.part, vwr) )
 
     def destroy(self):
-        """Destroys a PetscPartitioner object.
+        """Destroy a PetscPartitioner object.
 
         Collective.
 
@@ -54,7 +54,7 @@ cdef class Partitioner(Object):
         return self
 
     def create(self, comm=None):
-        """Creates an empty PetscPartitioner object. The type can then be set with PetscPartitionerSetType().
+        """Create an empty PetscPartitioner object. The type can then be set with PetscPartitionerSetType().
 
         Input Parameter
         comm - The communicator for the PetscPartitioner object
@@ -80,7 +80,7 @@ cdef class Partitioner(Object):
         return self
 
     def setType(self, part_type):
-        """Builds a particular PetscPartitioner
+        """Build a particular PetscPartitioner
 
         Input Parameters
         part - The PetscPartitioner object
@@ -111,7 +111,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerSetType(self.part, cval) )
 
     def getType(self):
-        """Gets the PetscPartitioner type name (as a string) from the object.
+        """Return the PetscPartitioner type name (as a string) from the object.
 
         Input Parameter
         part - The PetscPartitioner
@@ -135,7 +135,7 @@ cdef class Partitioner(Object):
         return bytes2str(cval)
 
     def setFromOptions(self):
-        """sets parameters in a PetscPartitioner from the options database
+        """Set parameters in a PetscPartitioner from the options database
 
         Input Parameter
         part - the PetscPartitioner object to set options for
@@ -179,7 +179,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerSetUp(self.part) )
 
     def reset(self):
-        """Resets data structures for the PetscPartitioner.
+        """Reset data structures for the PetscPartitioner.
 
         Input Parameter
         part - the PetscPartitioner object to reset

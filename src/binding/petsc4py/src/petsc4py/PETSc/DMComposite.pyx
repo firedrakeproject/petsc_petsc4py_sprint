@@ -3,7 +3,7 @@
 cdef class DMComposite(DM):
 
     def create(self, comm=None):
-        """Creates a DMCOMPOSITE, used to generate “composite” vectors made up of several subvectors.
+        """Create a DMCOMPOSITE, used to generate “composite” vectors made up of several subvectors.
 
         Collective.
 
@@ -25,7 +25,7 @@ cdef class DMComposite(DM):
         return self
 
     def addDM(self, DM dm, *args):
-        """aDD a DM vector to a DMCOMPOSITE.
+        """Add a DM vector to a DMCOMPOSITE.
 
         Collective.
         Add DM to composite.
@@ -47,7 +47,7 @@ cdef class DMComposite(DM):
             CHKERR( DMCompositeAddDM(self.dm, dm.dm) )
 
     def getNumber(self):
-        """Gets the number of DM objects in the DMCOMPOSITE representation.
+        """Return the number of DM objects in the DMCOMPOSITE representation.
 
         Get number of sub-DMs contained in the `DMComposite`.
 
@@ -69,7 +69,7 @@ cdef class DMComposite(DM):
     getNumberDM = getNumber
 
     def getEntries(self):
-        """Gets the DM for each entry in a DMCOMPOSITE.
+        """Return the DM for each entry in a DMCOMPOSITE.
 
         Get tuple of sub-DMs contained in the `DMComposite`.
 
@@ -99,7 +99,7 @@ cdef class DMComposite(DM):
         return tuple(entries)
 
     def scatter(self, Vec gvec, lvecs):
-        """Scatters from a global packed vector into its individual local vectors.
+        """Scatter from a global packed vector into its individual local vectors.
 
         Scatter coupled global vector into split local vectors.
 
@@ -127,7 +127,7 @@ cdef class DMComposite(DM):
         CHKERR( DMCompositeScatterArray(self.dm, gvec.vec, clvecs) )
 
     def gather(self, Vec gvec, imode, lvecs):
-        """Gathers into a global packed vector from its individual local vectors.
+        """Gather into a global packed vector from its individual local vectors.
 
         Gather split local vectors into coupled global vector.
 
@@ -154,7 +154,7 @@ cdef class DMComposite(DM):
         CHKERR( DMCompositeGatherArray(self.dm, cimode, gvec.vec, clvecs) )
 
     def getGlobalISs(self):
-        """Gets the index sets for each composed object in a DMCOMPOSITE.
+        """Return the index sets for each composed object in a DMCOMPOSITE.
 
         Collective.
 
@@ -185,7 +185,7 @@ cdef class DMComposite(DM):
         return isets
 
     def getLocalISs(self):
-        """Gets index sets for each component of a composite local vector.
+        """Return index sets for each component of a composite local vector.
 
         Output Parameter
         is - array of serial index sets for each each component of the DMCOMPOSITE
@@ -216,7 +216,7 @@ cdef class DMComposite(DM):
         return isets
 
     def getLGMaps(self):
-        """gets an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space.
+        """Return an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space.
 
         Collective.
 

@@ -12,7 +12,7 @@ cdef class Section(Object):
         self.sec = NULL
 
     def view(self, Viewer viewer=None, test=1, test=1, test=1, test=1, test=1, test=1):
-        """Views a PetscSection.
+        """View a PetscSection.
 
         PetscSectionView(), when viewer is of type PETSCVIEWERHDF5, only saves
         distribution independent data, such as dofs, offsets, constraint dofs,
@@ -38,7 +38,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionView(self.sec, vwr) )
 
     def destroy(self):
-        """Frees a section object and frees its range if that exists.
+        """Free a section object and frees its range if that exists.
 
         Not collective.
 
@@ -51,7 +51,7 @@ cdef class Section(Object):
         return self
 
     def create(self, comm=None):
-        """Allocates a PetscSection and sets the map contents to the default.
+        """Allocate a PetscSection and sets the map contents to the default.
 
         Typical calling sequence
 
@@ -83,7 +83,7 @@ cdef class Section(Object):
         return self
 
     def clone(self):
-        """Creates a shallow (if possible) copy of the PetscSection.
+        """Create a shallow (if possible) copy of the PetscSection.
 
         Collective.
 
@@ -117,7 +117,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetUp(self.sec) )
 
     def reset(self):
-        """Frees all section data.
+        """Free all section data.
 
         Not collective.
 
@@ -129,7 +129,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionReset(self.sec) )
 
     def getNumFields(self):
-        """Returns the number of fields in a PetscSection, or 0 if no fields were defined.
+        """Return the number of fields in a PetscSection, or 0 if no fields were defined.
 
         Output Parameter
         numFields - the number of fields defined, or 0 if none were defined
@@ -146,7 +146,7 @@ cdef class Section(Object):
         return toInt(numFields)
 
     def setNumFields(self,numFields):
-        """Sets the number of fields in a PetscSection.
+        """Set the number of fields in a PetscSection.
 
         Not collective.
 
@@ -164,7 +164,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetNumFields(self.sec, cnumFields) )
 
     def getFieldName(self,field):
-        """Returns the name of a field in the PetscSection.
+        """Return the name of a field in the PetscSection.
 
         Not collective.
 
@@ -187,7 +187,7 @@ cdef class Section(Object):
         return bytes2str(fieldName)
 
     def setFieldName(self,field,fieldName):
-        """Sets the name of a field in the PetscSection.
+        """Set the name of a field in the PetscSection.
 
         Will error if the field number is out of range.
 
@@ -209,7 +209,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldName(self.sec,cfield,cname) )
 
     def getFieldComponents(self,field):
-        """Returns the number of field components for the given field.
+        """Return the number of field components for the given field.
 
         Not collective.
 
@@ -231,7 +231,7 @@ cdef class Section(Object):
         return toInt(cnumComp)
 
     def setFieldComponents(self,field,numComp):
-        """Sets the number of field components for the given field.
+        """Set the number of field components for the given field.
 
         Not collective.
 
@@ -250,7 +250,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldComponents(self.sec,cfield,cnumComp) )
 
     def getChart(self):
-        """Returns the range [pStart, pEnd) in which points (indices) lie for this PetscSection
+        """Return the range [pStart, pEnd) in which points (indices) lie for this PetscSection
 
         Not collective.
 
@@ -271,7 +271,7 @@ cdef class Section(Object):
         return toInt(pStart), toInt(pEnd)
 
     def setChart(self, pStart, pEnd):
-        """Sets the range [pStart, pEnd) in which points (indices) lie for this PetscSection.
+        """Set the range [pStart, pEnd) in which points (indices) lie for this PetscSection.
 
         Not collective.
 
@@ -290,7 +290,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetChart(self.sec, cStart, cEnd) )
 
     def getPermutation(self):
-        """Returns the permutation of [0, pEnd - pStart) or NULL that was set with PetscSectionSetPermutation().
+        """Return the permutation of [0, pEnd - pStart) or NULL that was set with PetscSectionSetPermutation().
 
         Not collective.
 
@@ -308,7 +308,7 @@ cdef class Section(Object):
         return perm
 
     def setPermutation(self, IS perm):
-        """Sets the permutation for [0, pEnd - pStart).
+        """Set the permutation for [0, pEnd - pStart).
 
         Not collective.
 
@@ -346,7 +346,7 @@ cdef class Section(Object):
         return toInt(cnumDof)
 
     def setDof(self,point,numDof):
-        """Sets the number of degrees of freedom associated with a given point.
+        """Set the number of degrees of freedom associated with a given point.
 
         Not collective.
 
@@ -365,7 +365,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetDof(self.sec,cpoint,cnumDof) )
 
     def addDof(self,point,numDof):
-        """Adds to the number of degrees of freedom associated with a given point.
+        """Add to the number of degrees of freedom associated with a given point.
 
         Not collective.
 
@@ -407,7 +407,7 @@ cdef class Section(Object):
         return toInt(cnumDof)
 
     def setFieldDof(self,point,field,numDof):
-        """Sets the number of degrees of freedom associated with a field on a given point.
+        """Set the number of degrees of freedom associated with a field on a given point.
 
         Not collective.
 
@@ -428,7 +428,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldDof(self.sec,cpoint,cfield,cnumDof) )
 
     def addFieldDof(self,point,field,numDof):
-        """Adds a number of degrees of freedom associated with a field on a given point.
+        """Add a number of degrees of freedom associated with a field on a given point.
 
         Not collective.
 
@@ -574,7 +574,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddFieldConstraintDof(self.sec,cpoint,cfield,cnumDof) )
 
     def getConstraintIndices(self,point):
-        """Get the point dof numbers, in [0, dof), which are constrained for a given point.
+        """Return the point dof numbers, in [0, dof), which are constrained for a given point.
 
         Not collective.
 
@@ -622,7 +622,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetConstraintIndices(self.sec,cpoint,cindices) )
 
     def getFieldConstraintIndices(self,point,field):
-        """Get the field dof numbers, in [0, fdof), which are constrained.
+        """Return the field dof numbers, in [0, fdof), which are constrained.
 
         Not collective.
 

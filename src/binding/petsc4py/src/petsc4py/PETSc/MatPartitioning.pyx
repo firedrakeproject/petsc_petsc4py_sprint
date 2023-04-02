@@ -25,7 +25,7 @@ cdef class MatPartitioning(Object):
         return self.getValue()
 
     def view(self, Viewer viewer=None):
-        """Prints the partitioning data structure.
+        """Print the partitioning data structure.
 
         Input Parameters
         part - the partitioning context
@@ -57,7 +57,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningView(self.part, vwr) )
 
     def destroy(self):
-        """Destroys the partitioning context.
+        """Destroy the partitioning context.
 
         Input Parameter
         part - the partitioning context
@@ -78,7 +78,7 @@ cdef class MatPartitioning(Object):
         return self
 
     def create(self, comm=None):
-        """Creates a partitioning context.
+        """Create a partitioning context.
 
         Input Parameter
         comm - MPI communicator
@@ -102,7 +102,7 @@ cdef class MatPartitioning(Object):
         return self
 
     def setType(self, matpartitioning_type):
-        """Sets the type of partitioner to use
+        """Set the type of partitioner to use
 
         Input Parameters
         part - the partitioning context.
@@ -127,7 +127,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningSetType(self.part, cval) )
 
     def getType(self):
-        """Gets the Partitioning method type and name (as a string) from the partitioning context.
+        """Return the Partitioning method type and name (as a string) from the partitioning context.
 
         Input Parameter
         partitioning - the partitioning context
@@ -151,7 +151,7 @@ cdef class MatPartitioning(Object):
         return bytes2str(cval)
 
     def setFromOptions(self):
-        """Sets various partitioning options from the options database for the partitioning object
+        """Set various partitioning options from the options database for the partitioning object
 
         Input Parameter
         part - the partitioning context.
@@ -176,7 +176,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningSetFromOptions(self.part) )
 
     def setAdjacency(self, Mat adj):
-        """Sets the adjacency graph (matrix) of the thing to be partitioned.
+        """Set the adjacency graph (matrix) of the thing to be partitioned.
 
         Input Parameters
         part - the partitioning context
@@ -197,7 +197,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningSetAdjacency(self.part, adj.mat) )
 
     def apply(self, IS partitioning):
-        """Gets a partitioning for the graph represented by a sparse matrix.
+        """Return a partitioning for the graph represented by a sparse matrix.
 
         Input Parameter
         matp - the matrix partitioning object
