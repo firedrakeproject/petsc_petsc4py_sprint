@@ -1391,7 +1391,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetComputeEigenvalues(self.ksp, &flag) )
         return toBool(flag)
 
-    def setComputeSingularValues(self, bint flag) -> None:
+    def setComputeSingularValues(self, flag: bool) -> None:
         """Set flag to calculate singular values.
 
         Set a flag so that the extreme singular values will be
