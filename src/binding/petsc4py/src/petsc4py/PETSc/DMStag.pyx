@@ -47,7 +47,7 @@ cdef class DMStag(DM):
         dim,
         dofs=None,
         sizes=None,
-        boundary_types: None # DM.BoundaryType | None = None, # sequence? 0,1,2,3
+        boundary_types: None, # DM.BoundaryType | None = None, # sequence? 0,1,2,3
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
         proc_sizes=None,
