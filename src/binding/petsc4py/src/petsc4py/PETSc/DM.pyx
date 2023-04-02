@@ -1968,7 +1968,7 @@ cdef class DM(Object):
     def createFieldDecomposition(self) -> tuple[list, list, list] :
         """Return a list of `IS` objects.
 
-        Not Collective; No Fortran Support.
+        Not collective.
 
         Notes
         -----
@@ -2053,7 +2053,7 @@ cdef class DM(Object):
             ) -> None:
         """Set the `SNES` Jacobian evaluation function.
        
-        Not Collective
+        Not collective
 
         Parameters
         ----------
@@ -2087,7 +2087,7 @@ cdef class DM(Object):
     ) -> None:
         """Add a callback to be executed when restricting a nonlinear problem to a coarse grid.
         
-        Logically Collective; No Fortran Support.
+        Logically collective.
 
         Parameters
         ----------
