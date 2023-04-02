@@ -413,7 +413,7 @@ cdef class KSP(Object):
 
     # --- xxx ---
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
         """Print the KSP data structure.
 
         Collective.
