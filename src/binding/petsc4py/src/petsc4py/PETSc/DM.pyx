@@ -96,7 +96,7 @@ cdef class DM(Object):
         
         Notes
         -----
-        On using `Viewer.Type.HDF5` format, one can save  multiple `DMPlex` meshes in a single HDF5 files.
+        When using `Viewer.Type.HDF5` format, one can save  multiple `DMPlex` meshes in a single HDF5 files.
         This in turn requires one to name the `DMPlex` object with `Object.setName` before saving it with `DM.view` and before loading it with `DM.load` for identification of the mesh object.
 
         See Also
@@ -159,6 +159,7 @@ cdef class DM(Object):
         """Build a `DM`.
 
         Collective.
+
         Parameters
         ----------
         dm_type
@@ -267,7 +268,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        petsc.DMSetOptionsPrefix
+        petsc_options, petsc.DMSetOptionsPrefix
         
         """
         cdef const char *cval = NULL
@@ -281,7 +282,7 @@ cdef class DM(Object):
 
         See Also
         --------
-        petsc.DMGetOptionsPrefix
+        petsc_options, petsc.DMGetOptionsPrefix
         
         """
         cdef const char *cval = NULL
