@@ -20,7 +20,7 @@ cdef class Partitioner(Object):
         self.obj = <PetscObject*> &self.part
         self.part = NULL
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
         """View a PetscPartitioner
 
 
@@ -40,7 +40,7 @@ cdef class Partitioner(Object):
         if viewer is not None: vwr = viewer.vwr
         CHKERR( PetscPartitionerView(self.part, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
         """Destroy a PetscPartitioner object.
 
         Collective.
@@ -53,7 +53,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerDestroy(&self.part) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
         """Create an empty PetscPartitioner object. The type can then be set with PetscPartitionerSetType().
 
         Input Parameter
@@ -79,20 +79,12 @@ cdef class Partitioner(Object):
         PetscCLEAR(self.obj); self.part = newpart
         return self
 
-    def setType(self, part_type):
-        """Build a particular PetscPartitioner
+    def setType(self, part_type: Type) -> None:
+        """Build a particular PetscPartitioner.
 
         Input Parameters
         part - The PetscPartitioner object
         name - The kind of partitioner
-        Options Database Key
-        -petscpartitioner_type - Sets the PetscPartitioner type
-        Note
-        PETSCPARTITIONERCHACO    - The Chaco partitioner (--download-chaco)
-        PETSCPARTITIONERPARMETIS - The ParMetis partitioner (--download-parmetis)
-        PETSCPARTITIONERSHELL    - A shell partitioner implemented by the user
-        PETSCPARTITIONERSIMPLE   - A simple partitioner that divides cells into equal, contiguous chunks
-        PETSCPARTITIONERGATHER   - Gathers all cells onto process 0
 
         Collective.
 
@@ -110,7 +102,7 @@ cdef class Partitioner(Object):
         part_type = str2bytes(part_type, &cval)
         CHKERR( PetscPartitionerSetType(self.part, cval) )
 
-    def getType(self):
+    def getType(self) -> Type:
         """Return the PetscPartitioner type name (as a string) from the object.
 
         Input Parameter
@@ -134,7 +126,7 @@ cdef class Partitioner(Object):
         CHKERR( PetscPartitionerGetType(self.part, &cval) )
         return bytes2str(cval)
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
         """Set parameters in a PetscPartitioner from the options database
 
         Input Parameter
@@ -153,12 +145,12 @@ cdef class Partitioner(Object):
 
         See also
         --------
-        petsc.PetscPartitionerSetFromOptions
+        petsc.PetscPartitionerSetFromOptions, petsc_options
 
         """
         CHKERR( PetscPartitionerSetFromOptions(self.part) )
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Construct data structures for the PetscPartitioner.
 
         Input Parameter
@@ -178,7 +170,7 @@ cdef class Partitioner(Object):
         """
         CHKERR( PetscPartitionerSetUp(self.part) )
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset data structures for the PetscPartitioner.
 
         Input Parameter
@@ -198,7 +190,12 @@ cdef class Partitioner(Object):
         """
         CHKERR( PetscPartitionerReset(self.part) )
 
-    def setShellPartition(self, numProcs, sizes=None, points=None):
+    def setShellPartition(
+        self,
+        numProcs: int,
+        sizes: Sequence[int] | None = None,
+        points: Sequence[int] | None = None,
+    ) -> None:
         """Set an artificial partition for a mesh
 
         Input Parameters

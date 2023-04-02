@@ -24,7 +24,7 @@ cdef class MatPartitioning(Object):
     def __call__(self):
         return self.getValue()
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
         """Print the partitioning data structure.
 
         Input Parameters
@@ -56,7 +56,7 @@ cdef class MatPartitioning(Object):
         if viewer is not None: vwr = viewer.vwr
         CHKERR( MatPartitioningView(self.part, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
         """Destroy the partitioning context.
 
         Input Parameter
@@ -77,7 +77,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningDestroy(&self.part) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
         """Create a partitioning context.
 
         Input Parameter
@@ -101,7 +101,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningCreate(ccomm, &self.part) )
         return self
 
-    def setType(self, matpartitioning_type):
+    def setType(self, matpartitioning_type: Type) -> None:
         """Set the type of partitioner to use
 
         Input Parameters
@@ -126,7 +126,7 @@ cdef class MatPartitioning(Object):
         matpartitioning_type = str2bytes(matpartitioning_type, &cval)
         CHKERR( MatPartitioningSetType(self.part, cval) )
 
-    def getType(self):
+    def getType(self) -> Type:
         """Return the Partitioning method type and name (as a string) from the partitioning context.
 
         Input Parameter
@@ -170,12 +170,12 @@ cdef class MatPartitioning(Object):
 
         See also
         --------
-        petsc.MatPartitioningSetFromOptions
+        petsc.MatPartitioningSetFromOptions, petsc_options
 
         """
         CHKERR( MatPartitioningSetFromOptions(self.part) )
 
-    def setAdjacency(self, Mat adj):
+    def setAdjacency(self, Mat adj) -> None:
         """Set the adjacency graph (matrix) of the thing to be partitioned.
 
         Input Parameters
@@ -196,7 +196,7 @@ cdef class MatPartitioning(Object):
         """
         CHKERR( MatPartitioningSetAdjacency(self.part, adj.mat) )
 
-    def apply(self, IS partitioning):
+    def apply(self, IS partitioning) -> None:
         """Return a partitioning for the graph represented by a sparse matrix.
 
         Input Parameter

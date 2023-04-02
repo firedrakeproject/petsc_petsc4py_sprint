@@ -2,7 +2,7 @@
 
 cdef class DMComposite(DM):
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> None:
         """Create a DMCOMPOSITE, used to generate “composite” vectors made up of several subvectors.
 
         Collective.
@@ -24,7 +24,7 @@ cdef class DMComposite(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    def addDM(self, DM dm, *args):
+    def addDM(self, DM dm, *args: TODO) -> None:
         """Add a DM vector to a DMCOMPOSITE.
 
         Collective.
@@ -46,7 +46,7 @@ cdef class DMComposite(DM):
             dm = <DM?> item
             CHKERR( DMCompositeAddDM(self.dm, dm.dm) )
 
-    def getNumber(self):
+    def getNumber(self) -> int:
         """Return the number of DM objects in the DMCOMPOSITE representation.
 
         Get number of sub-DMs contained in the `DMComposite`.
@@ -68,7 +68,7 @@ cdef class DMComposite(DM):
         return toInt(n)
     getNumberDM = getNumber
 
-    def getEntries(self):
+    def getEntries(self) -> list[DM]:
         """Return the DM for each entry in a DMCOMPOSITE.
 
         Get tuple of sub-DMs contained in the `DMComposite`.
@@ -98,7 +98,7 @@ cdef class DMComposite(DM):
             entries.append(entry)
         return tuple(entries)
 
-    def scatter(self, Vec gvec, lvecs):
+    def scatter(self, Vec gvec, lvecs: TODO) -> None:
         """Scatter from a global packed vector into its individual local vectors.
 
         Scatter coupled global vector into split local vectors.
@@ -126,7 +126,7 @@ cdef class DMComposite(DM):
             clvecs[i] = (<Vec?>lvecs[<Py_ssize_t>i]).vec
         CHKERR( DMCompositeScatterArray(self.dm, gvec.vec, clvecs) )
 
-    def gather(self, Vec gvec, imode, lvecs):
+    def gather(self, Vec gvec, imode: InsertMode, lvecs: TODO) -> None:
         """Gather into a global packed vector from its individual local vectors.
 
         Gather split local vectors into coupled global vector.
@@ -153,7 +153,7 @@ cdef class DMComposite(DM):
             clvecs[i] = (<Vec?>lvecs[<Py_ssize_t>i]).vec
         CHKERR( DMCompositeGatherArray(self.dm, cimode, gvec.vec, clvecs) )
 
-    def getGlobalISs(self):
+    def getGlobalISs(self) -> list[IS]:
         """Return the index sets for each composed object in a DMCOMPOSITE.
 
         Collective.
@@ -184,7 +184,7 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(cis) )
         return isets
 
-    def getLocalISs(self):
+    def getLocalISs(self) -> list[IS]:
         """Return index sets for each component of a composite local vector.
 
         Output Parameter
@@ -215,7 +215,7 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(cis) )
         return isets
 
-    def getLGMaps(self):
+    def getLGMaps(self) -> list[LGMap]:
         """Return an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space.
 
         Collective.
@@ -240,7 +240,7 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(clgm) )
         return lgms
 
-    def getAccess(self, Vec gvec, locs=None):
+    def getAccess(self, Vec gvec, locs: Sequence[int] | None = None) -> _DMComposite_access: #TODO:ret type
         """TODO.
         Get access to specified parts of global vector.
         Use via `with` context manager (PEP 343).
