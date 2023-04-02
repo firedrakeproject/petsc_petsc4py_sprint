@@ -1454,8 +1454,7 @@ cdef class KSP(Object):
         petsc.KSPSetInitialGuessNonzero
 
         """
-        cdef PetscBool guess_nonzero = PETSC_FALSE
-        if flag: guess_nonzero = PETSC_TRUE
+        cdef PetscBool guess_nonzero = asBool(flag)
         CHKERR( KSPSetInitialGuessNonzero(self.ksp, guess_nonzero) )
 
     def getInitialGuessNonzero(self) -> bool:
