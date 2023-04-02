@@ -75,7 +75,7 @@ cdef class DMShell(DM):
 
     def setCreateGlobalVector(
         self,
-        create_gvec,
+        create_gvec: Callable[[DM], Vec] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -108,29 +108,7 @@ cdef class DMShell(DM):
 
     def setCreateLocalVector(
         self,
-        create_lvec,
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:# TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:# TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:# TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
-        # TODO:
+        create_lvec: Callable[[DM], Vec] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -163,8 +141,8 @@ cdef class DMShell(DM):
 
     def setGlobalToLocal(
         self,
-        begin,
-        end,
+        begin: Callable[[DM, Vec, InsertMode, Vec], None] | None,
+        end: Callable[[DM, Vec, InsertMode, Vec], None] | None,
         begin_args: tuple[Any, ...] | None = None,
         begin_kargs: dict[str, Any] | None = None,
         end_args: tuple[Any, ...] | None = None,
@@ -234,8 +212,8 @@ cdef class DMShell(DM):
 
     def setLocalToGlobal(
         self,
-        begin,
-        end,
+        begin: Callable[[DM, Vec, InsertMode, Vec], None] | None,
+        end: Callable[[DM, Vec, InsertMode, Vec], None] | None,
         begin_args: tuple[Any, ...] | None = None,
         begin_kargs: dict[str, Any] | None = None,
         end_args: tuple[Any, ...] | None = None,
@@ -303,15 +281,13 @@ cdef class DMShell(DM):
 
     def setLocalToLocal(
         self,
-        begin,
-        end,
-        begin_args=None,
-        begin_kargs=None,
-        end_args=None,
-        end_kargs=None,
-        # args: tuple[Any, ...] | None = None,
-        # kargs: dict[str, Any] | None = None,
-    ):
+        begin: Callable[[DM, Vec, InsertMode, Vec], None] | None,
+        end: Callable[[DM, Vec, InsertMode, Vec], None] | None,
+        begin_args: tuple[Any, ...] | None = None,
+        begin_kargs: dict[str, Any] | None = None,
+        end_args: tuple[Any, ...] | None = None,
+        end_kargs: dict[str, Any] | None = None,
+    ) -> None:
         """Set the routines used to perform a local to local scatter.
 
         Logically collective on the DM.
@@ -377,10 +353,10 @@ cdef class DMShell(DM):
 
     def setCreateMatrix(
         self,
-        create_matrix,
+        create_matrix: Callable[[DM], Mat] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routine to create a matrix.
 
         Logically collective.
@@ -410,10 +386,10 @@ cdef class DMShell(DM):
 
     def setCoarsen(
         self,
-        coarsen,
+        coarsen: Callable[[DM, Comm], DM] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routine used to coarsen the `DMShell`.
 
         Logically collective.
@@ -443,10 +419,10 @@ cdef class DMShell(DM):
 
     def setRefine(
         self,
-        refine,
+        refine: Callable[[DM, Comm], DM] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routine used to refine the `DMShell`.
 
         Logically collective.
@@ -476,10 +452,10 @@ cdef class DMShell(DM):
 
     def setCreateInterpolation(
         self,
-        create_interpolation,
+        create_interpolation: Callable[[DM, DM], tuple[Mat, Vec]] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routine used to create the interpolation operator.
 
         Logically collective.
@@ -509,10 +485,10 @@ cdef class DMShell(DM):
 
     def setCreateInjection(
         self,
-        create_injection,
+        create_injection: Callable[[DM, DM], Mat] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routine used to create the injection operator.
 
         Logically collective.
@@ -542,7 +518,7 @@ cdef class DMShell(DM):
 
     def setCreateRestriction(
         self,
-        create_restriction,
+        create_restriction: Callable[[DM, DM], Mat] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -552,7 +528,7 @@ cdef class DMShell(DM):
 
         Parameters
         ----------
-        create_restriction TODO: was it striction in docs
+        create_restriction
             The routine to create the restriction
         args
             Additional positional arguments for ``create_restriction``.
@@ -575,7 +551,8 @@ cdef class DMShell(DM):
 
     def setCreateFieldDecomposition(
         self,
-        decomp,
+        decomp: Callable[[DM], tuple[list[str], list[IS], list[DM]]] | None,
+        # TODO: | None in tuple?
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -608,7 +585,8 @@ cdef class DMShell(DM):
 
     def setCreateDomainDecomposition(
         self,
-        decomp,
+        decomp: Callable[[DM], tuple[list[str], list[IS], list[IS], list[DM]]] | None,
+        # TODO: | None in tuple?
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -641,7 +619,7 @@ cdef class DMShell(DM):
 
     def setCreateDomainDecompositionScatters(
         self,
-        scatter,
+        scatter: Callable[[DM, list[DM]], tuple[list[Scatter], list[Scatter], list[Scatter]]] | None,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
@@ -674,7 +652,8 @@ cdef class DMShell(DM):
 
     def setCreateSubDM(
         self,
-        create_subdm,
+        create_subdm: Callable[[DM, list[int]], tuple[IS, DM]] | None,
+        # TODO: list of int or ArrayInt ?
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
