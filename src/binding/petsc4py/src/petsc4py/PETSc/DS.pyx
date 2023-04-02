@@ -18,10 +18,6 @@ cdef class DS(Object):
     def view(self, Viewer viewer=None):
         """View a PetscDS
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSView(PetscDS prob, PetscViewer v)
-
 Collective
 
 Input Parameters
@@ -48,10 +44,6 @@ v - the viewer
     def destroy(self):
         """Destroy a PetscDS object
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSDestroy(PetscDS *ds)
-
 Collective
 
 Input Parameter
@@ -75,10 +67,6 @@ prob - the PetscDS object to destroy
 
     def create(self, comm=None):
         """Create an empty PetscDS object. The type can then be set with PetscDSSetType().
-
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSCreate(MPI_Comm comm, PetscDS *ds)
 
 Collective
 
@@ -109,10 +97,6 @@ ds - The PetscDS object
     def setType(self, ds_type):
         """Build a particular PetscDS
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSSetType(PetscDS prob, PetscDSType name)
-
 Collective; No Fortran Support
 
 Input Parameters
@@ -141,10 +125,6 @@ Options Database Key
     def getType(self):
         """Return the PetscDSType name (as a string) from the PetscDS
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetType(PetscDS prob, PetscDSType *name)
-
 Not Collective; No Fortran Support
 
 Input Parameter
@@ -171,10 +151,6 @@ name - The PetscDSType name
 
     def setFromOptions(self):
         """Set parameters in a PetscDS from the options database
-
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSSetFromOptions(PetscDS prob)
 
 Collective
 
@@ -205,10 +181,6 @@ Options Database Keys
     def setUp(self):
         """Construct data structures for the PetscDS
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSSetUp(PetscDS prob)
-
 Collective
 
 Input Parameter
@@ -234,10 +206,6 @@ prob - the PetscDS object to setup
 
     def getSpatialDimension(self):
         """Return the spatial dimension of the PetscDS, meaning the topological dimension of the discretizations
-
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetSpatialDimension(PetscDS prob, PetscInt *dim)
 
 Not Collective
 
@@ -266,10 +234,6 @@ dim - The spatial dimension
     def getCoordinateDimension(self):
         """Return the coordinate dimension of the PetscDS, meaning the dimension of the space into which the discretiaztions are embedded
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetCoordinateDimension(PetscDS prob, PetscInt *dimEmbed)
-
 Not Collective
 
 Input Parameter
@@ -297,10 +261,6 @@ dimEmbed - The coordinate dimension
     def getNumFields(self):
         """Return the number of fields in the PetscDS
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetNumFields(PetscDS prob, PetscInt *Nf)
-
 Not Collective
 
 Input Parameter
@@ -327,10 +287,6 @@ Nf - The number of fields
 
     def getFieldIndex(self, Object disc):
         """Return the index of the given field
-
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetFieldIndex(PetscDS prob, PetscObject disc, PetscInt *f)
 
 Not Collective
 
@@ -360,10 +316,6 @@ f - The field number
     def getTotalDimensions(self):
         """Return the total size of the approximation space for this system
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetTotalDimension(PetscDS prob, PetscInt *dim)
-
 Not Collective
 
 Input Parameter
@@ -391,10 +343,6 @@ dim - The total problem dimension
     def getTotalComponents(self):
         """Return the total number of components in this system
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetTotalComponents(PetscDS prob, PetscInt *Nc)
-
 Not Collective
 
 Input Parameter
@@ -421,10 +369,6 @@ dim - The total number of components
 
     def getDimensions(self):
         """Return the size of the approximation space for each field on an evaluation point
-
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetDimensions(PetscDS prob, PetscInt *dimensions[])
 
 Not Collective
 
@@ -454,10 +398,6 @@ dimensions - The number of dimensions
     def getComponents(self):
         """Return the number of components for each field on an evaluation point
 
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSGetComponents(PetscDS prob, PetscInt *components[])
-
 Not Collective
 
 Input Parameter
@@ -485,10 +425,6 @@ components - The number of components
 
     def setDiscretisation(self, f, disc):
         """Set the discretization object for the given field
-
-Synopsis
-#include "petscds.h"
-PetscErrorCode PetscDSSetDiscretization(PetscDS prob, PetscInt f, PetscObject disc)
 
 Not Collective
 

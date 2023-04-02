@@ -188,10 +188,6 @@ cdef class DMDA(DM):
     def setDof(self, dof):
         """Set the number of degrees of freedom per vertex
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetDof(DM da, PetscInt dof)
-
 Not Collective
 
 Input Parameters
@@ -219,10 +215,6 @@ dof - Number of degrees of freedom
         ------------
         getINFO
         Gets information about a given distributed array.
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetInfo(DM da, PetscInt *dim, PetscInt *M, PetscInt *N, PetscInt *P, PetscInt *m, PetscInt *n, PetscInt *p, PetscInt *dof, PetscInt *s, DMBoundaryType *bx, DMBoundaryType *by, DMBoundaryType *bz, DMDAStencilType *st)
 
 Not Collective
 
@@ -271,10 +263,6 @@ Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not 
 
     def setSizes(self, sizes):
         """Set the number of grid points in the three dimensional directions
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetSizes(DM da, PetscInt M, PetscInt N, PetscInt P)
 
 Logically Collective
 
@@ -343,10 +331,6 @@ Since the dimension may not yet have been set the code cannot error check for no
     def setProcSizes(self, proc_sizes):
         """Set the number of processes in each dimension
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetNumProcs(DM da, PetscInt m, PetscInt n, PetscInt p)
-
 Logically Collective
 
 Input Parameters
@@ -411,10 +395,6 @@ p - the number of Z procs (or PETSC_DECIDE)
     def setBoundaryType(self, boundary_type):
         """Set the type of ghost nodes on domain boundaries.
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetBoundaryType(DM da, DMBoundaryType bx, DMBoundaryType by, DMBoundaryType bz)
-
 Not Collective
 
 Input Parameters
@@ -471,10 +451,6 @@ bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
     def setStencilType(self, stencil_type):
         """Set the type of the communication stencil
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetStencilType(DM da, DMDAStencilType stype)
-
 Logically Collective
 
 Input Parameters
@@ -524,10 +500,6 @@ stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
 
     def setStencilWidth(self, stencil_width):
         """Set the width of the communication stencil
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetStencilWidth(DM da, PetscInt width)
 
 Logically Collective
 
@@ -675,10 +647,6 @@ width - The stencil width
     def getOwnershipRanges(self):
         """Return the ranges of indices in the x, y and z direction that are owned by each process
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetOwnershipRanges(DM da, const PetscInt *lx[], const PetscInt *ly[], const PetscInt *lz[])
-
 Not Collective
 
 Input Parameter
@@ -723,10 +691,6 @@ These numbers are NOT multiplied by the number of dof per node.
     def getCorners(self):
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetCorners(DM da, PetscInt *x, PetscInt *y, PetscInt *z, PetscInt *m, PetscInt *n, PetscInt *p)
-
 Not Collective
 
 Input Parameter
@@ -765,10 +729,6 @@ The corner information is independent of the number of degrees of freedom per no
 
     def getGhostCorners(self):
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetGhostCorners(DM da, PetscInt *x, PetscInt *y, PetscInt *z, PetscInt *m, PetscInt *n, PetscInt *p)
 
 Not Collective
 
@@ -811,10 +771,6 @@ The corner information is independent of the number of degrees of freedom per no
     def setFieldName(self, field, name):
         """Set the names of individual field components in multicomponent vectors associated with a DMDA.
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetFieldName(DM da, PetscInt nf, const char name[])
-
 Logically Collective; name must contain a common value
 
 Input Parameters
@@ -845,10 +801,6 @@ It must be called after having called DMSetUp().
 
     def getFieldName(self, field):
         """Return the names of individual field components in multicomponent vectors associated with a DMDA.
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetFieldName(DM da, PetscInt nf, const char **name)
 
 Not Collective; name will contain a common value
 
@@ -906,10 +858,6 @@ It must be called after having called DMSetUp().
                               zmin=0, zmax=1):
         """Set a DMDA coordinates to be a uniform grid
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetUniformCoordinates(DM da, PetscReal xmin, PetscReal xmax, PetscReal ymin, PetscReal ymax, PetscReal zmin, PetscReal zmax)
-
 Collective
 
 Input Parameters
@@ -942,10 +890,6 @@ zmin,zmax - extremes in the z direction (value ignored for 1 or 2 dimensional pr
     def setCoordinateName(self, index, name):
         """Set the name of the coordinate directions associated with a DMDA, for example “x” or “y”
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetCoordinateName(DM dm, PetscInt nf, const char name[])
-
 Logically Collective; name must contain a common value; No Fortran Support
 
 Input Parameters
@@ -976,10 +920,6 @@ Must be called after having called DMSetUp().
 
     def getCoordinateName(self, index):
         """Return the name of a coordinate direction associated with a DMDA.
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetCoordinateName(DM dm, PetscInt nf, const char **name)
 
 Not Collective; name will contain a common value; No Fortran Support
 
@@ -1015,10 +955,6 @@ It must be called after having called DMSetUp().
     def createNaturalVec(self):
         """Create a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDACreateNaturalVector(DM da, Vec *g)
-
 Collective
 
 Input Parameter
@@ -1050,10 +986,6 @@ The number of local entries in the vector on each process is the same as in a ve
 
     def globalToNatural(self, Vec vg, Vec vn, addv=None):
         """Map values from the global vector to a global vector in the “natural” grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGlobalToNaturalBegin(DM da, Vec g, InsertMode mode, Vec n)
 
 Neighbor-wise Collective
 
@@ -1092,10 +1024,6 @@ You must call DMDACreateNaturalVector() before using this routine
     def naturalToGlobal(self, Vec vn, Vec vg, addv=None):
         """Map values from a global vector in the “natural” ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDANaturalToGlobalBegin(DM da, Vec n, InsertMode mode, Vec g)
-
 Neighbor-wise Collective
 
 Input Parameters
@@ -1130,10 +1058,6 @@ The global and natural vectors used here need not be the same as those obtained 
     def getAO(self):
         """Return the application ordering context for a distributed array.
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetAO(DM da, AO *ao)
-
 Collective
 
 Input Parameter
@@ -1166,10 +1090,6 @@ Do NOT call AODestroy() on the ao returned by this function.
 
     def getScatter(self):
         """Return the global-to-local, and local-to-local vector scatter contexts for a distributed array.
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetScatter(DM da, VecScatter *gtol, VecScatter *ltol)
 
 Collective
 
@@ -1209,10 +1129,6 @@ The output contexts are valid only as long as the input da is valid. If you dele
                             refine_y=2,
                             refine_z=2):
         """Set the ratios that the DMDA grid is refined
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetRefinementFactor(DM da, PetscInt refine_x, PetscInt refine_y, PetscInt refine_z)
 
 Logically Collective
 
@@ -1255,10 +1171,6 @@ Pass PETSC_IGNORE to leave a value unchanged
     def getRefinementFactor(self):
         """Return the ratios that the DMDA grid is refined
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetRefinementFactor(DM da, PetscInt *refine_x, PetscInt *refine_y, PetscInt *refine_z)
-
 Not Collective
 
 Input Parameter
@@ -1295,10 +1207,6 @@ Pass NULL for values you do not need
     def setInterpolationType(self, interp_type):
         """Set the type of interpolation that will be returned by DMCreateInterpolation()
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetInterpolationType(DM da, DMDAInterpolationType ctype)
-
 Logically Collective
 
 Input Parameters
@@ -1326,10 +1234,6 @@ You should call this on the coarser of the two DMDA you pass to DMCreateInterpol
 
     def getInterpolationType(self):
         """Return the type of interpolation that will be used by DMCreateInterpolation()
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetInterpolationType(DM da, DMDAInterpolationType *ctype)
 
 Not Collective
 
@@ -1360,10 +1264,6 @@ ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported
     def setElementType(self, elem_type):
         """Set the element type to be returned by DMDAGetElements()
 
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDASetElementType(DM da, DMDAElementType etype)
-
 Not Collective
 
 Input Parameter
@@ -1389,10 +1289,6 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
 
     def getElementType(self):
         """Return the element type to be returned by DMDAGetElements()
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetElementType(DM da, DMDAElementType *etype)
 
 Not Collective
 
@@ -1420,10 +1316,6 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
 
     def getElements(self, elem_type=None):
         """Return an array containing the indices (in local coordinates) of all the local elements
-
-Synopsis
-#include "petscdmda.h"
-PetscErrorCode DMDAGetElements(DM dm, PetscInt *nel, PetscInt *nen, const PetscInt *e[])
 
 Not Collective; No Fortran Support
 
