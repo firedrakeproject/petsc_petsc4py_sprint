@@ -1144,7 +1144,7 @@ cdef class KSP(Object):
         CHKERR( KSPGetResidualHistory(self.ksp, &data, &size) )
         return array_r(size, data)
 
-    def logConvergenceHistory(self, rnorm: float):
+    def logConvergenceHistory(self, rnorm: float) -> None:
         """Add residual to convergence history.
 
         Parameters
