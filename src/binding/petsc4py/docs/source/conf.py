@@ -72,7 +72,7 @@ nitpicky = True
 nitpick_ignore = [
     ('envvar', 'NUMPY_INCLUDE'),
     ('py:class', 'ndarray'),  # FIXME
-    ('py:class', 'typing_extensions.Self')
+    ('py:class', 'typing_extensions.Self'),
 ]
 nitpick_ignore_regex = [
     (r'c:.*', r'MPI_.*'),
