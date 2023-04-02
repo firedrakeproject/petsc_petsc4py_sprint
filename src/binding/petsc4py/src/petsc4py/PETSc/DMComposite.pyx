@@ -5,15 +5,13 @@ cdef class DMComposite(DM):
     def create(self, comm=None):
         """Creates a DMCOMPOSITE, used to generate “composite” vectors made up of several subvectors.
 
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
-comm - the processors that will share the global vector
-Output Parameter
-packer - the DMCOMPOSITE object
+        comm - the processors that will share the global vector
+        Output Parameter
+        packer - the DMCOMPOSITE object
 
         See also
         --------
@@ -27,17 +25,15 @@ packer - the DMCOMPOSITE object
         return self
 
     def addDM(self, DM dm, *args):
-        """adds a DM vector to a DMCOMPOSITE
+        """aDD a DM vector to a DMCOMPOSITE.
 
-.
-
-         collective.
+        Collective.
         Add DM to composite.
 
         Parameters
         ----------
-dmc - the DMCOMPOSITE object
-dm - the DM object
+        dmc - the DMCOMPOSITE object
+        dm - the DM object
 
         See also
         --------
@@ -53,7 +49,6 @@ dm - the DM object
     def getNumber(self):
         """Gets the number of DM objects in the DMCOMPOSITE representation.
 
-.
         Get number of sub-DMs contained in the `DMComposite`.
 
         Not collective.
@@ -74,16 +69,15 @@ dm - the DM object
     getNumberDM = getNumber
 
     def getEntries(self):
-        """Gets the DM for each entry in a DMCOMPOSITE
+        """Gets the DM for each entry in a DMCOMPOSITE.
 
-.
         Get tuple of sub-DMs contained in the `DMComposite`.
 
         Not collective.
 
         Parameters
         ----------
-dms - array of sufficient length (see DMCompositeGetNumberDM()) to hold the individual DM
+        dms - array of sufficient length (see DMCompositeGetNumberDM()) to hold the individual DM
 
         See also
         --------
@@ -105,19 +99,18 @@ dms - array of sufficient length (see DMCompositeGetNumberDM()) to hold the indi
         return tuple(entries)
 
     def scatter(self, Vec gvec, lvecs):
-        """Scatters from a global packed vector into its individual local vectors
+        """Scatters from a global packed vector into its individual local vectors.
 
-.
         Scatter coupled global vector into split local vectors.
 
-         collective.
+        Collective.
 
         Parameters
         ----------
-gvec - the global vector
-lvecs - array of local vectors, NULL for any that are not needed
-Note
-This is a non-variadic alternative to DMCompositeScatter()
+        gvec - the global vector
+        lvecs - array of local vectors, NULL for any that are not needed
+        Note
+        This is a non-variadic alternative to DMCompositeScatter()
 
 
         See also
@@ -134,21 +127,17 @@ This is a non-variadic alternative to DMCompositeScatter()
         CHKERR( DMCompositeScatterArray(self.dm, gvec.vec, clvecs) )
 
     def gather(self, Vec gvec, imode, lvecs):
-        """Gathers into a global packed vector from its individual local vectors
+        """Gathers into a global packed vector from its individual local vectors.
 
-.
         Gather split local vectors into coupled global vector.
 
-         collective.
+        Collective.
 
         Parameters
         ----------
-gvec - the global vector
-imode - INSERT_VALUES or ADD_VALUES
-lvecs - the individual sequential vectors, NULL for any that are not needed
-Note
-This is a non-variadic alternative to DMCompositeGather().
-
+        gvec - the global vector
+        imode - INSERT_VALUES or ADD_VALUES
+        lvecs - the individual sequential vectors, NULL for any that are not needed
 
         See also
         --------
@@ -165,23 +154,20 @@ This is a non-variadic alternative to DMCompositeGather().
         CHKERR( DMCompositeGatherArray(self.dm, cimode, gvec.vec, clvecs) )
 
     def getGlobalISs(self):
-        """Gets the index sets for each composed object in a DMCOMPOSITE
+        """Gets the index sets for each composed object in a DMCOMPOSITE.
 
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
-Output Parameter
-is - the array of index sets
-Notes
-The is entries should be destroyed with ISDestroy(), the is array should be freed with PetscFree()
+        Output Parameter
+        is - the array of index sets
+        Notes
+        The is entries should be destroyed with ISDestroy(), the is array should be freed with PetscFree()
 
-These could be used to extract a subset of vector entries for a “multi-physics” preconditioner
+        These could be used to extract a subset of vector entries for a “multi-physics” preconditioner
 
-Use DMCompositeGetLocalISs() for index sets in the packed local numbering, and DMCompositeGetISLocalToGlobalMappings() for to map local sub-DM (including ghost) indices to packed global indices.
-
+        Use DMCompositeGetLocalISs() for index sets in the packed local numbering, and DMCompositeGetISLocalToGlobalMappings() for to map local sub-DM (including ghost) indices to packed global indices.
 
         See also
         --------
@@ -199,21 +185,18 @@ Use DMCompositeGetLocalISs() for index sets in the packed local numbering, and D
         return isets
 
     def getLocalISs(self):
-        """Gets index sets for each component of a composite local vector
+        """Gets index sets for each component of a composite local vector.
 
-.
+        Output Parameter
+        is - array of serial index sets for each each component of the DMCOMPOSITE
+        Notes
+        At present, a composite local vector does not normally exist. This function is used to provide index sets for MatGetLocalSubMatrix(). In the future, the scatters for each entry in the DMCOMPOSITE may be be merged into a single scatter to a composite local vector. The user should not typically need to know which is being done.
 
+        To get the composite global indices at all local points (including ghosts), use DMCompositeGetISLocalToGlobalMappings().
 
-Output Parameter
-is - array of serial index sets for each each component of the DMCOMPOSITE
-Notes
-At present, a composite local vector does not normally exist. This function is used to provide index sets for MatGetLocalSubMatrix(). In the future, the scatters for each entry in the DMCOMPOSITE may be be merged into a single scatter to a composite local vector. The user should not typically need to know which is being done.
+        To get index sets for pieces of the composite global vector, use DMCompositeGetGlobalISs().
 
-To get the composite global indices at all local points (including ghosts), use DMCompositeGetISLocalToGlobalMappings().
-
-To get index sets for pieces of the composite global vector, use DMCompositeGetGlobalISs().
-
-Each returned IS should be destroyed with ISDestroy(), the array should be freed with PetscFree().
+        Each returned IS should be destroyed with ISDestroy(), the array should be freed with PetscFree().
 
         Not collective.
 
@@ -233,17 +216,14 @@ Each returned IS should be destroyed with ISDestroy(), the array should be freed
         return isets
 
     def getLGMaps(self):
-        """gets an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space
+        """gets an ISLocalToGlobalMapping for each DM in the DMCOMPOSITE, maps to the composite global space.
 
-.
+        Collective.
 
-         collective.
-
-Output Parameter
-ltogs - the individual mappings for each packed vector. Note that this includes all the ghost points that individual ghosted DMDA may have.
-Note
-Each entry of ltogs should be destroyed with ISLocalToGlobalMappingDestroy(), the ltogs array should be freed with PetscFree().
-
+        Output Parameter
+        ltogs - the individual mappings for each packed vector. Note that this includes all the ghost points that individual ghosted DMDA may have.
+        Note
+        Each entry of ltogs should be destroyed with ISLocalToGlobalMappingDestroy(), the ltogs array should be freed with PetscFree().
 
         See also
         --------

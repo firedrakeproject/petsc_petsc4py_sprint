@@ -23,45 +23,27 @@ cdef class Partitioner(Object):
     def view(self, Viewer viewer=None):
         """Views a PetscPartitioner
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerView(PetscPartitioner part, PetscViewer v)
 
-Collective
-
-Input Parameters
-part - the PetscPartitioner object to view
-v - the viewer
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        part - the PetscPartitioner object to view
+        v - the viewer
 
         See also
         --------
         petsc.PetscPartitionerView
 
         """
-
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( PetscPartitionerView(self.part, vwr) )
 
     def destroy(self):
-        """Destroys a PetscPartitioner object
+        """Destroys a PetscPartitioner object.
 
-.
-
-         collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -74,19 +56,12 @@ v - the viewer
     def create(self, comm=None):
         """Creates an empty PetscPartitioner object. The type can then be set with PetscPartitionerSetType().
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerCreate(MPI_Comm comm, PetscPartitioner *part)
+        Input Parameter
+        comm - The communicator for the PetscPartitioner object
+        Output Parameter
+        part - The PetscPartitioner object
 
-Collective
-
-Input Parameter
-comm - The communicator for the PetscPartitioner object
-Output Parameter
-part - The PetscPartitioner object
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
@@ -107,27 +82,19 @@ part - The PetscPartitioner object
     def setType(self, part_type):
         """Builds a particular PetscPartitioner
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerSetType(PetscPartitioner part, PetscPartitionerType name)
+        Input Parameters
+        part - The PetscPartitioner object
+        name - The kind of partitioner
+        Options Database Key
+        -petscpartitioner_type - Sets the PetscPartitioner type
+        Note
+        PETSCPARTITIONERCHACO    - The Chaco partitioner (--download-chaco)
+        PETSCPARTITIONERPARMETIS - The ParMetis partitioner (--download-parmetis)
+        PETSCPARTITIONERSHELL    - A shell partitioner implemented by the user
+        PETSCPARTITIONERSIMPLE   - A simple partitioner that divides cells into equal, contiguous chunks
+        PETSCPARTITIONERGATHER   - Gathers all cells onto process 0
 
-Collective
-
-Input Parameters
-part - The PetscPartitioner object
-name - The kind of partitioner
-Options Database Key
--petscpartitioner_type - Sets the PetscPartitioner type
-Note
- PETSCPARTITIONERCHACO    - The Chaco partitioner (--download-chaco)
- PETSCPARTITIONERPARMETIS - The ParMetis partitioner (--download-parmetis)
- PETSCPARTITIONERSHELL    - A shell partitioner implemented by the user
- PETSCPARTITIONERSIMPLE   - A simple partitioner that divides cells into equal, contiguous chunks
- PETSCPARTITIONERGATHER   - Gathers all cells onto process 0
-
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
@@ -146,17 +113,10 @@ Note
     def getType(self):
         """Gets the PetscPartitioner type name (as a string) from the object.
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerGetType(PetscPartitioner part, PetscPartitionerType *name)
-
-Not Collective
-
-Input Parameter
-part - The PetscPartitioner
-Output Parameter
-name - The PetscPartitioner type name
-.
+        Input Parameter
+        part - The PetscPartitioner
+        Output Parameter
+        name - The PetscPartitioner type name
 
         Not collective.
 
@@ -177,21 +137,14 @@ name - The PetscPartitioner type name
     def setFromOptions(self):
         """sets parameters in a PetscPartitioner from the options database
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerSetFromOptions(PetscPartitioner part)
+        Input Parameter
+        part - the PetscPartitioner object to set options for
+        Options Database Keys
+        -petscpartitioner_type - Sets the PetscPartitioner type; use -help for a list of available types
+        -petscpartitioner_use_vertex_weights - Uses weights associated with the graph vertices
+        -petscpartitioner_view_graph - View the graph each time PetscPartitionerPartition is called. Viewer can be customized, see PetscOptionsGetViewer()
 
-Collective
-
-Input Parameter
-part - the PetscPartitioner object to set options for
-Options Database Keys
--petscpartitioner_type - Sets the PetscPartitioner type; use -help for a list of available types
--petscpartitioner_use_vertex_weights - Uses weights associated with the graph vertices
--petscpartitioner_view_graph - View the graph each time PetscPartitionerPartition is called. Viewer can be customized, see PetscOptionsGetViewer()
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
@@ -206,19 +159,12 @@ Options Database Keys
         CHKERR( PetscPartitionerSetFromOptions(self.part) )
 
     def setUp(self):
-        """Construct data structures for the PetscPartitioner
+        """Construct data structures for the PetscPartitioner.
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerSetUp(PetscPartitioner part)
+        Input Parameter
+        part - the PetscPartitioner object to setup
 
-Collective
-
-Input Parameter
-part - the PetscPartitioner object to setup
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
@@ -233,19 +179,12 @@ part - the PetscPartitioner object to setup
         CHKERR( PetscPartitionerSetUp(self.part) )
 
     def reset(self):
-        """Resets data structures for the PetscPartitioner
+        """Resets data structures for the PetscPartitioner.
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerReset(PetscPartitioner part)
+        Input Parameter
+        part - the PetscPartitioner object to reset
 
-Collective
-
-Input Parameter
-part - the PetscPartitioner object to reset
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
@@ -262,23 +201,15 @@ part - the PetscPartitioner object to reset
     def setShellPartition(self, numProcs, sizes=None, points=None):
         """Set an artificial partition for a mesh
 
-Synopsis
-#include "petscpartitioner.h"
-PetscErrorCode PetscPartitionerShellSetPartition(PetscPartitioner part, PetscInt size, const PetscInt sizes[], const PetscInt points[])
+        Input Parameters
+        part - The PetscPartitioner
+        size - The number of partitions
+        sizes - array of length size (or NULL) providing the number of points in each partition
+        points - array of length sum(sizes) (may be NULL iff sizes is NULL), a permutation of the points that groups those assigned to each partition in order (i.e., partition 0 first, partition 1 next, etc.)
+        Note
+        It is safe to free the sizes and points arrays after use in this routine.
 
-Collective
-
-Input Parameters
-part - The PetscPartitioner
-size - The number of partitions
-sizes - array of length size (or NULL) providing the number of points in each partition
-points - array of length sum(sizes) (may be NULL iff sizes is NULL), a permutation of the points that groups those assigned to each partition in order (i.e., partition 0 first, partition 1 next, etc.)
-Note
-It is safe to free the sizes and points arrays after use in this routine.
-
-.
-
-         collective.
+        Collective.
 
         Parameters
         ----------
