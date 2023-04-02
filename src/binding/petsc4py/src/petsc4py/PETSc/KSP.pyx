@@ -1959,7 +1959,7 @@ cdef class KSP(Object):
         cdef PetscReal smax = 0
         cdef PetscReal smin = 0
         CHKERR( KSPComputeExtremeSingularValues(self.ksp, &smax, &smin) )
-        return smax, smin
+        return toReal(smax), toReal(smin)
 
     # --- GMRES ---
 
