@@ -64,7 +64,7 @@ cdef class Scatter(Object):
         if viewer is not None: vwr = viewer.vwr
         CHKERR( VecScatterView(self.sct, vwr) )
 
-    def destroy(self) -> None:
+    def destroy(self) -> Self:
         """Destroy the scatter.
 
         Collective.
