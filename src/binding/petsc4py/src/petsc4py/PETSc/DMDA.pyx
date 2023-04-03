@@ -45,7 +45,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDACreateND
 
@@ -128,7 +128,7 @@ cdef class DMDA(DM):
         stencil_width
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDACreateND, petsc.DMSetUp
 
@@ -182,7 +182,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.TODO
 
@@ -199,7 +199,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.TODO
 
@@ -221,7 +221,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDASetDof
 
@@ -258,7 +258,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -290,7 +290,7 @@ cdef class DMDA(DM):
         P
             the global Z size
 
-        See also
+        See Also
         --------
         petsc.DMDASetSizes
 
@@ -317,7 +317,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -349,7 +349,7 @@ cdef class DMDA(DM):
         p
             the number of Z procs (or PETSC_DECIDE)
 
-        See also
+        See Also
         --------
         petsc.DMDASetNumProcs
 
@@ -376,7 +376,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -404,7 +404,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDASetBoundaryType
 
@@ -420,7 +420,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -450,7 +450,7 @@ cdef class DMDA(DM):
 
 
 
-        See also
+        See Also
         --------
         petsc.DMDASetStencilType
 
@@ -468,7 +468,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -492,7 +492,7 @@ cdef class DMDA(DM):
         ----------
         width - The stencil width
 
-        See also
+        See Also
         --------
         petsc.DMDASetStencilWidth
 
@@ -510,7 +510,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -539,7 +539,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDASetStencilType, petsc.DMDASetStencilWidth
 
@@ -559,7 +559,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInfo
 
@@ -587,7 +587,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetCorners
 
@@ -611,7 +611,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetGhostCorners
 
@@ -641,7 +641,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetOwnershipRanges
 
@@ -673,7 +673,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetCorners
 
@@ -701,7 +701,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetGhostCorners
 
@@ -730,7 +730,7 @@ cdef class DMDA(DM):
         names
             the name of the field (component)
 
-        See also
+        See Also
         --------
         petsc.DMDASetFieldName
 
@@ -754,7 +754,7 @@ cdef class DMDA(DM):
         nf
             field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
 
-        See also
+        See Also
         --------
         petsc.DMDAGetFieldName
 
@@ -776,7 +776,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc._DMDA_Vec_array
 
@@ -813,7 +813,7 @@ cdef class DMDA(DM):
         zmax
             The maximum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
 
-        See also
+        See Also
         --------
         petsc.DMDASetUniformCoordinates
 
@@ -840,7 +840,7 @@ cdef class DMDA(DM):
         name
             the name of the coordinate
 
-        See also
+        See Also
         --------
         petsc.DMDASetCoordinateName
 
@@ -860,7 +860,7 @@ cdef class DMDA(DM):
         nf
             number for the DMDA (0, 1, ... dim-1)
 
-        See also
+        See Also
         --------
         petsc.DMDAGetCoordinateName
 
@@ -884,7 +884,7 @@ cdef class DMDA(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMDACreateNaturalVector
 
@@ -920,7 +920,7 @@ cdef class DMDA(DM):
         mode
             one of INSERT_VALUES or ADD_VALUES
 
-        See also
+        See Also
         --------
         petsc.DMDAGlobalToNaturalBegin, petsc.DMDAGlobalToNaturalEnd
 
@@ -950,7 +950,7 @@ cdef class DMDA(DM):
         mode
             one of INSERT_VALUES or ADD_VALUES
 
-        See also
+        See Also
         --------
         petsc.DMDANaturalToGlobalBegin, petsc.DMDANaturalToGlobalEnd
 
@@ -973,7 +973,7 @@ cdef class DMDA(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetAO
 
@@ -994,7 +994,7 @@ cdef class DMDA(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetScatter
 
@@ -1029,7 +1029,7 @@ cdef class DMDA(DM):
         refine_z
             ratio of fine grid to coarse in z direction (2 by default)
 
-        See also
+        See Also
         --------
         petsc.DMDASetRefinementFactor
 
@@ -1058,7 +1058,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetRefinementFactor
 
@@ -1082,7 +1082,7 @@ cdef class DMDA(DM):
         ----------
         ctype - DMDA_Q1 and DMDA_Q0 are currently the only supported forms.
 
-        See also
+        See Also
         --------
         petsc.DMDASetInterpolationType
 
@@ -1098,7 +1098,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetInterpolationType
 
@@ -1117,7 +1117,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDASetElementType
 
@@ -1133,7 +1133,7 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetElementType
 
@@ -1164,7 +1164,7 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         petsc.DMDAGetElements
 
