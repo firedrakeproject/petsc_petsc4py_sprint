@@ -66,7 +66,7 @@ cdef class Partitioner(Object):
 
         See also
         --------
-        petsc.PetscPartitionerCreate, setType
+        setType, petsc.PetscPartitionerCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -87,7 +87,7 @@ cdef class Partitioner(Object):
 
         See also
         --------
-        petsc.PetscPartitionerSetType, getType
+        getType, petsc.PetscPartitionerSetType
 
         """
         cdef PetscPartitionerType cval = NULL
@@ -101,7 +101,7 @@ cdef class Partitioner(Object):
 
         See also
         --------
-        petsc.PetscPartitionerGetType, setType
+        setType, petsc.PetscPartitionerGetType
 
         """
         cdef PetscPartitionerType cval = NULL

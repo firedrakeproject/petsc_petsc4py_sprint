@@ -95,7 +95,7 @@ cdef class MatPartitioning(Object):
         matpartitioning_type = str2bytes(matpartitioning_type, &cval)
         CHKERR( MatPartitioningSetType(self.part, cval) )
 
-    def getType(self) -> Type:
+    def getType(self) -> str:
         """Return the partitioning method.
 
         Not collective.

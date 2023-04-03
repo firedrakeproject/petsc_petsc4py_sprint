@@ -24,7 +24,6 @@ cdef class DMComposite(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    # FIXME: API?
     def addDM(self, DM dm, *args: DM) -> None:
         """Add a DM vector to the composite.
 
@@ -63,7 +62,7 @@ cdef class DMComposite(DM):
         return toInt(n)
     getNumberDM = getNumber
 
-    def getEntries(self) -> tuple[DM, ...]:
+    def getEntries(self) -> list[DM]:
         """Return sub-DMs contained in the composite.
 
         Not collective.
@@ -85,7 +84,7 @@ cdef class DMComposite(DM):
             entry.dm = cdms[i]
             PetscINCREF(entry.obj)
             entries.append(entry)
-        return tuple(entries)
+        return entries
 
     def scatter(self, Vec gvec, lvecs: Sequence[Vec]) -> None:
         """Scatter coupled global vector into split local vectors.
@@ -140,7 +139,6 @@ cdef class DMComposite(DM):
             clvecs[i] = (<Vec?>lvecs[<Py_ssize_t>i]).vec
         CHKERR( DMCompositeGatherArray(self.dm, cimode, gvec.vec, clvecs) )
 
-    # FIXME: API: return list or tuple?
     def getGlobalISs(self) -> list[IS]:
         """Return the index sets for each composed object in the composite.
 
@@ -168,7 +166,6 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(cis) )
         return isets
 
-    # FIXME: API: return list or tuple?
     def getLocalISs(self) -> list[IS]:
         """Return index sets for each component of a composite local vector.
 
@@ -195,7 +192,6 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(cis) )
         return isets
 
-    # FIXME: API: return list or tuple?
     def getLGMaps(self) -> list[LGMap]:
         """Return a local-to-global mapping for each DM in the composite.
 
