@@ -21,7 +21,7 @@ cdef class Section(Object):
         viewer
             A `Viewer` to display the section.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionView
 
@@ -35,7 +35,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionDestroy
 
@@ -70,7 +70,7 @@ cdef class Section(Object):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionCreate
 
@@ -88,7 +88,7 @@ cdef class Section(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionClone
 
@@ -104,7 +104,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetUp
 
@@ -116,7 +116,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionReset
 
@@ -130,7 +130,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         setNumFields, petsc.PetscSectionGetNumFields
 
@@ -149,7 +149,7 @@ cdef class Section(Object):
         numFields
             The number of fields
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetNumFields, getNumFields
 
@@ -167,7 +167,7 @@ cdef class Section(Object):
         field
             The field number.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetFieldName, setFieldName
 
@@ -189,7 +189,7 @@ cdef class Section(Object):
         fieldName
             The field name.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetFieldName, getFieldName
 
@@ -209,7 +209,7 @@ cdef class Section(Object):
         field
             The field number.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetFieldComponents, setFieldComponents
 
@@ -230,7 +230,7 @@ cdef class Section(Object):
         numComp
             The number of field components.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetFieldComponents, getFieldComponents
 
@@ -247,7 +247,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetChart
 
@@ -271,7 +271,7 @@ cdef class Section(Object):
         pEnd
             One past the last point.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetChart
 
@@ -285,7 +285,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetPermutation, setPermutation
 
@@ -305,7 +305,7 @@ cdef class Section(Object):
         perm
             The permutation of points.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetPermutation, getPermutation
 
@@ -325,7 +325,7 @@ cdef class Section(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetDof, setDof
 
@@ -346,7 +346,7 @@ cdef class Section(Object):
         numDof
             The number of dof.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetDof, getDof, addDof
 
@@ -367,7 +367,7 @@ cdef class Section(Object):
         numDof
             The number of additional dof.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionAddDof, setDof, getDof
 
@@ -388,7 +388,7 @@ cdef class Section(Object):
         field
             The field.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetFieldDof, setFieldDof
 
@@ -412,7 +412,7 @@ cdef class Section(Object):
         numDof
             The number of dof.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetFieldDof, getFieldDof, addFieldDof
 
@@ -436,7 +436,7 @@ cdef class Section(Object):
         numDof
             The number of additional dof.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionAddFieldDof, setFieldDof, getFieldDof
 
@@ -456,7 +456,7 @@ cdef class Section(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetConstraintDof, setConstraintDof
 
@@ -477,7 +477,7 @@ cdef class Section(Object):
         numDof
             The number of dof which are fixed by constraints.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetConstraintDof, getConstraintDof, addConstraintDof
 
@@ -498,7 +498,7 @@ cdef class Section(Object):
         numDof
             The number of additional dof which are fixed by constraints.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionAddConstraintDof, setConstraintDof, getConstraintDof
 
@@ -519,7 +519,7 @@ cdef class Section(Object):
         field
             The field.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetFieldConstraintDof, setFieldConstraintDof
 
@@ -548,7 +548,7 @@ cdef class Section(Object):
         numDof
             The number of dof which are fixed by constraints.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetFieldConstraintDof, getFieldConstraintDof,
         addFieldConstraintDof
@@ -578,7 +578,7 @@ cdef class Section(Object):
         numDof
             The number of additional dof which are fixed by constraints.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionAddFieldConstraintDof, setFieldConstraintDof,
         getFieldConstraintDof
@@ -601,7 +601,7 @@ cdef class Section(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetConstraintIndices, setConstraintIndices
 
@@ -625,7 +625,7 @@ cdef class Section(Object):
         indices
             The constrained dofs.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetConstraintIndices, getConstraintIndices
 
@@ -651,7 +651,7 @@ cdef class Section(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetFieldConstraintIndices, setFieldConstraintIndices
 
@@ -683,7 +683,7 @@ cdef class Section(Object):
         indices
             The constrained dofs.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetFieldConstraintIndices, getFieldConstraintIndices
 
@@ -701,7 +701,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetMaxDof
 
@@ -715,7 +715,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetStorageSize, getConstrainedStorageSize
 
@@ -729,7 +729,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetConstrainedStorageSize, getStorageSize
 
@@ -751,7 +751,7 @@ cdef class Section(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetOffset, setOffset
 
@@ -774,7 +774,7 @@ cdef class Section(Object):
         offset
             The offset.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetOffset, getOffset
 
@@ -798,7 +798,7 @@ cdef class Section(Object):
         field
             The field.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetFieldOffset, setFieldOffset
 
@@ -825,7 +825,7 @@ cdef class Section(Object):
         offset
             The offset.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionSetFieldOffset, getFieldOffset
 
@@ -840,7 +840,7 @@ cdef class Section(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSectionGetOffsetRange
 

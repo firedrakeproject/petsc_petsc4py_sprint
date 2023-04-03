@@ -34,7 +34,7 @@ cdef class MatPartitioning(Object):
         viewer
             A `Viewer` to display the graph.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningView
 
@@ -49,7 +49,7 @@ cdef class MatPartitioning(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningDestroy, create
 
@@ -67,7 +67,7 @@ cdef class MatPartitioning(Object):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningCreate, destroy
 
@@ -86,7 +86,7 @@ cdef class MatPartitioning(Object):
         matpartitioning_type
             The partitioner type.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningSetType, getType
 
@@ -100,7 +100,7 @@ cdef class MatPartitioning(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningGetType, setType
 
@@ -114,7 +114,7 @@ cdef class MatPartitioning(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningSetFromOptions, petsc_options
 
@@ -132,7 +132,7 @@ cdef class MatPartitioning(Object):
             The adjacency matrix, this can be any `Mat.Type` but the natural
             representation is `Mat.Type.MPIADJ`.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningSetAdjacency
 
@@ -147,7 +147,7 @@ cdef class MatPartitioning(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.MatPartitioningApply
 

@@ -16,7 +16,7 @@ cdef class Quad(Object):
         viewer
             A `Viewer` to display the graph.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureView
 
@@ -35,7 +35,7 @@ cdef class Quad(Object):
         comm
             The communicator for the `Quad` object.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureCreate
 
@@ -51,7 +51,7 @@ cdef class Quad(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureDuplicate
 
@@ -65,7 +65,7 @@ cdef class Quad(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureDestroy
 
@@ -85,7 +85,7 @@ cdef class Quad(Object):
         weights : ArrayReal
             The quadrature weights.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureGetData
 
@@ -106,7 +106,7 @@ cdef class Quad(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureGetNumComponents, setNumComponents
 
@@ -125,7 +125,7 @@ cdef class Quad(Object):
         nc
             The number of components.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureSetNumComponents, getNumComponents
 
@@ -138,7 +138,7 @@ cdef class Quad(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureGetOrder, setOrder
 
@@ -158,7 +158,7 @@ cdef class Quad(Object):
             The order of the quadrature, i.e. the highest degree polynomial
             that is exactly integrated.
 
-        See also
+        See Also
         --------
         petsc.PetscQuadratureSetOrder, getOrder
 

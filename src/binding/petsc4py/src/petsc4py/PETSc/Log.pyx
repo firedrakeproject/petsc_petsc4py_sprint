@@ -556,7 +556,7 @@ cdef class LogEvent:
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscLogEventDeactivate
 
