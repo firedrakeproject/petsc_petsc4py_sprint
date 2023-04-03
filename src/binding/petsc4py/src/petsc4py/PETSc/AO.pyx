@@ -199,7 +199,7 @@ cdef class AO(Object):
     def getType(self) -> str:
         """Return the application ordering type.
 
-        Not Collective.
+        Not collective.
 
         See also
         --------

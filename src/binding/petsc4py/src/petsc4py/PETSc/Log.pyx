@@ -55,7 +55,7 @@ cdef class Log:
     def begin(cls, all: bool = False):
         """Turn on logging of objects and events.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -87,7 +87,7 @@ cdef class Log:
         ----------
         viewer : None, optional
             Viewer instance. If ``None`` then will default to an instance of `Viewer.Type.ASCII`.
-        
+
         See Also
         --------
         petsc_options, petsc.PetscLogView
@@ -102,7 +102,7 @@ cdef class Log:
     def logFlops(cls, flops: float) -> None:
         """Add floating point operations to the global counter.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -116,12 +116,12 @@ cdef class Log:
         """
         cdef PetscLogDouble cflops=flops
         CHKERR( PetscLogFlops(cflops) )
-        
+
     @classmethod
     def addFlops(cls, flops: float) -> None:
         """Add floating point operations to global counter.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -144,7 +144,7 @@ cdef class Log:
     def getFlops(cls) -> float:
         """Return the number of flops used on this processor since the program began.
 
-        Not Collective.
+        Not collective.
 
         Returns
         -------
@@ -163,14 +163,14 @@ cdef class Log:
     @classmethod
     def getTime(cls) -> float:
         """Return the current time of day in seconds.
-        
+
         Collective.
 
         Returns
         -------
         wctime : float
             Current time.
-        
+
         See Also
         --------
         petsc.PetscTime
@@ -189,7 +189,7 @@ cdef class Log:
         CHKERR( PetscGetCPUTime(&cputime) )
         return cputime
 
-    @classmethod    
+    @classmethod
     def EventDecorator(cls, name=None, klass=None):
         """Decorate a function with a `PETSc` event.
 
@@ -209,8 +209,8 @@ cdef class Log:
     @classmethod
     def isActive(cls) -> bool:
         """Return whether logging is currently in progress.
-        
-        Not Collective.
+
+        Not collective.
 
         See Also
         --------
@@ -245,7 +245,7 @@ cdef class LogStage:
     def push(self) -> None:
         """Push a stage on the logging stack.
 
-        Not Collective.
+        Not collective.
 
         Notes
         -----
@@ -261,7 +261,7 @@ cdef class LogStage:
     def pop(self) -> None:
         """Pop a stage on the logging stack that was pushed.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -290,7 +290,7 @@ cdef class LogStage:
     def activate(self) -> None:
         """Activate the stage.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -302,7 +302,7 @@ cdef class LogStage:
     def deactivate(self) -> None:
         """Deactivate the stage.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -313,8 +313,8 @@ cdef class LogStage:
 
     def getActive(self) -> bool:
         """Check if the stage is activate.
-        
-        Not Collective.
+
+        Not collective.
 
         See Also
         --------
@@ -327,8 +327,8 @@ cdef class LogStage:
 
     def setActive(self, flag: bool) -> None:
         """Activate or deactivate the current stage.
-        
-        Not Collective.
+
+        Not collective.
 
         Parameters
         ----------
@@ -355,7 +355,7 @@ cdef class LogStage:
     def getVisible(self) -> bool:
         """Return whether the stage is visible.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -367,9 +367,9 @@ cdef class LogStage:
         return toBool(flag)
 
     def setVisible(self, flag: bool) -> None:
-        """Set the visibility of the stage. 
-        
-        Not Collective.
+        """Set the visibility of the stage.
+
+        Not collective.
 
         Parameters
         ----------
@@ -484,18 +484,18 @@ cdef class LogEvent:
     def __exit__(self, *exc):
         self.end()
 
-    
+
 
     def begin(self, *objs) -> None:
         """Log the beginning of a user event.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
         *objs
             objects associated with the event
-        
+
         See Also
         --------
         petsc.PetscLogEventBegin
@@ -508,13 +508,13 @@ cdef class LogEvent:
     def end(self, *objs) -> None:
         """Log the end of a user event.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
         *objs
             Objects associated with the event.
-        
+
         See Also
         --------
         petsc.PetscLogEventEnd
@@ -542,7 +542,7 @@ cdef class LogEvent:
     def activate(self) -> None:
         """Indicate that the event should be logged.
 
-        Not Collective
+        Not collective.
 
         See Also
         --------
@@ -553,8 +553,8 @@ cdef class LogEvent:
 
     def deactivate(self) -> None:
         """Indicate that the event should not be logged.
-        
-        Not Collective
+
+        Not collective.
 
         See also
         --------
@@ -570,7 +570,7 @@ cdef class LogEvent:
     def setActive(self, flag: bool) -> None:
         """Indicate whether or not the event should logged.
 
-        Not Collective
+        Not collective.
 
         Parameters
         ----------
@@ -604,7 +604,7 @@ cdef class LogEvent:
         ----------
         flag : bool
             Active (if True) or deactivate (if False) the logging of all events.
-        
+
         See Also
         --------
         petsc.PetscLogEventSetActiveAll
@@ -623,7 +623,7 @@ cdef class LogEvent:
     #
 
     def getPerfInfo(self, stage: int | None = None) -> dict:
-        """Get the performance information about the given event in the given event.   
+        """Get the performance information about the given event in the given event.
 
         Parameters
         ----------
@@ -634,7 +634,7 @@ cdef class LogEvent:
         -------
         info : dict
             This structure is filled with the performance information.
-        
+
         See Also
         --------
         petsc.PetscLogEventGetPerfInfo

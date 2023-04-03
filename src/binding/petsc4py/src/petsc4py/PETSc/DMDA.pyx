@@ -209,7 +209,7 @@ cdef class DMDA(DM):
     def setDof(self, dof) -> None:
         """Set the number of degrees of freedom per vertex
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -231,7 +231,6 @@ cdef class DMDA(DM):
 
     def getDof(self):
         """
-        ------------
         getINFO
         Gets information about a given distributed array.
 
@@ -398,20 +397,12 @@ cdef class DMDA(DM):
     def setBoundaryType(self, boundary_type):
         """Set the type of ghost nodes on domain boundaries.
 
-Not Collective
-
         Parameters
         ----------
-da - The DMDA
-bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
-
+        bx
+            bx,by,bz is one of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -428,11 +419,6 @@ bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
         """TODO
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -455,20 +441,14 @@ bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
     def setStencilType(self, stencil_type: StencilType) -> None:
         """Set the type of the communication stencil
 
-Logically Collective
+        Logically collective.
 
         Parameters
         ----------
-da - The DMDA
-stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
+        stype
+            The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
 
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -504,22 +484,13 @@ stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
         return stype
 
     def setStencilWidth(self, stencil_width: int) -> None:
-        """Set the width of the communication stencil
+        """Set the width of the communication stencil.
 
-Logically Collective
-
-        Parameters
-        ----------
-da - The DMDA
-width - The stencil width
-
-
-        Not collective.
+        Logically collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        width - The stencil width
 
         See also
         --------
@@ -655,31 +626,20 @@ width - The stencil width
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     def getOwnershipRanges(self):
-        """Return the ranges of indices in the x, y and z direction that are owned by each process
+        """Return the ranges of indices in the x, y and z direction that are owned by each process.
 
-Not Collective
+        Output Parameters
+        lx - ownership along x direction (optional)
+        ly - ownership along y direction (optional)
+        lz - ownership along z direction (optional)
+        Note
+        These correspond to the optional final arguments passed to DMDACreate(), DMDACreate2d(), DMDACreate3d()
 
-Input Parameter
-da - the DMDA object
-Output Parameters
-lx - ownership along x direction (optional)
-ly - ownership along y direction (optional)
-lz - ownership along z direction (optional)
-Note
-These correspond to the optional final arguments passed to DMDACreate(), DMDACreate2d(), DMDACreate3d()
+        In C you should not free these arrays, nor change the values in them. They will only have valid values while the DMDA they came from still exists (has not been destroyed).
 
-In C you should not free these arrays, nor change the values in them. They will only have valid values while the DMDA they came from still exists (has not been destroyed).
-
-These numbers are NOT multiplied by the number of dof per node.
-
-
+        These numbers are NOT multiplied by the number of dof per node.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -701,28 +661,17 @@ These numbers are NOT multiplied by the number of dof per node.
     def getCorners(self):
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
 
-Not Collective
-
-Input Parameter
-da - the distributed array
-Output Parameters
-x - the corner index for the first dimension
-y - the corner index for the second dimension (only used in 2D and 3D problems)
-z - the corner index for the third dimension (only used in 3D problems)
-m - the width in the first dimension
-n - the width in the second dimension (only used in 2D and 3D problems)
-p - the width in the third dimension (only used in 3D problems)
-Note
-The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
-
-
+        Output Parameters
+        x - the corner index for the first dimension
+        y - the corner index for the second dimension (only used in 2D and 3D problems)
+        z - the corner index for the third dimension (only used in 3D problems)
+        m - the width in the first dimension
+        n - the width in the second dimension (only used in 2D and 3D problems)
+        p - the width in the third dimension (only used in 3D problems)
+        Note
+        The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -740,28 +689,17 @@ The corner information is independent of the number of degrees of freedom per no
     def getGhostCorners(self):
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
 
-Not Collective
-
-Input Parameter
-da - the distributed array
-Output Parameters
-x - the corner index for the first dimension
-y - the corner index for the second dimension (only used in 2D and 3D problems)
-z - the corner index for the third dimension (only used in 3D problems)
-m - the width in the first dimension
-n - the width in the second dimension (only used in 2D and 3D problems)
-p - the width in the third dimension (only used in 3D problems)
-Note
-The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
-
-
+        Output Parameters
+        x - the corner index for the first dimension
+        y - the corner index for the second dimension (only used in 2D and 3D problems)
+        z - the corner index for the third dimension (only used in 3D problems)
+        m - the width in the first dimension
+        n - the width in the second dimension (only used in 2D and 3D problems)
+        p - the width in the third dimension (only used in 3D problems)
+        Note
+        The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -781,24 +719,16 @@ The corner information is independent of the number of degrees of freedom per no
     def setFieldName(self, field: int, name: str) -> None:
         """Set the names of individual field components in multicomponent vectors associated with a DMDA.
 
-Logically Collective; name must contain a common value
+        It must be called after having called DMSetUp().
+
+        Logically collective; name must contain a common value.
 
         Parameters
         ----------
-da - the distributed array
-nf - field number for the DMDA (0, 1, … dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
-names - the name of the field (component)
-Note
-It must be called after having called DMSetUp().
-
-
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        nf
+            field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
+        names
+            the name of the field (component)
 
         See also
         --------
@@ -813,25 +743,16 @@ It must be called after having called DMSetUp().
     def getFieldName(self, field: int) -> str:
         """Return the names of individual field components in multicomponent vectors associated with a DMDA.
 
-Not Collective; name will contain a common value
+        It must be called after having called DMSetUp().
+
+        Not collective; name will contain a common value.
 
         Parameters
         ----------
-da - the distributed array
-nf - field number for the DMDA (0, 1, … dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
-Output Parameter
-names - the name of the field (component)
-Note
-It must be called after having called DMSetUp().
-
-
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        da
+            the distributed array
+        nf
+            field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
 
         See also
         --------
@@ -906,24 +827,18 @@ It must be called after having called DMSetUp().
                                           _zmin, _zmax) )
 
     def setCoordinateName(self, index: int, name: str) -> None:
-        """Set the name of the coordinate directions associated with a DMDA, for example “x” or “y”
+        """Set the name of the coordinate directions associated with a DMDA, for example "x" or "y"
 
-        Logically Collective; name must contain a common value.
+        It must be called after having called DMSetUp().
 
-        Parameters
-        ----------
-        index - coordinate number for the DMDA (0, 1, … dim-1),
-        name - the name of the coordinate
-        Note
-
-
-
-        Not collective.
+        Logically collective; name must contain a common value.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        index
+            coordinate number for the DMDA (0, 1, ... dim-1),
+        name
+            the name of the coordinate
 
         See also
         --------
@@ -938,21 +853,12 @@ It must be called after having called DMSetUp().
     def getCoordinateName(self, index: int) -> str:
         """Return the name of a coordinate direction associated with a DMDA.
 
-Not Collective; name will contain a common value; No Fortran Support
+        Not collective; name will contain a common value; No Fortran Support
 
         Parameters
         ----------
-dm - the DMDA
-nf - number for the DMDA (0, 1, … dim-1)
-Output Parameter
-names - the name of the coordinate direction
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        nf
+            number for the DMDA (0, 1, ... dim-1)
 
         See also
         --------
@@ -969,25 +875,14 @@ names - the name of the coordinate direction
     def createNaturalVec(self) -> Vec:
         """Create a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
 
-Collective
+        The output parameter, g, is a regular PETSc vector that should be destroyed with a call to VecDestroy() when usage is finished.
 
-Input Parameter
-da - the distributed array
-Output Parameter
-g - the distributed global vector
-Notes
-The output parameter, g, is a regular PETSc vector that should be destroyed with a call to VecDestroy() when usage is finished.
+        The number of local entries in the vector on each process is the same as in a vector created with DMCreateGlobalVector().
 
-The number of local entries in the vector on each process is the same as in a vector created with DMCreateGlobalVector().
+        Output Parameter
+        g - the distributed global vector
 
-
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -1004,33 +899,26 @@ The number of local entries in the vector on each process is the same as in a ve
         Vec vn,
         addv: InsertMode | None = None,
     ) -> None:
-        """Map values from the global vector to a global vector in the “natural” grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
+        """Map values from the global vector to a global vector in the "natural" grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
 
-Neighbor-wise Collective
+        Output Parameter
+        l - the natural ordering values
+        l - the natural ordering values
+        l - the global values in the natural ordering
 
-        Parameters
-        ----------
-da - the distributed array context
-g - the global vector
-mode - one of INSERT_VALUES or ADD_VALUES
-Output Parameter
-l - the natural ordering values
-l - the natural ordering values
-l - the global values in the natural ordering
+        Notes
+        The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
 
-Notes
-The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
+        You must call DMDACreateNaturalVector() before using this routine
 
-You must call DMDACreateNaturalVector() before using this routine
-
-
-
-        Not collective.
+        Neighbor-wise collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        g
+            the global vector
+        mode
+            one of INSERT_VALUES or ADD_VALUES
 
         See also
         --------
@@ -1047,28 +935,20 @@ You must call DMDACreateNaturalVector() before using this routine
         Vec vg,
         addv: InsertMode | None = None,
     ) -> None:
-        """Map values from a global vector in the “natural” ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
+        """Map values from a global vector in the "natural" ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
 
-Neighbor-wise Collective
+        Output Parameter
+        l - the values in the DMDA ordering
+        The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
 
-        Parameters
-        ----------
-da - the distributed array context
-g - the global vector in a natural ordering
-mode - one of INSERT_VALUES or ADD_VALUES
-Output Parameter
-l - the values in the DMDA ordering
-Notes
-The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
-
-
-
-        Not collective.
+        Neighbor-wise collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        g
+            the global vector in a natural ordering
+        mode
+            one of INSERT_VALUES or ADD_VALUES
 
         See also
         --------
@@ -1084,23 +964,14 @@ The global and natural vectors used here need not be the same as those obtained 
     def getAO(self) -> AO:
         """Return the application ordering context for a distributed array.
 
-Collective
+        In this case, the AO maps to the natural grid ordering that would be used for the DMDA if only 1 processor were employed (ordering most rapidly in the x-direction, then y, then z). Multiple degrees of freedom are numbered for each node (rather than 1 component for the whole grid, then the next component, etc.)
 
-Input Parameter
-da - the distributed array
-Output Parameter
-ao - the application ordering context for DMDA
-Notes
-In this case, the AO maps to the natural grid ordering that would be used for the DMDA if only 1 processor were employed (ordering most rapidly in the x-direction, then y, then z). Multiple degrees of freedom are numbered for each node (rather than 1 component for the whole grid, then the next component, etc.)
+        Do NOT call AODestroy() on the ao returned by this function.
 
-Do NOT call AODestroy() on the ao returned by this function.
+        Output Parameter
+        ao - the application ordering context for DMDA
 
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -1115,24 +986,13 @@ Do NOT call AODestroy() on the ao returned by this function.
     def getScatter(self) -> tuple[Scatter, Scatter]:
         """Return the global-to-local, and local-to-local vector scatter contexts for a distributed array.
 
-Collective
+        The output contexts are valid only as long as the input da is valid. If you delete the da, the scatter contexts will become invalid.
 
-Input Parameter
-da - the distributed array
-Output Parameters
-gtol - global-to-local scatter context (may be NULL)
-ltol - local-to-local scatter context (may be NULL)
-Note
-The output contexts are valid only as long as the input da is valid. If you delete the da, the scatter contexts will become invalid.
+        Output Parameters
+        gtol - global-to-local scatter context (may be NULL)
+        ltol - local-to-local scatter context (may be NULL)
 
-
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        Collective.
 
         See also
         --------
@@ -1156,30 +1016,18 @@ The output contexts are valid only as long as the input da is valid. If you dele
     ) -> None:
         """Set the ratios that the DMDA grid is refined
 
-Logically Collective
+        Pass PETSC_IGNORE to leave a value unchanged
+
+        Logically collective.
 
         Parameters
         ----------
-da - the DMDA object
-refine_x - ratio of fine grid to coarse in x direction (2 by default)
-refine_y - ratio of fine grid to coarse in y direction (2 by default)
-refine_z - ratio of fine grid to coarse in z direction (2 by default)
-Options Database Keys
--da_refine_x refine_x - refinement ratio in x direction
--da_refine_y rafine_y - refinement ratio in y direction
--da_refine_z refine_z - refinement ratio in z direction
--da_refine - refine the DMDA object n times when it is created.
-Note
-Pass PETSC_IGNORE to leave a value unchanged
-
-
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        refine_x
+            ratio of fine grid to coarse in x direction (2 by default)
+        refine_y
+            ratio of fine grid to coarse in y direction (2 by default)
+        refine_z
+            ratio of fine grid to coarse in z direction (2 by default)
 
         See also
         --------
@@ -1196,27 +1044,19 @@ Pass PETSC_IGNORE to leave a value unchanged
                                       refine[2]) )
 
     def getRefinementFactor(self):
-        """Return the ratios that the DMDA grid is refined
+        """Return the ratios that the DMDA grid is refined.
 
-Not Collective
+        Pass NULL for values you do not need.
 
-Input Parameter
-da - the DMDA object
-Output Parameters
-refine_x - ratio of fine grid to coarse in x direction (2 by default)
-refine_y - ratio of fine grid to coarse in y direction (2 by default)
-refine_z - ratio of fine grid to coarse in z direction (2 by default)
-Note
-Pass NULL for values you do not need
-
-
+        Output Parameters
+        refine_x
+            ratio of fine grid to coarse in x direction (2 by default)
+        refine_y
+            ratio of fine grid to coarse in y direction (2 by default)
+        refine_z
+            ratio of fine grid to coarse in z direction (2 by default)
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -1232,25 +1072,15 @@ Pass NULL for values you do not need
         return tuple([toInt(refine[i]) for 0 <= i < dim])
 
     def setInterpolationType(self, interp_type: InterpolationType) -> None:
-        """Set the type of interpolation that will be returned by DMCreateInterpolation()
+        """Set the type of interpolation that will be returned by DMCreateInterpolation().
 
-Logically Collective
+        You should call this on the coarser of the two DMDA you pass to DMCreateInterpolation().
 
-        Parameters
-        ----------
-da - initial distributed array
-ctype - DMDA_Q1 and DMDA_Q0 are currently the only supported forms
-Note
-You should call this on the coarser of the two DMDA you pass to DMCreateInterpolation()
-
-
-
-        Not collective.
+        Logically collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        ctype - DMDA_Q1 and DMDA_Q0 are currently the only supported forms.
 
         See also
         --------
@@ -1263,20 +1093,10 @@ You should call this on the coarser of the two DMDA you pass to DMCreateInterpol
     def getInterpolationType(self):
         """Return the type of interpolation that will be used by DMCreateInterpolation()
 
-Not Collective
-
-Input Parameter
-da - distributed array
-Output Parameter
-ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported forms)
-
+        Output Parameter
+        ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported forms)
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -1292,20 +1112,10 @@ ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported
     def setElementType(self, elem_type: ElementType) -> None:
         """Set the element type to be returned by DMDAGetElements()
 
-Not Collective
-
-Input Parameter
-da - the DMDA object
-Output Parameter
-etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
-
+        Output Parameter
+        etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -1318,20 +1128,10 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
     def getElementType(self):
         """Return the element type to be returned by DMDAGetElements()
 
-Not Collective
-
-Input Parameter
-da - the DMDA object
-Output Parameter
-etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
-
+        Output Parameter
+        etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -1343,24 +1143,19 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
         return <long>ival
 
     def getElements(self, elem_type: ElementType | None = None):
-        """Return an array containing the indices (in local coordinates) of all the local elements
-
-Not Collective; No Fortran Support
-
-Input Parameter
-dm - the DMDA object
-Output Parameters
-nel - number of local elements
-nen - number of element nodes
-e - the local indices of the elements’ vertices
-Notes
-Call DMDARestoreElements() once you have finished accessing the elements.
-
-Each process uniquely owns a subset of the elements. That is no element is owned by two or more processes.
-
-If on each process you integrate over its owned elements and use ADD_VALUES in Vec/MatSetValuesLocal() then you’ll obtain the correct result.
+        """Return an array containing the indices (in local coordinates) of all the local elements.
 
 
+        Call DMDARestoreElements() once you have finished accessing the elements.
+
+        Each process uniquely owns a subset of the elements. That is no element is owned by two or more processes.
+
+        If on each process you integrate over its owned elements and use ADD_VALUES in Vec/MatSetValuesLocal() then you'll obtain the correct result.
+
+        Output Parameters
+        nel - number of local elements
+        nen - number of element nodes
+        e - the local indices of the elements’ vertices
 
         Not collective.
 
