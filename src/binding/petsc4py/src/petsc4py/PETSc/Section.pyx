@@ -31,7 +31,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionView(self.sec, vwr) )
 
     def destroy(self) -> Self:
-        """Free a section object and free its range if that exists.
+        """Destroy a section.
 
         Not collective.
 
