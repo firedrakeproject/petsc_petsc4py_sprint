@@ -132,7 +132,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionGetNumFields, setNumFields
+        setNumFields, petsc.PetscSectionGetNumFields
 
         """
         cdef PetscInt numFields = 0
