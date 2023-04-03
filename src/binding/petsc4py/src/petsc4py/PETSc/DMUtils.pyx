@@ -28,6 +28,7 @@ cdef class DMInterpolation:
         cdef PetscDMInterpolation new = NULL
         CHKERR( DMInterpolationCreate(ccomm, &new) )
         self.dminterp = new
+        return self
 
     def destroy(self) -> None:
         """Destroy the `DMInterpolation` context.
