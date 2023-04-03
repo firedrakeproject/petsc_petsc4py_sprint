@@ -56,8 +56,8 @@ cdef class AO(Object):
     ) -> Self:
         """Return a basic application ordering using two orderings.
 
-        The arrays/indices **app** and **petsc** must contain all the integers
-        0 to **len(app)-1** with no duplicates; that is there cannot be any
+        The arrays/indices ``app`` and ``petsc`` must contain all the integers
+        ``0`` to ``len(app)-1`` with no duplicates; that is there cannot be any
         "holes" in the indices. Use ``createMapping`` if you wish to have
         "holes" in the indices.
 
@@ -106,8 +106,8 @@ cdef class AO(Object):
     ) -> Self:
         """Return a memory scalable application ordering using two orderings.
 
-        The arrays/indices **app** and **petsc** must contain all the integers
-        0 to **len(app)-1** with no duplicates; that is there cannot be any
+        The arrays/indices ``app`` and ``petsc`` must contain all the integers
+        ``0`` to ``len(app)-1*`` with no duplicates; that is there cannot be any
         "holes" in the indices. Use ``createMapping`` if you wish to have
         "holes" in the indices.
 
@@ -159,8 +159,8 @@ cdef class AO(Object):
     ) -> Self:
         """Return an application mapping using two orderings.
 
-        The arrays *app** and **petsc** need NOT contain all the integers 0
-        to **len(app)-1**, that is there CAN be "holes" in the indices.
+        The arrays ``app`` and ``petsc`` need NOT contain all the integers ``0``
+        to ``len(app)-1``, that is there CAN be "holes" in the indices.
         Use ``createBasic`` if they do not have holes for better performance.
 
         Parameters
