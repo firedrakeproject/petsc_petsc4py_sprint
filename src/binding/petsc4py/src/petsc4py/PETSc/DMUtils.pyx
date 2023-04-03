@@ -41,6 +41,7 @@ cdef class DMInterpolation:
 
         """
         CHKERR( DMInterpolationDestroy(&self.dminterp))
+        return self
 
     def evaluate(self, DM dm, Vec x) -> Vec:
         """Calculate interpolated field values at the interpolation points.
