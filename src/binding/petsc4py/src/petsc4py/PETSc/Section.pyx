@@ -100,7 +100,7 @@ cdef class Section(Object):
     def setUp(self) -> None:
         """Calculate offsets.
 
-        Based on the number of degrees of freedom for each point.
+        Offsets are based  on the number of degrees of freedom for each point.
 
         Not collective.
 
@@ -281,7 +281,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetChart(self.sec, cStart, cEnd) )
 
     def getPermutation(self) -> IS:
-        """Return the permutation of that was set with `setPermutation`.
+        """Return the permutation that was set with `setPermutation`.
 
         The permutation is [0, pEnd - pStart) or `None`.
 
@@ -317,8 +317,8 @@ cdef class Section(Object):
     def getDof(self, point: int) -> int:
         """Return the number of degrees of freedom for a given point.
 
-        In a global section, this size will be negative for points not owned by
-        this process.
+        In a global section, this value will be negative for points not owned
+        by this process.
 
         Not collective.
 
@@ -358,7 +358,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetDof(self.sec,cpoint,cnumDof) )
 
     def addDof(self, point: int, numDof: int) -> None:
-        """Add N degrees of freedom associated with a given point.
+        """Add ``numDof`` degrees of freedom associated with a given point.
 
         Not collective.
 
@@ -425,7 +425,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldDof(self.sec,cpoint,cfield,cnumDof) )
 
     def addFieldDof(self, point: int, field: int, numDof: int) -> None:
-        """Add a number of dof associated with a field on a given point.
+        """Add ``numDof`` dof associated with a field on a given point.
 
         Not collective.
 
@@ -552,7 +552,8 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetFieldConstraintDof, getFieldConstraintDof, addFieldConstraintDof
+        petsc.PetscSectionSetFieldConstraintDof, getFieldConstraintDof,
+        addFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -566,7 +567,7 @@ cdef class Section(Object):
         field: int,
         numDof: int,
     ) -> None:
-        """Increment the number of constrained dof for a given field on a point.
+        """Add ``numDof`` constrained dof for a given field on a point.
 
         Not collective.
 
@@ -581,7 +582,8 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionAddFieldConstraintDof, setFieldConstraintDof, getFieldConstraintDof
+        petsc.PetscSectionAddFieldConstraintDof, setFieldConstraintDof,
+        getFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -593,10 +595,6 @@ cdef class Section(Object):
         """Return the point dof numbers which are constrained for a given point.
 
         The range is in [0, dof).
-
-        Output Parameter
-        indices
-        The constrained dofs.
 
         Not collective.
 
@@ -644,7 +642,7 @@ cdef class Section(Object):
     def getFieldConstraintIndices(self, point: int, field: int) -> ArrayInt:
         """Return the field dof numbers, in [0, fdof), which are constrained.
 
-        (The constrained dofs. sorted in ascending order)
+        The constrained dofs are sorted in ascending order.
 
         Not collective.
 
@@ -702,8 +700,6 @@ cdef class Section(Object):
 
     def getMaxDof(self) -> int:
         """Return the maximum number of dof on any point in the section.
-
-        The returned number is up-to-date without need for PetscSectionSetUp().
 
         Not collective.
 
@@ -769,7 +765,7 @@ cdef class Section(Object):
     def setOffset(self, point: int, offset: int) -> None:
         """Set the offset for the dof associated with the given point.
 
-        The user usually does not call this function, but uses sectionSetUp()
+        The user usually does not call this function, but uses `setUp`.
 
         Not collective.
 
@@ -792,11 +788,8 @@ cdef class Section(Object):
     def getFieldOffset(self, point: int, field: int) -> int:
         """Return the offset for the field dof on the given point.
 
-        In a global section, this offset will be negative for points not owned by this process.
-
-        Output Parameter
-        offset
-        The offset.
+        In a global section, this offset will be negative for points not owned
+        by this process.
 
         Not collective.
 
@@ -809,7 +802,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionGetFieldOffset
+        petsc.PetscSectionGetFieldOffset, setFieldOffset
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -836,7 +829,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetFieldOffset
+        petsc.PetscSectionSetFieldOffset, getFieldOffset
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -845,7 +838,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldOffset(self.sec,cpoint,cfield,coffset) )
 
     def getOffsetRange(self) -> tuple[int,int]:
-        """Return the full range of offsets [start, end) for a section.
+        """Return the full range of offsets, [start, end), for a section.
 
         Not collective.
 
@@ -860,19 +853,26 @@ cdef class Section(Object):
 
     # FIXME: Hardcoded PETSC_FALSE parameters
     def createGlobalSection(self, SF sf) -> Section:
-        """Create a section describing the global field layout using the local section and a PetscSF describing the section point overlap.
-        gsection - The PetscSection for the global field layout
+        """Create a section describing the global field layout.
 
-        If we have a set of local sections defining the layout of a set of local vectors, and also a PetscSF to determine which section points are shared and the ownership, we can calculate a global section defining the parallel data layout, and the associated global vector.
+        The section describes the global field layout using the local section
+        and an `SF` describing the section point overlap.
 
-        This gives negative sizes and offsets to points not owned by this process.
+        If we have a set of local sections defining the layout of a set of
+        local vectors, and also an `SF` to determine which section points are
+        shared and the ownership, we can calculate a global section defining
+        the parallel data layout, and the associated global vector.
 
-        includeConstraints and localOffsets parameters of the C API are here set to `False`.
+        This gives negative sizes and offsets to points not owned by this
+        process.
+
+        ``includeConstraints`` and ``localOffsets`` parameters of the C API
+        are always set to `False`.
 
         Parameters
         ----------
         sf
-            The PetscSF describing parallel layout of the section points
+            The `SF` describing parallel layout of the section points
             (leaves are unowned local points).
 
         See also
