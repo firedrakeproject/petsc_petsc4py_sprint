@@ -875,7 +875,7 @@ cdef class Section(Object):
             The `SF` describing the parallel layout of the section points
             (leaves are unowned local points).
 
-        See also
+        See Also
         --------
         petsc.PetscSectionCreateGlobalSection
 
