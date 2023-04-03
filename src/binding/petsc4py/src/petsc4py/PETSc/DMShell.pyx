@@ -147,7 +147,7 @@ cdef class DMShell(DM):
         begin_kargs: dict[str, Any] | None = None,
         end_args: tuple[Any, ...] | None = None,
         end_kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routines used to perform a global to local scatter.
 
         Logically collective on the DM.
@@ -189,7 +189,7 @@ cdef class DMShell(DM):
             cend = &DMSHELL_GlobalToLocalEnd
         CHKERR( DMShellSetGlobalToLocal(self.dm, cbegin, cend) )
 
-    def setGlobalToLocalVecScatter(self, Scatter gtol):
+    def setGlobalToLocalVecScatter(self, Scatter gtol) -> None:
         """Set a `Scatter` context for global to local communication.
 
         Logically collective on the DM.
@@ -214,7 +214,7 @@ cdef class DMShell(DM):
         begin_kargs: dict[str, Any] | None = None,
         end_args: tuple[Any, ...] | None = None,
         end_kargs: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Set the routines used to perform a local to global scatter.
 
         Logically collective on the DM.
@@ -254,7 +254,7 @@ cdef class DMShell(DM):
             cend = &DMSHELL_LocalToGlobalEnd
         CHKERR( DMShellSetLocalToGlobal(self.dm, cbegin, cend) )
 
-    def setLocalToGlobalVecScatter(self, Scatter ltog):
+    def setLocalToGlobalVecScatter(self, Scatter ltog) -> None:
         """Set a `Scatter` context for local to global communication.
 
         Logically collective on the DM.
@@ -321,7 +321,7 @@ cdef class DMShell(DM):
             cend = &DMSHELL_LocalToLocalEnd
         CHKERR( DMShellSetLocalToLocal(self.dm, cbegin, cend) )
 
-    def setLocalToLocalVecScatter(self, Scatter ltol):
+    def setLocalToLocalVecScatter(self, Scatter ltol) -> None:
         """Set a ``Scatter`` context for local to local communication.
 
         Logically collective.
