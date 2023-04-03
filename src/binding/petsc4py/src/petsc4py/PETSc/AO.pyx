@@ -9,7 +9,7 @@ class AOType(object):
 # --------------------------------------------------------------------
 
 cdef class AO(Object):
-    """An application ordering."""
+    """Application ordering object."""
     Type = AOType
 
     def __cinit__(self):
