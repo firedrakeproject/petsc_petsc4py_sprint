@@ -334,7 +334,7 @@ cdef class Mat(Object):
         CHKERR( MatView(self.mat, vwr) )
 
     def destroy(self) -> Self:
-        """Destroy the matrix and free its memory.
+        """Destroy the matrix.
 
         Collective.
 
