@@ -31,7 +31,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionView(self.sec, vwr) )
 
     def destroy(self) -> Self:
-        """Free a section object and frees its range if that exists.
+        """Free a section object and free its range if that exists.
 
         Not collective.
 
@@ -55,7 +55,13 @@ cdef class Section(Object):
         - `getOffset`
         - `destroy`
 
-        The PetscSection object and methods are intended to be used in the PETSc Vec and Mat implementations. The indices returned by the PetscSection are appropriate for the kind of Vec it is associated with. For example, if the vector being indexed is a local vector, we call the section a local section. If the section indexes a global vector, we call it a global section. For parallel vectors, like global vectors, we use negative indices to indicate dofs owned by other processes.
+        The `Section` object and methods are intended to be used in the PETSc
+        Vec and Mat implementations. The indices returned by the `Section` are
+        appropriate for the kind of `Vec` it is associated with. For example,
+        if the vector being indexed is a local vector, we call the section a
+        local section. If the section indexes a global vector, we call it a
+        global section. For parallel vectors, like global vectors, we use
+        negative indices to indicate dofs owned by other processes.
 
         Collective.
 
@@ -76,7 +82,9 @@ cdef class Section(Object):
         return self
 
     def clone(self) -> Section:
-        """Return a shallow (if possible) copy of the section.
+        """Return a copy of the section.
+
+        The copy is shallow, if possible.
 
         Collective.
 
@@ -90,7 +98,9 @@ cdef class Section(Object):
         return sec
 
     def setUp(self) -> None:
-        """Calculate offsets based upon the number of degrees of freedom for each point.
+        """Calculate offsets.
+
+        Based on the number of degrees of freedom for each point.
 
         Not collective.
 
@@ -230,7 +240,10 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldComponents(self.sec,cfield,cnumComp) )
 
     def getChart(self) -> tuple[int, int]:
-        """Return the range [pStart, pEnd) in which points (indices) lie for this section.
+        """Return the range in which points (indices) lie for this section.
+
+        The range is [pStart, pEnd), i.e., from the first point to one past the
+        last point.
 
         Not collective.
 
@@ -244,7 +257,10 @@ cdef class Section(Object):
         return toInt(pStart), toInt(pEnd)
 
     def setChart(self, pStart: int, pEnd: int) -> None:
-        """Set the range [pStart, pEnd) in which points (indices) lie for this section.
+        """Set the range in which points (indices) lie for this section.
+
+        The range is [pStart, pEnd), i.e., from the first point to one past the
+        last point.
 
         Not collective.
 
@@ -265,7 +281,9 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetChart(self.sec, cStart, cEnd) )
 
     def getPermutation(self) -> IS:
-        """Return the permutation of [0, pEnd - pStart) or NULL that was set with `setPermutation`.
+        """Return the permutation of that was set with `setPermutation`.
+
+        The permutation is [0, pEnd - pStart) or `None`.
 
         Not collective.
 
@@ -297,9 +315,10 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetPermutation(self.sec, perm.iset))
 
     def getDof(self, point: int) -> int:
-        """Return the number of degrees of freedom associated with a given point.
+        """Return the number of degrees of freedom for a given point.
 
-        In a global section, this size will be negative for points not owned by this process.
+        In a global section, this size will be negative for points not owned by
+        this process.
 
         Not collective.
 
@@ -339,7 +358,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetDof(self.sec,cpoint,cnumDof) )
 
     def addDof(self, point: int, numDof: int) -> None:
-        """Add to the number of degrees of freedom associated with a given point.
+        """Add N degrees of freedom associated with a given point.
 
         Not collective.
 
@@ -360,7 +379,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddDof(self.sec,cpoint,cnumDof) )
 
     def getFieldDof(self, point: int, field: int) -> int:
-        """Return the number of degrees of freedom associated with a field on a given point.
+        """Return the number of dof associated with a field on a given point.
 
         Not collective.
 
@@ -382,7 +401,7 @@ cdef class Section(Object):
         return toInt(cnumDof)
 
     def setFieldDof(self, point: int, field: int, numDof: int) -> None:
-        """Set the number of degrees of freedom associated with a field on a given point.
+        """Set the number of dof associated with a field on a given point.
 
         Not collective.
 
@@ -406,7 +425,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldDof(self.sec,cpoint,cfield,cnumDof) )
 
     def addFieldDof(self, point: int, field: int, numDof: int) -> None:
-        """Add a number of degrees of freedom associated with a field on a given point.
+        """Add a number of dof associated with a field on a given point.
 
         Not collective.
 
@@ -430,7 +449,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddFieldDof(self.sec,cpoint,cfield,cnumDof) )
 
     def getConstraintDof(self, point: int) -> int:
-        """Return the number of constrained degrees of freedom associated with a given point.
+        """Return the number of constrained dof associated with a given point.
 
         Not collective.
 
@@ -449,7 +468,7 @@ cdef class Section(Object):
         return toInt(cnumDof)
 
     def setConstraintDof(self, point: int, numDof: int) -> None:
-        """Set the number of constrained degrees of freedom associated with a given point.
+        """Set the number of constrained dof associated with a given point.
 
         Not collective.
 
@@ -470,7 +489,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetConstraintDof(self.sec,cpoint,cnumDof) )
 
     def addConstraintDof(self, point: int, numDof: int) -> None:
-        """Increment the number of constrained degrees of freedom associated with a given point.
+        """Increment the number of constrained dof for a given point.
 
         Not collective.
 
@@ -491,7 +510,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddConstraintDof(self.sec,cpoint,cnumDof) )
 
     def getFieldConstraintDof(self, point: int, field: int) -> int:
-        """Return the number of constrained degrees of freedom associated with a given field on a point.
+        """Return the number of constrained dof for a given field on a point.
 
         Not collective.
 
@@ -518,7 +537,7 @@ cdef class Section(Object):
         field: int,
         numDof: int,
     ) -> None:
-        """Set the number of constrained degrees of freedom associated with a given field on a point.
+        """Set the number of constrained dof for a given field on a point.
 
         Not collective.
 
@@ -547,7 +566,7 @@ cdef class Section(Object):
         field: int,
         numDof: int,
     ) -> None:
-        """Increment the number of constrained degrees of freedom associated with a given field on a point.
+        """Increment the number of constrained dof for a given field on a point.
 
         Not collective.
 
@@ -571,7 +590,9 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddFieldConstraintDof(self.sec,cpoint,cfield,cnumDof) )
 
     def getConstraintIndices(self, point: int) -> ArrayInt:
-        """Return the point dof numbers, in [0, dof), which are constrained for a given point.
+        """Return the point dof numbers which are constrained for a given point.
+
+        The range is in [0, dof).
 
         Output Parameter
         indices
@@ -680,7 +701,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldConstraintIndices(self.sec,cpoint,cfield,cindices) )
 
     def getMaxDof(self) -> int:
-        """Return the maximum number of degrees of freedom on any point in the section.
+        """Return the maximum number of dof on any point in the section.
 
         The returned number is up-to-date without need for PetscSectionSetUp().
 
@@ -696,7 +717,7 @@ cdef class Section(Object):
         return toInt(maxDof)
 
     def getStorageSize(self) -> int:
-        """Return the size of an array or local Vec capable of holding all the degrees of freedom defined in a section.
+        """Return the size capable of holding all the dof defined in a section.
 
         Not collective.
 
@@ -710,7 +731,7 @@ cdef class Section(Object):
         return toInt(size)
 
     def getConstrainedStorageSize(self) -> int:
-        """Return the size of an array or local Vec capable of holding all unconstrained degrees of freedom in a section.
+        """Return the size capable of holding all unconstrained dof in a section.
 
         Not collective.
 
@@ -724,7 +745,7 @@ cdef class Section(Object):
         return toInt(size)
 
     def getOffset(self, point: int) -> int:
-        """Return the offset into an array or Vec for the dof associated with the given point.
+        """Return the offset for the dof associated with the given point.
 
         In a global section, this offset will be negative for points not owned
         by this process.
@@ -746,7 +767,7 @@ cdef class Section(Object):
         return toInt(offset)
 
     def setOffset(self, point: int, offset: int) -> None:
-        """Set the offset into an array or Vec for the dof associated with the given point.
+        """Set the offset for the dof associated with the given point.
 
         The user usually does not call this function, but uses sectionSetUp()
 
@@ -769,7 +790,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetOffset(self.sec,cpoint,coffset) )
 
     def getFieldOffset(self, point: int, field: int) -> int:
-        """Return the offset into an array or Vec for the field dof associated with the given point.
+        """Return the offset for the field dof on the given point.
 
         In a global section, this offset will be negative for points not owned by this process.
 
@@ -798,7 +819,7 @@ cdef class Section(Object):
         return toInt(offset)
 
     def setFieldOffset(self, point: int, field: int, offset: int) -> None:
-        """Set the offset into an array or Vec for the dof associated with the given field at a point.
+        """Set the offset for the dof on the given field at a point.
 
         The user usually does not call this function, but uses `setUp`.
 
