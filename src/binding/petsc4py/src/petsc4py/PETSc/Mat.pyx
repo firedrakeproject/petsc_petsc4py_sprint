@@ -2977,7 +2977,7 @@ cdef class Mat(Object):
         return toInt(nrows), toInt(ncols)
 
     def getNestISs(self) -> tuple[list[IS], list[IS]]:
-        """Return the `IS` sets partitioning the row and column spaces.
+        """Return the index sets representing the row and column spaces.
 
         Not collective.
 
