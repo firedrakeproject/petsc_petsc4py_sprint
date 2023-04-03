@@ -2197,7 +2197,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatMatMult
+        petsc.MatMatMult, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
