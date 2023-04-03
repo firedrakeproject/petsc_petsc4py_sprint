@@ -43,7 +43,7 @@ cdef class DMStag(DM):
     StencilLocation   = DMStagStencilLocation
 
     # TODO: can someone please double check descriptions in Parameters?
-    # TODO: do all see alsos render? they didn't before
+    # TODO: do all See Alsos render? they didn't before
     def create(
         self,
         dim,
@@ -90,7 +90,7 @@ cdef class DMStag(DM):
         setUp
             Whether to call the setup routine after creating the object.
 
-        See also
+        See Also
         --------
         petsc.DMStagCreate1d, petsc.DMStagCreate2d, petsc.DMStagCreate3d,
         petsc.DMSetUp
@@ -170,7 +170,7 @@ cdef class DMStag(DM):
         swidth
             Stencil/halo/ghost width in elements.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetStencilWidth
 
@@ -188,7 +188,7 @@ cdef class DMStag(DM):
         stenciltype
             The elementwise ghost stencil type.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetStencilType
 
@@ -209,7 +209,7 @@ cdef class DMStag(DM):
         boundary_types
             Boundary types for x/y/z directions.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetBoundaryTypes
 
@@ -235,7 +235,7 @@ cdef class DMStag(DM):
             1D, edge in 2D and 3D), 2-cell (element in 2D, face in 3D), or
             3-cell (element in 3D).
 
-        See also
+        See Also
         --------
         petsc.DMStagSetDOF
 
@@ -258,7 +258,7 @@ cdef class DMStag(DM):
         sizes
             Global elementwise size in the x/y/z directions.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetGlobalSizes
 
@@ -283,7 +283,7 @@ cdef class DMStag(DM):
         sizes
             Number of ranks in the x/y/z directions.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetNumRanks
 
@@ -306,7 +306,7 @@ cdef class DMStag(DM):
         ranges
             Element counts for each rank in the x/y/z directions.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetOwnershipRanges
 
@@ -330,7 +330,7 @@ cdef class DMStag(DM):
         TODO
             TODO.
 
-        See also
+        See Also
         --------
         ``TODO``
 
@@ -348,7 +348,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetEntriesPerElement
 
@@ -362,7 +362,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetStencilWidth
 
@@ -376,7 +376,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetDOF
 
@@ -409,7 +409,7 @@ cdef class DMStag(DM):
         ? nExtray    number of extra partial elements in second direction
         ? nExtraz    number of extra partial elements in third direction
 
-        See also
+        See Also
         --------
         petsc.DMStagGetCorners, petsc.DMGetDimension
 
@@ -433,7 +433,7 @@ cdef class DMStag(DM):
         ? n    the element width in the second direction
         ? p    the element width in the third direction
 
-        See also
+        See Also
         --------
         petsc.DMStagGetGhostCorners
 
@@ -450,7 +450,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetLocalSizes
 
@@ -465,7 +465,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetGlobalSizes
 
@@ -480,7 +480,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetNumRanks
 
@@ -495,7 +495,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetStencilType
 
@@ -509,7 +509,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetOwnershipRanges
 
@@ -526,7 +526,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetBoundaryTypes
 
@@ -544,7 +544,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetIsFirstRank
 
@@ -560,7 +560,7 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetIsLastRank
 
@@ -601,7 +601,7 @@ cdef class DMStag(DM):
         zmax
             The maximum global coordinate value in the z direction.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetUniformCoordinatesExplicit,
         setUniformCoordinatesProduct, setUniformCoordinates
@@ -644,7 +644,7 @@ cdef class DMStag(DM):
         zmax
             The maximum global coordinate value in the z direction.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetUniformCoordinatesProduct,
         setUniformCoordinatesExplicit, setUniformCoordinates
@@ -692,7 +692,7 @@ cdef class DMStag(DM):
         zmax
             The maximum global coordinate value in the z direction.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetUniformCoordinates
 
@@ -712,7 +712,7 @@ cdef class DMStag(DM):
         dmtype
             The type for coordinates.
 
-        See also
+        See Also
         --------
         petsc.DMStagSetCoordinateDMType
 
@@ -735,7 +735,7 @@ cdef class DMStag(DM):
         c
             Component.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetLocationSlot
 
@@ -756,7 +756,7 @@ cdef class DMStag(DM):
         loc
             The grid location.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetProductCoordinateLocationSlot
 
@@ -776,7 +776,7 @@ cdef class DMStag(DM):
         loc
             The grid point.
 
-        See also
+        See Also
         --------
         petsc.DMStagGetLocationDOF
 
@@ -804,7 +804,7 @@ cdef class DMStag(DM):
         vecTo
             The destination vector.
 
-        See also
+        See Also
         --------
         petsc.DMStagMigrateVec
 
@@ -821,7 +821,7 @@ cdef class DMStag(DM):
         dofs
             The number of dof on the strata  in the new DMSTAG.
 
-        See also
+        See Also
         --------
         petsc.DMStagCreateCompatibleDMStag
 
@@ -858,7 +858,7 @@ cdef class DMStag(DM):
         c
             Which component to extract.
 
-        See also
+        See Also
         --------
         petsc.DMStagVecSplitToDMDA
 
