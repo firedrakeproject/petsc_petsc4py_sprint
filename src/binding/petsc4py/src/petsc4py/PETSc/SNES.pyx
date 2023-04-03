@@ -1082,7 +1082,7 @@ cdef class SNES(Object):
     def setNormSchedule(self, normsched: NormSchedule) -> None:
         """Set the norm schedule.
 
-        Collective.
+        Collective
 
         See Also
         --------
@@ -1094,7 +1094,7 @@ cdef class SNES(Object):
     def getNormSchedule(self) -> NormSchedule:
         """Return the norm schedule.
 
-        Not collective.
+        Not collective
 
         See Also
         --------
@@ -1209,7 +1209,7 @@ cdef class SNES(Object):
     def getConvergenceHistory(self) -> tuple[ArrayReal, ArrayInt]:
         """Return the convergence history.
 
-        Not collective.
+        Not collective
 
         See Also
         --------
