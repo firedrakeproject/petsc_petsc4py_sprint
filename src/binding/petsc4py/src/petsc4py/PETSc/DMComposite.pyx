@@ -3,17 +3,15 @@
 cdef class DMComposite(DM):
     """A DM object that is used to manage data for a collection of DMs."""
 
-    def create(self, comm: Comm | None = None) -> None:
+    def create(self, comm: Comm | None = None) -> Self:
         """Create a composite object.
-
-        It is used to generate composite vectors made up of several subvectors.
 
         Collective.
 
         Parameters
         ----------
         comm
-            The communicator of processors that will share the global vector.
+            The communicator of processors that will share the DM.
 
         See also
         --------

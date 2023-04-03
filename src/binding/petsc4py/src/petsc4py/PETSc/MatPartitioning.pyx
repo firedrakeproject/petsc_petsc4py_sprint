@@ -109,7 +109,7 @@ cdef class MatPartitioning(Object):
         CHKERR( MatPartitioningGetType(self.part, &cval) )
         return bytes2str(cval)
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
         """Set parameters in the partitioner from the options database.
 
         Collective.
