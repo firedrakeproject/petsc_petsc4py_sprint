@@ -170,7 +170,7 @@ cdef class Scatter(Object):
         """
         CHKERR( VecScatterSetFromOptions(self.sct) )
 
-    def setUp(self) -> None:
+    def setUp(self) -> Self:
         """Set up the internal data structures for using the scatter.
 
         Collective.
