@@ -441,7 +441,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.setBlockSize, Mat.setBlockSizes
+        setBlockSize, setBlockSizes
         petsc.MatSetSizes, petsc.MatSetBlockSize, petsc.MatSetBlockSizes
 
         """
@@ -466,7 +466,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.setBlockSizes, Mat.setSizes, petsc.MatSetBlockSize
+        setBlockSizes, setSizes, petsc.MatSetBlockSize
 
         """
         cdef PetscInt bs = asInt(bsize)
@@ -494,7 +494,7 @@ cdef class Mat(Object):
         CHKERR( MatSetBlockSizes(self.mat, rbs, cbs) )
 
     def setVecType(self, vec_type: Vec.Type | str) -> None:
-        """Set the vector type the matrix returns with `Mat.createVecs`.
+        """Set the vector type the matrix returns with `createVecs`.
 
         Collective.
 
@@ -510,7 +510,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.getVecType, petsc.MatSetVecType
+        getVecType, petsc.MatSetVecType
 
         """
         cdef PetscVecType cval = NULL
@@ -524,7 +524,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.setVecType, petsc.MatGetVecType
+        setVecType, petsc.MatGetVecType
 
         """
         cdef PetscVecType cval = NULL
@@ -554,19 +554,19 @@ cdef class Mat(Object):
         Parameters
         ----------
         size, bsize
-            Matrix size attributes. See `Mat.setSizes` for usage information.
+            Matrix size attributes. See `setSizes` for usage information.
         nnz
-            Non-zero preallocation pattern. See `Mat.setPreallocationNNZ` for
+            Non-zero preallocation pattern. See `setPreallocationNNZ` for
             usage information.
         csr
             Compressed sparse row layout information. See
-            `Mat.setPreallocationCSR` for usage information.
+            `setPreallocationCSR` for usage information.
         comm
             MPI communicators, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        Mat.createBAIJ
+        createBAIJ
         petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ, petsc.MatCreateAIJ
         petsc.MatSeqAIJSetPreallocation, petsc.MatSeqAIJSetPreallocationCSR
 
@@ -594,12 +594,12 @@ cdef class Mat(Object):
         Parameters
         ----------
         size, bsize, nnz, csr, comm
-            See `Mat.createAIJ` for information on the meaning of the
+            See `createAIJ` for information on the meaning of the
             parameters. Note in this case that ``bsize`` cannot be `None`.
 
         See Also
         --------
-        Mat.createAIJ
+        createAIJ
         petsc.MATBAIJ, petsc.MATSEQBAIJ, petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
 
         """
@@ -626,13 +626,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         size, bsize, nnz, csr, comm
-            See `Mat.createAIJ` for information on the meaning of the
+            See `createAIJ` for information on the meaning of the
             parameters. Note in this case that ``bsize`` must be an `int`,
             that is, blocks *must* be square.
 
         See Also
         --------
-        Mat.createAIJ, Mat.createBAIJ
+        createAIJ, createBAIJ
         petsc.MatCreateSBAIJ
 
         """
@@ -652,9 +652,9 @@ cdef class Mat(Object):
         csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse matrix with type `Mat.Type.AIJCRL`.
+        """Create a sparse matrix with type `Type.AIJCRL`.
 
-        This is similar to `Mat.Type.AIJ` matrices but stores some additional
+        This is similar to `Type.AIJ` matrices but stores some additional
         information that improves vectorisation for the matrix-vector product.
 
         Collective.
@@ -662,12 +662,12 @@ cdef class Mat(Object):
         Parameters
         ----------
         size, bsize, nnz, csr, comm
-            See `Mat.createAIJ` for information on the meaning of the
+            See `createAIJ` for information on the meaning of the
             parameters.
 
         See Also
         --------
-        Mat.createAIJ, Mat.createBAIJ
+        createAIJ, createBAIJ
         petsc.MatCreateSeqAIJCRL, petsc.MatCreateMPIAIJCRL
 
         """
@@ -682,8 +682,8 @@ cdef class Mat(Object):
     def setPreallocationNNZ(self, nnz: NNZType) -> Self:
         """Preallocate memory for the matrix with a non-zero pattern.
 
-        This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ`,
-        `Mat.Type.SBAIJ` matrices.
+        This method is only valid for `Type.AIJ`, `Type.BAIJ`,
+        `Type.SBAIJ` matrices.
 
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
@@ -701,7 +701,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.setPreallocationCSR, Mat.createAIJ
+        setPreallocationCSR, createAIJ
         petsc.MatSeqAIJSetPreallocation
         petsc.MatMPIAIJSetPreallocation
 
@@ -715,8 +715,8 @@ cdef class Mat(Object):
     def setPreallocationCSR(self, csr: CSRIndicesType) -> Self:
         """Preallocate memory for the matrix with a CSR layout.
 
-        This method is only valid for `Mat.Type.AIJ`, `Mat.Type.BAIJ` and
-        `Mat.Type.SBAIJ` matrices.
+        This method is only valid for `Type.AIJ`, `Type.BAIJ` and
+        `Type.SBAIJ` matrices.
 
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
@@ -733,7 +733,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.setPreallocationNNZ, Mat.createAIJ
+        setPreallocationNNZ, createAIJ
         petsc.MatSeqAIJSetPreallocationCSR
         petsc.MatMPIAIJSetPreallocationCSR
 
@@ -758,7 +758,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         size
-            Matrix size. See `Mat.setSizes` for usage information.
+            Matrix size. See `setSizes` for usage information.
         csr
             Matrix data expressed in compressed sparse row format. Note that
             in this function this argument is a 3-tuple of
@@ -767,13 +767,13 @@ cdef class Mat(Object):
             diagonal and off-diagonal portions of the parallel matrix. Doing
             so will avoid any copies.
         bsize
-            Block size. See `Mat.setSizes` for usage information.
+            Block size. See `setSizes` for usage information.
         comm
             MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        Mat.createAIJ
+        createAIJ
         petsc.MatCreateSeqAIJWithArrays, petsc.MatCreateMPIAIJWithArrays
         petsc.MatCreateMPIAIJWithSplitArrays
 
@@ -850,7 +850,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         size, bsize
-            Matrix size parameters. See `Mat.createAIJ` for usage information.
+            Matrix size parameters. See `createAIJ` for usage information.
         array
             Matrix data. If `None` then the matrix will not be preallocated.
         comm
@@ -858,7 +858,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.createDenseCUDA
+        createDenseCUDA
         petsc.MATDENSE, petsc.MatCreateDense
 
         """
@@ -887,7 +887,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         size, bsize
-            Matrix size parameters. See `Mat.setSizes` for usage information.
+            Matrix size parameters. See `setSizes` for usage information.
         array
             Host data. Will be lazily allocated if `None`.
         cudahandle
@@ -899,7 +899,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.createDense, petsc.MatCreateDenseCUDA
+        createDense, petsc.MatCreateDenseCUDA
 
         """
         # create matrix
@@ -930,8 +930,8 @@ cdef class Mat(Object):
     def setPreallocationDense(self, array: Sequence[Scalar]) -> Self:
         """Set the array used for storing matrix elements for a dense matrix.
 
-        Only valid for matrices with types `Mat.Type.SEQDENSE` and
-        `Mat.Type.MPIDENSE`.
+        Only valid for matrices with types `Type.SEQDENSE` and
+        `Type.MPIDENSE`.
 
         Collective.
 
@@ -961,7 +961,7 @@ cdef class Mat(Object):
     def createScatter(self, Scatter scatter, comm: Comm | None = None) -> Self:
         """Create a scattering matrix from a vector scatter.
 
-        The resulting matrix will have type `Mat.Type.SCATTER`.
+        The resulting matrix will have type `Type.SCATTER`.
 
         Collective.
 
@@ -997,7 +997,7 @@ cdef class Mat(Object):
         Notes
         -----
         The product AᵀA is never actually formed. Instead A and Aᵀ are used
-        during `Mat.mult` etc.
+        during `mult` etc.
 
         See Also
         --------
@@ -1012,7 +1012,7 @@ cdef class Mat(Object):
     def createTranspose(self, Mat mat) -> Self:
         """Create a virtual matrix transpose that behaves like Aᵀ.
 
-        This sets the matrix to have type `Mat.Type.TRANSPOSE`.
+        This sets the matrix to have type `Type.TRANSPOSE`.
 
         Collective.
 
@@ -1023,12 +1023,12 @@ cdef class Mat(Object):
 
         Notes
         -----
-        The transpose is never actually formed. Instead `Mat.multTranspose` is
+        The transpose is never actually formed. Instead `multTranspose` is
         called whenever the matrix-vector product is computed.
 
         See Also
         --------
-        Mat.createNormal, petsc.MatCreateTranspose
+        createNormal, petsc.MatCreateTranspose
 
         """
         cdef PetscMat newmat = NULL
@@ -1039,7 +1039,7 @@ cdef class Mat(Object):
     def createNormalHermitian(self, Mat mat) -> Self:
         """Create a matrix representing (A*)ᵀA.
 
-        This sets the matrix to have type `Mat.Type.NORMALHERMITIAN`.
+        This sets the matrix to have type `Type.NORMALHERMITIAN`.
 
         Collective.
 
@@ -1051,11 +1051,11 @@ cdef class Mat(Object):
         Notes
         -----
         The product (A*)ᵀA is never actually formed. Instead things are
-        computed on the fly during `Mat.mult` etc.
+        computed on the fly during `mult` etc.
 
         See Also
         --------
-        Mat.createHermitianTranspose
+        createHermitianTranspose
         petsc.MATNORMAL, petsc.MATNORMALHERMITIAN, petsc.MatCreateNormalHermitian
 
         """
@@ -1067,7 +1067,7 @@ cdef class Mat(Object):
     def createHermitianTranspose(self, Mat mat) -> Self:
         """Create a virtual matrix transpose that behaves like (A*)ᵀ.
 
-        This sets the matrix to have type `Mat.Type.HERMITIANTRANSPOSE`.
+        This sets the matrix to have type `Type.HERMITIANTRANSPOSE`.
 
         Collective.
 
@@ -1084,7 +1084,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.createNormal, Mat.createNormalHermitian
+        createNormal, createNormalHermitian
         petsc.MATHERMITIANTRANSPOSEVIRTUAL, petsc.MatCreateHermitianTranspose
 
         """
@@ -1096,7 +1096,7 @@ cdef class Mat(Object):
     def createLRC(self, Mat A, Mat U, Vec c, Mat V) -> Self:
         """Create a matrix representing A + UCVᵀ.
 
-        This sets the matrix to have type `Mat.Type.LRC`.
+        This sets the matrix to have type `Type.LRC`.
 
         Collective.
 
@@ -1112,7 +1112,7 @@ cdef class Mat(Object):
         Notes
         -----
         The matrix A + UCVᵀ is never actually formed. Instead things are
-        computed on the fly during `Mat.mult` etc.
+        computed on the fly during `mult` etc.
 
         C is a diagonal matrix (represented as a vector) of order k, where k
         is the number of columns of both U and V.
@@ -1146,7 +1146,7 @@ cdef class Mat(Object):
     def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None) -> Self:
         """Create a virtual matrix that acts as a submatrix.
 
-        This sets the matrix type to `Mat.Type.SUBMATRIX`.
+        This sets the matrix type to `Type.SUBMATRIX`.
 
         Collective.
 
@@ -1181,7 +1181,7 @@ cdef class Mat(Object):
 
         Each submatrix is stored separately.
 
-        The resulting matrix has type `Mat.Type.NEST`.
+        The resulting matrix has type `Type.NEST`.
 
         Collective.
 
@@ -1253,7 +1253,7 @@ cdef class Mat(Object):
         bs: int | None = None,
         rtol: float | None = None,
     ) -> Self:
-        """Create a `Mat.Type.H2OPUS` sampling from a provided operator.
+        """Create a `Type.H2OPUS` sampling from a provided operator.
 
         Serial execution only.
 
