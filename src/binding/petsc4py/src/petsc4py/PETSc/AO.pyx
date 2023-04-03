@@ -52,7 +52,7 @@ cdef class AO(Object):
         self,
         app: Sequence[int] | IS,
         petsc: Sequence[int] | IS | None = None,
-        comm=Comm | None=None
+        comm: Comm | None = None,
     ) -> Self:
         """Return a basic application ordering using two orderings.
 
@@ -102,7 +102,7 @@ cdef class AO(Object):
         self,
         app: Sequence[int] | IS,
         petsc: Sequence[int] | IS | None = None,
-        comm=Comm | None=None
+        comm: Comm | None = None,
     ) -> Self:
         """Return a memory scalable application ordering using two orderings.
 
@@ -155,7 +155,7 @@ cdef class AO(Object):
         self,
         app: Sequence[int] | IS,
         petsc: Sequence[int] | IS | None = None,
-        comm=Comm | None=None
+        comm: Comm | None = None,
     ) -> Self:
         """Return an application mapping using two orderings.
 
