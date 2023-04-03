@@ -228,7 +228,6 @@ cdef class AO(Object):
         ----------
         indices
             The indices; to be replaced with their mapped values.
-        # TODO: The values are still replaced, right?
 
         See also
         --------
@@ -263,7 +262,6 @@ cdef class AO(Object):
         ----------
         indices
             The indices; to be replaced with their mapped values.
-        # TODO: The values are still replaced, right?
 
         See also
         --------

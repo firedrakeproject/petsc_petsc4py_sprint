@@ -182,12 +182,12 @@ cdef class DS(Object):
     def getFieldIndex(self, Object disc) -> int:
         """Return the index of the given field.
 
+        Not collective.
+
         Parameters
         ----------
         disc
             The discretization object.
-
-        Not collective.
 
         See also
         --------
