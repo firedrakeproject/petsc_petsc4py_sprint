@@ -9,7 +9,7 @@ cdef class DMInterpolation:
     def __dealloc__(self):
         self.destroy()
 
-    def create(self, comm: Comm | None = None) -> None:
+    def create(self, comm: Comm | None = None) -> Self:
         """Create a `DMInterpolation` context.
 
         Collective.
