@@ -573,16 +573,16 @@ cdef class Section(Object):
     def getConstraintIndices(self, point: int) -> ArrayInt:
         """Return the point dof numbers, in [0, dof), which are constrained for a given point.
 
+        Output Parameter
+        indices
+        The constrained dofs.
+
         Not collective.
 
         Parameters
         ----------
         point
             The point.
-
-        Output Parameter
-        indices
-        The constrained dofs.
 
         See also
         --------
@@ -773,6 +773,10 @@ cdef class Section(Object):
 
         In a global section, this offset will be negative for points not owned by this process.
 
+        Output Parameter
+        offset
+        The offset.
+
         Not collective.
 
         Parameters
@@ -781,10 +785,6 @@ cdef class Section(Object):
             The point.
         field
             The field.
-
-        Output Parameter
-        offset
-        The offset.
 
         See also
         --------
