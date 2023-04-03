@@ -212,7 +212,7 @@ cdef class Scatter(Object):
         return (scatter, ovec)
 
     @classmethod
-    def toZero(cls, Vec vec) -> Scatter:
+    def toZero(cls, Vec vec) -> tuple[Scatter, Vec]:
         """Create a scatter that communicates a vector to rank zero of the sharing communicator.
 
         Collective.
