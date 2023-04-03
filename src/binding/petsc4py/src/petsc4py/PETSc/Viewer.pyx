@@ -89,18 +89,20 @@ cdef class Viewer(Object):
     """Viewer object.
 
     Viewer is described in the `PETSc manual <petsc:sec_viewers>`.
-Viewers can be called as functions where the argument specified is the PETSc object to be viewed. See the example below.
 
-Examples
---------------
->>> from petsc4py import PETSc
->>> u = PETSc.Vec().createWithArray([1,2])
->>> v = PETSc.Viewer()
->>> v(u)
-Vec Object: 1 MPI process
-  type: seq
-1.
-2.
+    Viewers can be called as functions where the argument specified is the PETSc object to be viewed. See the example below.
+
+    Examples
+    --------
+    >>> from petsc4py import PETSc
+    >>> u = PETSc.Vec().createWithArray([1,2])
+    >>> v = PETSc.Viewer()
+    >>> v(u)
+    Vec Object: 1 MPI process
+      type: seq
+    1.
+    2.
+
     See Also
     --------
     petsc.PetscViewer
@@ -109,12 +111,13 @@ Vec Object: 1 MPI process
 
     Type   = ViewerType
     Format = ViewerFormat
-    FileMode = FileMode
-    DrawSize = DrawSize
 
     # backward compatibility
     Mode   = FileMode
     Size   = DrawSize
+
+    FileMode = FileMode
+    DrawSize = DrawSize
 
     #
 
@@ -663,7 +666,7 @@ Vec Object: 1 MPI process
         CHKERR( PetscViewerASCIIGetTab(self.vwr, &tabs) )
         return toInt(tabs)
 
-    def addASCIITab(self, tabs):
+    def addASCIITab(self, tabs: int):
         """Increment the ASCII tab level.
 
         Collective.
@@ -676,7 +679,7 @@ Vec Object: 1 MPI process
         cdef PetscInt ctabs = asInt(tabs)
         CHKERR( PetscViewerASCIIAddTab(self.vwr, ctabs) )
 
-    def subtractASCIITab(self, tabs) -> None:
+    def subtractASCIITab(self, tabs: int) -> None:
         """Decrement the ASCII tab level.
 
         Collective.
