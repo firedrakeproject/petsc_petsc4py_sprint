@@ -265,7 +265,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetChart(self.sec, cStart, cEnd) )
 
     def getPermutation(self) -> IS:
-        """Return the permutation of [0, pEnd - pStart) or NULL that was set with `sectionSetPermutation`.
+        """Return the permutation of [0, pEnd - pStart) or NULL that was set with `setPermutation`.
 
         Not collective.
 
@@ -579,11 +579,10 @@ cdef class Section(Object):
         ----------
         point
             The point.
-        ---------------------------------
+
         Output Parameter
-        ---------------------------------
         indices
-            The constrained dofs.
+        The constrained dofs.
 
         See also
         --------
@@ -782,11 +781,10 @@ cdef class Section(Object):
             The point.
         field
             The field.
-        ---------------------------------
+
         Output Parameter
-        ---------------------------------
         offset
-            The offset.
+        The offset.
 
         See also
         --------
