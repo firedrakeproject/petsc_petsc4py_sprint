@@ -6,6 +6,7 @@ class DSType(object):
 # --------------------------------------------------------------------
 
 cdef class DS(Object):
+    """A discrete system."""
 
     Type = DSType
 
@@ -18,14 +19,13 @@ cdef class DS(Object):
     def view(self, Viewer viewer=None):
         """View a PetscDS
 
-Collective
+        Parameters
+        ----------
+        prob - the PetscDS object to view
+        v - the viewer
 
-Input Parameters
-prob - the PetscDS object to view
-v - the viewer
 
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -44,13 +44,12 @@ v - the viewer
     def destroy(self):
         """Destroy a PetscDS object
 
-Collective
+        Parameters
+        ----------
+        prob - the PetscDS object to destroy
 
-Input Parameter
-prob - the PetscDS object to destroy
 
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -68,15 +67,14 @@ prob - the PetscDS object to destroy
     def create(self, comm=None):
         """Create an empty PetscDS object. The type can then be set with PetscDSSetType().
 
-Collective
+        Parameters
+        ----------
+        comm - The communicator for the PetscDS object
+        Output Parameter
+        ds - The PetscDS object
 
-Input Parameter
-comm - The communicator for the PetscDS object
-Output Parameter
-ds - The PetscDS object
 
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -97,16 +95,15 @@ ds - The PetscDS object
     def setType(self, ds_type):
         """Build a particular PetscDS
 
-Collective; No Fortran Support
+        Parameters
+        ----------
+        prob - The PetscDS object
+        name - The PetscDSType
+        Options Database Key
+        -petscds_type - Sets the PetscDS type; use -help for a list of available types
 
-Input Parameters
-prob - The PetscDS object
-name - The PetscDSType
-Options Database Key
--petscds_type - Sets the PetscDS type; use -help for a list of available types
 
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -125,12 +122,11 @@ Options Database Key
     def getType(self):
         """Return the PetscDSType name (as a string) from the PetscDS
 
-Not Collective; No Fortran Support
-
-Input Parameter
-prob - The PetscDS
-Output Parameter
-name - The PetscDSType name
+        Parameters
+        ----------
+        prob - The PetscDS
+        Output Parameter
+        name - The PetscDSType name
 
 
         Not collective.
@@ -152,19 +148,11 @@ name - The PetscDSType name
     def setFromOptions(self):
         """Set parameters in a PetscDS from the options database
 
-Collective
+        Parameters
+        ----------
+        prob - the PetscDS object to set options for
 
-Input Parameter
-prob - the PetscDS object to set options for
-Options Database Keys
--petscds_type - Set the PetscDS type
--petscds_view - View the PetscDS
--petscds_jac_pre - Turn formation of a separate Jacobian preconditioner on or off
--bc_ - Specify a list of label ids for a boundary condition
--bc__comp - Specify a list of field components to constrain for a boundary condition
-
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -181,13 +169,12 @@ Options Database Keys
     def setUp(self):
         """Construct data structures for the PetscDS
 
-Collective
+        Parameters
+        ----------
+        prob - the PetscDS object to setup
 
-Input Parameter
-prob - the PetscDS object to setup
 
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
@@ -207,12 +194,11 @@ prob - the PetscDS object to setup
     def getSpatialDimension(self):
         """Return the spatial dimension of the PetscDS, meaning the topological dimension of the discretizations
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-dim - The spatial dimension
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        dim - The spatial dimension
 
 
         Not collective.
@@ -234,12 +220,11 @@ dim - The spatial dimension
     def getCoordinateDimension(self):
         """Return the coordinate dimension of the PetscDS, meaning the dimension of the space into which the discretiaztions are embedded
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-dimEmbed - The coordinate dimension
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        dimEmbed - The coordinate dimension
 
 
         Not collective.
@@ -261,12 +246,11 @@ dimEmbed - The coordinate dimension
     def getNumFields(self):
         """Return the number of fields in the PetscDS
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-Nf - The number of fields
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        Nf - The number of fields
 
 
         Not collective.
@@ -288,13 +272,12 @@ Nf - The number of fields
     def getFieldIndex(self, Object disc):
         """Return the index of the given field
 
-Not Collective
-
-Input Parameters
-prob - The PetscDS object
-disc - The discretization object
-Output Parameter
-f - The field number
+        Parameters
+        ----------
+        prob - The PetscDS object
+        disc - The discretization object
+        Output Parameter
+        f - The field number
 
 
         Not collective.
@@ -316,12 +299,11 @@ f - The field number
     def getTotalDimensions(self):
         """Return the total size of the approximation space for this system
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-dim - The total problem dimension
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        dim - The total problem dimension
 
 
         Not collective.
@@ -343,12 +325,11 @@ dim - The total problem dimension
     def getTotalComponents(self):
         """Return the total number of components in this system
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-dim - The total number of components
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        dim - The total number of components
 
 
         Not collective.
@@ -370,12 +351,11 @@ dim - The total number of components
     def getDimensions(self):
         """Return the size of the approximation space for each field on an evaluation point
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-dimensions - The number of dimensions
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        dimensions - The number of dimensions
 
 
         Not collective.
@@ -398,12 +378,11 @@ dimensions - The number of dimensions
     def getComponents(self):
         """Return the number of components for each field on an evaluation point
 
-Not Collective
-
-Input Parameter
-prob - The PetscDS object
-Output Parameter
-components - The number of components
+        Parameters
+        ----------
+        prob - The PetscDS object
+        Output Parameter
+        components - The number of components
 
 
         Not collective.
@@ -426,13 +405,11 @@ components - The number of components
     def setDiscretisation(self, f, disc):
         """Set the discretization object for the given field
 
-Not Collective
-
-Input Parameters
-prob - The PetscDS object
-f - The field number
-disc - The discretization object
-
+        Parameters
+        ----------
+        prob - The PetscDS object
+        f - The field number
+        disc - The discretization object
 
         Not collective.
 

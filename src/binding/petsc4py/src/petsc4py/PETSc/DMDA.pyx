@@ -1069,8 +1069,6 @@ In this case, the AO maps to the natural grid ordering that would be used for th
 
 Do NOT call AODestroy() on the ao returned by this function.
 
-
-
         Not collective.
 
         Parameters
