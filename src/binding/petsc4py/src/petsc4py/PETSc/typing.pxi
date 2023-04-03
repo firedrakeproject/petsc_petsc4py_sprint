@@ -20,6 +20,14 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+# --- Mat ---
+
+cdef MatSizeType
+cdef MatBlockSizeType
+cdef CSRIndicesType
+cdef CSRType
+cdef NNZType
+
 # --- DM ---
 
 cdef DMCoarsenHookFunction
