@@ -38,10 +38,12 @@ class DMStagStencilLocation(object):
 # --------------------------------------------------------------------
 
 cdef class DMStag(DM):
-    """TODO"""
+    """A DM object representing a "staggered grid" or a structured cell complex."""
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
+    # TODO: can someone please double check descriptions in Parameters?
+    # TODO: do all see alsos render? they didn't before
     def create(
         self,
         dim,
@@ -55,48 +57,38 @@ cdef class DMStag(DM):
         comm: Comm | None = None,
         setUp: bool | None = False,
     ) -> Self:
-        """TODO
-        Create an object to manage data living on the elements and vertices of a parallelized regular 1D grid.
-        Create an object to manage data living on the elements, faces, and vertices of a parallelized regular 2D grid.
-        Create an object to manage data living on the elements, faces, edges, and vertices of a parallelized regular 3D grid.
+        """Create a DMDA object.
+
+        Creates an object to manage data living on the elements and vertices /
+        the elements, faces, and vertices / the elements, faces, edges, and
+        vertices of a parallelized regular 1D / 2D / 3D grid.
 
         Collective.
 
-        notes
-
         Parameters
         ----------
-        bndx
-            boundary type: DM_BOUNDARY_NONE, DM_BOUNDARY_PERIODIC, or DM_BOUNDARY_GHOSTED
-        M
-            global number of elements
-        dof0
-            number of degrees of freedom per vertex/0-cell
-        dof1
-            number of degrees of freedom per element/1-cell
-
-        dof0
-            number of degrees of freedom per vertex/0-cell
-        dof1
-            number of degrees of freedom per face/1-cell
-        dof2
-            number of degrees of freedom per element/2-cell
-
-        dof0
-            number of degrees of freedom per vertex/0-cell
-        dof1
-            number of degrees of freedom per edge/1-cell
-        dof2
-            number of degrees of freedom per face/2-cell
-        dof3
-            number of degrees of freedom per element/3-cell
-
+        dim
+            The number of dimensions.
+        dofs
+            The number of degrees of freedom per vertex, element (1D), vertex,
+            face, element (2D), or vertex, edge, face, element (3D).
+        sizes
+            The number of elements in each dimension.
+        boundary_types
+            The boundary types.
         stencil_type
-            Ghost/halo region type.
+            The ghost/halo stencil type.
         stencil_width
-            Width, in elements, of halo/ghost region.
-        lx
-            array of local sizes, of length equal to the comm size, summing to M
+            The width of the ghost/halo region.
+        proc_sizes
+            The number of processes in x, y, z dimensions.
+        ownership_ranges
+            Local x, y, z element counts, of length equal to ``proc_sizes``,
+            summing to ``sizes``.
+        comm
+            The MPI communicator.
+        setUp
+            Whether to call the setup routine after creating the object.
 
         See also
         --------
@@ -104,7 +96,6 @@ cdef class DMStag(DM):
         petsc.DMSetUp
 
         """
-        # TODO: do all see alsos render? they didn't before
         # ndim
         cdef PetscInt ndim = asInt(dim)
 
@@ -170,9 +161,9 @@ cdef class DMStag(DM):
     def setStencilWidth(self, swidth: int) -> None:
         """Set elementwise stencil width.
 
-        Logically collective; stencilWidth must contain common value.
-
         The width value is not used when `StencilType.NONE` is specified.
+
+        Logically collective; stencilWidth must contain common value.
 
         Parameters
         ----------
@@ -187,7 +178,7 @@ cdef class DMStag(DM):
         cdef PetscInt sw = asInt(swidth)
         CHKERR( DMStagSetStencilWidth(self.dm, sw) )
 
-    def setStencilType(self, stenciltype: StencilType) -> None:
+    def setStencilType(self, stenciltype: StencilType | str) -> None:
         """Set elementwise ghost/halo stencil type.
 
         Logically collective; stenciltype must contain common value.
@@ -209,13 +200,9 @@ cdef class DMStag(DM):
         self,
         boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]
     ) -> None:
-        """Set DMSTAG boundary types.
+        """Set the boundary types.
 
-        Logically collective; boundaryType0, boundaryType1, and boundaryType2
-        must contain common values.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
+        Logically collective; ``boundary_types`` must contain common values.
 
         Parameters
         ----------
@@ -239,10 +226,7 @@ cdef class DMStag(DM):
     ) -> None:
         """Set dof/stratum.
 
-        Logically collective; dof0, dof1, dof2, and dof3 must contain common values.
-
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids.
+        Logically collective; ``dofs`` must contain common values.
 
         Parameters
         ----------
@@ -267,21 +251,12 @@ cdef class DMStag(DM):
     ) -> None:
         """Set global element counts in each direction.
 
-        Logically collective; N0, N1, and N2 must contain common values.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
+        Logically collective; ``sizes`` must contain common values.
 
         Parameters
         ----------
-        dm
-            The DMSTAG object.
-        N0
-            Global elementwise size in the x direction.
-        N1
-            Global elementwise size in the y direction.
-        N2
-            Global elementwise size in the z direction.
+        sizes
+            Global elementwise size in the x/y/z directions.
 
         See also
         --------
@@ -297,23 +272,16 @@ cdef class DMStag(DM):
         self,
         sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]
     ) -> None:
-        """Set ranks in each direction in the global rank grid.
+        """Set the number of ranks in each direction in the global rank grid.
 
-        Logically collective; nRanks0, nRanks1, and nRanks2 must contain common values.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D grids.
+        Logically collective; ``sizes`` must contain common values.
 
         Parameters
         ----------
         dm
             The DMSTAG object.
-        nRanks0
-            Number of ranks in the x direction.
-        nRanks1
-            Number of ranks in the y direction.
-        nRanks2
-            Number of ranks in the z direction.
+        sizes
+            Number of ranks in the x/y/z directions.
 
         See also
         --------
@@ -331,10 +299,7 @@ cdef class DMStag(DM):
     ) -> None:
         """Set elements per rank in each direction.
 
-        Logically collective; lx, ly, and lz must contain common values.
-
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
+        Logically collective; ``ranges`` must contain common values.
 
         Parameters
         ----------
@@ -372,16 +337,14 @@ cdef class DMStag(DM):
         """
         return self.getDimension()
 
+    # TODO: are the dof+1, dof+2, etc. correct?
     def getEntriesPerElement(self) -> int:
         """Return number of entries per element in the local representation.
 
-        Notes
-        This is the natural block size for most local operations. In 1D it is equal to dof0++dof1,
-        in 2D it is equal to dof0+2+2dof1++dof2, and in 3D it is equal to dof0+3+3dof1+3+3dof2++dof3.
-
-        Output Parameter
-        entriesPerElement
-            Number of entries associated with each element in the local representation.
+        This is the natural block size for most local operations. In 1D it is
+        equal to ``dof[0]+dof[1]``, in 2D it is equal to
+        ``dof[0]+2dof[1]+dof[2]``, and in 3D it is equal to
+        ``dof[0]+3dof[1]+3dof[2]+dof[3]``.
 
         Not collective.
 
@@ -399,10 +362,6 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        Output Parameter
-        stencilWidth
-            Stencil/halo/ghost width in elements.
-
         See also
         --------
         petsc.DMStagGetStencilWidth
@@ -413,23 +372,13 @@ cdef class DMStag(DM):
         return toInt(swidth)
 
     def getDof(self) -> tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]:
-        """Get number of DOF associated with each stratum of the grid.
+        """Get number of dof associated with each stratum of the grid.
 
         Not collective.
 
-        Output Parameters
-        dof0
-            The number of points per 0-cell (vertex/node).
-        dof1
-            The number of points per 1-cell (element in 1D, edge in 2D and 3D).
-        dof2
-            The number of points per 2-cell (element in 2D, face in 3D).
-        dof3
-            The number of points per 3-cell (element in 3D).
-
         See also
         --------
-        petsc.DMStagGetDOF, petsc.DMGetDimension
+        petsc.DMStagGetDOF
 
         """
         cdef PetscInt dim=0, dof0=0, dof1=0, dof2=0, dof3=0
@@ -439,37 +388,26 @@ cdef class DMStag(DM):
 
     # TODO: I need help deciphering this type.
     def getCorners(self):
-        """Return global element indices of the local region (excluding ghost points).
+        """Return global element indices of the local region.
 
-        Not collective.
-
-        Notes
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
+        The returned value is calculated excluding ghost points.
 
         The number of extra partial elements is either 1 or 0. The value is 1
         on right, top, and front non-periodic domain (“physical”) boundaries,
         in the x, y, and z directions respectively, and otherwise 0.
 
-        Output Parameters
-        x
-            starting element index in first direction
-        y
-            starting element index in second direction
-        z
-            starting element index in third direction
-        m
-            element width in first direction
-        n
-            element width in second direction
-        p
-            element width in third direction
-        nExtrax
-            number of extra partial elements in first direction
-        nExtray
-            number of extra partial elements in second direction
-        nExtraz
-            number of extra partial elements in third direction
+        Not collective.
+
+        ? Output Parameters
+        ? x          starting element index in first direction
+        ? y          starting element index in second direction
+        ? z          starting element index in third direction
+        ? m          element width in first direction
+        ? n          element width in second direction
+        ? p          element width in third direction
+        ? nExtrax    number of extra partial elements in first direction
+        ? nExtray    number of extra partial elements in second direction
+        ? nExtraz    number of extra partial elements in third direction
 
         See also
         --------
@@ -483,27 +421,17 @@ cdef class DMStag(DM):
 
     # TODO: I need help deciphering this type.
     def getGhostCorners(self):
-        """Return global element indices of the local region, including ghost points.
+        """Return global element indices of the local region, with ghost points.
 
         Not collective.
 
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
-
-        Output Parameters
-        x
-            the starting element index in the first direction
-        y
-            the starting element index in the second direction
-        z
-            the starting element index in the third direction
-        m
-            the element width in the first direction
-        n
-            the element width in the second direction
-        p
-            the element width in the third direction
+        ? Output Parameters
+        ? x    the starting element index in the first direction
+        ? y    the starting element index in the second direction
+        ? z    the starting element index in the third direction
+        ? m    the element width in the first direction
+        ? n    the element width in the second direction
+        ? p    the element width in the third direction
 
         See also
         --------
@@ -516,21 +444,11 @@ cdef class DMStag(DM):
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
     def getLocalSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """Return local elementwise sizes.
+        """Return local elementwise sizes in each direction.
+
+        The returned value is calculated excluding ghost points.
 
         Not collective.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
-
-        Output Parameters
-        m
-            local element counts (excluding ghosts) in the x direction
-        n
-            local element counts (excluding ghosts) in the y direction
-        p
-            local element counts (excluding ghosts) in the z direction
 
         See also
         --------
@@ -543,22 +461,9 @@ cdef class DMStag(DM):
         return toStagDims(dim, m, n, p)
 
     def getGlobalSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """Return global element counts.
+        """Return global element counts in each direction.
 
         Not collective.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
-
-        Output Parameters
-        M
-            global element counts in the x direction
-        N
-            global element counts in the y direction
-        P
-            global element counts in the z direction
-
 
         See also
         --------
@@ -571,16 +476,9 @@ cdef class DMStag(DM):
         return toStagDims(dim, m, n, p)
 
     def getProcSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """Return number of ranks in each direction in the global grid decomposition.
+        """Return number of ranks in each direction in the global decomposition.
 
         Not collective.
-
-        nRanks0
-            number of ranks in the x direction in the grid decomposition
-        nRanks1
-            number of ranks in the y direction in the grid decomposition
-        nRanks2
-            number of ranks in the z direction in the grid decomposition
 
         See also
         --------
@@ -611,24 +509,6 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        Notes
-        These correspond to the optional final arguments passed to
-        DMStagCreate1d(), DMStagCreate2d(), and DMStagCreate3d().
-
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
-
-        In C you should not free these arrays, nor change the values in them.
-        They will only have valid values while the DMSTAG they came from still
-        exists (has not been destroyed).
-
-        lx
-            ownership along x direction (optional)
-        ly
-            ownership along y direction (optional)
-        lz
-            ownership along z direction (optional)
-
         See also
         --------
         petsc.DMStagGetOwnershipRanges
@@ -642,17 +522,9 @@ cdef class DMStag(DM):
         return toStagOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getBoundaryTypes(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
-        """Return boundary types.
+        """Return boundary types in each direction.
 
         Not collective.
-
-        Output Parameters
-        boundaryTypeX
-            boundary type for x direction
-        boundaryTypeY
-            boundary type for y direction, not set for one dimensional problems
-        boundaryTypeZ
-            boundary type for z direction, not set for one and two dimensional problems
 
         See also
         --------
@@ -668,21 +540,9 @@ cdef class DMStag(DM):
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
     def getIsFirstRank(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """Return boolean value for whether this rank is first in each direction in the rank grid.
+        """Return whether this rank is first in each direction in the rank grid.
 
         Not collective.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
-
-        Output Parameters
-        isFirstRank0
-            whether this rank is first in the x direction
-        isFirstRank1
-            whether this rank is first in the y direction
-        isFirstRank2
-            whether this rank is first in the z direction
 
         See also
         --------
@@ -696,21 +556,9 @@ cdef class DMStag(DM):
         return toStagDims(dim, rank0, rank1, rank2)
 
     def getIsLastRank(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """Return boolean value for whether this rank is last in each direction in the rank grid.
+        """Return whether this rank is last in each direction in the rank grid.
 
         Not collective.
-
-        Note
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids. These arguments may be set to NULL in this case.
-
-        Output Parameters
-        isFirstRank0
-            whether this rank is last in the x direction
-        isFirstRank1
-            whether this rank is last in the y direction
-        isFirstRank2
-            whether this rank is last in the z direction
 
         See also
         --------
@@ -734,42 +582,29 @@ cdef class DMStag(DM):
         zmin: float | None = 0,
         zmax: float | None = 1,
     ) -> None:
-        """Set `DMStag` coordinates to be a uniform grid, storing all values.
+        """Set coordinates to be a uniform grid, storing all values.
 
-        Collective. TODO:?
-
-        Notes
-        DMSTAG supports 2 different types of coordinate DM: either another
-        DMSTAG, or a DMPRODUCT. If the grid is orthogonal, using DMPRODUCT
-        should be more efficient.
-
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids.
-
-        See the manual page for DMStagSetUniformCoordinates() for information
-        on how coordinates for dummy cells outside the physical domain boundary
-        are populated.
+        Collective.
 
         Parameters
         ----------
-        dm
-            the DMSTAG object
         xmin
-            minimum global coordinate value in the x direction
+            The minimum global coordinate value in the x direction.
         xmax
-            maximum global coordinate values in the x direction
+            The maximum global coordinate value in the x direction.
         ymin
-            minimum global coordinate value in the y direction
+            The minimum global coordinate value in the y direction.
         ymax
-            maximum global coordinate value in the y direction
+            The maximum global coordinate value in the y direction.
         zmin
-            minimum global coordinate value in the z direction
+            The minimum global coordinate value in the z direction.
         zmax
-            maximum global coordinate value in the z direction
+            The maximum global coordinate value in the z direction.
 
         See also
         --------
-        petsc.DMStagSetUniformCoordinatesExplicit
+        petsc.DMStagSetUniformCoordinatesExplicit,
+        setUniformCoordinatesProduct, setUniformCoordinates
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
@@ -788,43 +623,31 @@ cdef class DMStag(DM):
     ) -> None:
         """Create uniform coordinates, as a product of 1D arrays.
 
-        Set the coordinate DM to be a DMPRODUCT of 1D DMSTAG objects, each of
-        which have a coordinate DM (also a 1d DMSTAG) holding uniform
-        coordinates.
-
-        Collective.
-
-        Notes
-        -----
-        Arguments corresponding to higher dimensions are ignored for 1D and 2D
-        grids.
-
         The per-dimension 1-dimensional DMSTAG objects that comprise the
         product always have active 0-cells (vertices, element boundaries) and
         1-cells (element centers).
 
-        See the manual page for DMStagSetUniformCoordinates() for information
-        on how coordinates for dummy cells outside the physical domain boundary
-        are populated.
+        Collective.
 
         Parameters
         ----------
         xmin
-            minimum global coordinate value in the x direction
+            The minimum global coordinate value in the x direction.
         xmax
-            maximum global coordinate value in the x direction
+            The maximum global coordinate value in the x direction.
         ymin
-            minimum global coordinate value in the y direction
+            The minimum global coordinate value in the y direction.
         ymax
-            maximum global coordinate value in the y direction
+            The maximum global coordinate value in the y direction.
         zmin
-            minimum global coordinate value in the z direction
+            The minimum global coordinate value in the z direction.
         zmax
-            maximum global coordinate value in the z direction
+            The maximum global coordinate value in the z direction.
 
         See also
         --------
-        petsc.DMStagSetUniformCoordinatesProduct
+        petsc.DMStagSetUniformCoordinatesProduct,
+        setUniformCoordinatesExplicit, setUniformCoordinates
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
@@ -841,40 +664,33 @@ cdef class DMStag(DM):
         zmin: float | None = 0,
         zmax: float | None = 1,
     ) -> None:
-        """Set DMSTAG coordinates to be a uniform grid.
+        """Set the coordinates to be a uniform grid..
+
+        Local coordinates are populated, linearly extrapolated to ghost cells,
+        including those outside the physical domain. This is also done in case
+        of periodic boundaries, meaning that the same global point may have
+        different coordinates in different local representations, which are
+        equivalent assuming a periodicity implied by the arguments to this
+        function, i.e., two points are equivalent if their difference is a
+        multiple of ``xmax-xmin`` in the x direction, ``ymax-ymin`` in the y
+        direction, and ``zmax-zmin`` in the z direction.
 
         Collective.
-
-        Notes
-        DMSTAG supports 2 different types of coordinate DM: DMSTAG and
-        DMPRODUCT. Arguments corresponding to higher dimensions are ignored for
-        1D and 2D grids.
-
-        Local coordinates are populated (using DMSetCoordinatesLocal()),
-        linearly extrapolated to ghost cells, including those outside the
-        physical domain. This is also done in case of periodic boundaries,
-        meaning that the same global point may have different coordinates in
-        different local representations, which are equivalent assuming a
-        periodicity implied by the arguments to this function, i.e. two points
-        are equivalent if their difference is a multiple of
-        ((xmax−xmin)) in the x direction,
-        ((ymax−−ymin)) in the y direction,
-        and((zmax−−zmin)) in the z direction.
 
         Parameters
         ----------
         xmin
-            minimum global coordinate value in the x direction
+            The minimum global coordinate value in the x direction.
         xmax
-            maximum global coordinate values in the x direction
+            The maximum global coordinate value in the x direction.
         ymin
-            minimum global coordinate value in the y direction
+            The minimum global coordinate value in the y direction.
         ymax
-            maximum global coordinate value in the y direction
+            The maximum global coordinate value in the y direction.
         zmin
-            minimum global coordinate value in the z direction
+            The minimum global coordinate value in the z direction.
         zmax
-            maximum global coordinate value in the z direction
+            The maximum global coordinate value in the z direction.
 
         See also
         --------
@@ -887,14 +703,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetUniformCoordinates(self.dm, _xmin, _xmax, _ymin, _ymax, _zmin, _zmax) )
 
     def setCoordinateDMType(self, dmtype: DM.Type) -> None:
-        """Set DM type to store coordinates.
+        """Set the type to store coordinates.
 
-        Logically collective; dmtype must contain common value.
+        Logically collective; ``dmtype`` must contain a common value.
 
         Parameters
         ----------
         dmtype
-            `DM.Type` for coordinates, either DMSTAG or DMPRODUCT.
+            The type for coordinates.
 
         See also
         --------
@@ -912,21 +728,12 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        Notes
-        Provides an appropriate index to use with DMStagVecGetArray() and
-        friends. This is required so that the user doesn't need to know about
-        the ordering of dof associated with each local element.
-
         Parameters
         ----------
         loc
             Location relative to an element.
         c
             Component.
-
-        Output Parameter
-        slot
-            index to use
 
         See also
         --------
@@ -944,29 +751,10 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        Notes
-        High-level helper function to get slot indices for 1D coordinate DMs,
-        for use with DMStagGetProductCoordinateArrays() and related functions.
-
-        For loc, one should use DMSTAG_LEFT, DMSTAG_ELEMENT, or DMSTAG_RIGHT
-        for “previous”, “center” and “next” locations, respectively, in each
-        dimension. One can equivalently use DMSTAG_DOWN or DMSTAG_BACK in place
-        of DMSTAG_LEFT, and DMSTAG_UP or DMSTACK_FRONT in place of DMSTAG_RIGHT.
-
-        This function checks that the coordinates are actually set up so that
-        using the slots from any of the 1D coordinate sub-DMs are valid for all
-        the 1D coordinate sub-DMs.
-
         Parameters
         ----------
-        dm
-            The DMSTAG object.
         loc
             The grid location.
-        Output Parameter
-        slot
-            the index to use in local arrays
-
 
         See also
         --------
@@ -979,15 +767,14 @@ cdef class DMStag(DM):
         return toInt(slot)
 
     def getLocationDof(self, loc: StencilLocation) -> int:
-        """Return number of DOF associated with a given point in a DMSTAG grid.
+        """Return number of dof associated with a given point in the grid.
 
         Not collective.
 
+        Parameters
+        ----------
         loc
-            grid point (see DMStagStencilLocation)
-        Output Parameter
-        dof
-            the number of DOF (components) living at loc in dm
+            The grid point.
 
         See also
         --------
@@ -1002,22 +789,20 @@ cdef class DMStag(DM):
     # Random other functions
 
     def migrateVec(self, Vec vec, DM dmTo, Vec vecTo) -> None:
-        """Transfer a vector associated with a DMSTAG to a vector associated with a compatible DMSTAG.
+        """Transfer a vector between two ``DMStag`` objects.
+
+        Currently only implemented to migrate global vectors to global vectors.
 
         Collective.
 
         Parameters
         ----------
         vec
-            The source vector, compatible with dm.
+            The source vector.
         dmTo
-            The compatible destination DMSTAG object.
+            The compatible destination object.
         vecTo
-            The destination vector, compatible with dmTo.
-        Notes
-        Extra dof are ignored, and unfilled dof are zeroed. Currently only
-        implemented to migrate global vectors to global vectors. For the
-        definition of compatibility of DMs, see DMGetCompatibility().
+            The destination vector.
 
         See also
         --------
@@ -1027,28 +812,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagMigrateVec(self.dm, vec.vec, dmTo.dm, vecTo.vec ) )
 
     def createCompatibleDMStag(self, dofs) -> DM:
-        """Create a compatible DMSTAG with different dof/stratum.
+        """Create a compatible ``DMStag`` with different dof/stratum.
 
         Collective.
 
         Parameters
         ----------
-        dof0
-            Number of dof on the first stratum in the new DMSTAG.
-        dof1
-            Number of dof on the second stratum in the new DMSTAG.
-        dof2
-            Number of dof on the third stratum in the new DMSTAG.
-        dof3
-            Number of dof on the fourth stratum in the new DMSTAG.
-
-        Notes
-        DOF supplied for strata too big for the dimension are ignored; these
-        may be set to 0. For example, for a 2-dimensional DMSTAG, dof2 sets the
-        number of dof per element, and dof3 is unused. For a 3-dimensional
-        DMSTAG, dof3 sets the number of DOF per element.
-
-        In contrast to DMDACreateCompatibleDMDA(), coordinates are not reused.
+        dofs
+            The number of dof on the strata  in the new DMSTAG.
 
         See also
         --------
@@ -1070,28 +841,22 @@ cdef class DMStag(DM):
         loc: StencilLocation,
         c: int,
     ) -> tuple[DMDA, Vec]:
-        """Create a DMDA and Vec from a subgrid of a DMSTAG and its Vec.
+        """Return a ``DMDA``, ``Vec`` from a subgrid of a ``DMStag``, its ``Vec``.
+
+        If a ``c`` value of ``-k`` is provided, the first ``k`` dof for that
+        position are extracted, padding with zero values if needed. If a
+        non-negative value is provided, a single DOF is extracted.
 
         Collective.
-
-        Notes
-        If a c value of -k is provided, the first k DOF for that position are extracted, padding with zero values if needed. If a non-negative value is provided, a single DOF is extracted.
-
-        The caller is responsible for destroying the created DMDA and Vec.
 
         Parameters
         ----------
         vec
-            Vec object associated with dm.
+            ``Vec`` object.
         loc
-            Which subgrid to extract (see DMStagStencilLocation).
+            Which subgrid to extract.
         c
-            Which component to extract (see note below).
-        Output Parameters
-        pda
-            the DMDA
-        pdavec
-            the new Vec
+            Which component to extract.
 
         See also
         --------
@@ -1118,57 +883,57 @@ cdef class DMStag(DM):
         raise NotImplementedError('get1dCoordinatecArrays for DMStag not yet implemented in petsc4py')
 
     property dim:
-        # TODO: docstring
-        def __get__(self):
+        """The dimension."""
+        def __get__(self) -> int:
             return self.getDim()
 
     property dofs:
-        # TODO: docstring
-        def __get__(self):
+        """The number of dof associated with each stratum of the grid."""
+        def __get__(self) -> tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]:
             return self.getDof()
 
     property entries_per_element:
-        # The number of entries per element in the local representation.
+        """The number of entries per element in the local representation."""
         def __get__(self) -> int:
             return self.getEntriesPerElement()
 
     property global_sizes:
-        # TODO: docstring
-        def __get__(self):
+        """Global element counts in each direction."""
+        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
             return self.getGlobalSizes()
 
     property local_sizes:
-        # TODO: docstring
-        def __get__(self):
+        """Local elementwise sizes in each direction."""
+        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
             return self.getLocalSizes()
 
     property proc_sizes:
-        # TODO: docstring
-        def __get__(self):
+        """The number of ranks in each direction in the global decomposition."""
+        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
             return self.getProcSizes()
 
     property boundary_types:
-        # TODO: docstring
-        def __get__(self):
+        """Boundary types in each direction."""
+        def __get__(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
             return self.getBoundaryTypes()
 
     property stencil_type:
-        # Elementwise ghost/halo stencil type.
-        def __get__(self) -> StencilType:
+        """Elementwise ghost/halo stencil type."""
+        def __get__(self) -> str:
             return self.getStencilType()
 
     property stencil_width:
-        # Elementwise stencil width.
+        """Elementwise stencil width."""
         def __get__(self) -> int:
             return self.getStencilWidth()
 
     property corners:
-        # TODO: docstring
+        """Global element indices of the local region."""
         def __get__(self):
             return self.getCorners()
 
     property ghost_corners:
-        # TODO: docstring
+        """Global element indices of the local region, with ghost points."""
         def __get__(self):
             return self.getGhostCorners()
 
