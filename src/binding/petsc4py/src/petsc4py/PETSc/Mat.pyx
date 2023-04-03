@@ -518,7 +518,7 @@ cdef class Mat(Object):
         CHKERR( MatSetVecType(self.mat, cval) )
 
     def getVecType(self) -> str:
-        """Return the vector type the matrix returns with `Mat.createVecs`.
+        """Return the vector type used by the matrix.
 
         Not collective.
 
