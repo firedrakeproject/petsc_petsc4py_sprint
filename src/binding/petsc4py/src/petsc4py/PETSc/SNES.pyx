@@ -1603,7 +1603,7 @@ cdef class SNES(Object):
         CHKERR( SNESSetForceIteration(self.snes, bval) )
 
     def setFunctionNorm(self, norm: float) -> None:
-        """Set the function norm value. This is only of use to implementers of custom SNES types. 
+        """Set the function norm value. This is only of use to implementers of custom SNES types.
 
         Collective.
 
