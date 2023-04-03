@@ -16,21 +16,15 @@ cdef class DS(Object):
         self.obj = <PetscObject*> &self.ds
         self.ds  = NULL
 
-    def view(self, Viewer viewer=None):
-        """View a PetscDS
-
-        Parameters
-        ----------
-        prob - the PetscDS object to view
-        v - the viewer
-
+    def view(self, Viewer viewer=None) -> None:
+        """View a discrete system.
 
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        viewer
+            A `Viewer` to display the system.
 
         See also
         --------
@@ -41,49 +35,34 @@ cdef class DS(Object):
         if viewer is not None: vwr = viewer.vwr
         CHKERR( PetscDSView(self.ds, vwr) )
 
-    def destroy(self):
-        """Destroy a PetscDS object
-
-        Parameters
-        ----------
-        prob - the PetscDS object to destroy
-
+    def destroy(self) -> Self:
+        """Destroy the discrete system.
 
         Collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See also
         --------
-        petsc.PetscDSDestroy
+        petsc.PetscDSDestroy, create
 
         """
         CHKERR( PetscDSDestroy(&self.ds) )
         return self
 
-    def create(self, comm=None):
-        """Create an empty PetscDS object. The type can then be set with PetscDSSetType().
+    def create(self, comm: Comm | None = None) -> Self:
+        """Create an empty DS.
 
-        Parameters
-        ----------
-        comm - The communicator for the PetscDS object
-        Output Parameter
-        ds - The PetscDS object
-
+        The type can then be set with `setType`.
 
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        comm
+            The MPI communicator.
 
         See also
         --------
-        petsc.PetscDSCreate
+        petsc.PetscDSCreate, setType, destroy
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -92,72 +71,43 @@ cdef class DS(Object):
         PetscCLEAR(self.obj); self.ds = newds
         return self
 
-    def setType(self, ds_type):
-        """Build a particular PetscDS
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        name - The PetscDSType
-        Options Database Key
-        -petscds_type - Sets the PetscDS type; use -help for a list of available types
-
+    def setType(self, ds_type: Type | str) -> None:
+        """Build a particular type of a discrete system.
 
         Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        ds_type
+            The type of the discrete system.
 
         See also
         --------
-        petsc.PetscDSSetType
+        petsc.PetscDSSetType, getType
 
         """
         cdef PetscDSType cval = NULL
         ds_type = str2bytes(ds_type, &cval)
         CHKERR( PetscDSSetType(self.ds, cval) )
 
-    def getType(self):
-        """Return the PetscDSType name (as a string) from the PetscDS
-
-        Parameters
-        ----------
-        prob - The PetscDS
-        Output Parameter
-        name - The PetscDSType name
-
+    def getType(self) -> str:
+        """Return the type of the discrete system.
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See also
         --------
-        petsc.PetscDSGetType
+        petsc.PetscDSGetType, setType
 
         """
         cdef PetscDSType cval = NULL
         CHKERR( PetscDSGetType(self.ds, &cval) )
         return bytes2str(cval)
 
-    def setFromOptions(self):
-        """Set parameters in a PetscDS from the options database
-
-        Parameters
-        ----------
-        prob - the PetscDS object to set options for
+    def setFromOptions(self) -> None:
+        """Set parameters in a `DS` from the options database.
 
         Collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -166,20 +116,10 @@ cdef class DS(Object):
         """
         CHKERR( PetscDSSetFromOptions(self.ds) )
 
-    def setUp(self):
-        """Construct data structures for the PetscDS
-
-        Parameters
-        ----------
-        prob - the PetscDS object to setup
-
+    def setUp(self) -> Self:
+        """Construct data structures for the discrete system.
 
         Collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -191,22 +131,13 @@ cdef class DS(Object):
 
     #
 
-    def getSpatialDimension(self):
-        """Return the spatial dimension of the PetscDS, meaning the topological dimension of the discretizations
+    def getSpatialDimension(self) -> int:
+        """Return the spatial dimension of the DS.
 
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        dim - The spatial dimension
-
+        The spatial dimension of the `DS` is the topological dimension of the
+        discretizations.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -217,22 +148,13 @@ cdef class DS(Object):
         CHKERR( PetscDSGetSpatialDimension(self.ds, &dim) )
         return toInt(dim)
 
-    def getCoordinateDimension(self):
-        """Return the coordinate dimension of the PetscDS, meaning the dimension of the space into which the discretiaztions are embedded
+    def getCoordinateDimension(self) -> int:
+        """Return the coordinate dimension of the DS.
 
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        dimEmbed - The coordinate dimension
-
+        The coordinate dimension of the `DS` is the dimension of the space into
+        which the discretiaztions are embedded.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -243,22 +165,10 @@ cdef class DS(Object):
         CHKERR( PetscDSGetCoordinateDimension(self.ds, &dim) )
         return toInt(dim)
 
-    def getNumFields(self):
-        """Return the number of fields in the PetscDS
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        Nf - The number of fields
-
+    def getNumFields(self) -> int:
+        """Return the number of fields in the DS.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -269,23 +179,15 @@ cdef class DS(Object):
         CHKERR( PetscDSGetNumFields(self.ds, &nf) )
         return toInt(nf)
 
-    def getFieldIndex(self, Object disc):
-        """Return the index of the given field
+    def getFieldIndex(self, Object disc) -> int:
+        """Return the index of the given field.
 
         Parameters
         ----------
-        prob - The PetscDS object
-        disc - The discretization object
-        Output Parameter
-        f - The field number
-
+        disc
+            The discretization object.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -296,22 +198,10 @@ cdef class DS(Object):
         CHKERR( PetscDSGetFieldIndex(self.ds, disc.obj[0], &field) )
         return toInt(field)
 
-    def getTotalDimensions(self):
-        """Return the total size of the approximation space for this system
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        dim - The total problem dimension
-
+    def getTotalDimensions(self) -> int:
+        """Return the total size of the approximation space for this system.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -322,22 +212,10 @@ cdef class DS(Object):
         CHKERR( PetscDSGetTotalDimension(self.ds, &tdim) )
         return toInt(tdim)
 
-    def getTotalComponents(self):
-        """Return the total number of components in this system
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        dim - The total number of components
-
+    def getTotalComponents(self) -> int:
+        """Return the total number of components in this system.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -348,22 +226,11 @@ cdef class DS(Object):
         CHKERR( PetscDSGetTotalComponents(self.ds, &tcmp) )
         return toInt(tcmp)
 
-    def getDimensions(self):
-        """Return the size of the approximation space for each field on an evaluation point
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        dimensions - The number of dimensions
-
+    def getDimensions(self) -> ArrayInt:
+        """Return the size of the approximation space for each field on an evaluation point.
+        TODO: shorten to 79
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -375,22 +242,11 @@ cdef class DS(Object):
         CHKERR( PetscDSGetDimensions(self.ds, &dims) )
         return array_i(nf, dims)
 
-    def getComponents(self):
-        """Return the number of components for each field on an evaluation point
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        Output Parameter
-        components - The number of components
-
+    def getComponents(self) -> ArrayInt:
+        """Return the number of components for each field on an evaluation point.
+        TODO: shorten to 79
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See also
         --------
@@ -402,21 +258,17 @@ cdef class DS(Object):
         CHKERR( PetscDSGetComponents(self.ds, &cmps) )
         return array_i(nf, cmps)
 
-    def setDiscretisation(self, f, disc):
-        """Set the discretization object for the given field
-
-        Parameters
-        ----------
-        prob - The PetscDS object
-        f - The field number
-        disc - The discretization object
+    def setDiscretisation(self, f: int, disc: Object) -> None:
+        """Set the discretization object for the given field.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        f
+            The field number.
+        disc
+            The discretization object.
 
         See also
         --------

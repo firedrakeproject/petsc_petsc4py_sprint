@@ -24,7 +24,7 @@ cdef class AO(Object):
         Parameters
         ----------
         viewer
-            A `Viewer` to display the graph.
+            A `Viewer` to display the ordering.
 
         See also
         --------

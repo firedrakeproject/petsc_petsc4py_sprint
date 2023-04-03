@@ -15,6 +15,7 @@ class DMDAElementType(object):
 # --------------------------------------------------------------------
 
 cdef class DMDA(DM):
+    """A DM object that is used to manage data for a structured grid."""
 
     StencilType       = DMDAStencilType
     InterpolationType = DMDAInterpolationType
@@ -22,10 +23,19 @@ cdef class DMDA(DM):
 
     #
 
-    def create(self, dim=None, dof=None,
-               sizes=None, proc_sizes=None, boundary_type=None,
-               stencil_type=None, stencil_width=None,
-               bint setup=True, ownership_ranges=None, comm=None):
+    def create(
+        self,
+        dim=None,
+        dof=None,
+        sizes=None,
+        proc_sizes=None,
+        boundary_type=None,
+        stencil_type=None,
+        stencil_width=None,
+        bint setup=True,
+        ownership_ranges=None,
+        comm=None
+    ) -> Self:
         """TODO
 
         Not collective.
