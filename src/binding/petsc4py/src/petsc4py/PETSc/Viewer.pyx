@@ -89,7 +89,18 @@ cdef class Viewer(Object):
     """Viewer object.
 
     Viewer is described in the `PETSc manual <petsc:sec_viewers>`.
+Viewers can be called as functions where the argument specified is the PETSc object to be viewed. See the example below.
 
+Examples
+--------------
+>>> from petsc4py import PETSc
+>>> u = PETSc.Vec().createWithArray([1,2])
+>>> v = PETSc.Viewer()
+>>> v(u)
+Vec Object: 1 MPI process
+  type: seq
+1.
+2.
     See Also
     --------
     petsc.PetscViewer
@@ -127,7 +138,7 @@ cdef class Viewer(Object):
         ----------
         obj
           A `Viewer` instance or `None` for the default viewer.
-          If none of the above applies, it assumes ``obj`` an instance of `Object`
+          If none of the above applies, it assumes ``obj`` is an instance of `Object`
           and it calls the generic view for ``obj``.
 
         Notes
@@ -464,7 +475,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerGetFormat(self.vwr, &format) )
         return format
 
-    def pushFormat(self, format) -> None:
+    def pushFormat(self, format: Format) -> None:
         """Push format to the viewer.
 
         Collective.
@@ -532,7 +543,7 @@ cdef class Viewer(Object):
 
     @classmethod
     def STDOUT(cls, comm: Comm | None = None) -> Viewer:
-        """The standard output viewer associated with the communicator.
+        """Return the standard output viewer associated with the communicator.
 
         Collective.
 
@@ -550,7 +561,7 @@ cdef class Viewer(Object):
 
     @classmethod
     def STDERR(cls, comm: Comm | None = None) -> Viewer:
-        """The standard error viewer associated with the communicator.
+        """Return the standard error viewer associated with the communicator.
 
         Collective.
 
@@ -589,7 +600,7 @@ cdef class Viewer(Object):
 
     @classmethod
     def BINARY(cls, comm: Comm | None = None) -> Viewer:
-        """The default `Type.BINARY` viewer associated with the communicator.
+        """Return the default `Type.BINARY` viewer associated with the communicator.
 
         Collective.
 
@@ -607,7 +618,7 @@ cdef class Viewer(Object):
 
     @classmethod
     def DRAW(cls, comm: Comm | None = None) -> Viewer:
-        """The default `Type.DRAW` viewer associated with the communicator.
+        """Return the default `Type.DRAW` viewer associated with the communicator.
 
         Collective.
 
@@ -639,7 +650,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerASCIISetTab(self.vwr, ctabs) )
 
     def getASCIITab(self) -> int:
-        """Return ASCII tab level.
+        """Return the ASCII tab level.
 
         Not collective.
 
@@ -653,7 +664,7 @@ cdef class Viewer(Object):
         return toInt(tabs)
 
     def addASCIITab(self, tabs):
-        """Increment ASCII tab level.
+        """Increment the ASCII tab level.
 
         Collective.
 
@@ -666,7 +677,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerASCIIAddTab(self.vwr, ctabs) )
 
     def subtractASCIITab(self, tabs) -> None:
-        """Decrement ASCII tab level.
+        """Decrement the ASCII tab level.
 
         Collective.
 
@@ -705,7 +716,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerASCIIPopSynchronized(self.vwr) )
 
     def pushASCIITab(self) -> None:
-        """Push additional tab level.
+        """Push an additional tab level.
 
         Collective.
 
@@ -717,7 +728,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerASCIIPushTab(self.vwr) )
 
     def popASCIITab(self) -> None:
-        """Pop additional tab level pushed via `pushASCIITab`.
+        """Pop an additional tab level pushed via `pushASCIITab`.
 
         Collective.
 
@@ -742,7 +753,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerASCIIUseTabs(self.vwr, flg) )
 
     def printfASCII(self, msg: str) -> None:
-        """Print message.
+        """Print a message.
 
         Collective.
 
@@ -755,8 +766,8 @@ cdef class Viewer(Object):
         msg = str2bytes(msg, &cmsg)
         CHKERR( PetscViewerASCIIPrintf(self.vwr, '%s', cmsg) )
 
-    def printfASCIISynchronized(self, msg) -> None:
-        """Print synchronized message.
+    def printfASCIISynchronized(self, msg: str) -> None:
+        """Print a synchronized message.
 
         Collective.
 
@@ -783,7 +794,7 @@ cdef class Viewer(Object):
         """
         CHKERR( PetscViewerFlush(self.vwr) )
 
-    def setFileMode(self, mode : FileMode | str) -> None:
+    def setFileMode(self, mode: FileMode | str) -> None:
         """Set file mode.
 
         Collective.
@@ -809,7 +820,7 @@ cdef class Viewer(Object):
         CHKERR( PetscViewerFileGetMode(self.vwr, &mode) )
         return mode
 
-    def setFileName(self, name : str) -> None:
+    def setFileName(self, name: str) -> None:
         """Set file name.
 
         Collective.
