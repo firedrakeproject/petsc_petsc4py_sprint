@@ -9,31 +9,22 @@ class AOType(object):
 # --------------------------------------------------------------------
 
 cdef class AO(Object):
-
+    """An application ordering."""
     Type = AOType
 
     def __cinit__(self):
         self.obj = <PetscObject*> &self.ao
         self.ao = NULL
 
-    def view(self, Viewer viewer=None):
-        """Display an application ordering.
+    def view(self, Viewer viewer=None) -> None:
+        """Display the application ordering.
 
-Collective
+        Collective.
 
-Input Parameters
-ao - the application ordering context
-viewer - viewer used for display
-Options Database Key
--ao_view - calls AOView() at end of AOCreate()
-Notes
-The available visualization contexts include
-
-PETSC_VIEWER_STDOUT_SELF - standard output (default)
-PETSC_VIEWER_STDOUT_WORLD - synchronized standard output where only the first processor opens the file. All other processors send their data to the first processor to print.
-The user can open an alternative visualization context with PetscViewerASCIIOpen() - output to a specified file.
-
-
+        Parameters
+        ----------
+        viewer
+            A `Viewer` to display the graph.
 
         See also
         --------
@@ -44,14 +35,10 @@ The user can open an alternative visualization context with PetscViewerASCIIOpen
         if viewer is not None: cviewer = viewer.vwr
         CHKERR( AOView(self.ao, cviewer) )
 
-    def destroy(self):
-        """Destroy an application ordering.
+    def destroy(self) -> Self:
+        """Destroy the application ordering.
 
-Collective
-
-Input Parameter
-ao - the application ordering context
-
+        Collective.
 
         See also
         --------
@@ -61,38 +48,35 @@ ao - the application ordering context
         CHKERR( AODestroy(&self.ao) )
         return self
 
-    def createBasic(self, app, petsc=None, comm=None):
-        """Create a basic application ordering using two integer arrays.
+    def createBasic(
+        self,
+        app: Sequence[int] | IS,
+        petsc: Sequence[int] | IS | None = None,
+        comm=Comm | None=None
+    ) -> Self:
+        """Return a basic application ordering using two orderings.
 
-Collective
+        The arrays/indices **app** and **petsc** must contain all the integers
+        0 to **len(app)-1** with no duplicates; that is there cannot be any
+        "holes" in the indices. Use ``createMapping`` if you wish to have
+        "holes" in the indices.
 
-Input Parameters
-comm - MPI communicator that is to share AO
-napp - size of integer arrays
-myapp - integer array that defines an ordering
-mypetsc - integer array that defines another ordering (may be NULL to indicate the natural ordering, that is 0,1,2,3,…)
-Output Parameter
-aoout - the new application ordering
-Note
-The arrays myapp and mypetsc must contain the all the integers 0 to napp-1 with no duplicates; that is there cannot be any “holes” in the indices. Use AOCreateMapping() or AOCreateMappingIS() if you wish to have “holes” in the indices.
+        Collective.
 
-Creates a basic application ordering using two IS index sets.
-
-Collective
-
-Input Parameters
-isapp - index set that defines an ordering
-ispetsc - index set that defines another ordering (may be NULL to use the natural ordering)
-Output Parameter
-aoout - the new application ordering
-Note
-The index sets isapp and ispetsc must contain the all the integers 0 to napp-1 (where napp is the length of the index sets) with no duplicates; that is there cannot be any “holes”
-
-
+        Parameters
+        ----------
+        app
+            The application ordering.
+        petsc
+            Another ordering (may be `None` to indicate the natural ordering,
+            that is 0, 1, 2, 3, ...).
+        comm
+            The MPI communicator that is to share the application ordering.
 
         See also
         --------
-        petsc.AOCreateBasicIS, petsc.AOCreateBasic
+        petsc.AOCreateBasicIS, petsc.AOCreateBasic, createMemoryScalable,
+        createMapping
 
         """
         cdef PetscIS isapp = NULL, ispetsc = NULL
@@ -114,40 +98,38 @@ The index sets isapp and ispetsc must contain the all the integers 0 to napp-1 (
         PetscCLEAR(self.obj); self.ao = newao
         return self
 
-    def createMemoryScalable(self, app, petsc=None, comm=None):
-        """Create a memory scalable application ordering using two integer arrays.
+    def createMemoryScalable(
+        self,
+        app: Sequence[int] | IS,
+        petsc: Sequence[int] | IS | None = None,
+        comm=Comm | None=None
+    ) -> Self:
+        """Return a memory scalable application ordering using two orderings.
 
-Collective
+        The arrays/indices **app** and **petsc** must contain all the integers
+        0 to **len(app)-1** with no duplicates; that is there cannot be any
+        "holes" in the indices. Use ``createMapping`` if you wish to have
+        "holes" in the indices.
 
-Input Parameters
-comm - MPI communicator that is to share the AO
-napp - size of integer arrays
-myapp - integer array that defines an ordering
-mypetsc - integer array that defines another ordering (may be NULL to indicate the natural ordering, that is 0,1,2,3,…)
-Output Parameter
-aoout - the new application ordering
-Note
-The arrays myapp and mypetsc must contain the all the integers 0 to napp-1 with no duplicates; that is there cannot be any “holes” in the indices. Use AOCreateMapping() or AOCreateMappingIS() if you wish to have “holes” in the indices. Comparing with AOCreateBasic(), this routine trades memory with message communication.
+        Comparing with ``createBasic``, this routine trades memory with message
+        communication.
 
-Creates a memory scalable application ordering using two index sets.
+        Collective.
 
-Collective
-
-Input Parameters
-isapp - index set that defines an ordering
-ispetsc - index set that defines another ordering (may be NULL to use the natural ordering)
-Output Parameter
-aoout - the new application ordering
-Notes
-The index sets isapp and ispetsc must contain the all the integers 0 to napp-1 (where napp is the length of the index sets) with no duplicates; that is there cannot be any “holes”.
-
-Comparing with AOCreateBasicIS(), this routine trades memory with message communication.
-
-
+        Parameters
+        ----------
+        app
+            The application ordering.
+        petsc
+            Another ordering (may be `None` to indicate the natural ordering,
+            that is 0, 1, 2, 3, ...).
+        comm
+            The MPI communicator that is to share the application ordering.
 
         See also
         --------
-        petsc.AOCreateMemoryScalableIS, petsc.AOCreateMemoryScalable
+        petsc.AOCreateMemoryScalableIS, petsc.AOCreateMemoryScalable,
+        createBasic, createMapping
 
         """
         cdef PetscIS isapp = NULL, ispetsc = NULL
@@ -169,40 +151,30 @@ Comparing with AOCreateBasicIS(), this routine trades memory with message commun
         PetscCLEAR(self.obj); self.ao = newao
         return self
 
-    def createMapping(self, app, petsc=None, comm=None):
-        """Create an application mapping using two integer arrays.
+    def createMapping(
+        self,
+        app: Sequence[int] | IS,
+        petsc: Sequence[int] | IS | None = None,
+        comm=Comm | None=None
+    ) -> Self:
+        """Return an application mapping using two orderings.
 
-Input Parameters
-comm - MPI communicator that is to share the AO
-napp - size of integer arrays
-myapp - integer array that defines an ordering
-mypetsc - integer array that defines another ordering (may be NULL to indicate the identity ordering)
-Output Parameter
-aoout - the new application mapping
-Options Database Key
--ao_view - call AOView() at the conclusion of AOCreateMapping()
-Note
-The arrays myapp and mypetsc need NOT contain the all the integers 0 to napp-1, that is there CAN be “holes” in the indices. Use AOCreateBasic() or AOCreateBasicIS() if they do not have holes for better performance.
+        The arrays *app** and **petsc** need NOT contain all the integers 0
+        to **len(app)-1**, that is there CAN be "holes" in the indices.
+        Use ``createBasic`` if they do not have holes for better performance.
 
-
-Creates an application mapping using two index sets.
-
-Input Parameters
-comm - MPI communicator that is to share AO
-isapp - index set that defines an ordering
-ispetsc - index set that defines another ordering, maybe NULL for identity IS
-Output Parameter
-aoout - the new application ordering
-Options Database Key
--ao_view - call AOView() at the conclusion of AOCreateMappingIS()
-Note
-The index sets isapp and ispetsc need NOT contain the all the integers 0 to N-1, that is there CAN be “holes” in the indices. Use AOCreateBasic() or AOCreateBasicIS() if they do not have holes for better performance.
-
-
+        Parameters
+        ----------
+        app
+            The application ordering.
+        petsc
+            Another ordering. May be `None` to indicate the identity ordering.
+        comm
+            The MPI communicator that is to share the application ordering.
 
         See also
         --------
-        petsc.AOCreateMappingIS, petsc.AOCreateMapping
+        petsc.AOCreateMappingIS, petsc.AOCreateMapping, createBasic
 
         """
         cdef PetscIS isapp = NULL, ispetsc = NULL
@@ -224,16 +196,10 @@ The index sets isapp and ispetsc need NOT contain the all the integers 0 to N-1,
         PetscCLEAR(self.obj); self.ao = newao
         return self
 
-    def getType(self):
-        """Return the AO type name (as a string) from the AO.
+    def getType(self) -> str:
+        """Return the application ordering type.
 
-Not Collective
-
-Input Parameter
-ao - The vector
-Output Parameter
-type - The AO type name
-
+        Not Collective.
 
         See also
         --------
@@ -244,43 +210,29 @@ type - The AO type name
         CHKERR( AOGetType(self.ao, &cval) )
         return bytes2str(cval)
 
-    def app2petsc(self, indices):
-        """Map a set of integers in the application-defined ordering to the PETSc ordering.
+    def app2petsc(self, indices: Sequence[int] | IS) -> Sequence[int] | IS:
+        """Map an application-defined ordering to the PETSc ordering.
 
-Collective
+        Any integers in ``indices`` that are negative are left unchanged. This
+        allows one to convert, for example, neighbor lists that use negative
+        entries to indicate nonexistent neighbors due to boundary conditions,
+        etc.
 
-Input Parameters
-ao - the application ordering context
-n - the number of integers
-ia - the integers; these are replaced with their mapped value
-Output Parameter
-ia - the mapped integers
-Notes
-Any integers in ia[] that are negative are left unchanged. This allows one to convert, for example, neighbor lists that use negative entries to indicate nonexistent neighbors due to boundary conditions, etc.
+        Integers that are out of range are mapped to -1.
 
-Integers that are out of range are mapped to -1
+        If ``IS`` is used, it cannot be of type stride or block.
 
+        Collective.
 
-Maps an index set in the application-defined ordering to the PETSc ordering.
-
-Collective
-
-Input Parameters
-ao - the application ordering context
-is - the index set; this is replaced with its mapped values
-Output Parameter
-is - the mapped index set
-Notes
-The index set cannot be of type stride or block
-
-Any integers in is that are negative are left unchanged. This allows one to convert, for example, neighbor lists that use negative entries to indicate nonexistent neighbors due to boundary conditions, etc.
-
-
-
+        Parameters
+        ----------
+        indices
+            The indices; to be replaced with their mapped values.
+        # TODO: The values are still replaced, right?
 
         See also
         --------
-        petsc.AOApplicationToPetscIS, petsc.AOApplicationToPetsc
+        petsc.AOApplicationToPetscIS, petsc.AOApplicationToPetsc, petsc2app
 
         """
         cdef PetscIS iset = NULL
@@ -293,41 +245,29 @@ Any integers in is that are negative are left unchanged. This allows one to conv
             CHKERR( AOApplicationToPetsc(self.ao, nidx, idx) )
         return indices
 
-    def petsc2app(self, indices):
-        """Map a set of integers in the PETSc ordering to the application-defined ordering.
+    def petsc2app(self, indices: Sequence[int] | IS) -> Sequence[int] | IS:
+        """Map a PETSc ordering to the application-defined ordering.
 
-Collective
+        Any integers in ``indices`` that are negative are left unchanged. This
+        allows one to convert, for example, neighbor lists that use negative
+        entries to indicate nonexistent neighbors due to boundary conditions,
+        etc.
 
-Input Parameters
-ao - the application ordering context
-n - the number of integers
-ia - the integers; these are replaced with their mapped value
-Output Parameter
-ia - the mapped integers
-Note
-Any integers in ia[] that are negative are left unchanged. This allows one to convert, for example, neighbor lists that use negative entries to indicate nonexistent neighbors due to boundary conditions, etc.
+        Integers that are out of range are mapped to -1.
 
-Integers that are out of range are mapped to -1
+        If ``IS`` is used, it cannot be of type stride or block.
 
-Maps an index set in the PETSc ordering to the application-defined ordering.
+        Collective.
 
-Collective
-
-Input Parameters
-ao - the application ordering context
-is - the index set; this is replaced with its mapped values
-Output Parameter
-is - the mapped index set
-Notes
-The index set cannot be of type stride or block
-
-Any integers in is that are negative are left unchanged. This allows one to convert, for example, neighbor lists that use negative entries to indicate nonexistent neighbors due to boundary conditions etc.
-
-
+        Parameters
+        ----------
+        indices
+            The indices; to be replaced with their mapped values.
+        # TODO: The values are still replaced, right?
 
         See also
         --------
-        petsc.AOPetscToApplicationIS, petsc.AOPetscToApplication
+        petsc.AOPetscToApplicationIS, petsc.AOPetscToApplication, app2petsc
 
         """
         cdef PetscIS iset = NULL
