@@ -49,7 +49,7 @@ cdef class DMStag(DM):
         dim,
         dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
         sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
-        boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None, # DM.BoundaryType | None = None, # sequence? 0,1,2,3
+        boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
         proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
