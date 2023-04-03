@@ -190,7 +190,7 @@ cdef class Scatter(Object):
         return scatter
 
     @classmethod
-    def toAll(cls, Vec vec) -> Scatter:
+    def toAll(cls, Vec vec) -> tuple[Scatter, Vec]:
         """Create a scatter that communicates a vector to all sharing processes.
 
         Collective.
