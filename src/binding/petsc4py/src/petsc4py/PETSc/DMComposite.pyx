@@ -24,10 +24,7 @@ cdef class DMComposite(DM):
         PetscCLEAR(self.obj); self.dm = newdm
         return self
 
-    # TODO 1: *args type
-    # TODO 2: *args in Parameters block
-    # Should it just be Sequence[DM]?
-    def addDM(self, DM dm, *args) -> None:
+    def addDM(self, DM dm, *args: DM) -> None:
         """Add a DM vector to the composite.
 
         Collective.
@@ -36,6 +33,8 @@ cdef class DMComposite(DM):
         ----------
         dm
             The DM object.
+        *args
+            Additional DM objects.
 
         See also
         --------
@@ -216,9 +215,8 @@ cdef class DMComposite(DM):
         CHKERR( PetscFree(clgm) )
         return lgms
 
-    # TODO: return type?
-    def getAccess(self, Vec gvec, locs: Sequence[int] | None = None):
-        """Get access to specified parts of global vector.
+    def getAccess(self, Vec gvec, locs: Sequence[int] | None = None) -> Any:
+        """Get access to the individual vectors from the global vector.
 
         Use via `with` context manager (PEP 343).
 
@@ -229,8 +227,7 @@ cdef class DMComposite(DM):
         gvec
             The global vector.
         locs
-            Locations at which access is requested (TODO?). If `None`, access
-            to all locations is requested.
+            Indices of vectors wanted, or `None` to get all vectors.
 
         """
         return _DMComposite_access(self, gvec, locs)
