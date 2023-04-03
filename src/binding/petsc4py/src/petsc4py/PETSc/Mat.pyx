@@ -2177,7 +2177,7 @@ cdef class Mat(Object):
         mat
             The right hand matrix B.
         result
-            The resultant matrix C, can be ``None``.
+            The optional resultant matrix C, uses ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
             ``None`` if you do not have a good estimate. If the
@@ -2223,7 +2223,7 @@ cdef class Mat(Object):
         mat
             The right hand matrix B.
         result
-            The resultant matrix C, can be ``None``.
+            The optional resultant matrix C, uses ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
             ``None`` if you do not have a good estimate. If the
@@ -2269,7 +2269,7 @@ cdef class Mat(Object):
         mat
             The right hand matrix B.
         result
-            The resultant matrix C, can be ``None``.
+            The optional resultant matrix C, uses ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
             ``None`` if you do not have a good estimate. If the
@@ -2315,7 +2315,7 @@ cdef class Mat(Object):
         P
             The matrix P.
         result
-            The resultant matrix C, can be ``None``.
+            The optional resultant matrix C, uses ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(P)), use
             ``None`` if you do not have a good estimate. If the
@@ -2365,7 +2365,7 @@ cdef class Mat(Object):
         R
             The projection matrix.
         result
-            The resultant matrix C, can be ``None``.
+            The optional resultant matrix C, uses ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
             you do not have a good estimate. If the result is a dense
@@ -2425,7 +2425,7 @@ cdef class Mat(Object):
         C
             The right hand matrix C.
         result
-            The resultant matrix D, can be ``None``.
+            The optional resultant matrix D, uses ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
             you do not have a good estimate. If the result is a dense
