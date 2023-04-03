@@ -30,11 +30,11 @@ cdef class DMDA(DM):
         sizes=None,
         proc_sizes=None,
         boundary_type=None,
-        stencil_type=None,
-        stencil_width=None,
-        bint setup=True,
+        stencil_type: StencilType | None = None,
+        stencil_width: int | None = None,
+        bint setup:=True,
         ownership_ranges=None,
-        comm=None,
+        comm: Comm | None = None,
     ) -> Self:
         """TODO
 
@@ -119,7 +119,13 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        TODO
+        dof
+            TODO.
+        boundary_type
+            TODO.
+        stencil_type
+            TODO.
+        stencil_width
             TODO.
 
         See also
@@ -203,15 +209,12 @@ cdef class DMDA(DM):
     def setDof(self, dof) -> None:
         """Set the number of degrees of freedom per vertex
 
-Not Collective
+        Not Collective.
 
         Parameters
         ----------
-da - The DMDA
-dof - Number of degrees of freedom
-
-
-        Not collective.
+        dof
+            Number of degrees of freedom.
 
         Parameters
         ----------
@@ -232,28 +235,22 @@ dof - Number of degrees of freedom
         getINFO
         Gets information about a given distributed array.
 
-Not Collective
-
-Input Parameter
-da - the distributed array
-Output Parameters
-dim - dimension of the distributed array (1, 2, or 3)
-M - global dimension in first direction of the array
-N - global dimension in second direction of the array
-P - global dimension in third direction of the array
-m - corresponding number of procs in first dimension
-n - corresponding number of procs in second dimension
-p - corresponding number of procs in third dimension
-dof - number of degrees of freedom per node
-s - stencil width
-bx - type of ghost nodes at boundary in first dimension
-by - type of ghost nodes at boundary in second dimension
-bz - type of ghost nodes at boundary in third dimension
-st - stencil type, either DMDA_STENCIL_STAR or DMDA_STENCIL_BOX
-Note
-Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not of interest.
-
-
+        Output Parameters
+        dim - dimension of the distributed array (1, 2, or 3)
+        M - global dimension in first direction of the array
+        N - global dimension in second direction of the array
+        P - global dimension in third direction of the array
+        m - corresponding number of procs in first dimension
+        n - corresponding number of procs in second dimension
+        p - corresponding number of procs in third dimension
+        dof - number of degrees of freedom per node
+        s - stencil width
+        bx - type of ghost nodes at boundary in first dimension
+        by - type of ghost nodes at boundary in second dimension
+        bz - type of ghost nodes at boundary in third dimension
+        st - stencil type, either DMDA_STENCIL_STAR or DMDA_STENCIL_BOX
+        Note
+        Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not of interest.
 
         Not collective.
 
@@ -278,27 +275,21 @@ Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not 
         return toInt(dof)
 
     def setSizes(self, sizes):
-        """Set the number of grid points in the three dimensional directions
+        """Set the number of grid points in the three dimensional directions.
 
-Logically Collective
+        Developer Note
+        Since the dimension may not yet have been set the code cannot error check for non-positive Y and Z number of grid points
 
-        Parameters
-        ----------
-da - the DMDA
-M - the global X size
-N - the global Y size
-P - the global Z size
-Developer Note
-Since the dimension may not yet have been set the code cannot error check for non-positive Y and Z number of grid points
-
-
-
-        Not collective.
+        Logically collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        M
+            the global X size
+        N
+            the global Y size
+        P
+            the global Z size
 
         See also
         --------
@@ -348,22 +339,16 @@ Since the dimension may not yet have been set the code cannot error check for no
     def setProcSizes(self, proc_sizes):
         """Set the number of processes in each dimension
 
-Logically Collective
+        Logically collective.
 
         Parameters
         ----------
-da - the DMDA
-m - the number of X procs (or PETSC_DECIDE)
-n - the number of Y procs (or PETSC_DECIDE)
-p - the number of Z procs (or PETSC_DECIDE)
-
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
+        m
+            the number of X procs (or PETSC_DECIDE)
+        n
+            the number of Y procs (or PETSC_DECIDE)
+        p
+            the number of Z procs (or PETSC_DECIDE)
 
         See also
         --------
