@@ -15,7 +15,6 @@ class DMDAElementType(object):
 # --------------------------------------------------------------------
 
 cdef class DMDA(DM):
-    """A DM object that is used to manage data for a structured grid."""
 
     StencilType       = DMDAStencilType
     InterpolationType = DMDAInterpolationType
@@ -23,33 +22,10 @@ cdef class DMDA(DM):
 
     #
 
-    def create(
-        self,
-        dim=None,
-        dof=None,
-        sizes=None,
-        proc_sizes=None,
-        boundary_type=None,
-        stencil_type: StencilType | None = None,
-        stencil_width: int | None = None,
-        bint setup:=True,
-        ownership_ranges=None,
-        comm: Comm | None = None,
-    ) -> Self:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDACreateND
-
-        """
+    def create(self, dim=None, dof=None,
+               sizes=None, proc_sizes=None, boundary_type=None,
+               stencil_type=None, stencil_width=None,
+               bint setup=True, ownership_ranges=None, comm=None):
         #
         cdef object arg = None
         try: arg = tuple(dim)
@@ -106,33 +82,8 @@ cdef class DMDA(DM):
         PetscCLEAR(self.obj); self.dm = newda
         return self
 
-    def duplicate(
-        self,
-        dof=None,
-        boundary_type: DM.BoundaryType | None = None,
-        stencil_type: StencilType | None = None,
-        stencil_width: int | None = None,
-    ) -> DMDA:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        dof
-            TODO.
-        boundary_type
-            TODO.
-        stencil_type
-            TODO.
-        stencil_width
-            TODO.
-
-        See also
-        --------
-        petsc.DMDACreateND, petsc.DMSetUp
-
-        """
+    def duplicate(self, dof=None, boundary_type=None,
+                  stencil_type=None, stencil_width=None):
         cdef PetscInt ndim = 0, ndof = 0
         cdef PetscInt M = 1, N = 1, P = 1
         cdef PetscInt m = 1, n = 1, p = 1
@@ -172,97 +123,17 @@ cdef class DMDA(DM):
 
     #
 
-    def setDim(self, dim) -> None:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.TODO
-
-        """
+    def setDim(self, dim):
         return self.setDimension(dim)
 
     def getDim(self):
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.TODO
-
-        """
         return self.getDimension()
 
-    def setDof(self, dof) -> None:
-        """Set the number of degrees of freedom per vertex
-
-        Not collective.
-
-        Parameters
-        ----------
-        dof
-            Number of degrees of freedom.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDASetDof
-
-        """
+    def setDof(self, dof):
         cdef PetscInt ndof = asInt(dof)
         CHKERR( DMDASetDof(self.dm, ndof) )
 
     def getDof(self):
-        """
-        getINFO
-        Gets information about a given distributed array.
-
-        Output Parameters
-        dim - dimension of the distributed array (1, 2, or 3)
-        M - global dimension in first direction of the array
-        N - global dimension in second direction of the array
-        P - global dimension in third direction of the array
-        m - corresponding number of procs in first dimension
-        n - corresponding number of procs in second dimension
-        p - corresponding number of procs in third dimension
-        dof - number of degrees of freedom per node
-        s - stencil width
-        bx - type of ghost nodes at boundary in first dimension
-        by - type of ghost nodes at boundary in second dimension
-        bz - type of ghost nodes at boundary in third dimension
-        st - stencil type, either DMDA_STENCIL_STAR or DMDA_STENCIL_BOX
-        Note
-        Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not of interest.
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
         cdef PetscInt dof = 0
         CHKERR( DMDAGetInfo(self.dm,
                             NULL,
@@ -274,27 +145,6 @@ cdef class DMDA(DM):
         return toInt(dof)
 
     def setSizes(self, sizes):
-        """Set the number of grid points in the three dimensional directions.
-
-        Developer Note
-        Since the dimension may not yet have been set the code cannot error check for non-positive Y and Z number of grid points
-
-        Logically collective.
-
-        Parameters
-        ----------
-        M
-            the global X size
-        N
-            the global Y size
-        P
-            the global Z size
-
-        See also
-        --------
-        petsc.DMDASetSizes
-
-        """
         cdef tuple gsizes = tuple(sizes)
         cdef PetscInt gdim = PETSC_DECIDE
         cdef PetscInt M = 1
@@ -308,20 +158,6 @@ cdef class DMDA(DM):
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
     def getSizes(self):
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
         cdef PetscInt dim = 0
         cdef PetscInt M = PETSC_DECIDE
         cdef PetscInt N = PETSC_DECIDE
@@ -336,24 +172,6 @@ cdef class DMDA(DM):
         return toDims(dim, M, N, P)
 
     def setProcSizes(self, proc_sizes):
-        """Set the number of processes in each dimension
-
-        Logically collective.
-
-        Parameters
-        ----------
-        m
-            the number of X procs (or PETSC_DECIDE)
-        n
-            the number of Y procs (or PETSC_DECIDE)
-        p
-            the number of Z procs (or PETSC_DECIDE)
-
-        See also
-        --------
-        petsc.DMDASetNumProcs
-
-        """
         cdef tuple psizes = tuple(proc_sizes)
         cdef PetscInt pdim = PETSC_DECIDE
         cdef PetscInt m = PETSC_DECIDE
@@ -367,20 +185,6 @@ cdef class DMDA(DM):
         CHKERR( DMDASetNumProcs(self.dm, m, n, p) )
 
     def getProcSizes(self):
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
         cdef PetscInt dim = 0
         cdef PetscInt m = PETSC_DECIDE
         cdef PetscInt n = PETSC_DECIDE
@@ -395,20 +199,6 @@ cdef class DMDA(DM):
         return toDims(dim, m, n, p)
 
     def setBoundaryType(self, boundary_type):
-        """Set the type of ghost nodes on domain boundaries.
-
-        Parameters
-        ----------
-        bx
-            bx,by,bz is one of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDASetBoundaryType
-
-        """
         cdef PetscDMBoundaryType btx = DM_BOUNDARY_NONE
         cdef PetscDMBoundaryType bty = DM_BOUNDARY_NONE
         cdef PetscDMBoundaryType btz = DM_BOUNDARY_NONE
@@ -416,15 +206,6 @@ cdef class DMDA(DM):
         CHKERR( DMDASetBoundaryType(self.dm, btx, bty, btz) )
 
     def getBoundaryType(self):
-        """TODO
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
         cdef PetscInt dim = 0
         cdef PetscDMBoundaryType btx = DM_BOUNDARY_NONE
         cdef PetscDMBoundaryType bty = DM_BOUNDARY_NONE
@@ -438,41 +219,11 @@ cdef class DMDA(DM):
                           NULL) )
         return toDims(dim, btx, bty, btz)
 
-    def setStencilType(self, stencil_type: StencilType) -> None:
-        """Set the type of the communication stencil
-
-        Logically collective.
-
-        Parameters
-        ----------
-        stype
-            The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
-
-
-
-        See also
-        --------
-        petsc.DMDASetStencilType
-
-        """
+    def setStencilType(self, stencil_type):
         cdef PetscDMDAStencilType stype = asStencil(stencil_type)
         CHKERR( DMDASetStencilType(self.dm, stype) )
 
-    def getStencilType(self) -> StencilType:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
+    def getStencilType(self):
         cdef PetscDMDAStencilType stype = DMDA_STENCIL_BOX
         CHKERR( DMDAGetInfo(self.dm,
                           NULL,
@@ -483,38 +234,11 @@ cdef class DMDA(DM):
                           &stype) )
         return stype
 
-    def setStencilWidth(self, stencil_width: int) -> None:
-        """Set the width of the communication stencil.
-
-        Logically collective.
-
-        Parameters
-        ----------
-        width - The stencil width
-
-        See also
-        --------
-        petsc.DMDASetStencilWidth
-
-        """
+    def setStencilWidth(self, stencil_width):
         cdef PetscInt swidth = asInt(stencil_width)
         CHKERR( DMDASetStencilWidth(self.dm, swidth) )
 
-    def getStencilWidth(self) -> int:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
+    def getStencilWidth(self):
         cdef PetscInt swidth = 0
         CHKERR( DMDAGetInfo(self.dm,
                             NULL,
@@ -525,45 +249,13 @@ cdef class DMDA(DM):
                             NULL) )
         return toInt(swidth)
 
-    def setStencil(
-        self,
-        stencil_type: StencilType,
-        stencil_width: int,
-    ) -> None:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDASetStencilType, petsc.DMDASetStencilWidth
-
-        """
+    def setStencil(self, stencil_type, stencil_width):
         cdef PetscDMDAStencilType stype = asStencil(stencil_type)
         cdef PetscInt swidth = asInt(stencil_width)
         CHKERR( DMDASetStencilType(self.dm, stype) )
         CHKERR( DMDASetStencilWidth(self.dm, swidth) )
 
-    def getStencil(self) -> tuple[StencilType, int]:
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetInfo
-
-        """
+    def getStencil(self):
         cdef PetscDMDAStencilType stype = DMDA_STENCIL_BOX
         cdef PetscInt swidth = 0
         CHKERR( DMDAGetInfo(self.dm,
@@ -578,20 +270,6 @@ cdef class DMDA(DM):
     #
 
     def getRanges(self):
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetCorners
-
-        """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
         CHKERR( DMDAGetDim(self.dm, &dim) )
         CHKERR( DMDAGetCorners(self.dm,
@@ -602,20 +280,6 @@ cdef class DMDA(DM):
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     def getGhostRanges(self):
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetGhostCorners
-
-        """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
         CHKERR( DMDAGetDim(self.dm, &dim) )
         CHKERR( DMDAGetGhostCorners(self.dm,
@@ -626,26 +290,6 @@ cdef class DMDA(DM):
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     def getOwnershipRanges(self):
-        """Return the ranges of indices in the x, y and z direction that are owned by each process.
-
-        Output Parameters
-        lx - ownership along x direction (optional)
-        ly - ownership along y direction (optional)
-        lz - ownership along z direction (optional)
-        Note
-        These correspond to the optional final arguments passed to DMDACreate(), DMDACreate2d(), DMDACreate3d()
-
-        In C you should not free these arrays, nor change the values in them. They will only have valid values while the DMDA they came from still exists (has not been destroyed).
-
-        These numbers are NOT multiplied by the number of dof per node.
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetOwnershipRanges
-
-        """
         cdef PetscInt dim=0, m=0, n=0, p=0
         cdef const PetscInt *lx = NULL, *ly = NULL, *lz = NULL
         CHKERR( DMDAGetInfo(self.dm,
@@ -659,25 +303,6 @@ cdef class DMDA(DM):
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getCorners(self):
-        """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
-
-        Output Parameters
-        x - the corner index for the first dimension
-        y - the corner index for the second dimension (only used in 2D and 3D problems)
-        z - the corner index for the third dimension (only used in 3D problems)
-        m - the width in the first dimension
-        n - the width in the second dimension (only used in 2D and 3D problems)
-        p - the width in the third dimension (only used in 3D problems)
-        Note
-        The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetCorners
-
-        """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
         CHKERR( DMDAGetDim(self.dm, &dim) )
         CHKERR( DMDAGetCorners(self.dm,
@@ -687,25 +312,6 @@ cdef class DMDA(DM):
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
     def getGhostCorners(self):
-        """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
-
-        Output Parameters
-        x - the corner index for the first dimension
-        y - the corner index for the second dimension (only used in 2D and 3D problems)
-        z - the corner index for the third dimension (only used in 3D problems)
-        m - the width in the first dimension
-        n - the width in the second dimension (only used in 2D and 3D problems)
-        p - the width in the third dimension (only used in 3D problems)
-        Note
-        The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetGhostCorners
-
-        """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
         CHKERR( DMDAGetDim(self.dm, &dim) )
         CHKERR( DMDAGetGhostCorners(self.dm,
@@ -716,49 +322,13 @@ cdef class DMDA(DM):
 
     #
 
-    def setFieldName(self, field: int, name: str) -> None:
-        """Set the names of individual field components in multicomponent vectors associated with a DMDA.
-
-        It must be called after having called DMSetUp().
-
-        Logically collective; name must contain a common value.
-
-        Parameters
-        ----------
-        nf
-            field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
-        names
-            the name of the field (component)
-
-        See also
-        --------
-        petsc.DMDASetFieldName
-
-        """
+    def setFieldName(self, field, name):
         cdef PetscInt ival = asInt(field)
         cdef const char *cval = NULL
         name = str2bytes(name, &cval)
         CHKERR( DMDASetFieldName(self.dm, ival, cval) )
 
-    def getFieldName(self, field: int) -> str:
-        """Return the names of individual field components in multicomponent vectors associated with a DMDA.
-
-        It must be called after having called DMSetUp().
-
-        Not collective; name will contain a common value.
-
-        Parameters
-        ----------
-        da
-            the distributed array
-        nf
-            field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
-
-        See also
-        --------
-        petsc.DMDAGetFieldName
-
-        """
+    def getFieldName(self, field):
         cdef PetscInt ival = asInt(field)
         cdef const char *cval = NULL
         CHKERR( DMDAGetFieldName(self.dm, ival, &cval) )
@@ -767,57 +337,14 @@ cdef class DMDA(DM):
     #
 
     def getVecArray(self, Vec vec):
-        """TODO
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc._DMDA_Vec_array
-
-        """
         return _DMDA_Vec_array(self, vec)
 
     #
 
-    def setUniformCoordinates(
-        self,
-        xmin: float | None = 0,
-        xmax: float | None = 1,
-        ymin: float | None = 0,
-        ymax: float | None = 1,
-        zmin: float | None = 0,
-        zmax: float | None = 1,
-    ) -> None:
-        """Set the DMDA coordinates to be a uniform grid.
-
-        Collective.
-
-        Parameters
-        ----------
-        xmin
-            The minimum in the ``x`` direction.
-        xmax
-            The maximum in the ``x`` direction.
-        ymin
-            The minimum in the ``y`` direction (value ignored for 1 dimensional problems).
-        ymax
-            The maximum in the ``y`` direction (value ignored for 1 dimensional problems).
-        zmin
-            The minimum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
-        zmax
-            The maximum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
-
-        See also
-        --------
-        petsc.DMDASetUniformCoordinates
-
-        """
+    def setUniformCoordinates(self,
+                              xmin=0, xmax=1,
+                              ymin=0, ymax=1,
+                              zmin=0, zmax=1):
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
         cdef PetscReal _ymin = asReal(ymin), _ymax = asReal(ymax)
         cdef PetscReal _zmin = asReal(zmin), _zmax = asReal(zmax)
@@ -826,45 +353,13 @@ cdef class DMDA(DM):
                                           _ymin, _ymax,
                                           _zmin, _zmax) )
 
-    def setCoordinateName(self, index: int, name: str) -> None:
-        """Set the name of the coordinate directions associated with a DMDA, for example "x" or "y"
-
-        It must be called after having called DMSetUp().
-
-        Logically collective; name must contain a common value.
-
-        Parameters
-        ----------
-        index
-            coordinate number for the DMDA (0, 1, ... dim-1),
-        name
-            the name of the coordinate
-
-        See also
-        --------
-        petsc.DMDASetCoordinateName
-
-        """
+    def setCoordinateName(self, index, name):
         cdef PetscInt ival = asInt(index)
         cdef const char *cval = NULL
         name = str2bytes(name, &cval)
         CHKERR( DMDASetCoordinateName(self.dm, ival, cval) )
 
-    def getCoordinateName(self, index: int) -> str:
-        """Return the name of a coordinate direction associated with a DMDA.
-
-        Not collective; name will contain a common value; No Fortran Support
-
-        Parameters
-        ----------
-        nf
-            number for the DMDA (0, 1, ... dim-1)
-
-        See also
-        --------
-        petsc.DMDAGetCoordinateName
-
-        """
+    def getCoordinateName(self, index):
         cdef PetscInt ival = asInt(index)
         cdef const char *cval = NULL
         CHKERR( DMDAGetCoordinateName(self.dm, ival, &cval) )
@@ -872,133 +367,30 @@ cdef class DMDA(DM):
 
     #
 
-    def createNaturalVec(self) -> Vec:
-        """Create a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
-
-        The output parameter, g, is a regular PETSc vector that should be destroyed with a call to VecDestroy() when usage is finished.
-
-        The number of local entries in the vector on each process is the same as in a vector created with DMCreateGlobalVector().
-
-        Output Parameter
-        g - the distributed global vector
-
-        Collective.
-
-        See also
-        --------
-        petsc.DMDACreateNaturalVector
-
-        """
+    def createNaturalVec(self):
         cdef Vec vn = Vec()
         CHKERR( DMDACreateNaturalVector(self.dm, &vn.vec) )
         return vn
 
-    def globalToNatural(
-        self,
-        Vec vg,
-        Vec vn,
-        addv: InsertMode | None = None,
-    ) -> None:
-        """Map values from the global vector to a global vector in the "natural" grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
-
-        Output Parameter
-        l - the natural ordering values
-        l - the natural ordering values
-        l - the global values in the natural ordering
-
-        Notes
-        The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
-
-        You must call DMDACreateNaturalVector() before using this routine
-
-        Neighbor-wise collective.
-
-        Parameters
-        ----------
-        g
-            the global vector
-        mode
-            one of INSERT_VALUES or ADD_VALUES
-
-        See also
-        --------
-        petsc.DMDAGlobalToNaturalBegin, petsc.DMDAGlobalToNaturalEnd
-
-        """
+    def globalToNatural(self, Vec vg, Vec vn, addv=None):
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMDAGlobalToNaturalBegin(self.dm, vg.vec, im, vn.vec) )
         CHKERR( DMDAGlobalToNaturalEnd  (self.dm, vg.vec, im, vn.vec) )
 
-    def naturalToGlobal(
-        self,
-        Vec vn,
-        Vec vg,
-        addv: InsertMode | None = None,
-    ) -> None:
-        """Map values from a global vector in the "natural" ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
-
-        Output Parameter
-        l - the values in the DMDA ordering
-        The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
-
-        Neighbor-wise collective.
-
-        Parameters
-        ----------
-        g
-            the global vector in a natural ordering
-        mode
-            one of INSERT_VALUES or ADD_VALUES
-
-        See also
-        --------
-        petsc.DMDANaturalToGlobalBegin, petsc.DMDANaturalToGlobalEnd
-
-        """
+    def naturalToGlobal(self, Vec vn, Vec vg, addv=None):
         cdef PetscInsertMode im = insertmode(addv)
         CHKERR( DMDANaturalToGlobalBegin(self.dm, vn.vec, im, vg.vec) )
         CHKERR( DMDANaturalToGlobalEnd  (self.dm, vn.vec, im, vg.vec) )
 
     #
 
-    def getAO(self) -> AO:
-        """Return the application ordering context for a distributed array.
-
-        In this case, the AO maps to the natural grid ordering that would be used for the DMDA if only 1 processor were employed (ordering most rapidly in the x-direction, then y, then z). Multiple degrees of freedom are numbered for each node (rather than 1 component for the whole grid, then the next component, etc.)
-
-        Do NOT call AODestroy() on the ao returned by this function.
-
-        Output Parameter
-        ao - the application ordering context for DMDA
-
-        Collective.
-
-        See also
-        --------
-        petsc.DMDAGetAO
-
-        """
+    def getAO(self):
         cdef AO ao = AO()
         CHKERR( DMDAGetAO(self.dm, &ao.ao) )
         PetscINCREF(ao.obj)
         return ao
 
-    def getScatter(self) -> tuple[Scatter, Scatter]:
-        """Return the global-to-local, and local-to-local vector scatter contexts for a distributed array.
-
-        The output contexts are valid only as long as the input da is valid. If you delete the da, the scatter contexts will become invalid.
-
-        Output Parameters
-        gtol - global-to-local scatter context (may be NULL)
-        ltol - local-to-local scatter context (may be NULL)
-
-        Collective.
-
-        See also
-        --------
-        petsc.DMDAGetScatter
-
-        """
+    def getScatter(self):
         cdef Scatter l2g = Scatter()
         cdef Scatter g2l = Scatter()
         CHKERR( DMDAGetScatter(self.dm, &l2g.sct, &g2l.sct) )
@@ -1008,32 +400,10 @@ cdef class DMDA(DM):
 
     #
 
-    def setRefinementFactor(
-        self,
-        refine_x: int | None = 2,
-        refine_y: int | None = 2,
-        refine_z: int | None = 2,
-    ) -> None:
-        """Set the ratios that the DMDA grid is refined
-
-        Pass PETSC_IGNORE to leave a value unchanged
-
-        Logically collective.
-
-        Parameters
-        ----------
-        refine_x
-            ratio of fine grid to coarse in x direction (2 by default)
-        refine_y
-            ratio of fine grid to coarse in y direction (2 by default)
-        refine_z
-            ratio of fine grid to coarse in z direction (2 by default)
-
-        See also
-        --------
-        petsc.DMDASetRefinementFactor
-
-        """
+    def setRefinementFactor(self,
+                            refine_x=2,
+                            refine_y=2,
+                            refine_z=2):
         cdef PetscInt refine[3]
         refine[0] = asInt(refine_x)
         refine[1] = asInt(refine_y)
@@ -1044,25 +414,6 @@ cdef class DMDA(DM):
                                       refine[2]) )
 
     def getRefinementFactor(self):
-        """Return the ratios that the DMDA grid is refined.
-
-        Pass NULL for values you do not need.
-
-        Output Parameters
-        refine_x
-            ratio of fine grid to coarse in x direction (2 by default)
-        refine_y
-            ratio of fine grid to coarse in y direction (2 by default)
-        refine_z
-            ratio of fine grid to coarse in z direction (2 by default)
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetRefinementFactor
-
-        """
         cdef PetscInt i, dim = 0, refine[3]
         CHKERR( DMDAGetDim(self.dm, &dim) )
         CHKERR( DMDAGetRefinementFactor(self.dm,
@@ -1071,104 +422,27 @@ cdef class DMDA(DM):
                                       &refine[2]) )
         return tuple([toInt(refine[i]) for 0 <= i < dim])
 
-    def setInterpolationType(self, interp_type: InterpolationType) -> None:
-        """Set the type of interpolation that will be returned by DMCreateInterpolation().
-
-        You should call this on the coarser of the two DMDA you pass to DMCreateInterpolation().
-
-        Logically collective.
-
-        Parameters
-        ----------
-        ctype - DMDA_Q1 and DMDA_Q0 are currently the only supported forms.
-
-        See also
-        --------
-        petsc.DMDASetInterpolationType
-
-        """
+    def setInterpolationType(self, interp_type):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
     def getInterpolationType(self):
-        """Return the type of interpolation that will be used by DMCreateInterpolation()
-
-        Output Parameter
-        ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported forms)
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetInterpolationType
-
-        """
         cdef PetscDMDAInterpolationType ival = DMDA_INTERPOLATION_Q0
         CHKERR( DMDAGetInterpolationType(self.dm, &ival) )
         return <long>ival
 
     #
 
-    def setElementType(self, elem_type: ElementType) -> None:
-        """Set the element type to be returned by DMDAGetElements()
-
-        Output Parameter
-        etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDASetElementType
-
-        """
+    def setElementType(self, elem_type):
         cdef PetscDMDAElementType ival = daelementtype(elem_type)
         CHKERR( DMDASetElementType(self.dm, ival) )
 
     def getElementType(self):
-        """Return the element type to be returned by DMDAGetElements()
-
-        Output Parameter
-        etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
-
-        Not collective.
-
-        See also
-        --------
-        petsc.DMDAGetElementType
-
-        """
         cdef PetscDMDAElementType ival = DMDA_ELEMENT_Q1
         CHKERR( DMDAGetElementType(self.dm, &ival) )
         return <long>ival
 
-    def getElements(self, elem_type: ElementType | None = None):
-        """Return an array containing the indices (in local coordinates) of all the local elements.
-
-
-        Call DMDARestoreElements() once you have finished accessing the elements.
-
-        Each process uniquely owns a subset of the elements. That is no element is owned by two or more processes.
-
-        If on each process you integrate over its owned elements and use ADD_VALUES in Vec/MatSetValuesLocal() then you'll obtain the correct result.
-
-        Output Parameters
-        nel - number of local elements
-        nen - number of element nodes
-        e - the local indices of the elements’ vertices
-
-        Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See also
-        --------
-        petsc.DMDAGetElements
-
-        """
+    def getElements(self, elem_type=None):
         cdef PetscInt dim=0
         cdef PetscDMDAElementType etype
         cdef PetscInt nel=0, nen=0
