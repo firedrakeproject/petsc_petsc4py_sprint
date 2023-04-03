@@ -34,7 +34,7 @@ cdef class DMDA(DM):
         stencil_width=None,
         bint setup=True,
         ownership_ranges=None,
-        comm=None
+        comm=None,
     ) -> Self:
         """TODO
 
@@ -106,8 +106,13 @@ cdef class DMDA(DM):
         PetscCLEAR(self.obj); self.dm = newda
         return self
 
-    def duplicate(self, dof=None, boundary_type=None,
-                  stencil_type=None, stencil_width=None):
+    def duplicate(
+        self,
+        dof=None,
+        boundary_type: DM.BoundaryType | None = None,
+        stencil_type: StencilType | None = None,
+        stencil_width: int | None = None,
+    ) -> DMDA:
         """TODO
 
         Not collective.
@@ -161,7 +166,7 @@ cdef class DMDA(DM):
 
     #
 
-    def setDim(self, dim):
+    def setDim(self, dim) -> None:
         """TODO
 
         Not collective.
@@ -195,12 +200,13 @@ cdef class DMDA(DM):
         """
         return self.getDimension()
 
-    def setDof(self, dof):
+    def setDof(self, dof) -> None:
         """Set the number of degrees of freedom per vertex
 
 Not Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - The DMDA
 dof - Number of degrees of freedom
 
@@ -276,7 +282,8 @@ Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not 
 
 Logically Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - the DMDA
 M - the global X size
 N - the global Y size
@@ -343,7 +350,8 @@ Since the dimension may not yet have been set the code cannot error check for no
 
 Logically Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - the DMDA
 m - the number of X procs (or PETSC_DECIDE)
 n - the number of Y procs (or PETSC_DECIDE)
@@ -407,7 +415,8 @@ p - the number of Z procs (or PETSC_DECIDE)
 
 Not Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - The DMDA
 bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
 
@@ -458,12 +467,13 @@ bx,by,bz - One of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
                           NULL) )
         return toDims(dim, btx, bty, btz)
 
-    def setStencilType(self, stencil_type):
+    def setStencilType(self, stencil_type: StencilType) -> None:
         """Set the type of the communication stencil
 
 Logically Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - The DMDA
 stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
 
@@ -483,7 +493,7 @@ stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
         cdef PetscDMDAStencilType stype = asStencil(stencil_type)
         CHKERR( DMDASetStencilType(self.dm, stype) )
 
-    def getStencilType(self):
+    def getStencilType(self) -> StencilType:
         """TODO
 
         Not collective.
@@ -508,12 +518,13 @@ stype - The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
                           &stype) )
         return stype
 
-    def setStencilWidth(self, stencil_width):
+    def setStencilWidth(self, stencil_width: int) -> None:
         """Set the width of the communication stencil
 
 Logically Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - The DMDA
 width - The stencil width
 
@@ -533,7 +544,7 @@ width - The stencil width
         cdef PetscInt swidth = asInt(stencil_width)
         CHKERR( DMDASetStencilWidth(self.dm, swidth) )
 
-    def getStencilWidth(self):
+    def getStencilWidth(self) -> int:
         """TODO
 
         Not collective.
@@ -558,7 +569,11 @@ width - The stencil width
                             NULL) )
         return toInt(swidth)
 
-    def setStencil(self, stencil_type, stencil_width):
+    def setStencil(
+        self,
+        stencil_type: StencilType,
+        stencil_width: int,
+    ) -> None:
         """TODO
 
         Not collective.
@@ -578,7 +593,7 @@ width - The stencil width
         CHKERR( DMDASetStencilType(self.dm, stype) )
         CHKERR( DMDASetStencilWidth(self.dm, swidth) )
 
-    def getStencil(self):
+    def getStencil(self) -> tuple[StencilType, int]:
         """TODO
 
         Not collective.
@@ -778,12 +793,13 @@ The corner information is independent of the number of degrees of freedom per no
 
     #
 
-    def setFieldName(self, field, name):
+    def setFieldName(self, field: int, name: str) -> None:
         """Set the names of individual field components in multicomponent vectors associated with a DMDA.
 
 Logically Collective; name must contain a common value
 
-Input Parameters
+        Parameters
+        ----------
 da - the distributed array
 nf - field number for the DMDA (0, 1, … dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
 names - the name of the field (component)
@@ -809,12 +825,13 @@ It must be called after having called DMSetUp().
         name = str2bytes(name, &cval)
         CHKERR( DMDASetFieldName(self.dm, ival, cval) )
 
-    def getFieldName(self, field):
+    def getFieldName(self, field: int) -> str:
         """Return the names of individual field components in multicomponent vectors associated with a DMDA.
 
 Not Collective; name will contain a common value
 
-Input Parameters
+        Parameters
+        ----------
 da - the distributed array
 nf - field number for the DMDA (0, 1, … dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
 Output Parameter
@@ -862,27 +879,33 @@ It must be called after having called DMSetUp().
 
     #
 
-    def setUniformCoordinates(self,
-                              xmin=0, xmax=1,
-                              ymin=0, ymax=1,
-                              zmin=0, zmax=1):
-        """Set a DMDA coordinates to be a uniform grid
+    def setUniformCoordinates(
+        self,
+        xmin: float | None = 0,
+        xmax: float | None = 1,
+        ymin: float | None = 0,
+        ymax: float | None = 1,
+        zmin: float | None = 0,
+        zmax: float | None = 1,
+    ) -> None:
+        """Set the DMDA coordinates to be a uniform grid.
 
-Collective
-
-Input Parameters
-da - the distributed array object
-xmin,xmax - extremes in the x direction
-ymin,ymax - extremes in the y direction (value ignored for 1 dimensional problems)
-zmin,zmax - extremes in the z direction (value ignored for 1 or 2 dimensional problems)
-
-
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        xmin
+            The minimum in the ``x`` direction.
+        xmax
+            The maximum in the ``x`` direction.
+        ymin
+            The minimum in the ``y`` direction (value ignored for 1 dimensional problems).
+        ymax
+            The maximum in the ``y`` direction (value ignored for 1 dimensional problems).
+        zmin
+            The minimum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
+        zmax
+            The maximum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
 
         See also
         --------
@@ -897,17 +920,16 @@ zmin,zmax - extremes in the z direction (value ignored for 1 or 2 dimensional pr
                                           _ymin, _ymax,
                                           _zmin, _zmax) )
 
-    def setCoordinateName(self, index, name):
+    def setCoordinateName(self, index: int, name: str) -> None:
         """Set the name of the coordinate directions associated with a DMDA, for example “x” or “y”
 
-Logically Collective; name must contain a common value; No Fortran Support
+        Logically Collective; name must contain a common value.
 
-Input Parameters
-dm - the DMDA
-nf - coordinate number for the DMDA (0, 1, … dim-1),
-name - the name of the coordinate
-Note
-Must be called after having called DMSetUp().
+        Parameters
+        ----------
+        index - coordinate number for the DMDA (0, 1, … dim-1),
+        name - the name of the coordinate
+        Note
 
 
 
@@ -928,20 +950,17 @@ Must be called after having called DMSetUp().
         name = str2bytes(name, &cval)
         CHKERR( DMDASetCoordinateName(self.dm, ival, cval) )
 
-    def getCoordinateName(self, index):
+    def getCoordinateName(self, index: int) -> str:
         """Return the name of a coordinate direction associated with a DMDA.
 
 Not Collective; name will contain a common value; No Fortran Support
 
-Input Parameters
+        Parameters
+        ----------
 dm - the DMDA
 nf - number for the DMDA (0, 1, … dim-1)
 Output Parameter
 names - the name of the coordinate direction
-Note
-It must be called after having called DMSetUp().
-
-
 
         Not collective.
 
@@ -962,7 +981,7 @@ It must be called after having called DMSetUp().
 
     #
 
-    def createNaturalVec(self):
+    def createNaturalVec(self) -> Vec:
         """Create a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
 
 Collective
@@ -994,12 +1013,18 @@ The number of local entries in the vector on each process is the same as in a ve
         CHKERR( DMDACreateNaturalVector(self.dm, &vn.vec) )
         return vn
 
-    def globalToNatural(self, Vec vg, Vec vn, addv=None):
+    def globalToNatural(
+        self,
+        Vec vg,
+        Vec vn,
+        addv: InsertMode | None = None,
+    ) -> None:
         """Map values from the global vector to a global vector in the “natural” grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
 
 Neighbor-wise Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - the distributed array context
 g - the global vector
 mode - one of INSERT_VALUES or ADD_VALUES
@@ -1031,12 +1056,18 @@ You must call DMDACreateNaturalVector() before using this routine
         CHKERR( DMDAGlobalToNaturalBegin(self.dm, vg.vec, im, vn.vec) )
         CHKERR( DMDAGlobalToNaturalEnd  (self.dm, vg.vec, im, vn.vec) )
 
-    def naturalToGlobal(self, Vec vn, Vec vg, addv=None):
+    def naturalToGlobal(
+        self,
+        Vec vn,
+        Vec vg,
+        addv: InsertMode | None = None,
+    ) -> None:
         """Map values from a global vector in the “natural” ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
 
 Neighbor-wise Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - the distributed array context
 g - the global vector in a natural ordering
 mode - one of INSERT_VALUES or ADD_VALUES
@@ -1065,7 +1096,7 @@ The global and natural vectors used here need not be the same as those obtained 
 
     #
 
-    def getAO(self):
+    def getAO(self) -> AO:
         """Return the application ordering context for a distributed array.
 
 Collective
@@ -1096,7 +1127,7 @@ Do NOT call AODestroy() on the ao returned by this function.
         PetscINCREF(ao.obj)
         return ao
 
-    def getScatter(self):
+    def getScatter(self) -> tuple[Scatter, Scatter]:
         """Return the global-to-local, and local-to-local vector scatter contexts for a distributed array.
 
 Collective
@@ -1132,15 +1163,18 @@ The output contexts are valid only as long as the input da is valid. If you dele
 
     #
 
-    def setRefinementFactor(self,
-                            refine_x=2,
-                            refine_y=2,
-                            refine_z=2):
+    def setRefinementFactor(
+        self,
+        refine_x: int | None = 2,
+        refine_y: int | None = 2,
+        refine_z: int | None = 2,
+    ) -> None:
         """Set the ratios that the DMDA grid is refined
 
 Logically Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - the DMDA object
 refine_x - ratio of fine grid to coarse in x direction (2 by default)
 refine_y - ratio of fine grid to coarse in y direction (2 by default)
@@ -1212,12 +1246,13 @@ Pass NULL for values you do not need
                                       &refine[2]) )
         return tuple([toInt(refine[i]) for 0 <= i < dim])
 
-    def setInterpolationType(self, interp_type):
+    def setInterpolationType(self, interp_type: InterpolationType) -> None:
         """Set the type of interpolation that will be returned by DMCreateInterpolation()
 
 Logically Collective
 
-Input Parameters
+        Parameters
+        ----------
 da - initial distributed array
 ctype - DMDA_Q1 and DMDA_Q0 are currently the only supported forms
 Note
@@ -1269,7 +1304,7 @@ ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported
 
     #
 
-    def setElementType(self, elem_type):
+    def setElementType(self, elem_type: ElementType) -> None:
         """Set the element type to be returned by DMDAGetElements()
 
 Not Collective
@@ -1322,7 +1357,7 @@ etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
         CHKERR( DMDAGetElementType(self.dm, &ival) )
         return <long>ival
 
-    def getElements(self, elem_type=None):
+    def getElements(self, elem_type: ElementType | None = None):
         """Return an array containing the indices (in local coordinates) of all the local elements
 
 Not Collective; No Fortran Support
