@@ -228,7 +228,6 @@ cdef class DS(Object):
 
     def getDimensions(self) -> ArrayInt:
         """Return the size of the space for each field on an evaluation point.
-        TODO: shorten to 79
 
         Not collective.
 
