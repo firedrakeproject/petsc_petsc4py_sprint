@@ -927,14 +927,16 @@ cdef class DMStag(DM):
         def __get__(self) -> int:
             return self.getStencilWidth()
 
+    # TODO: fix type once determined above
     property corners:
         """Global element indices of the local region."""
-        def __get__(self):
+        def __get__(self) -> None:
             return self.getCorners()
 
+    # TODO: fix type once determined above
     property ghost_corners:
         """Global element indices of the local region, with ghost points."""
-        def __get__(self):
+        def __get__(self) -> None:
             return self.getGhostCorners()
 
 
