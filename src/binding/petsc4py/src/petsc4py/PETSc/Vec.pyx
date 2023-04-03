@@ -1133,7 +1133,7 @@ cdef class Vec(Object):
         """
         CHKERR( VecSetOption(self.vec, option, flag) )
 
-    def getType(self) -> Vec.Type | str:
+    def getType(self) -> str:
         """Return the type of the vector.
 
         Not collective.
