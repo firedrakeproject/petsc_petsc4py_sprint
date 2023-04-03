@@ -206,7 +206,7 @@ class MatSORType(object):
 cdef class Mat(Object):
     """Matrix object.
 
-    Mat is described in the `PETSc manual <petsc:manual/ts>`.
+    Mat is described in the `PETSc manual <petsc:manual/mat>`.
 
     See Also
     --------
