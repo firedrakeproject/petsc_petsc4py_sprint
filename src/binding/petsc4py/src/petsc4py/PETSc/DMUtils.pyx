@@ -1,6 +1,7 @@
 
 cdef class DMInterpolation:
     """Interpolation on a mesh."""
+
     cdef PetscDMInterpolation dminterp
 
     def __cinit__(self):
@@ -25,9 +26,10 @@ cdef class DMInterpolation:
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_SELF)
-        cdef PetscDMInterpolation new = NULL
-        CHKERR( DMInterpolationCreate(ccomm, &new) )
-        self.dminterp = new
+        cdef PetscDMInterpolation newdminterp = NULL
+        CHKERR( DMInterpolationCreate(ccomm, &newdminterp) )
+        CHKERR( DMInterpolationDestroy(&self.dminterp))
+        self.dminterp = newdminterp
         return self
 
     def destroy(self) -> Self:
@@ -43,7 +45,7 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationDestroy(&self.dminterp))
         return self
 
-    def evaluate(self, DM dm, Vec x) -> Vec:
+    def evaluate(self, DM dm, Vec x, Vec v=None) -> Vec:
         """Calculate interpolated field values at the interpolation points.
 
         Parameters
@@ -52,13 +54,18 @@ cdef class DMInterpolation:
             The `DM`.
         x
             The local vector containing the field to be interpolated.
+        v
+            A vector capable of holding the interpolated field values.
 
         See also
         --------
         petsc.DMInterpolationEvaluate
 
         """
-        cdef Vec v = Vec()
+        if v is None:
+            v = Vec()
+        if v.vec == NULL:
+            CHKERR( DMInterpolationGetVector(self.dminterp, &v.vec ) )
         CHKERR( DMInterpolationEvaluate(self.dminterp, dm.dm, x.vec, v.vec ) )
         return v
 
@@ -77,6 +84,7 @@ cdef class DMInterpolation:
         """
         cdef Vec coords = Vec()
         CHKERR( DMInterpolationGetCoordinates(self.dminterp, &coords.vec) )
+        PetscINCREF(coords.obj)
         return coords
 
     def getDim(self) -> int:
@@ -189,7 +197,7 @@ cdef class DMInterpolation:
         CHKERR( DMInterpolationGetVector(self.dminterp, &vec.vec))
         return vec
 
-    def restoreVector(self, Vec vec) -> Vec:
+    def restoreVector(self, Vec vec) -> None:
         """Restore a Vec which can hold all the interpolated field values.
 
         Collective.
@@ -205,4 +213,3 @@ cdef class DMInterpolation:
 
         """
         CHKERR( DMInterpolationRestoreVector(self.dminterp, &vec.vec) )
-        return vec
