@@ -42,21 +42,16 @@ cdef class DMStag(DM):
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
-# TODO:
-# TODODOFS
-# TODOSTAGDIMS
-# TODOBOUNDARY
-# TODOSTAGCORNERS
     def create(
         self,
         dim,
-        dofs: TODODOFS | None = None,
-        sizes: TODOSTAGDIMS | None = None,
-        boundary_types: TODOBOUNDARY | None = None, # DM.BoundaryType | None = None, # sequence? 0,1,2,3
+        dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
+        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None, # DM.BoundaryType | None = None, # sequence? 0,1,2,3
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
-        proc_sizes: TODOSTAGDIMS | None = None,
-        ownership_ranges: TODOOWN | None = None,
+        proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        ownership_ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]] | None = None,
         comm: Comm | None = None,
         setUp: bool | None = False,
     ) -> Self:
@@ -210,7 +205,10 @@ cdef class DMStag(DM):
         cdef PetscDMStagStencilType stype = asStagStencil(stenciltype)
         CHKERR( DMStagSetStencilType(self.dm, stype) )
 
-    def setBoundaryTypes(self, boundary_types: TODOBOUNDARY) -> None:
+    def setBoundaryTypes(
+        self,
+        boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]
+    ) -> None:
         """Set DMSTAG boundary types.
 
         Logically collective; boundaryType0, boundaryType1, and boundaryType2
@@ -235,7 +233,10 @@ cdef class DMStag(DM):
         asBoundary(boundary_types, &btx, &bty, &btz)
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
-    def setDof(self, dofs: TODODOFS) -> None:
+    def setDof(
+        self,
+        dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]
+    ) -> None:
         """Set dof/stratum.
 
         Logically collective; dof0, dof1, dof2, and dof3 must contain common values.
@@ -260,7 +261,10 @@ cdef class DMStag(DM):
         gdim = asDofs(gdofs, &dof0, &dof1, &dof2, &dof3)
         CHKERR( DMStagSetDOF(self.dm, dof0, dof1, dof2, dof3) )
 
-    def setGlobalSizes(self, sizes: TODOSTAGDIMS) -> None:
+    def setGlobalSizes(
+        self,
+        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]
+    ) -> None:
         """Set global element counts in each direction.
 
         Logically collective; N0, N1, and N2 must contain common values.
@@ -289,7 +293,10 @@ cdef class DMStag(DM):
         gdim = asStagDims(gsizes, &M, &N, &P)
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
-    def setProcSizes(self, sizes: TODOSTAGDIMS) -> None:
+    def setProcSizes(
+        self,
+        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]
+    ) -> None:
         """Set ranks in each direction in the global rank grid.
 
         Logically collective; nRanks0, nRanks1, and nRanks2 must contain common values.
@@ -318,7 +325,10 @@ cdef class DMStag(DM):
         pdim = asStagDims(psizes, &m, &n, &p)
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
-    def setOwnershipRanges(self, ranges: TODOOWN) -> None:
+    def setOwnershipRanges(
+        self,
+        ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]]
+    ) -> None:
         """Set elements per rank in each direction.
 
         Logically collective; lx, ly, and lz must contain common values.
@@ -402,7 +412,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetStencilWidth(self.dm, &swidth) )
         return toInt(swidth)
 
-    def getDof(self) -> TODODOFS:
+    def getDof(self) -> tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]:
         """Get number of DOF associated with each stratum of the grid.
 
         Not collective.
@@ -427,7 +437,8 @@ cdef class DMStag(DM):
         CHKERR( DMGetDimension(self.dm, &dim) )
         return toDofs(dim+1,dof0,dof1,dof2,dof3)
 
-    def getCorners(self) -> TODOSTAGCORNERS:
+    # TODO: I need help deciphering this type.
+    def getCorners(self):
         """Return global element indices of the local region (excluding ghost points).
 
         Not collective.
@@ -469,9 +480,9 @@ cdef class DMStag(DM):
         CHKERR( DMGetDimension(self.dm, &dim) )
         CHKERR( DMStagGetCorners(self.dm, &x, &y, &z, &m, &n, &p, &nExtrax, &nExtray, &nExtraz) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim], (asInt(nExtrax), asInt(nExtray), asInt(nExtraz))[:<Py_ssize_t>dim]
-        # TODO: :o
 
-    def getGhostCorners(self) -> TODOSTAGCORNERS:
+    # TODO: I need help deciphering this type.
+    def getGhostCorners(self):
         """Return global element indices of the local region, including ghost points.
 
         Not collective.
@@ -504,7 +515,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGhostCorners(self.dm, &x, &y, &z, &m, &n, &p) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
-    def getLocalSizes(self) -> TODOSTAGDIMS:
+    def getLocalSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """Return local elementwise sizes.
 
         Not collective.
@@ -531,7 +542,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getGlobalSizes(self) -> TODOSTAGDIMS:
+    def getGlobalSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """Return global element counts.
 
         Not collective.
@@ -559,7 +570,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGlobalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getProcSizes(self) -> TODOSTAGDIMS:
+    def getProcSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """Return number of ranks in each direction in the global grid decomposition.
 
         Not collective.
@@ -595,7 +606,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetStencilType(self.dm, &stype) )
         return toStagStencil(stype)
 
-    def getOwnershipRanges(self) -> TODOOWN:
+    def getOwnershipRanges(self) -> tuple[ArrayInt] | tuple[ArrayInt, ArrayInt] | tuple[ArrayInt, ArrayInt, ArrayInt]:
         """Return elements per rank in each direction.
 
         Not collective.
@@ -630,7 +641,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetOwnershipRanges(self.dm, &lx, &ly, &lz) )
         return toStagOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
-    def getBoundaryTypes(self) -> TODOBOUNDARY:
+    def getBoundaryTypes(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
         """Return boundary types.
 
         Not collective.
@@ -656,7 +667,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetBoundaryTypes(self.dm, &btx, &bty, &btz) )
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
-    def getIsFirstRank(self) -> TODOSTAGDIMS:
+    def getIsFirstRank(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """Return boolean value for whether this rank is first in each direction in the rank grid.
 
         Not collective.
@@ -684,7 +695,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetIsFirstRank(self.dm, &rank0, &rank1, &rank2) )
         return toStagDims(dim, rank0, rank1, rank2)
 
-    def getIsLastRank(self) -> TODOSTAGDIMS:
+    def getIsLastRank(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """Return boolean value for whether this rank is last in each direction in the rank grid.
 
         Not collective.
