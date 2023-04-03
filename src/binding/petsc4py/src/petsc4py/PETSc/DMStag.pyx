@@ -42,16 +42,21 @@ cdef class DMStag(DM):
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
+# TODO:
+# TODODOFS
+# TODOSTAGDIMS
+# TODOBOUNDARY
+# TODOSTAGCORNERS
     def create(
         self,
         dim,
-        dofs=None,
-        sizes=None,
-        boundary_types: None, # DM.BoundaryType | None = None, # sequence? 0,1,2,3
+        dofs: TODODOFS | None = None,
+        sizes: TODOSTAGDIMS | None = None,
+        boundary_types: TODOBOUNDARY | None = None, # DM.BoundaryType | None = None, # sequence? 0,1,2,3
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
-        proc_sizes=None,
-        ownership_ranges=None,
+        proc_sizes: TODOSTAGDIMS | None = None,
+        ownership_ranges: TODOOWN | None = None,
         comm: Comm | None = None,
         setUp: bool | None = False,
     ) -> Self:
@@ -205,7 +210,7 @@ cdef class DMStag(DM):
         cdef PetscDMStagStencilType stype = asStagStencil(stenciltype)
         CHKERR( DMStagSetStencilType(self.dm, stype) )
 
-    def setBoundaryTypes(self, boundary_types: DM.BoundaryType) -> None: # TODO: should be seq?
+    def setBoundaryTypes(self, boundary_types: TODOBOUNDARY) -> None:
         """Set DMSTAG boundary types.
 
         Logically collective; boundaryType0, boundaryType1, and boundaryType2
@@ -216,13 +221,8 @@ cdef class DMStag(DM):
 
         Parameters
         ----------
-        boundaryTypeX
-            Boundary type for x direction.
-        boundaryTypeY
-            Boundary type for y direction, not set for one dimensional problems.
-        boundaryTypeZ
-            Boundary type for z direction, not set for one and two dimensional problems.
-
+        boundary_types
+            Boundary types for x/y/z directions.
 
         See also
         --------
@@ -235,7 +235,7 @@ cdef class DMStag(DM):
         asBoundary(boundary_types, &btx, &bty, &btz)
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
-    def setDof(self, dofs) -> None:
+    def setDof(self, dofs: TODODOFS) -> None:
         """Set dof/stratum.
 
         Logically collective; dof0, dof1, dof2, and dof3 must contain common values.
@@ -245,16 +245,10 @@ cdef class DMStag(DM):
 
         Parameters
         ----------
-        dm
-            The DMSTAG object.
-        dof0
-            The number of points per 0-cell (vertex/node).
-        dof1
-            The number of points per 1-cell (element in 1D, edge in 2D and 3D).
-        dof2
-            The number of points per 2-cell (element in 2D, face in 3D).
-        dof3
-            The number of points per 3-cell (element in 3D).
+        dofs
+            The number of points per 0-cell (vertex/node), 1-cell (element in
+            1D, edge in 2D and 3D), 2-cell (element in 2D, face in 3D), or
+            3-cell (element in 3D).
 
         See also
         --------
@@ -266,7 +260,7 @@ cdef class DMStag(DM):
         gdim = asDofs(gdofs, &dof0, &dof1, &dof2, &dof3)
         CHKERR( DMStagSetDOF(self.dm, dof0, dof1, dof2, dof3) )
 
-    def setGlobalSizes(self, sizes) -> None:
+    def setGlobalSizes(self, sizes: TODOSTAGDIMS) -> None:
         """Set global element counts in each direction.
 
         Logically collective; N0, N1, and N2 must contain common values.
@@ -295,7 +289,7 @@ cdef class DMStag(DM):
         gdim = asStagDims(gsizes, &M, &N, &P)
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
-    def setProcSizes(self, sizes) -> None:
+    def setProcSizes(self, sizes: TODOSTAGDIMS) -> None:
         """Set ranks in each direction in the global rank grid.
 
         Logically collective; nRanks0, nRanks1, and nRanks2 must contain common values.
@@ -324,7 +318,7 @@ cdef class DMStag(DM):
         pdim = asStagDims(psizes, &m, &n, &p)
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
-    def setOwnershipRanges(self, ranges) -> None:
+    def setOwnershipRanges(self, ranges: TODOOWN) -> None:
         """Set elements per rank in each direction.
 
         Logically collective; lx, ly, and lz must contain common values.
@@ -334,12 +328,8 @@ cdef class DMStag(DM):
 
         Parameters
         ----------
-        lx
-            element counts for each rank in the x direction
-        ly
-            element counts for each rank in the y direction
-        lz
-            element counts for each rank in the z direction
+        ranges
+            Element counts for each rank in the x/y/z directions.
 
         See also
         --------
@@ -355,7 +345,7 @@ cdef class DMStag(DM):
 
     # Getters
 
-    def getDim(self):
+    def getDim(self) -> int:
         """TODO.
 
         Not collective.
@@ -412,7 +402,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetStencilWidth(self.dm, &swidth) )
         return toInt(swidth)
 
-    def getDof(self):
+    def getDof(self) -> TODODOFS:
         """Get number of DOF associated with each stratum of the grid.
 
         Not collective.
@@ -437,7 +427,7 @@ cdef class DMStag(DM):
         CHKERR( DMGetDimension(self.dm, &dim) )
         return toDofs(dim+1,dof0,dof1,dof2,dof3)
 
-    def getCorners(self):
+    def getCorners(self) -> TODOSTAGCORNERS:
         """Return global element indices of the local region (excluding ghost points).
 
         Not collective.
@@ -479,8 +469,9 @@ cdef class DMStag(DM):
         CHKERR( DMGetDimension(self.dm, &dim) )
         CHKERR( DMStagGetCorners(self.dm, &x, &y, &z, &m, &n, &p, &nExtrax, &nExtray, &nExtraz) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim], (asInt(nExtrax), asInt(nExtray), asInt(nExtraz))[:<Py_ssize_t>dim]
+        # TODO: :o
 
-    def getGhostCorners(self):
+    def getGhostCorners(self) -> TODOSTAGCORNERS:
         """Return global element indices of the local region, including ghost points.
 
         Not collective.
@@ -513,7 +504,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGhostCorners(self.dm, &x, &y, &z, &m, &n, &p) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
-    def getLocalSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]: #TODO: ?
+    def getLocalSizes(self) -> TODOSTAGDIMS:
         """Return local elementwise sizes.
 
         Not collective.
@@ -540,7 +531,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getGlobalSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getGlobalSizes(self) -> TODOSTAGDIMS:
         """Return global element counts.
 
         Not collective.
@@ -568,7 +559,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGlobalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getProcSizes(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getProcSizes(self) -> TODOSTAGDIMS:
         """Return number of ranks in each direction in the global grid decomposition.
 
         Not collective.
@@ -590,7 +581,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetNumRanks(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getStencilType(self) -> StencilType:
+    def getStencilType(self) -> str:
         """Return elementwise ghost/halo stencil type.
 
         Not collective.
@@ -604,7 +595,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetStencilType(self.dm, &stype) )
         return toStagStencil(stype)
 
-    def getOwnershipRanges(self):
+    def getOwnershipRanges(self) -> TODOOWN:
         """Return elements per rank in each direction.
 
         Not collective.
@@ -639,7 +630,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetOwnershipRanges(self.dm, &lx, &ly, &lz) )
         return toStagOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
-    def getBoundaryTypes(self):
+    def getBoundaryTypes(self) -> TODOBOUNDARY:
         """Return boundary types.
 
         Not collective.
@@ -665,7 +656,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetBoundaryTypes(self.dm, &btx, &bty, &btz) )
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
-    def getIsFirstRank(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getIsFirstRank(self) -> TODOSTAGDIMS:
         """Return boolean value for whether this rank is first in each direction in the rank grid.
 
         Not collective.
@@ -693,7 +684,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetIsFirstRank(self.dm, &rank0, &rank1, &rank2) )
         return toStagDims(dim, rank0, rank1, rank2)
 
-    def getIsLastRank(self) -> tuple[] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getIsLastRank(self) -> TODOSTAGDIMS:
         """Return boolean value for whether this rank is last in each direction in the rank grid.
 
         Not collective.
@@ -1062,7 +1053,12 @@ cdef class DMStag(DM):
         PetscCLEAR(newdm.obj); newdm.dm = newda
         return newdm
 
-    def VecSplitToDMDA(self, Vec vec, loc: StencilLocation, c: int):
+    def VecSplitToDMDA(
+        self,
+        Vec vec,
+        loc: StencilLocation,
+        c: int,
+    ) -> tuple[DMDA, Vec]:
         """Create a DMDA and Vec from a subgrid of a DMSTAG and its Vec.
 
         Collective.
@@ -1102,11 +1098,11 @@ cdef class DMStag(DM):
         PetscCLEAR(davec.obj); davec.vec = pdavec
         return (da,davec)
 
-    def getVecArray(self, Vec vec):
+    def getVecArray(self, Vec vec) -> None:
         """**Not implemented.**"""
         raise NotImplementedError('getVecArray for DMStag not yet implemented in petsc4py')
 
-    def get1dCoordinatecArrays(self):
+    def get1dCoordinatecArrays(self) -> None:
         """**Not implemented.**"""
         raise NotImplementedError('get1dCoordinatecArrays for DMStag not yet implemented in petsc4py')
 
