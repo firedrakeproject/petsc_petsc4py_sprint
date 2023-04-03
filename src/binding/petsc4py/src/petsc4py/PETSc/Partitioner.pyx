@@ -150,7 +150,7 @@ cdef class Partitioner(Object):
         sizes: Sequence[int] | None = None,
         points: Sequence[int] | None = None,
     ) -> None:
-        """Set an artificial partition for a mesh.
+        """Set a custom partition for a mesh.
 
         Collective.
 
