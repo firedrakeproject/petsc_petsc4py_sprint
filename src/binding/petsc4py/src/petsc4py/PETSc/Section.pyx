@@ -19,7 +19,7 @@ cdef class Section(Object):
         Parameters
         ----------
         viewer
-            A `Viewer` to display the graph.
+            A `Viewer` to display the section.
 
         See also
         --------
@@ -44,7 +44,7 @@ cdef class Section(Object):
         return self
 
     def create(self, comm: Comm | None = None) -> Self:
-        """Allocate a PetscSection and sets the map contents to the default.
+        """Allocate a section and set the map contents to the default.
 
         Typical calling sequence
 
@@ -62,7 +62,8 @@ cdef class Section(Object):
 
         Parameters
         ----------
-        comm - the MPI communicator
+        comm
+            The MPI communicator.
 
         See also
         --------
@@ -76,16 +77,9 @@ cdef class Section(Object):
         return self
 
     def clone(self) -> Section:
-        """Create a shallow (if possible) copy of the PetscSection.
-
-        With standard PETSc terminology this should be called PetscSectionDuplicate()
+        """Return a shallow (if possible) copy of the section.
 
         Collective.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        newSection - the copy
 
         See also
         --------
@@ -121,18 +115,15 @@ cdef class Section(Object):
         CHKERR( PetscSectionReset(self.sec) )
 
     def getNumFields(self) -> int:
-        """Return the number of fields in a PetscSection, or 0 if no fields were defined.
+        """Return the number of fields in a section.
 
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        numFields - the number of fields defined, or 0 if none were defined
+        Returns 0 if no fields were defined.
 
         Not collective.
 
         See also
         --------
-        petsc.PetscSectionGetNumFields
+        petsc.PetscSectionGetNumFields, setNumFields
 
         """
         cdef PetscInt numFields = 0
@@ -140,43 +131,36 @@ cdef class Section(Object):
         return toInt(numFields)
 
     def setNumFields(self, numFields: int) -> None:
-        """Set the number of fields in a PetscSection.
+        """Set the number of fields in a section.
 
         Not collective.
 
         Parameters
         ----------
         numFields
-                The number of fields
+            The number of fields
 
         See also
         --------
-        petsc.PetscSectionSetNumFields
+        petsc.PetscSectionSetNumFields, getNumFields
 
         """
         cdef PetscInt cnumFields = asInt(numFields)
         CHKERR( PetscSectionSetNumFields(self.sec, cnumFields) )
 
     def getFieldName(self, field: int) -> str:
-        """Return the name of a field in the PetscSection.
-
-        Will error if the field number is out of range
+        """Return the name of a field in the section.
 
         Not collective.
 
         Parameters
         ----------
         field
-            The field number
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        fieldName - the field name
+            The field number.
 
         See also
         --------
-        petsc.PetscSectionGetFieldName
+        petsc.PetscSectionGetFieldName, setFieldName
 
         """
         cdef PetscInt cfield = asInt(field)
@@ -185,9 +169,7 @@ cdef class Section(Object):
         return bytes2str(fieldName)
 
     def setFieldName(self, field: int, fieldName: str) -> None:
-        """Set the name of a field in the PetscSection.
-
-        Will error if the field number is out of range.
+        """Set the name of a field in the section.
 
         Not collective.
 
@@ -200,7 +182,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetFieldName
+        petsc.PetscSectionSetFieldName, getFieldName
 
         """
         cdef PetscInt cfield = asInt(field)
@@ -211,8 +193,6 @@ cdef class Section(Object):
     def getFieldComponents(self, field: int) -> int:
         """Return the number of field components for the given field.
 
-        This function is misnamed. There is a Num in PetscSectionGetNumFields() but not in this name
-
         Not collective.
 
         Parameters
@@ -220,15 +200,9 @@ cdef class Section(Object):
         field
             The field number.
 
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        numComp
-            The number of field components.
-
         See also
         --------
-        petsc.PetscSectionGetFieldComponents
+        petsc.PetscSectionGetFieldComponents, setFieldComponents
 
         """
         cdef PetscInt cfield = asInt(field), cnumComp = 0
@@ -249,7 +223,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetFieldComponents
+        petsc.PetscSectionSetFieldComponents, getFieldComponents
 
         """
         cdef PetscInt cfield = asInt(field)
@@ -257,15 +231,9 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldComponents(self.sec,cfield,cnumComp) )
 
     def getChart(self) -> tuple[int, int]:
-        """Return the range [pStart, pEnd) in which points (indices) lie for this PetscSection
+        """Return the range [pStart, pEnd) in which points (indices) lie for this section.
 
         Not collective.
-
-        Output Parameters
-        pStart
-            The first point.
-        pEnd
-            One past the last point.
 
         See also
         --------
@@ -277,7 +245,7 @@ cdef class Section(Object):
         return toInt(pStart), toInt(pEnd)
 
     def setChart(self, pStart: int, pEnd: int) -> None:
-        """Set the range [pStart, pEnd) in which points (indices) lie for this PetscSection.
+        """Set the range [pStart, pEnd) in which points (indices) lie for this section.
 
         Not collective.
 
@@ -298,18 +266,13 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetChart(self.sec, cStart, cEnd) )
 
     def getPermutation(self) -> IS:
-        """Return the permutation of [0, pEnd - pStart) or NULL that was set with PetscSectionSetPermutation().
+        """Return the permutation of [0, pEnd - pStart) or NULL that was set with `sectionSetPermutation`.
 
         Not collective.
 
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        perm - The permutation as an IS
-
         See also
         --------
-        petsc.PetscSectionGetPermutation
+        petsc.PetscSectionGetPermutation, setPermutation
 
         """
         cdef IS perm = IS()
@@ -329,7 +292,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetPermutation
+        petsc.PetscSectionSetPermutation, getPermutation
 
         """
         CHKERR( PetscSectionSetPermutation(self.sec, perm.iset))
@@ -345,15 +308,10 @@ cdef class Section(Object):
         ----------
         point
             The point.
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        numDof
-            The number of dof.
 
         See also
         --------
-        petsc.PetscSectionGetDof
+        petsc.PetscSectionGetDof, setDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -374,7 +332,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetDof
+        petsc.PetscSectionSetDof, getDof, addDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -395,7 +353,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionAddDof
+        petsc.PetscSectionAddDof, setDof, getDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -413,15 +371,10 @@ cdef class Section(Object):
             The point.
         field
             The field.
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        numDof
-            The number of dof.
 
         See also
         --------
-        petsc.PetscSectionGetFieldDof
+        petsc.PetscSectionGetFieldDof, setFieldDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -445,7 +398,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetFieldDof
+        petsc.PetscSectionSetFieldDof, getFieldDof, addFieldDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -465,11 +418,11 @@ cdef class Section(Object):
         field
             The field.
         numDof
-            The number of dof.
+            The number of additional dof.
 
         See also
         --------
-        petsc.PetscSectionAddFieldDof
+        petsc.PetscSectionAddFieldDof, setFieldDof, getFieldDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -486,15 +439,10 @@ cdef class Section(Object):
         ----------
         point
             The point.
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        numDof
-            The number of dof. which are fixed by constraints
 
         See also
         --------
-        petsc.PetscSectionGetConstraintDof
+        petsc.PetscSectionGetConstraintDof, setConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -511,11 +459,11 @@ cdef class Section(Object):
         point
             The point.
         numDof
-            The number of dof. which are fixed by constraints
+            The number of dof which are fixed by constraints.
 
         See also
         --------
-        petsc.PetscSectionSetConstraintDof
+        petsc.PetscSectionSetConstraintDof, getConstraintDof, addConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -536,7 +484,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionAddConstraintDof
+        petsc.PetscSectionAddConstraintDof, setConstraintDof, getConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -554,15 +502,10 @@ cdef class Section(Object):
             The point.
         field
             The field.
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        numDof
-            The number of dof. which are fixed by constraints
 
         See also
         --------
-        petsc.PetscSectionGetFieldConstraintDof
+        petsc.PetscSectionGetFieldConstraintDof, setFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -587,11 +530,11 @@ cdef class Section(Object):
         field
             The field.
         numDof
-            The number of dof. which are fixed by constraints
+            The number of dof which are fixed by constraints.
 
         See also
         --------
-        petsc.PetscSectionSetFieldConstraintDof
+        petsc.PetscSectionSetFieldConstraintDof, getFieldConstraintDof, addFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -620,7 +563,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionAddFieldConstraintDof
+        petsc.PetscSectionAddFieldConstraintDof, setFieldConstraintDof, getFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -645,8 +588,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionGetConstraintIndices
-        getConstraintDof,
+        petsc.PetscSectionGetConstraintIndices, setConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -670,8 +612,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetConstraintIndices
-        setConstraintDof,
+        petsc.PetscSectionSetConstraintIndices, getConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -684,7 +625,7 @@ cdef class Section(Object):
     def getFieldConstraintIndices(self, point: int, field: int) -> ArrayInt:
         """Return the field dof numbers, in [0, fdof), which are constrained.
 
-        The indices array, which is provided by the caller, must have capacity to hold the number of constrained dofs, e.g., as returned by PetscSectionGetConstraintDof().
+        (The constrained dofs. sorted in ascending order)
 
         Not collective.
 
@@ -694,16 +635,10 @@ cdef class Section(Object):
             The field number.
         point
             The point.
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        indices
-            The constrained dofs. sorted in ascending order
 
         See also
         --------
-        petsc.PetscSectionGetFieldConstraintIndices,
-        getFieldConstraintDof
+        petsc.PetscSectionGetFieldConstraintIndices, setFieldConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -718,8 +653,7 @@ cdef class Section(Object):
         self,
         point: int,
         field: int,
-        indices:
-        Sequence[int]
+        indices: Sequence[int]
     ) -> None:
         """Set the field dof numbers, in [0, fdof), which are constrained.
 
@@ -736,8 +670,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetFieldConstraintIndices,
-        setFieldConstraintDof,
+        petsc.PetscSectionSetFieldConstraintIndices, getFieldConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -749,24 +682,11 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldConstraintIndices(self.sec,cpoint,cfield,cindices) )
 
     def getMaxDof(self) -> int:
-        """Return the maximum number of degrees of freedom on any point in the PetscSection
+        """Return the maximum number of degrees of freedom on any point in the section.
 
         The returned number is up-to-date without need for PetscSectionSetUp().
 
-        The returned number is calculated lazily and stashed.
-
-        A call to PetscSectionInvalidateMaxDof_Internal() invalidates the stashed value.
-
-        PetscSectionInvalidateMaxDof_Internal() is called in PetscSectionSetDof(), PetscSectionAddDof() and PetscSectionReset()
-
-        It should also be called every time atlasDof is modified directly.
-
         Not collective.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        maxDof - the maximum dof
 
         See also
         --------
@@ -778,18 +698,13 @@ cdef class Section(Object):
         return toInt(maxDof)
 
     def getStorageSize(self) -> int:
-        """Return the size of an array or local Vec capable of holding all the degrees of freedom defined in a PetscSection.
+        """Return the size of an array or local Vec capable of holding all the degrees of freedom defined in a section.
 
         Not collective.
 
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        size - the size of an array which can hold all the dofs
-
         See also
         --------
-        petsc.PetscSectionGetStorageSize
+        petsc.PetscSectionGetStorageSize, getConstrainedStorageSize
 
         """
         cdef PetscInt size = 0
@@ -797,18 +712,13 @@ cdef class Section(Object):
         return toInt(size)
 
     def getConstrainedStorageSize(self) -> int:
-        """Return the size of an array or local Vec capable of holding all unconstrained degrees of freedom in a PetscSection
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        size - the size of an array which can hold all unconstrained dofs
+        """Return the size of an array or local Vec capable of holding all unconstrained degrees of freedom in a section.
 
         Not collective.
 
         See also
         --------
-        petsc.PetscSectionGetConstrainedStorageSize
+        petsc.PetscSectionGetConstrainedStorageSize, getStorageSize
 
         """
         cdef PetscInt size = 0
@@ -818,7 +728,8 @@ cdef class Section(Object):
     def getOffset(self, point: int) -> int:
         """Return the offset into an array or Vec for the dof associated with the given point.
 
-        In a global section, this offset will be negative for points not owned by this process.
+        In a global section, this offset will be negative for points not owned
+        by this process.
 
         Not collective.
 
@@ -826,15 +737,10 @@ cdef class Section(Object):
         ----------
         point
             The point.
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        offset
-            The offset.
 
         See also
         --------
-        petsc.PetscSectionGetOffset
+        petsc.PetscSectionGetOffset, setOffset
 
         """
         cdef PetscInt cpoint = asInt(point), offset = 0
@@ -844,7 +750,7 @@ cdef class Section(Object):
     def setOffset(self, point: int, offset: int) -> None:
         """Set the offset into an array or Vec for the dof associated with the given point.
 
-        The user usually does not call this function, but uses PetscSectionSetUp()
+        The user usually does not call this function, but uses sectionSetUp()
 
         Not collective.
 
@@ -857,7 +763,7 @@ cdef class Section(Object):
 
         See also
         --------
-        petsc.PetscSectionSetOffset
+        petsc.PetscSectionSetOffset, getOffset
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -897,7 +803,7 @@ cdef class Section(Object):
     def setFieldOffset(self, point: int, field: int, offset: int) -> None:
         """Set the offset into an array or Vec for the dof associated with the given field at a point.
 
-        The user usually does not call this function, but uses PetscSectionSetUp()
+        The user usually does not call this function, but uses `setUp`.
 
         Not collective.
 
@@ -921,13 +827,9 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldOffset(self.sec,cpoint,cfield,coffset) )
 
     def getOffsetRange(self) -> tuple[int,int]:
-        """Return the full range of offsets [start, end) for a PetscSection.
+        """Return the full range of offsets [start, end) for a section.
 
         Not collective.
-
-        Output Parameters
-        start - the minimum offset
-        end - one more than the maximum offset
 
         See also
         --------
@@ -938,28 +840,22 @@ cdef class Section(Object):
         CHKERR( PetscSectionGetOffsetRange(self.sec,&oStart,&oEnd) )
         return toInt(oStart),toInt(oEnd)
 
+    # FIXME: Hardcoded PETSC_FALSE parameters
     def createGlobalSection(self, SF sf) -> Section:
         """Create a section describing the global field layout using the local section and a PetscSF describing the section point overlap.
+        gsection - The PetscSection for the global field layout
 
         If we have a set of local sections defining the layout of a set of local vectors, and also a PetscSF to determine which section points are shared and the ownership, we can calculate a global section defining the parallel data layout, and the associated global vector.
 
         This gives negative sizes and offsets to points not owned by this process.
+
+        includeConstraints and localOffsets parameters of the C API are here set to `False`.
 
         Parameters
         ----------
         sf
             The PetscSF describing parallel layout of the section points
             (leaves are unowned local points).
-        includeConstraints
-            By default this is PETSC_FALSE, meaning that the global field
-            vector will not possess constrained dofs.
-        localOffsets
-            If PETSC_TRUE, use local rather than global offsets for the points.
-
-        ---------------------------------
-        Output Parameter
-        ---------------------------------
-        gsection - The PetscSection for the global field layout
 
         See also
         --------
