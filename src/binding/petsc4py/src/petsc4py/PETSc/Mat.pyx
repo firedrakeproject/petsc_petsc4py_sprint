@@ -2170,7 +2170,7 @@ cdef class Mat(Object):
     ) -> Mat:
         """Performs matrix-matrix multiplication C=AB.
 
-        Neighbor-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -2216,7 +2216,7 @@ cdef class Mat(Object):
     ):
         """Perform matrix-matrix multiplication C=ABᵀ.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -2262,7 +2262,7 @@ cdef class Mat(Object):
     ):
         """Perform matrix-matrix multiplication C=AᵀB.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -2308,7 +2308,7 @@ cdef class Mat(Object):
     ) -> Mat:
         """Creates the matrix product C = PᵀAP.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -2358,7 +2358,7 @@ cdef class Mat(Object):
     ) -> Mat:
         """Create the matrix product C = RARᵀ.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -2416,7 +2416,7 @@ cdef class Mat(Object):
     ) -> Mat:
         """Perform matrix-matrix-matrix multiplication D=ABC.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
