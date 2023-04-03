@@ -80,9 +80,9 @@ cdef class Scatter(Object):
     def create(
         self,
         Vec vec_from,
-        IS is_from,
+        IS is_from: IS | None,
         Vec vec_to,
-        IS is_to,
+        IS is_to: IS | None,
     ) -> Self:
         """Create a scatter object.
 
