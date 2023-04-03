@@ -2998,7 +2998,7 @@ cdef class Mat(Object):
         return isetsrows, isetscols
 
     def getNestLocalISs(self) -> tuple[list[IS], list[IS]]:
-        """Return the local `IS` sets partitioning the row and column spaces.
+        """Return the local index sets representing the row and column spaces.
 
         Not collective.
 
