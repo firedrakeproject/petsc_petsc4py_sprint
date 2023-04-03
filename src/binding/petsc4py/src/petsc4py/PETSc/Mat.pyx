@@ -326,7 +326,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_options, Mat.load, petsc.MatView
+        petsc_options, load, petsc.MatView
 
         """
         cdef PetscViewer vwr = NULL
@@ -340,7 +340,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.create, petsc.MatDestroy
+        create, petsc.MatDestroy
 
         """
         CHKERR( MatDestroy(&self.mat) )
@@ -349,10 +349,10 @@ cdef class Mat(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create the matrix.
 
-        Once created, the user should call `Mat.setType` or
-        `Mat.setFromOptions` before using the matrix. Alternatively, specific
-        creation routines can be used such as `Mat.createAIJ` or
-        `Mat.createBAIJ` can be used.
+        Once created, the user should call `setType` or
+        `setFromOptions` before using the matrix. Alternatively, specific
+        creation routines can be used such as `createAIJ` or
+        `createBAIJ` can be used.
 
         Collective.
 
@@ -363,7 +363,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.destroy, petsc.MatCreate
+        destroy, petsc.MatCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -372,7 +372,7 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def setType(self, mat_type: Mat.Type | str) -> None:
+    def setType(self, mat_type: Type | str) -> None:
         """Set the matrix type.
 
         Collective.
@@ -384,12 +384,12 @@ cdef class Mat(Object):
 
         Notes
         -----
-        `Mat.setFromOptions` can be used instead to set the type using the
+        `setFromOptions` can be used instead to set the type using the
         options database. For more information see `petsc_options`.
 
         See Also
         --------
-        Mat.setFromOptions, Mat.create, petsc.MatSetType
+        setFromOptions, create, petsc.MatSetType
 
         """
         cdef PetscMatType cval = NULL
@@ -1333,12 +1333,12 @@ cdef class Mat(Object):
     ) -> Self:
         """Create a matrix assembled on each process but not across processes.
 
-        The resulting matrix has type `Mat.Type.IS`.
+        The resulting matrix has type `Type.IS`.
 
         Parameters
         ----------
         size
-            Matrix size. See `Mat.setSizes` for usage information. Note that
+            Matrix size. See `setSizes` for usage information. Note that
             the block size is set to ``1``.
         lgmapr
             Local to global map for rows. If `None` then the local row space
@@ -1385,14 +1385,14 @@ cdef class Mat(Object):
     ) -> Self:
         """Create a Python matrix and attach a context object to it.
 
-        The resulting matrix has type `Mat.Type.PYTHON`.
+        The resulting matrix has type `Type.PYTHON`.
 
         Collective.
 
         Parameters
         ----------
         size
-            Matrix size. See `Mat.setSizes` for usage information.
+            Matrix size. See `setSizes` for usage information.
         context
             Python class that implements the required matrix methods. If
             `None` then the context will not be set.
@@ -1401,7 +1401,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, petsc.MATPYTHON
+        Type.PYTHON, petsc_python_mat
 
         """
         # communicator and sizes
@@ -1420,7 +1420,7 @@ cdef class Mat(Object):
         return self
 
     def setPythonContext(self, context: Any) -> None:
-        """Set the context object for a `Mat.Type.PYTHON` matrix.
+        """Set the context object for a `Type.PYTHON` matrix.
 
         Logically collective.
 
@@ -1431,13 +1431,13 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, Mat.getPythonContext, Mat.createPython
+        petsc_python_mat, getPythonContext, createPython
 
         """
         CHKERR( MatPythonSetContext(self.mat, <void*>context) )
 
     def getPythonContext(self) -> Any | None:
-        """Return the context object attached to a `Mat.Type.PYTHON` matrix.
+        """Return the context object attached to a `Type.PYTHON` matrix.
 
         Not collective.
 
@@ -1448,7 +1448,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, Mat.setPythonContext, Mat.createPython
+        petsc_python_mat, setPythonContext, createPython
 
         """
         cdef void *context = NULL
@@ -1457,7 +1457,7 @@ cdef class Mat(Object):
         else: return <object> context
 
     def setPythonType(self, py_type: str) -> None:
-        """Set the type of a `Mat.Type.PYTHON` matrix.
+        """Set the type of a `Type.PYTHON` matrix.
 
         Collective.
 
@@ -1469,7 +1469,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, Mat.getPythonType, Mat.createPython
+        petsc_python_mat, getPythonType, createPython
         petsc.MatPythonSetType
 
         """
@@ -1478,7 +1478,7 @@ cdef class Mat(Object):
         CHKERR( MatPythonSetType(self.mat, cval) )
 
     def getPythonType(self) -> str:
-        """Return the type of a `Mat.Type.PYTHON` matrix.
+        """Return the type of a `Type.PYTHON` matrix.
 
         Not collective.
 
@@ -1489,7 +1489,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, Mat.setPythonType, Mat.createPython
+        petsc_python_mat, setPythonType, createPython
         petsc.MatPythonGetType
 
         """
