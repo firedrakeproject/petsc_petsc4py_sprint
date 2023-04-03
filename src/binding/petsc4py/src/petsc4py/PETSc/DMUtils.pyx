@@ -30,7 +30,7 @@ cdef class DMInterpolation:
         self.dminterp = new
         return self
 
-    def destroy(self) -> None:
+    def destroy(self) -> Self:
         """Destroy the `DMInterpolation` context.
 
         Collective.
