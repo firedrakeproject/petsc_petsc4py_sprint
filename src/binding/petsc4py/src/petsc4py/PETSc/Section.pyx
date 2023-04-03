@@ -46,15 +46,14 @@ cdef class Section(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Allocate a section and set the map contents to the default.
 
-        Typical calling sequence
-
-        PetscSectionCreate(MPI_Comm,PetscSection *);!
-        PetscSectionSetNumFields(PetscSection, numFields);
-        PetscSectionSetChart(PetscSection,low,high);
-        PetscSectionSetDof(PetscSection,point,numdof);
-        PetscSectionSetUp(PetscSection);
-        PetscSectionGetOffset(PetscSection,point,PetscInt *);
-        PetscSectionDestroy(PetscSection);
+        Typical calling sequence:
+        - `create`
+        - `setNumFields`
+        - `setChart`
+        - `setDof`
+        - `setUp`
+        - `getOffset`
+        - `destroy`
 
         The PetscSection object and methods are intended to be used in the PETSc Vec and Mat implementations. The indices returned by the PetscSection are appropriate for the kind of Vec it is associated with. For example, if the vector being indexed is a local vector, we call the section a local section. If the section indexes a global vector, we call it a global section. For parallel vectors, like global vectors, we use negative indices to indicate dofs owned by other processes.
 
