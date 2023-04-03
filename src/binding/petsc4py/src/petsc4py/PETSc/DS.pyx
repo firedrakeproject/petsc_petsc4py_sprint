@@ -243,7 +243,6 @@ cdef class DS(Object):
 
     def getComponents(self) -> ArrayInt:
         """Return the number of components for each field on an evaluation point.
-        TODO: shorten to 79
 
         Not collective.
 
