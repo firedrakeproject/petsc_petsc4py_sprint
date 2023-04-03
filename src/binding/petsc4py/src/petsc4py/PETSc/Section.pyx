@@ -283,8 +283,6 @@ cdef class Section(Object):
     def getPermutation(self) -> IS:
         """Return the permutation that was set with `setPermutation`.
 
-        The permutation is [0, pEnd - pStart) or `None`.
-
         Not collective.
 
         See also
