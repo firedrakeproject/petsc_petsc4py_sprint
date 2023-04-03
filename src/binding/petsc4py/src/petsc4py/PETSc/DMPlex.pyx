@@ -1269,7 +1269,7 @@ cdef class DMPlex(DM):
         opts = str2bytes(opts, &copts)
         CHKERR( DMPlexTetgenSetOptions(self.dm, copts) )
 
-    def markBoundaryFaces(self, DMLabel label, value: int | None = None) -> DMLabel:
+    def markBoundaryFaces(self, label: str, value: int | None = None) -> DMLabel:
         """Mark all faces on the boundary.
 
         Not collective.
