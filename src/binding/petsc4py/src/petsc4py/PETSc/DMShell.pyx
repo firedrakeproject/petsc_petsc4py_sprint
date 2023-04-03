@@ -161,13 +161,13 @@ cdef class DMShell(DM):
         end
             The routine which ends the global to local scatter.
         begin_args
-            Additional positional arguments for **begin**.
+            Additional positional arguments for ``begin``.
         begin_kargs
-            Additional keyword arguments for **begin**.
+            Additional keyword arguments for ``begin``.
         end_args
-            Additional positional arguments for **end**.
+            Additional positional arguments for ``end``.
         end_kargs
-            Additional keyword arguments for **end**.
+            Additional keyword arguments for ``end``.
 
         See also
         --------
@@ -226,13 +226,13 @@ cdef class DMShell(DM):
         end
             The routine which ends the local to global scatter.
         begin_args
-            Additional positional arguments for **begin**.
+            Additional positional arguments for ``begin``.
         begin_kargs
-            Additional keyword arguments for **begin**.
+            Additional keyword arguments for ``begin``.
         end_args
-            Additional positional arguments for **end**.
+            Additional positional arguments for ``end``.
         end_kargs
-            Additional keyword arguments for **end**.
+            Additional keyword arguments for ``end``.
 
         See also
         --------
@@ -291,13 +291,13 @@ cdef class DMShell(DM):
         end
             The routine which ends the local to local scatter.
         begin_args
-            Additional positional arguments for **begin**.
+            Additional positional arguments for ``begin``.
         begin_kargs
-            Additional keyword arguments for **begin**.
+            Additional keyword arguments for ``begin``.
         end_args
-            Additional positional arguments for **end**.
+            Additional positional arguments for ``end``.
         end_kargs
-            Additional keyword arguments for **end**.
+            Additional keyword arguments for ``end``.
 
         See also
         --------
@@ -386,9 +386,9 @@ cdef class DMShell(DM):
         coarsen
             The routine which coarsens the DM.
         args
-            Additional positional arguments for **coarsen**.
+            Additional positional arguments for ``coarsen``.
         kargs
-            Additional keyword arguments for **coarsen**.
+            Additional keyword arguments for ``coarsen``.
 
         See also
         --------
@@ -419,9 +419,9 @@ cdef class DMShell(DM):
         refine
             The routine which refines the DM.
         args
-            Additional positional arguments for **refine**.
+            Additional positional arguments for ``refine``.
         kargs
-            Additional keyword arguments for **refine**.
+            Additional keyword arguments for ``refine``.
 
         See also
         --------
@@ -452,9 +452,9 @@ cdef class DMShell(DM):
         create_interpolation
             The routine to create the interpolation.
         args
-            Additional positional arguments for **create_interpolation**.
+            Additional positional arguments for ``create_interpolation``.
         kargs
-            Additional keyword arguments for **create_interpolation**.
+            Additional keyword arguments for ``create_interpolation``.
 
         See also
         --------
@@ -485,9 +485,9 @@ cdef class DMShell(DM):
         create_injection
             The routine to create the injection.
         args
-            Additional positional arguments for **create_injection**.
+            Additional positional arguments for ``create_injection``.
         kargs
-            Additional keyword arguments for **create_injection**.
+            Additional keyword arguments for ``create_injection``.
 
         See also
         --------
@@ -518,9 +518,9 @@ cdef class DMShell(DM):
         create_restriction
             The routine to create the restriction
         args
-            Additional positional arguments for **create_restriction**.
+            Additional positional arguments for ``create_restriction``.
         kargs
-            Additional keyword arguments for **create_restriction**.
+            Additional keyword arguments for ``create_restriction``.
 
         See also
         --------
@@ -551,9 +551,9 @@ cdef class DMShell(DM):
         decomp
             The routine to create the decomposition.
         args
-            Additional positional arguments for **decomp**.
+            Additional positional arguments for ``decomp``.
         kargs
-            Additional keyword arguments for **decomp**.
+            Additional keyword arguments for ``decomp``.
 
         See also
         --------
@@ -584,9 +584,9 @@ cdef class DMShell(DM):
         decomp
             The routine to create the decomposition.
         args
-            Additional positional arguments for **decomp**.
+            Additional positional arguments for ``decomp``.
         kargs
-            Additional keyword arguments for **decomp**.
+            Additional keyword arguments for ``decomp``.
 
         See also
         --------
@@ -617,9 +617,9 @@ cdef class DMShell(DM):
         scatter
             The routine to create the scatters.
         args
-            Additional positional arguments for **scatter**.
+            Additional positional arguments for ``scatter``.
         kargs
-            Additional keyword arguments for **scatter**.
+            Additional keyword arguments for ``scatter``.
 
         See also
         --------
@@ -650,9 +650,9 @@ cdef class DMShell(DM):
         subdm
             The routine to create the decomposition.
         args
-            Additional positional arguments for **subdm**.
+            Additional positional arguments for ``subdm``.
         kargs
-            Additional keyword arguments for **subdm**.
+            Additional keyword arguments for ``subdm``.
 
         See also
         --------
