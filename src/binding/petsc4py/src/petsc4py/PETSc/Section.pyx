@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 
 cdef class Section(Object):
-    """Mapping from integers in a range to contiguous sets of integers."""
+    """Mapping from integers in a range to unstructured set of integers."""
 
     def __cinit__(self):
         self.obj = <PetscObject*> &self.sec
