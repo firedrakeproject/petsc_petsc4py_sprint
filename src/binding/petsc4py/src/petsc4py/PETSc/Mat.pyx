@@ -2177,7 +2177,8 @@ cdef class Mat(Object):
         mat
             The right hand matrix B.
         result
-            The optional resultant matrix C, uses ``MAT_REUSE_MATRIX``.
+            The optional resultant matrix C. When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
+            When C is not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
             ``None`` if you do not have a good estimate. If the
