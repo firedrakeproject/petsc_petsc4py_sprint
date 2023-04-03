@@ -337,7 +337,7 @@ cdef class PC(Object):
     def appendOptionsPrefix(self, prefix: str) -> None:
         """Append to the prefix used for all the `PC` options.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------

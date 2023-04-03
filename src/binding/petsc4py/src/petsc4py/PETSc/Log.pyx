@@ -55,7 +55,7 @@ cdef class Log:
     def begin(cls, all: bool = False):
         """Turn on logging of objects and events.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -102,7 +102,7 @@ cdef class Log:
     def logFlops(cls, flops: float) -> None:
         """Add floating point operations to the global counter.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -121,7 +121,7 @@ cdef class Log:
     def addFlops(cls, flops: float) -> None:
         """Add floating point operations to global counter.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -144,7 +144,7 @@ cdef class Log:
     def getFlops(cls) -> float:
         """Return the number of flops used on this processor since the program began.
 
-        Not Collective.
+        Not collective.
 
         Returns
         -------
@@ -210,7 +210,7 @@ cdef class Log:
     def isActive(cls) -> bool:
         """Return whether logging is currently in progress.
         
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -245,7 +245,7 @@ cdef class LogStage:
     def push(self) -> None:
         """Push a stage on the logging stack.
 
-        Not Collective.
+        Not collective.
 
         Notes
         -----
@@ -261,7 +261,7 @@ cdef class LogStage:
     def pop(self) -> None:
         """Pop a stage on the logging stack that was pushed.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -290,7 +290,7 @@ cdef class LogStage:
     def activate(self) -> None:
         """Activate the stage.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -302,7 +302,7 @@ cdef class LogStage:
     def deactivate(self) -> None:
         """Deactivate the stage.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -314,7 +314,7 @@ cdef class LogStage:
     def getActive(self) -> bool:
         """Check if the stage is activate.
         
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -328,7 +328,7 @@ cdef class LogStage:
     def setActive(self, flag: bool) -> None:
         """Activate or deactivate the current stage.
         
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -355,7 +355,7 @@ cdef class LogStage:
     def getVisible(self) -> bool:
         """Return whether the stage is visible.
 
-        Not Collective.
+        Not collective.
 
         See Also
         --------
@@ -369,7 +369,7 @@ cdef class LogStage:
     def setVisible(self, flag: bool) -> None:
         """Set the visibility of the stage. 
         
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -489,7 +489,7 @@ cdef class LogEvent:
     def begin(self, *objs) -> None:
         """Log the beginning of a user event.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -508,7 +508,7 @@ cdef class LogEvent:
     def end(self, *objs) -> None:
         """Log the end of a user event.
 
-        Not Collective.
+        Not collective.
 
         Parameters
         ----------
@@ -542,7 +542,7 @@ cdef class LogEvent:
     def activate(self) -> None:
         """Indicate that the event should be logged.
 
-        Not Collective
+        Not collective
 
         See Also
         --------
@@ -554,7 +554,7 @@ cdef class LogEvent:
     def deactivate(self) -> None:
         """Indicate that the event should not be logged.
         
-        Not Collective
+        Not collective
 
         See also
         --------
@@ -570,7 +570,7 @@ cdef class LogEvent:
     def setActive(self, flag: bool) -> None:
         """Indicate whether or not the event should logged.
 
-        Not Collective
+        Not collective
 
         Parameters
         ----------
