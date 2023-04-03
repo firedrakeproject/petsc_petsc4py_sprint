@@ -389,8 +389,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         display
           The X display to use or `None` for the local machine.
         title
@@ -504,8 +504,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         comm
           The subcommunicator. If `None`, uses `COMM_SELF`.
 
@@ -528,8 +528,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         sub
           The subviewer obtained from `getSubViewer`.
 
@@ -547,8 +547,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         comm
           The communicator. Defaults to `Sys.getDefaultComm`.
 
@@ -565,8 +565,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         comm
           The communicator. Defaults to `Sys.getDefaultComm`.
 
@@ -583,8 +583,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         name
           The filename.
         comm
@@ -604,8 +604,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         comm
           The communicator. Defaults to `Sys.getDefaultComm`.
 
@@ -622,8 +622,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         comm
           The communicator. Defaults to `Sys.getDefaultComm`.
 
@@ -861,8 +861,8 @@ Vec Object: 1 MPI process
 
         Collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         display
           The X display to use or `None` for the local machine.
         title
