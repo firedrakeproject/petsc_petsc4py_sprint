@@ -229,7 +229,7 @@ cdef class DMSwarm(DM):
 
         The returned array contains underlying values of the field.
 
-        The array must be returned to the `DMSwarm` using a matching call to 
+        The array must be returned to the `DMSwarm` using a matching call to
         `restoreField`.
 
         Not collective.
@@ -496,7 +496,7 @@ cdef class DMSwarm(DM):
         PetscINCREF(dm.obj)
         return dm
 
-    def setType(self, dmswarm_type: Type) -> None:
+    def setType(self, dmswarm_type: Type | str) -> None:
         """Set particular flavor of `DMSwarm`.
 
         Collective.
