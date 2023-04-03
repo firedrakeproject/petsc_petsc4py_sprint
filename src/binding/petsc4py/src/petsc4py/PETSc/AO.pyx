@@ -107,7 +107,7 @@ cdef class AO(Object):
         """Return a memory scalable application ordering using two orderings.
 
         The arrays/indices ``app`` and ``petsc`` must contain all the integers
-        ``0`` to ``len(app)-1*`` with no duplicates; that is there cannot be any
+        ``0`` to ``len(app)-1`` with no duplicates; that is there cannot be any
         "holes" in the indices. Use ``createMapping`` if you wish to have
         "holes" in the indices.
 
