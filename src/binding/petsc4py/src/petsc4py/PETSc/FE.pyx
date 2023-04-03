@@ -72,7 +72,15 @@ cdef class FE(Object):
         return self
 
     # TODO:
-    def createDefault(self, dim: int, nc: int, isSimplex: bool, qorder: int = DETERMINE, prefix: str = None, comm: Comm | None = None) -> Self:
+    def createDefault(
+        self,
+        dim: int,
+        nc: int,
+        isSimplex: bool,
+        qorder: int = DETERMINE,
+        prefix: str = None,
+        comm: Comm | None = None
+    ) -> Self:
         """Create a `FE` for basic FEM computation.
 
         Collective.
@@ -111,7 +119,15 @@ cdef class FE(Object):
         PetscCLEAR(self.obj); self.fe = newfe
         return self
 
-    def createLagrange(self, dim: int, nc: int, isSimplex: bool, k: int, qorder: int = DETERMINE, comm: Comm | None = None) -> Self:
+    def createLagrange(
+        self,
+        dim: int,
+        nc: int,
+        isSimplex: bool,
+        k: int,
+        qorder: int = DETERMINE,
+        comm: Comm | None = None
+    ) -> Self:
         """Create a `FE` for the basic Lagrange space of degree k.
 
         Collective.
@@ -267,7 +283,13 @@ cdef class FE(Object):
         CHKERR( PetscFEGetTileSizes(self.fe, &blockSize, &numBlocks, &batchSize, &numBatches) )
         return toInt(blockSize), toInt(numBlocks), toInt(batchSize), toInt(numBatches)
 
-    def setTileSizes(self, blockSize: int, numBlocks: int, batchSize: int, numBatches: int) -> None:
+    def setTileSizes(
+        self,
+        blockSize: int,
+        numBlocks: int,
+        batchSize: int,
+        numBatches: int,
+    ) -> None:
         """Set the tile sizes for evaluation.
 
         Not collective.
@@ -342,7 +364,7 @@ cdef class FE(Object):
         CHKERR( PetscFESetFaceQuadrature(self.fe, quad.quad) )
         return self
 
-    def setType(self, fe_type: Type) -> Self:
+    def setType(self, fe_type: Type | str) -> Self:
         """Build a particular `FE`.
 
         Collective.
@@ -455,10 +477,10 @@ cdef class FE(Object):
 
         Parameters
         ----------
-        obj
-            Optional object that provides the options prefix.
         name
             Command line option name.
+        obj
+            Optional object that provides the options prefix.
 
         See also
         --------

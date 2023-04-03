@@ -28,6 +28,18 @@ cdef CSRIndicesType
 cdef CSRType
 cdef NNZType
 
+# --- DM ---
+
+cdef DMCoarsenHookFunction
+cdef DMRestrictHookFunction
+
+# --- KSP ---
+
+cdef KSPRHSFunction
+cdef KSPOperatorsFunction
+cdef KSPConvergenceTestFunction
+cdef KSPMonitorFunction
+
 # --- TS ---
 
 cdef TSRHSFunction
