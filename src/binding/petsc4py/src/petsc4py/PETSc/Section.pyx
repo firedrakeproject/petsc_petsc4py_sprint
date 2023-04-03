@@ -872,7 +872,7 @@ cdef class Section(Object):
         Parameters
         ----------
         sf
-            The `SF` describing parallel layout of the section points
+            The `SF` describing the parallel layout of the section points
             (leaves are unowned local points).
 
         See also
