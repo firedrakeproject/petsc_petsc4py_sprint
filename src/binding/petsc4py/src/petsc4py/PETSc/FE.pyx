@@ -364,7 +364,7 @@ cdef class FE(Object):
         CHKERR( PetscFESetFaceQuadrature(self.fe, quad.quad) )
         return self
 
-    def setType(self, fe_type: Type) -> Self:
+    def setType(self, fe_type: Type | str) -> Self:
         """Build a particular `FE`.
 
         Collective.
