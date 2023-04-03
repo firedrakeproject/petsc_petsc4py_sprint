@@ -23,6 +23,7 @@ cdef class Scatter(Object):
     """Scatter object.
 
     The object used to perform data movement between vectors.
+    Scatter is described in the `PETSc manual <petsc:sec_scatter>`.
 
     See Also
     --------
@@ -41,6 +42,15 @@ cdef class Scatter(Object):
         self.sct = NULL
 
     def __call__(self, x, y, addv=None, mode=None):
+        """Perform the scatter.
+
+        Collective.
+
+        See Also
+        --------
+        scatter
+
+        """
         self.scatter(x, y, addv, mode)
 
     #
@@ -91,30 +101,34 @@ cdef class Scatter(Object):
         Parameters
         ----------
         vec_from
-          A representative vector from which to scatter the data.
+          Representative vector from which to scatter the data.
         is_from
-          The indices of ``vec_from`` to scatter. If `None`, uses all indices.
+          Indices of ``vec_from`` to scatter. If `None`, use all indices.
         vec_to
-          A representative vector to which scatter the data.
-        is_from
-          The indices of ``vec_to`` where to receive. If `None`, uses all indices.
+          Representative vector to which scatter the data.
+        is_to
+          Indices of ``vec_to`` where to receive. If `None`, use all indices.
 
         Examples
         --------
-        The scatter object can be used to repeatedly perform data movement and it can be seen as the PETSc equivalent of NumPy-like indexing and slicing, with support for parallel communications:
+        The scatter object can be used to repeatedly perform data movement.
+        It is the PETSc equivalent of NumPy-like indexing and slicing,
+        with support for parallel communications:
 
+        >>> revmode = PETSc.Scatter.Mode.REVERSE
         >>> v1 = PETSc.Vec().createWithArray([1, 2, 3])
         >>> v2 = PETSc.Vec().createWithArray([0, 0, 0])
         >>> sct = PETSc.Scatter().create(v1,None,v2,None)
         >>> sct.scatter(v1,v2) # v2[:] = v1[:]
-        >>> sct.scatter(v2,v1,mode=PETSC.Scatter.Mode.REVERSE) # v1[:] = v2[:]
+        >>> sct.scatter(v2,v1,mode=revmode) # v1[:] = v2[:]
 
+        >>> revmode = PETSc.Scatter.Mode.REVERSE
         >>> v1 = PETSc.Vec().createWithArray([1, 2, 3, 4])
         >>> v2 = PETSc.Vec().createWithArray([0, 0])
         >>> is1 = PETSc.IS().createStride(2, 3, -2)
         >>> sct = PETSc.Scatter().create(v1,is1,v2,None)
         >>> sct.scatter(v1,v2) # v2[:] = v1[3:0:-2]
-        >>> sct.scatter(v2,v1,mode=PETSC.Scatter.Mode.REVERSE) # v1[3:0:-2] = v2[:]
+        >>> sct.scatter(v2,v1,mode=revmode) # v1[3:0:-2] = v2[:]
 
         See Also
         --------
@@ -198,7 +212,13 @@ cdef class Scatter(Object):
         Parameters
         ----------
         vec
-          The vector to scatter from. The resulting scatter will have the same communicator.
+          The vector to scatter from.
+
+        Notes
+        -----
+        The created scatter will have the same communicator of ``vec``.
+        The method also returns an output vector of appropriate size to
+        contain the result of the operation.
 
         See Also
         --------
@@ -213,14 +233,20 @@ cdef class Scatter(Object):
 
     @classmethod
     def toZero(cls, Vec vec) -> tuple[Scatter, Vec]:
-        """Create a scatter that communicates a vector to rank zero of the sharing communicator.
+        """Create a scatter that communicates a vector to rank zero.
 
         Collective.
 
         Parameters
         ----------
         vec
-          The vector to scatter from. The resulting scatter will have the same communicator.
+          The vector to scatter from.
+
+        Notes
+        -----
+        The created scatter will have the same communicator of ``vec``.
+        The method also returns an output vector of appropriate size to
+        contain the result of the operation.
 
         See Also
         --------
@@ -232,11 +258,6 @@ cdef class Scatter(Object):
         CHKERR( VecScatterCreateToZero(
             vec.vec, &scatter.sct, &ovec.vec) )
         return (scatter, ovec)
-    #
-
-    scatterBegin = begin
-    scatterEnd = end
-
     #
 
     def begin(
@@ -270,7 +291,7 @@ cdef class Scatter(Object):
         addv : InsertMode | int | None = None,
         mode: ScatterMode | int | None = None,
     ) -> None:
-        """Finish a generalized scatter from one vector into another.
+        """Complete a generalized scatter from one vector into another.
 
         Collective.
 
@@ -314,9 +335,11 @@ cdef class Scatter(Object):
         mode
             Scatter mode. Possible values are:
 
-            - `ScatterMode.FORWARD` If ``vec_from`` and ``vec_to`` are compatible with the vectors used to create the scatter.
+            - `ScatterMode.FORWARD` If ``vec_from`` and ``vec_to`` are
+              compatible with the vectors used to create the scatter.
 
-            - `ScatterMode.REVERSE` If ``vec_from`` and ``vec_to`` are swapped with respect to the vectors used to create the scatter.
+            - `ScatterMode.REVERSE` If ``vec_from`` and ``vec_to`` are
+              swapped with respect to the vectors used to create the scatter.
 
         See also
         --------
@@ -329,6 +352,9 @@ cdef class Scatter(Object):
                                 caddv, csctm) )
         CHKERR( VecScatterEnd(self.sct, vec_from.vec, vec_to.vec,
                               caddv, csctm) )
+
+    scatterBegin = begin
+    scatterEnd = end
 
 # --------------------------------------------------------------------
 
