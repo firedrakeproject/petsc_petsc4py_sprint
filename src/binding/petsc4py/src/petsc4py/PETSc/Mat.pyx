@@ -2381,17 +2381,6 @@ cdef class Mat(Object):
         To determine the correct fill value, run with -info and search
         for the string "Fill ratio" to see the value actually needed.
 
-        An alternative approach to this function is to use
-        `petsc.MatProductCreate` and set the desired options before the
-        computation is done.
-
-        This routine is currently only implemented for pairs of
-        `Type.AIJ` matrices and classes which inherit from
-        `Type.AIJ`. Due to PETSc sparse matrix block row distribution
-        among processes, parallel `petsc.MatRARt` is implemented via
-        explicit transpose of R, which could be very expensive. We
-        recommend using `ptap`.
-
         See also
         --------
         petsc.MatRARt
