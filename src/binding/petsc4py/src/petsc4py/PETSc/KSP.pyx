@@ -1414,7 +1414,7 @@ cdef class KSP(Object):
         getComputeSingularValues, petsc.KSPSetComputeSingularValues
 
         """
-        cdef PetscBool compute = asBool(compute)
+        cdef PetscBool compute = asBool(flag)
         CHKERR( KSPSetComputeSingularValues(self.ksp, compute) )
 
     def getComputeSingularValues(self) -> bool:

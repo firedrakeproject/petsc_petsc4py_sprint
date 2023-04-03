@@ -1439,7 +1439,12 @@ cdef class DM(Object):
         CHKERR( DMAdaptLabel(self.dm, clbl, &newdm.dm) )
         return newdm
 
-    def adaptMetric(self, Vec metric, bdLabel: str | None, rgLabel: str | None) -> DM:
+    def adaptMetric(
+        self,
+        Vec metric,
+        bdLabel: str | None = None,
+        rgLabel: str | None = None,
+    ) -> DM:
         """Return a mesh adapted to the specified metric field.
 
         Parameters
