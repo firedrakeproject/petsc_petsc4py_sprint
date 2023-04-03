@@ -6,7 +6,7 @@ class DSType(object):
 # --------------------------------------------------------------------
 
 cdef class DS(Object):
-    """A discrete system."""
+    """Discrete System object."""
 
     Type = DSType
 
