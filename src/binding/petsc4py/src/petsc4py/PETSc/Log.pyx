@@ -209,6 +209,7 @@ cdef class Log:
     @classmethod
     def isActive(cls) -> bool:
         """Return whether logging is currently in progress.
+
         Not collective.
 
         See Also
@@ -312,6 +313,7 @@ cdef class LogStage:
 
     def getActive(self) -> bool:
         """Check if the stage is activate.
+
         Not collective.
 
         See Also
@@ -325,6 +327,7 @@ cdef class LogStage:
 
     def setActive(self, flag: bool) -> None:
         """Activate or deactivate the current stage.
+
         Not collective.
 
         Parameters
