@@ -412,11 +412,11 @@ cdef class SNES(Object):
 
         Collective.
 
-        Arguments
-        ---------
-        levels :
+        Parameters
+        ----------
+        levels
           The number of levels
-        comms :
+        comms
           An optional sequence of communicators of length `levels`, or `None` for the default communicator `Sys.getDefaultComm`.
         See Also
         --------
@@ -1734,8 +1734,8 @@ cdef class SNES(Object):
 
         Logically collective.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         flag :
           Whether or not to use the Eisenstat-Walker trick.
         *targs :
