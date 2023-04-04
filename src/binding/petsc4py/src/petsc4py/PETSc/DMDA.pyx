@@ -28,13 +28,13 @@ cdef class DMDA(DM):
         self,
         dim: int | None = None,
         dof: int | None = None,
-        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
-        proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
-        boundary_type: tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType] | None = None,
+        sizes: tuple[int, ...] | None = None,
+        proc_sizes: tuple[int, ...] | None = None,
+        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
         bint setup: bool | None = True,
-        ownership_ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]] | None = None,
+        ownership_ranges: tuple[Sequence[int], ...] | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a ``DMDA`` object.
@@ -144,7 +144,7 @@ cdef class DMDA(DM):
     def duplicate(
         self,
         dof: int | None = None,
-        boundary_type: tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType] | None = None,
+        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
     ) -> DMDA:
@@ -161,7 +161,7 @@ cdef class DMDA(DM):
         dof
             The number of degrees of freedom.
         boundary_type
-            TODO.
+            Boundary types.
         stencil_type
             The ghost/halo stencil type.
         stencil_width
@@ -241,14 +241,14 @@ cdef class DMDA(DM):
         return self.getDimension()
 
     def setDof(self, dof: int) -> None:
-        """Set the number of degrees of freedom per vertex
+        """Set the number of degrees of freedom per vertex.
 
         Not collective.
 
         Parameters
         ----------
         dof
-            Number of degrees of freedom.
+            The number of degrees of freedom.
 
         Parameters
         ----------
@@ -283,22 +283,15 @@ cdef class DMDA(DM):
                             NULL) )
         return toInt(dof)
 
-    def setSizes(self, sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]) -> None:
-        """Set the number of grid points in the three dimensional directions.
-
-        Developer Note
-        Since the dimension may not yet have been set the code cannot error check for non-positive Y and Z number of grid points
+    def setSizes(self, sizes: tuple[int, ...]) -> None:
+        """Set the number of grid points in each direction.
 
         Logically collective.
 
         Parameters
         ----------
-        M
-            the global X size
-        N
-            the global Y size
-        P
-            the global Z size
+        sizes
+            The global x / x, y / x, y, z size.
 
         See Also
         --------
@@ -1199,19 +1192,19 @@ cdef class DMDA(DM):
             return self.getStencilWidth()
 
     property ranges:
-        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]::
+        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
             return self.getRanges()
 
     property ghost_ranges:
-        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]::
+        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
             return self.getGhostRanges()
 
     property corners:
-        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]::
+        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
             return self.getCorners()
 
     property ghost_corners:
-        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]::
+        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
             return self.getGhostCorners()
 
     # backward compatibility
