@@ -25,20 +25,28 @@ cdef class DMDA(DM):
 
     def create(
         self,
-        dim=None,
-        dof=None,
-        sizes=None,
-        proc_sizes=None,
-        boundary_type=None,
+        dim: int | None = None,
+        dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
+        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
-        bint setup:=True,
-        ownership_ranges=None,
+        bint setup: bool | None = True,
+        ownership_ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]] | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """TODO
+        """
 
-        Not collective.
+        692   PetscCall(DMDACreate(comm,&da));
+        693   PetscCall(DMSetDimension(da,dim));
+        694   PetscCall(DMDASetDof(da,dof));
+        695   PetscCall(DMDASetSizes(da,M,N,P));
+        696   PetscCall(DMDASetNumProcs(da,m,n,p));
+        697   PetscCall(DMDASetOwnershipRanges(da,lx,ly,lz));
+        698   PetscCall(DMDASetBoundaryType(da,bx,by,bz));
+        699   PetscCall(DMDASetStencilType(da,stencil_type));
+        700   PetscCall(DMDASetStencilWidth(da,stencil_width));
 
         Parameters
         ----------
@@ -108,8 +116,8 @@ cdef class DMDA(DM):
 
     def duplicate(
         self,
-        dof=None,
-        boundary_type: DM.BoundaryType | None = None,
+        dof: int | None = None,
+        boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
     ) -> DMDA:
@@ -172,7 +180,7 @@ cdef class DMDA(DM):
 
     #
 
-    def setDim(self, dim) -> None:
+    def setDim(self, dim: int) -> None:
         """TODO
 
         Not collective.
@@ -189,7 +197,7 @@ cdef class DMDA(DM):
         """
         return self.setDimension(dim)
 
-    def getDim(self):
+    def getDim(self) -> int:
         """TODO
 
         Not collective.
@@ -206,7 +214,7 @@ cdef class DMDA(DM):
         """
         return self.getDimension()
 
-    def setDof(self, dof) -> None:
+    def setDof(self, dof: int) -> None:
         """Set the number of degrees of freedom per vertex
 
         Not collective.
@@ -229,7 +237,7 @@ cdef class DMDA(DM):
         cdef PetscInt ndof = asInt(dof)
         CHKERR( DMDASetDof(self.dm, ndof) )
 
-    def getDof(self):
+    def getDof(self) -> int:
         """
         getINFO
         Gets information about a given distributed array.
@@ -273,7 +281,7 @@ cdef class DMDA(DM):
                             NULL) )
         return toInt(dof)
 
-    def setSizes(self, sizes):
+    def setSizes(self, sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]) -> None:
         """Set the number of grid points in the three dimensional directions.
 
         Developer Note
@@ -307,7 +315,7 @@ cdef class DMDA(DM):
             CHKERR( DMSetDimension(self.dm, gdim) )
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
-    def getSizes(self):
+    def getSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """TODO
 
         Not collective.
@@ -335,7 +343,7 @@ cdef class DMDA(DM):
                             NULL) )
         return toDims(dim, M, N, P)
 
-    def setProcSizes(self, proc_sizes):
+    def setProcSizes(self, proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]) -> None:
         """Set the number of processes in each dimension
 
         Logically collective.
@@ -366,7 +374,7 @@ cdef class DMDA(DM):
             CHKERR( DMSetDimension(self.dm, pdim) )
         CHKERR( DMDASetNumProcs(self.dm, m, n, p) )
 
-    def getProcSizes(self):
+    def getProcSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
         """TODO
 
         Not collective.
@@ -394,7 +402,10 @@ cdef class DMDA(DM):
                             NULL) )
         return toDims(dim, m, n, p)
 
-    def setBoundaryType(self, boundary_type):
+    def setBoundaryType(
+        self,
+        boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]
+    ) -> None:
         """Set the type of ghost nodes on domain boundaries.
 
         Parameters
@@ -415,7 +426,7 @@ cdef class DMDA(DM):
         asBoundary(boundary_type, &btx, &bty, &btz)
         CHKERR( DMDASetBoundaryType(self.dm, btx, bty, btz) )
 
-    def getBoundaryType(self):
+    def getBoundaryType(self) -> tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]:
         """TODO
 
         Not collective.
@@ -577,6 +588,7 @@ cdef class DMDA(DM):
 
     #
 
+    # TODO: ??????
     def getRanges(self):
         """TODO
 
@@ -601,6 +613,7 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
+    # TODO: ??????
     def getGhostRanges(self):
         """TODO
 
@@ -625,7 +638,7 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
-    def getOwnershipRanges(self):
+    def getOwnershipRanges(self) -> tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]]:
         """Return the ranges of indices in the x, y and z direction that are owned by each process.
 
         Output Parameters
@@ -658,6 +671,7 @@ cdef class DMDA(DM):
         CHKERR( DMDAGetOwnershipRanges(self.dm, &lx, &ly, &lz) )
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
+    # TODO: ??????????
     def getCorners(self):
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
 
@@ -686,6 +700,7 @@ cdef class DMDA(DM):
         return ((toInt(x), toInt(y), toInt(z))[:<Py_ssize_t>dim],
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
+    # TODO: ???????
     def getGhostCorners(self):
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
 
@@ -766,7 +781,8 @@ cdef class DMDA(DM):
 
     #
 
-    def getVecArray(self, Vec vec):
+    # TODO: ?????
+    def getVecArray(self, Vec vec) -> Any:
         """TODO
 
         Not collective.
@@ -1090,7 +1106,8 @@ cdef class DMDA(DM):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
-    def getInterpolationType(self):
+    # TODO: or just int?
+    def getInterpolationType(self) -> int64:
         """Return the type of interpolation that will be used by DMCreateInterpolation()
 
         Output Parameter
@@ -1109,7 +1126,7 @@ cdef class DMDA(DM):
 
     #
 
-    def setElementType(self, elem_type: ElementType) -> None:
+    def setElementType(self, elem_type: ElementType | str) -> None:
         """Set the element type to be returned by DMDAGetElements()
 
         Output Parameter
@@ -1125,6 +1142,7 @@ cdef class DMDA(DM):
         cdef PetscDMDAElementType ival = daelementtype(elem_type)
         CHKERR( DMDASetElementType(self.dm, ival) )
 
+    # TODO: or just int? why is it not a string?
     def getElementType(self):
         """Return the element type to be returned by DMDAGetElements()
 
@@ -1142,7 +1160,7 @@ cdef class DMDA(DM):
         CHKERR( DMDAGetElementType(self.dm, &ival) )
         return <long>ival
 
-    def getElements(self, elem_type: ElementType | None = None):
+    def getElements(self, elem_type: ElementType | None = None) -> ArrayInt:
         """Return an array containing the indices (in local coordinates) of all the local elements.
 
 
