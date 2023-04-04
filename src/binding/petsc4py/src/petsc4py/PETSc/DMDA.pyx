@@ -250,11 +250,6 @@ cdef class DMDA(DM):
         dof
             The number of degrees of freedom.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See Also
         --------
         getDof, petsc.DMDASetDof
@@ -1136,7 +1131,7 @@ cdef class DMDA(DM):
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
-    # TODO: see not above at getBoundaryType
+    # TODO: see the note above at getBoundaryType
     property boundary_type:
         """Boundary types in each direction."""
         def __get__(self) -> tuple[int, ...]:
