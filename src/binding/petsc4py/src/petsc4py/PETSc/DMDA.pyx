@@ -385,7 +385,7 @@ cdef class DMDA(DM):
 
     def setBoundaryType(
         self,
-        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...]
+        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...],
     ) -> None:
         """Set the type of ghost nodes on domain boundaries.
 
@@ -839,7 +839,7 @@ cdef class DMDA(DM):
         """Create a vector that will hold values in the natural numbering.
 
         The number of local entries in the vector on each process is the same
-        as in a vector created with `DM.createGlobalVector`.
+        as in a vector created with `DM.createGlobalVec`.
 
         Collective.
 
