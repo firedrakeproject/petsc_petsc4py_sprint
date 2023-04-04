@@ -2287,7 +2287,23 @@ cdef class Mat(Object):
         CHKERR( MatRestoreRow(self.mat, irow, &ncols, &icols, &svals) )
         return (cols, vals)
 
-    def getRowIJ(self, symmetric=False, compressed=False):
+    def getRowIJ(self, symmetric: bool = False, compressed: bool = False) -> tuple[ArrayInt, ArrayInt]:
+        """Return the CSR representation of the local sparsity pattern.
+
+        Collective.
+
+        Parameters
+        ----------
+        symmetric
+          If `True`, return the symmetrized graph.
+        compressed
+          If `True`, return the compressed graph.
+
+        See Also
+        --------
+        petsc.MatGetRowIJ
+
+        """
         cdef PetscInt shift=0
         cdef PetscBool symm=symmetric
         cdef PetscBool bcmp=compressed
@@ -2302,7 +2318,23 @@ cdef class Mat(Object):
         CHKERR( MatRestoreRowIJ(self.mat, shift, symm, bcmp, &n, &ia, &ja, &done) )
         return (ai, aj)
 
-    def getColumnIJ(self, symmetric=False, compressed=False):
+    def getColumnIJ(self, symmetric: bool = False, compressed: bool = False) -> tuple[ArrayInt, ArrayInt]:
+        """Return the CSc representation of the local sparsity pattern.
+
+        Collective.
+
+        Parameters
+        ----------
+        symmetric
+          If `True`, return the symmetrized graph.
+        compressed
+          If `True`, return the compressed graph.
+
+        See Also
+        --------
+        petsc.MatGetRowIJ
+
+        """
         cdef PetscInt shift=0
         cdef PetscBool symm=symmetric, bcmp=compressed
         cdef PetscInt n=0
@@ -2316,14 +2348,66 @@ cdef class Mat(Object):
         CHKERR( MatRestoreColumnIJ(self.mat, shift, symm, bcmp, &n, &ia, &ja, &done) )
         return (ai, aj)
 
-    def setValue(self, row, col, value, addv=None):
+    def setValue(
+        self,
+        row: int,
+        col: int,
+        value: Scalar,
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a value to the ``(row, col)`` entry of the matrix.
+
+        Not collective.
+
+        Parameters
+        ----------
+        row
+          Row index.
+        col
+          Column index.
+        value
+          The scalar value.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValues
+
+        """
         cdef PetscInt    ival1 = asInt(row)
         cdef PetscInt    ival2 = asInt(col)
         cdef PetscScalar sval  = asScalar(value)
         cdef PetscInsertMode caddv = insertmode(addv)
         CHKERR( MatSetValues(self.mat, 1, &ival1, 1, &ival2, &sval, caddv) )
 
-    def setValues(self, rows, cols, values, addv=None):
+    def setValues(
+        self,
+        rows: Sequence[int],
+        cols: Sequence[int],
+        values: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a values to the rows ⊗ col entries of the matrix.
+
+        Not collective.
+
+        Parameters
+        ----------
+        rows
+          Row indices.
+        cols
+          Column indices.
+        values
+          The scalar values. A sequence of length at least ``len(rows) * len(cols)``.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValues
+
+        """
         matsetvalues(self.mat, rows, cols, values, addv, 0, 0)
 
     def setValuesRCV(self, R, C, V, addv=None):
@@ -2335,7 +2419,34 @@ cdef class Mat(Object):
     def setValuesCSR(self, I, J, V, addv=None):
         matsetvalues_csr(self.mat, I, J, V, addv, 0, 0)
 
-    def setValuesBlocked(self, rows, cols, values, addv=None):
+    def setValuesBlocked(
+        self,
+        rows: Sequence[int],
+        cols: Sequence[int],
+        values: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a values to the rows ⊗ col block entries of the matrix.
+
+        Not collective.
+
+        Parameters
+        ----------
+        rows
+          Block row indices.
+        cols
+          Block column indices.
+        values
+          The scalar values. A sequence of length at least ``len(rows) * len(cols) * bs * bs``,
+          where ``bs`` is the block size of the matrix.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlocked
+
+        """
         matsetvalues(self.mat, rows, cols, values, addv, 1, 0)
 
     def setValuesBlockedRCV(self, R, C, V, addv=None):
@@ -2359,7 +2470,33 @@ cdef class Mat(Object):
         PetscINCREF(rmap.obj)
         return (rmap, cmap)
 
-    def setValueLocal(self, row, col, value, addv=None):
+    def setValueLocal(
+        self,
+        row: int,
+        col: int,
+        value: Scalar,
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a value to the ``(row, col)`` entry of the matrix in local ordering.
+
+        Not collective.
+
+        Parameters
+        ----------
+        row
+          Local row index.
+        col
+          Local column index.
+        value
+          The scalar value.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesLocal
+
+        """
         cdef PetscInt    ival1 = asInt(row)
         cdef PetscInt    ival2 = asInt(col)
         cdef PetscScalar sval  = asScalar(value)
@@ -2367,7 +2504,33 @@ cdef class Mat(Object):
         CHKERR( MatSetValuesLocal(
                 self.mat, 1, &ival1, 1, &ival2, &sval, caddv) )
 
-    def setValuesLocal(self, rows, cols, values, addv=None):
+    def setValuesLocal(
+        self,
+        rows: Sequence[int],
+        cols: Sequence[int],
+        values: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a values to the rows ⊗ col entries of the matrix in local ordering.
+
+        Not collective.
+
+        Parameters
+        ----------
+        rows
+          Local row indices.
+        cols
+          Local column indices.
+        values
+          The scalar values. A sequence of length at least ``len(rows) * len(cols)``.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesLocal
+
+        """
         matsetvalues(self.mat, rows, cols, values, addv, 0, 1)
 
     def setValuesLocalRCV(self, R, C, V, addv=None):
@@ -2379,7 +2542,34 @@ cdef class Mat(Object):
     def setValuesLocalCSR(self, I, J, V, addv=None):
         matsetvalues_csr(self.mat, I, J, V, addv, 0, 1)
 
-    def setValuesBlockedLocal(self, rows, cols, values, addv=None):
+    def setValuesBlockedLocal(
+        self,
+        rows: Sequence[int],
+        cols: Sequence[int],
+        values: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a values to the rows ⊗ col block entries of the matrix in local ordering.
+
+        Not collective.
+
+        Parameters
+        ----------
+        rows
+          Local block row indices.
+        cols
+          Local block column indices.
+        values
+          The scalar values. A sequence of length at least ``len(rows) * len(cols) * bs * bs``,
+          where ``bs`` is the block size of the matrix.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlockedLocal
+
+        """
         matsetvalues(self.mat, rows, cols, values, addv, 1, 1)
 
     def setValuesBlockedLocalRCV(self, R, C, V, addv=None):
@@ -2411,7 +2601,8 @@ cdef class Mat(Object):
         cdef PetscInsertMode im = insertmode(addv)
         matsetvaluestencil(self.mat, r, c, value, im, 0)
 
-    def setValueStagStencil(self, row, col, value, addv=None):
+    def setValueStagStencil(self, row, col, value, addv=None) -> None:
+        """Not yet implemented."""
         raise NotImplementedError('setValueStagStencil not yet implemented in petsc4py')
 
     def setValueBlockedStencil(self, row, col, value, addv=None):
@@ -2419,10 +2610,32 @@ cdef class Mat(Object):
         cdef PetscInsertMode im = insertmode(addv)
         matsetvaluestencil(self.mat, r, c, value, im, 1)
 
-    def setValueBlockedStagStencil(self, row, col, value, addv=None):
+    def setValueBlockedStagStencil(self, row, col, value, addv=None) -> None:
+        """Not yet implemented."""
         raise NotImplementedError('setValueBlockedStagStencil not yet implemented in petsc4py')
 
-    def zeroRows(self, rows, diag=1, Vec x=None, Vec b=None):
+    def zeroRows(self, rows: IS | Sequence[int], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+        """Zero selected rows of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        rows
+          Row indices to be zeroed.
+        diag
+          Scalar value to insert into the diagonal.
+        x
+          Optional solution vector to be modified for zeroed rows.
+        b
+          Optional right-hand side vector to be modified.
+          It will be adjusted with provided solution entries.
+
+        See Also
+        --------
+        zeroRowsLocal, petsc.MatZeroRows, petsc.MatZeroRowsIS
+
+        """
         cdef PetscInt ni=0, *i=NULL
         cdef PetscScalar sval = asScalar(diag)
         cdef PetscVec xvec=NULL, bvec=NULL
@@ -2434,7 +2647,28 @@ cdef class Mat(Object):
             rows = iarray_i(rows, &ni, &i)
             CHKERR( MatZeroRows(self.mat, ni, i, sval, xvec, bvec) )
 
-    def zeroRowsLocal(self, rows, diag=1, Vec x=None, Vec b=None):
+    def zeroRowsLocal(self, rows: IS | Sequence[int], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+        """Zero selected rows of the matrix in local ordering.
+
+        Collective.
+
+        Parameters
+        ----------
+        rows
+          Local row indices to be zeroed.
+        diag
+          Scalar value to insert into the diagonal.
+        x
+          Optional solution vector to be modified for zeroed rows.
+        b
+          Optional right-hand side vector to be modified.
+          It will be adjusted with provided solution entries.
+
+        See Also
+        --------
+        zeroRows, petsc.MatZeroRowsLocal, petsc.MatZeroRowsLocalIS
+
+        """
         cdef PetscInt ni=0, *i=NULL
         cdef PetscScalar sval = asScalar(diag)
         cdef PetscVec xvec=NULL, bvec=NULL
@@ -2446,7 +2680,28 @@ cdef class Mat(Object):
             rows = iarray_i(rows, &ni, &i)
             CHKERR( MatZeroRowsLocal(self.mat, ni, i, sval, xvec, bvec) )
 
-    def zeroRowsColumns(self, rows, diag=1, Vec x=None, Vec b=None):
+    def zeroRowsColumns(self, rows: IS | Sequence[int], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+        """Zero selected rows and columns of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        rows
+          Row/column indices to be zeroed.
+        diag
+          Scalar value to insert into the diagonal.
+        x
+          Optional solution vector to be modified for zeroed rows.
+        b
+          Optional right-hand side vector to be modified.
+          It will be adjusted with provided solution entries.
+
+        See Also
+        --------
+        zeroRowsColumnsLocal, zeroRows, petsc.MatZeroRowsColumns, petsc.MatZeroRowsColumnsIS
+
+        """
         cdef PetscInt ni=0, *i=NULL
         cdef PetscScalar sval = asScalar(diag)
         cdef PetscVec xvec=NULL, bvec=NULL
@@ -2458,7 +2713,28 @@ cdef class Mat(Object):
             rows = iarray_i(rows, &ni, &i)
             CHKERR( MatZeroRowsColumns(self.mat, ni, i, sval, xvec, bvec) )
 
-    def zeroRowsColumnsLocal(self, rows, diag=1, Vec x=None, Vec b=None):
+    def zeroRowsColumnsLocal(self, rows: IS | Sequence[int], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+        """Zero selected rows and columns of the matrix in local ordering.
+
+        Collective.
+
+        Parameters
+        ----------
+        rows
+          Local row/column indices to be zeroed.
+        diag
+          Scalar value to insert into the diagonal.
+        x
+          Optional solution vector to be modified for zeroed rows.
+        b
+          Optional right-hand side vector to be modified.
+          It will be adjusted with provided solution entries.
+
+        See Also
+        --------
+        zeroRowsLocal, zeroRowsColumns, petsc.MatZeroRowsColumnsLocal, petsc.MatZeroRowsColumnsLocalIS
+
+        """
         cdef PetscInt ni=0, *i=NULL
         cdef PetscScalar sval = asScalar(diag)
         cdef PetscVec xvec=NULL, bvec=NULL
@@ -2486,36 +2762,137 @@ cdef class Mat(Object):
         CHKERR( MatZeroRowsColumnsStencil(self.mat, nrows, crows, sval, xvec, bvec) )
         CHKERR( PetscFree( crows ) )
 
-    def storeValues(self):
+    def storeValues(self) -> None:
+        """Stash a copy of the matrix values.
+
+        Collective.
+
+        See Also
+        --------
+        retrieveValues, petsc.MatStoreValues
+
+        """
         CHKERR( MatStoreValues(self.mat) )
 
-    def retrieveValues(self):
+    def retrieveValues(self) -> None:
+        """Retrieve a copy of the matrix values previosly stored with `storeValues`.
+
+        Collective.
+
+        See Also
+        --------
+        storeValues, petsc.MatRetrieveValues
+
+        """
         CHKERR( MatRetrieveValues(self.mat) )
 
-    def assemblyBegin(self, assembly=None):
+    def assemblyBegin(self, assembly: MatAssemblySpec = None) -> None:
+        """Begin an assembling stage of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        assembly
+          The assembly type.
+
+        See Also
+        --------
+        assemblyEnd, assemble, petsc.MatAssemblyBegin
+
+        """
         cdef PetscMatAssemblyType flag = assemblytype(assembly)
         CHKERR( MatAssemblyBegin(self.mat, flag) )
 
-    def assemblyEnd(self, assembly=None):
+    def assemblyEnd(self, assembly: MatAssemblySpec = None) -> None:
+        """Complete an assembling stage of the matrix initiated with `assemblyBegin`.
+
+        Collective.
+
+        Parameters
+        ----------
+        assembly
+          The assembly type.
+
+        See Also
+        --------
+        assemblyBegin, assemble, petsc.MatAssemblyEnd
+
+        """
         cdef PetscMatAssemblyType flag = assemblytype(assembly)
         CHKERR( MatAssemblyEnd(self.mat, flag) )
 
-    def assemble(self, assembly=None):
+    def assemble(self, assembly: MatAssemblySpec = None) -> None:
+        """Assemble the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        assembly
+          The assembly type.
+
+        See Also
+        --------
+        assemblyBegin, assemblyEnd
+
+        """
         cdef PetscMatAssemblyType flag = assemblytype(assembly)
         CHKERR( MatAssemblyBegin(self.mat, flag) )
         CHKERR( MatAssemblyEnd(self.mat, flag) )
 
-    def isAssembled(self):
+    def isAssembled(self) -> bool:
+        """The boolean flag indicating if the matrix is assembled.
+
+        Not collective.
+
+        See Also
+        --------
+        assemble, petsc.MatAssembled
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatAssembled(self.mat, &flag) )
         return toBool(flag)
 
-    def findZeroRows(self):
+    def findZeroRows(self) -> IS:
+        """Return the index set of empty rows.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatFindZeroRows
+
+        """
         cdef IS zerorows = IS()
         CHKERR( MatFindZeroRows(self.mat, &zerorows.iset) )
         return zerorows
 
-    def createVecs(self, side=None):
+    def createVecs(
+        self,
+        side: Literal['r', 'R', 'right', 'Right', 'RIGHT', 'l', 'L', 'left', 'Left', 'LEFT'] | None = None,
+        ) -> Vec | tuple[Vec, Vec]:
+        """Return vectors that can be used in matrix vector products.
+
+        Parameters
+        ----------
+        side
+          If `None` returns a 2-tuple of vectors ``(right, left)``.
+          Otherwise it just return a left or right vector.
+
+        Notes
+        -----
+        ``right`` vectors are vectors in the column space of the matrix.
+        ``left`` vectors are vectors in the row space of the matrix.
+
+        Collective.
+
+        See Also
+        --------
+        createVecLeft, createVecRight, petsc.MatCreateVecs
+
+        """
         cdef Vec vecr, vecl
         if side is None:
             vecr = Vec(); vecl = Vec();
@@ -2532,12 +2909,30 @@ cdef class Mat(Object):
         else:
             raise ValueError("side '%r' not understood" % side)
 
-    def createVecRight(self):
+    def createVecRight(self) -> Vec:
+        """Return a right vector, a vector that the matrix can be multiplied against.
+
+        Collective.
+
+        See Also
+        --------
+        createVecs, createVecLeft, petsc.MatCreateVecs
+
+        """
         cdef Vec vecr = Vec()
         CHKERR( MatCreateVecs(self.mat, &vecr.vec, NULL) )
         return vecr
 
-    def createVecLeft(self):
+    def createVecLeft(self) -> Vec:
+        """Return a left vector, a vector that the matrix vector product can be stored in.
+
+        Collective.
+
+        See Also
+        --------
+        createVecs, createVecRight, petsc.MatCreateVecs
+
+        """
         cdef Vec vecl = Vec()
         CHKERR( MatCreateVecs(self.mat, NULL, &vecl.vec) )
         return vecl
@@ -2634,22 +3029,124 @@ cdef class Mat(Object):
 
     # matrix-vector product
 
-    def mult(self, Vec x, Vec y):
+    def mult(self, Vec x, Vec y) -> None:
+        """Perform the matrix vector product y = A @ x.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+          The input vector.
+        y
+          The output vector.
+
+        See Also
+        --------
+        petsc.MatMult
+
+        """
         CHKERR( MatMult(self.mat, x.vec, y.vec) )
 
-    def multAdd(self, Vec x, Vec v, Vec y):
+    def multAdd(self, Vec x, Vec v, Vec y) -> None:
+        """Perform the matrix vector product with addition y = A @ x + v.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+          The input vector for the matrix-vector product.
+        v
+          The input vector to be added to.
+        y
+          The output vector.
+
+        See Also
+        --------
+        petsc.MatMultAdd
+
+        """
         CHKERR( MatMultAdd(self.mat, x.vec, v.vec, y.vec) )
 
-    def multTranspose(self, Vec x, Vec y):
+    def multTranspose(self, Vec x, Vec y) -> None:
+        """Perform the transposed matrix vector product y = A^T @ x.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+          The input vector.
+        y
+          The output vector.
+
+        See Also
+        --------
+        petsc.MatMultTranspose
+
+        """
         CHKERR( MatMultTranspose(self.mat, x.vec, y.vec) )
 
-    def multTransposeAdd(self, Vec x, Vec v, Vec y):
+    def multTransposeAdd(self, Vec x, Vec v, Vec y) -> None:
+        """Perform the transposed matrix vector product with addition y = A^T @ x + v.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+          The input vector for the transposed matrix-vector product.
+        v
+          The input vector to be added to.
+        y
+          The output vector.
+
+        See Also
+        --------
+        petsc.MatMultTransposeAdd
+
+        """
         CHKERR( MatMultTransposeAdd(self.mat, x.vec, v.vec, y.vec) )
 
-    def multHermitian(self, Vec x, Vec y):
+    def multHermitian(self, Vec x, Vec y) -> None:
+        """Perform the Hermitian matrix vector product y = A^H @ x.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+          The input vector for the Hermitian matrix-vector product.
+        y
+          The output vector.
+
+        See Also
+        --------
+        petsc.MatMultHermitianTranspose
+
+        """
         CHKERR( MatMultHermitian(self.mat, x.vec, y.vec) )
 
-    def multHermitianAdd(self, Vec x, Vec v, Vec y):
+    def multHermitianAdd(self, Vec x, Vec v, Vec y) -> None:
+        """Perform the Hermitian matrix vector product with addition y = A^H @ x + v.
+
+        Collective.
+
+        Parameters
+        ----------
+        x
+          The input vector for the Hermitian matrix-vector product.
+        v
+          The input vector to be added to.
+        y
+          The output vector.
+
+        See Also
+        --------
+        petsc.MatMultHermitianTransposeAdd
+
+        """
         CHKERR( MatMultHermitianAdd(self.mat, x.vec, v.vec, y.vec) )
 
     # SOR
@@ -2753,31 +3250,105 @@ cdef class Mat(Object):
         else: return (toReal(rval[0]), toReal(rval[1]))
 
     def scale(self, alpha: Scalar) -> None:
-        """Scale the matrix."""
+        """Scale the matrix.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatScale
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( MatScale(self.mat, sval) )
 
     def shift(self, alpha: Scalar) -> None:
-        """Shift the matrix."""
+        """Shift the matrix.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatShift
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( MatShift(self.mat, sval) )
 
     def chop(self, tol: float) -> None:
-        """Set entries smallest of tol (in absolute values) to zero."""
+        """Set entries smallest of tol (in absolute values) to zero.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatChop
+
+        """
         cdef PetscReal rval = asReal(tol)
         CHKERR( MatChop(self.mat, rval) )
 
     def setRandom(self, Random random=None) -> None:
+        """Set random values in the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        random
+          The random number generator object or `None` for the default.
+
+        See Also
+        --------
+        petsc.MatSetRandom
+
+        """
         cdef PetscRandom rnd = NULL
         if random is not None: rnd = random.rnd
         CHKERR( MatSetRandom(self.mat, rnd) )
 
-    def axpy(self, alpha, Mat X, structure=None) -> None:
+    def axpy(self, alpha: Scalar, Mat X, structure: Structure = None) -> None:
+        """Perform the matrix summation ``self`` + = ɑ·X.
+
+        Collective.
+
+        Parameters
+        ----------
+        alpha
+          The scalar.
+        X
+          The matrix to be added.
+        structure
+          The structure of the operation
+
+        See Also
+        --------
+        petsc.MatAXPY
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         cdef PetscMatStructure flag = matstructure(structure)
         CHKERR( MatAXPY(self.mat, sval, X.mat, flag) )
 
-    def aypx(self, alpha, Mat X, structure=None) -> None:
+    def aypx(self, alpha: Scalar, Mat X, structure: Structure = None) -> None:
+        """Perform the matrix summation ``self`` = ɑ·``self`` + X.
+
+        Collective.
+
+        Parameters
+        ----------
+        alpha
+          The scalar.
+        X
+          The matrix to be added.
+        structure
+          The structure of the operation
+
+        See Also
+        --------
+        petsc.MatAYPX
+
+        """
         cdef PetscScalar sval = asScalar(alpha)
         cdef PetscMatStructure flag = matstructure(structure)
         CHKERR( MatAYPX(self.mat, sval, X.mat, flag) )

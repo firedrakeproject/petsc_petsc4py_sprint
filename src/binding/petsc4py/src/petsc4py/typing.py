@@ -11,6 +11,7 @@ from numpy.typing import (
     NDArray,
 )
 from .PETSc import (
+    InsertMode,
     Vec,
     Mat,
     KSP,
@@ -26,6 +27,8 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "InsertModeSpec",
+    "MatAssemblySpec",
     "MatSizeSpec",
     "MatBlockSizeSpec",
     "CSRIndicesSpec",
@@ -90,6 +93,34 @@ ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
 
 # --- Mat ---
+
+InsertModeSpec = InsertMode | bool | None
+"""Insertion mode specification.
+
+   Possible values are:
+     - `InsertMode.ADD_VALUES` Add new value to existing one.
+     - `InsertMode.INSERT_VALUES` Replace existing entry with new value.
+     - `None` as `InsertMode.INSERT_VALUES`.
+     - `False` as `InsertMode.INSERT_VALUES`.
+     - `True` as `InsertMode.ADD_VALUES`.
+
+"""
+
+MatAssemblySpec = Mat.AssemblyType | bool | None
+"""Matrix assembly specification.
+
+   Possible values are:
+     - `Mat.AssemblyType.FINAL`
+     - `Mat.AssemblyType.FLUSH`
+     - `None` as `Mat.AssemblyType.FINAL`
+     - `False` as `Mat.AssemblyType.FINAL`
+     - `True` as `Mat.AssemblyType.FLUSH`
+
+   See Also
+   --------
+   petsc.MatAssemblyType
+
+"""
 
 MatSizeSpec = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
 """`int` or (nested) `tuple` of `int` describing the matrix sizes.

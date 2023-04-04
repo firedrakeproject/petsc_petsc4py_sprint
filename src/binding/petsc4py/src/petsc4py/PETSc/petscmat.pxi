@@ -384,6 +384,8 @@ cdef extern from * nogil:
     PetscErrorCode MatMultAdd(PetscMat,PetscVec,PetscVec,PetscVec)
     PetscErrorCode MatMultTranspose(PetscMat,PetscVec,PetscVec)
     PetscErrorCode MatMultTransposeAdd(PetscMat,PetscVec,PetscVec,PetscVec)
+
+    # FIXME: Why?
     PetscErrorCode MatMultHermitian"MatMultHermitianTranspose"(PetscMat,PetscVec,PetscVec)
     PetscErrorCode MatMultHermitianAdd"MatMultHermitianTransposeAdd"(PetscMat,PetscVec,PetscVec,PetscVec)
 

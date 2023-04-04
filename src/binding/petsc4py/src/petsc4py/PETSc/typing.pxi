@@ -22,6 +22,8 @@ cdef ArrayScalar
 
 # --- Mat ---
 
+cdef InsertModeSpec
+cdef MatAssemblySpec
 cdef MatSizeSpec
 cdef MatBlockSizeSpec
 cdef CSRIndicesSpec
