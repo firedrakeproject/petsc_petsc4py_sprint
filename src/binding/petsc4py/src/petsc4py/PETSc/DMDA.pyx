@@ -50,12 +50,14 @@ cdef class DMDA(DM):
         - ``petsc.DMDASetStencilWidth``
         - ``petsc.DMSetUp`` (optionally)
 
+        Collective.
+
         Parameters
         ----------
         dim
             TODO.
         dof
-            TODO.
+            The number of degrees of freedom.
         sizes
             TODO.
         proc_sizes
@@ -63,9 +65,9 @@ cdef class DMDA(DM):
         boundary_type
             TODO.
         stencil_type
-            TODO.
+            The ghost/halo stencil type.
         stencil_width
-            TODO.
+            The width of the ghost/halo region.
         setup
             TODO.
         ownership_ranges
@@ -144,24 +146,28 @@ cdef class DMDA(DM):
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
     ) -> DMDA:
-        """TODO
+        """Duplicate a DMDA.
 
-        Not collective.
+        This routine retrieves the information from the DMDA and recreates it.
+        Parameters ``dof``, ``boundary_type``, ``stencil_type``,
+        ``stencil_width`` will be overwritten, if provided.
+
+        Collective.
 
         Parameters
         ----------
         dof
-            TODO.
+            The number of degrees of freedom.
         boundary_type
             TODO.
         stencil_type
-            TODO.
+            The ghost/halo stencil type.
         stencil_width
-            TODO.
+            The width of the ghost/halo region.
 
         See Also
         --------
-        petsc.DMDACreateND, petsc.DMSetUp
+        petsc.DMDAGetInfo, create, petsc.DMSetUp
 
         """
         cdef PetscInt ndim = 0, ndof = 0
@@ -204,35 +210,30 @@ cdef class DMDA(DM):
     #
 
     def setDim(self, dim: int) -> None:
-        """TODO
+        """Set the topological dimension.
 
-        Not collective.
+        Collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        dim
+            Topological dimension.
 
         See Also
         --------
-        petsc.TODO
+        petsc.DMSetDimension
 
         """
         return self.setDimension(dim)
 
     def getDim(self) -> int:
-        """TODO
+        """Return the topological dimension.
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See Also
         --------
-        petsc.TODO
+        petsc.DMGetDimension
 
         """
         return self.getDimension()
@@ -930,20 +931,25 @@ cdef class DMDA(DM):
         Vec vg,
         addv: InsertMode | None = None,
     ) -> None:
-        """Map values from a global vector in the "natural" ordering to a global vector in the PETSc DMDA grid ordering. Must be followed by DMDANaturalToGlobalEnd() to complete the exchange.
+        """Map values from a global vector from "natural" to grid ordering.
 
-        Output Parameter
-        l - the values in the DMDA ordering
-        The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
+        Maps values from a global vector in the "natural" ordering to a global
+        vector in the DMDA grid ordering.
+
+        The global and natural vectors used here need not be the same as those
+        obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT
+        they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
 
         Neighbor-wise collective.
 
         Parameters
         ----------
-        g
-            the global vector in a natural ordering
-        mode
-            one of INSERT_VALUES or ADD_VALUES
+        vn
+            The global vector in a natural ordering.
+        vg
+            the global vector in a grid ordering.
+        addv
+            Insertion mode.
 
         See Also
         --------
@@ -961,11 +967,6 @@ cdef class DMDA(DM):
 
         In this case, the AO maps to the natural grid ordering that would be used for the DMDA if only 1 processor were employed (ordering most rapidly in the x-direction, then y, then z). Multiple degrees of freedom are numbered for each node (rather than 1 component for the whole grid, then the next component, etc.)
 
-        Do NOT call AODestroy() on the ao returned by this function.
-
-        Output Parameter
-        ao - the application ordering context for DMDA
-
         Collective.
 
         See Also
@@ -979,13 +980,7 @@ cdef class DMDA(DM):
         return ao
 
     def getScatter(self) -> tuple[Scatter, Scatter]:
-        """Return the global-to-local, and local-to-local vector scatter contexts for a distributed array.
-
-        The output contexts are valid only as long as the input da is valid. If you delete the da, the scatter contexts will become invalid.
-
-        Output Parameters
-        gtol - global-to-local scatter context (may be NULL)
-        ltol - local-to-local scatter context (may be NULL)
+        """Return the global-to-local, and local-to-local scatter contexts.
 
         Collective.
 
@@ -1009,20 +1004,18 @@ cdef class DMDA(DM):
         refine_y: int | None = 2,
         refine_z: int | None = 2,
     ) -> None:
-        """Set the ratios that the DMDA grid is refined
-
-        Pass PETSC_IGNORE to leave a value unchanged
+        """Set the ratios for the DMDA grid refinement.
 
         Logically collective.
 
         Parameters
         ----------
         refine_x
-            ratio of fine grid to coarse in x direction (2 by default)
+            Ratio of fine grid to coarse in x direction.
         refine_y
-            ratio of fine grid to coarse in y direction (2 by default)
+            Ratio of fine grid to coarse in y direction.
         refine_z
-            ratio of fine grid to coarse in z direction (2 by default)
+            Ratio of fine grid to coarse in z direction.
 
         See Also
         --------
@@ -1039,17 +1032,7 @@ cdef class DMDA(DM):
                                       refine[2]) )
 
     def getRefinementFactor(self):
-        """Return the ratios that the DMDA grid is refined.
-
-        Pass NULL for values you do not need.
-
-        Output Parameters
-        refine_x
-            ratio of fine grid to coarse in x direction (2 by default)
-        refine_y
-            ratio of fine grid to coarse in y direction (2 by default)
-        refine_z
-            ratio of fine grid to coarse in z direction (2 by default)
+        """Return the ratios that the DMDA grid is refined in each dimension.
 
         Not collective.
 
@@ -1067,9 +1050,10 @@ cdef class DMDA(DM):
         return tuple([toInt(refine[i]) for 0 <= i < dim])
 
     def setInterpolationType(self, interp_type: InterpolationType) -> None:
-        """Set the type of interpolation that will be returned by DMCreateInterpolation().
+        """Set the type of interpolation.
 
-        You should call this on the coarser of the two DMDA you pass to DMCreateInterpolation().
+        You should call this on the coarser of the two DMDAs you pass to
+        `DM.createInterpolation`.
 
         Logically collective.
 
@@ -1085,12 +1069,9 @@ cdef class DMDA(DM):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
-    # TODO: or just int64/long?
+    # TODO: or just int64/long? why is it not a string?
     def getInterpolationType(self) -> int:
-        """Return the type of interpolation that will be used by DMCreateInterpolation()
-
-        Output Parameter
-        ctype - interpolation type (DMDA_Q1 and DMDA_Q0 are currently the only supported forms)
+        """Return the type of interpolation.
 
         Not collective.
 
