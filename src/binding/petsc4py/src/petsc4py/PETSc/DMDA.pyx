@@ -223,7 +223,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMSetDimension
+        getDim, petsc.DMSetDimension
 
         """
         return self.setDimension(dim)
@@ -235,7 +235,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMGetDimension
+        setDim, petsc.DMGetDimension
 
         """
         return self.getDimension()
@@ -257,7 +257,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDASetDof
+        getDof, petsc.DMDASetDof
 
         """
         cdef PetscInt ndof = asInt(dof)
@@ -270,7 +270,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetInfo
+        setDof, petsc.DMDAGetInfo
 
         """
         cdef PetscInt dof = 0
@@ -291,11 +291,11 @@ cdef class DMDA(DM):
         Parameters
         ----------
         sizes
-            The global x / x, y / x, y, z size.
+            The global (x), (x, y), or (x, y, z) size.
 
         See Also
         --------
-        petsc.DMDASetSizes
+        getSizes, petsc.DMDASetSizes
 
         """
         cdef tuple gsizes = tuple(sizes)
@@ -310,14 +310,14 @@ cdef class DMDA(DM):
             CHKERR( DMSetDimension(self.dm, gdim) )
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
-    def getSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
-        """Return the global dimension in first/second/third direction.
+    def getSizes(self) -> tuple[int, ...]:
+        """Return the global dimension in one/two/three directions.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetInfo
+        setSizes, petsc.DMDAGetInfo
 
         """
         cdef PetscInt dim = 0
@@ -333,23 +333,19 @@ cdef class DMDA(DM):
                             NULL) )
         return toDims(dim, M, N, P)
 
-    def setProcSizes(self, proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]) -> None:
+    def setProcSizes(self, proc_sizes: tuple[int, ...]) -> None:
         """Set the number of processes in each dimension.
 
         Logically collective.
 
         Parameters
         ----------
-        m
-            the number of X procs (or PETSC_DECIDE)
-        n
-            the number of Y procs (or PETSC_DECIDE)
-        p
-            the number of Z procs (or PETSC_DECIDE)
+        proc_sizes
+            The number of processes in (x), (x, y), or (x, y, z) dimensions.
 
         See Also
         --------
-        petsc.DMDASetNumProcs
+        getProcSizes, petsc.DMDASetNumProcs
 
         """
         cdef tuple psizes = tuple(proc_sizes)
@@ -364,14 +360,14 @@ cdef class DMDA(DM):
             CHKERR( DMSetDimension(self.dm, pdim) )
         CHKERR( DMDASetNumProcs(self.dm, m, n, p) )
 
-    def getProcSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
-        """Return the number of processes in first/second/third dimensions.
+    def getProcSizes(self) -> tuple[int, ...]:
+        """Return the number of processes in each dimensions.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetInfo
+        setProcSizes, petsc.DMDAGetInfo
 
         """
         cdef PetscInt dim = 0
@@ -389,7 +385,7 @@ cdef class DMDA(DM):
 
     def setBoundaryType(
         self,
-        boundary_type: tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType]
+        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...]
     ) -> None:
         """Set the type of ghost nodes on domain boundaries.
 
@@ -397,12 +393,12 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        bx
-            bx, by, bz is one of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
+        boundary_type
+            The boundary type in (x), (x, y), or (x, y, z) dimensions.
 
         See Also
         --------
-        petsc.DMDASetBoundaryType
+        getBoundaryType, petsc.DMDASetBoundaryType
 
         """
         cdef PetscDMBoundaryType btx = DM_BOUNDARY_NONE
@@ -411,14 +407,15 @@ cdef class DMDA(DM):
         asBoundary(boundary_type, &btx, &bty, &btz)
         CHKERR( DMDASetBoundaryType(self.dm, btx, bty, btz) )
 
-    def getBoundaryType(self) -> tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType]:
-        """Return the type of ghost nodes at boundary in each dimensions.
+    # TODO: expected a string, but this seems to be an int
+    def getBoundaryType(self) -> tuple[int, ...]:
+        """Return the type of ghost nodes at boundary in each dimension.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetInfo
+        setBoundaryType
 
         """
         cdef PetscInt dim = 0
@@ -435,20 +432,18 @@ cdef class DMDA(DM):
         return toDims(dim, btx, bty, btz)
 
     def setStencilType(self, stencil_type: StencilType) -> None:
-        """Set the type of the communication stencil
+        """Set the type of the communication stencil.
 
         Logically collective.
 
         Parameters
         ----------
         stype
-            The stencil type, use either DMDA_STENCIL_BOX or DMDA_STENCIL_STAR.
-
-
+            The stencil type.
 
         See Also
         --------
-        petsc.DMDASetStencilType
+        getStencilType, setStencil, petsc.DMDASetStencilType
 
         """
         cdef PetscDMDAStencilType stype = asStencil(stencil_type)
@@ -461,7 +456,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetInfo
+        setStencilType, petsc.DMDAGetInfo
 
         """
         cdef PetscDMDAStencilType stype = DMDA_STENCIL_BOX
@@ -481,12 +476,12 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        width
+        stencil_width
             The stencil width.
 
         See Also
         --------
-        petsc.DMDASetStencilWidth
+        getStencilWidth, setStencil, petsc.DMDASetStencilWidth
 
         """
         cdef PetscInt swidth = asInt(stencil_width)
@@ -499,7 +494,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetInfo
+        setStencilWidth
 
         """
         cdef PetscInt swidth = 0
@@ -517,18 +512,21 @@ cdef class DMDA(DM):
         stencil_type: StencilType,
         stencil_width: int,
     ) -> None:
-        """TODO
+        """Set the stencil type and width.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        stencil_type
+            The stencil type.
+        stencil_width
+            The stencil width.
 
         See Also
         --------
-        petsc.DMDASetStencilType, petsc.DMDASetStencilWidth
+        setStencilWidth, setStencilType, petsc.DMDASetStencilType
+        petsc.DMDASetStencilWidth
 
         """
         cdef PetscDMDAStencilType stype = asStencil(stencil_type)
@@ -541,14 +539,9 @@ cdef class DMDA(DM):
 
         Not collective.
 
-        Parameters
-        ----------
-        TODO
-            TODO.
-
         See Also
         --------
-        petsc.DMDAGetInfo
+        getStencilType, getStencilWidth
 
         """
         cdef PetscDMDAStencilType stype = DMDA_STENCIL_BOX
@@ -564,15 +557,13 @@ cdef class DMDA(DM):
 
     #
 
-    def getRanges(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
-        """TODO
+    # TODO: should we clarify how is getRanges different than getGhostRanges and getCorners?
+    def getRanges(self) -> tuple[tuple[int, int], ...]:
+        """Return the ranges of the local region in each dimension.
+
+        Excluding ghost nodes.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -588,15 +579,10 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
-    def getGhostRanges(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
-        """TODO
+    def getGhostRanges(self) -> tuple[tuple[int, int], ...]:
+        """Return the ranges of local region in each dim. including ghost nodes.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -612,19 +598,11 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
-    def getOwnershipRanges(self) -> tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]]:
-        """Return the ranges of indices in the x, y and z direction that are owned by each process.
+    # TODO: this seems to be a sequence and not a tuple, right?
+    def getOwnershipRanges(self) -> tuple[Sequence[int], ...]:
+        """Return the ranges of indices in each direction owned by each process.
 
-        Output Parameters
-        lx - ownership along x direction (optional)
-        ly - ownership along y direction (optional)
-        lz - ownership along z direction (optional)
-        Note
-        These correspond to the optional final arguments passed to DMDACreate(), DMDACreate2d(), DMDACreate3d()
-
-        In C you should not free these arrays, nor change the values in them. They will only have valid values while the DMDA they came from still exists (has not been destroyed).
-
-        These numbers are NOT multiplied by the number of dof per node.
+        These numbers are not multiplied by the number of DOFs per node.
 
         Not collective.
 
@@ -645,7 +623,7 @@ cdef class DMDA(DM):
         CHKERR( DMDAGetOwnershipRanges(self.dm, &lx, &ly, &lz) )
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
-    def getCorners(self) -> tuple[()] | tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
+    def getCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
 
         Output Parameters
@@ -1163,12 +1141,12 @@ cdef class DMDA(DM):
             return self.getDof()
 
     property sizes:
-        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getSizes()
 
     property proc_sizes:
         """The number of ranks in each direction in the global decomposition."""
-        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
     property boundary_type:
