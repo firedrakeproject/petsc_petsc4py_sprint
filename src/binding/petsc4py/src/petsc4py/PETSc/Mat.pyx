@@ -204,6 +204,15 @@ class MatSORType(object):
 # --------------------------------------------------------------------
 
 cdef class Mat(Object):
+    """Matrix object.
+
+    Mat is described in the `PETSc manual <petsc:manual/mat>`.
+
+    See Also
+    --------
+    petsc.Mat
+
+    """
 
     Type            = MatType
     Option          = MatOption
@@ -296,28 +305,146 @@ cdef class Mat(Object):
         return y
     #
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
+        """View the matrix.
+
+        For more information about the different viewers available and
+        relevant database options see `petsc_options` and `petsc.MatView`.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+            Viewer instance. If `None` the matrix will print to screen.
+
+        Notes
+        -----
+        Viewers with type `Viewer.Type.ASCII` are only recommended for small
+        matrices on small numbers of processes. Larger matrices should use a
+        binary format.
+
+        See Also
+        --------
+        petsc_options, Mat.load, petsc.MatView
+
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( MatView(self.mat, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the matrix.
+
+        Collective.
+
+        See Also
+        --------
+        Mat.create, petsc.MatDestroy
+
+        """
         CHKERR( MatDestroy(&self.mat) )
         return self
 
-    def create(self, comm=None):
+    def create(self, comm: Comm | None = None) -> Self:
+        """Create the matrix.
+
+        Once created, the user should call `Mat.setType` or
+        `Mat.setFromOptions` before using the matrix. Alternatively, specific
+        creation routines can be used such as `Mat.createAIJ` or
+        `Mat.createBAIJ` can be used.
+
+        Collective.
+
+        Parameters
+        ----------
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        Mat.destroy, petsc.MatCreate
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscMat newmat = NULL
         CHKERR( MatCreate(ccomm, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def setType(self, mat_type):
+    def setType(self, mat_type: Mat.Type | str) -> None:
+        """Set the matrix type.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat_type
+            Matrix type.
+
+        Notes
+        -----
+        `Mat.setFromOptions` can be used instead to set the type using the
+        options database. For more information see `petsc_options`.
+
+        See Also
+        --------
+        Mat.setFromOptions, Mat.create, petsc.MatSetType
+
+        """
         cdef PetscMatType cval = NULL
         mat_type = str2bytes(mat_type, &cval)
         CHKERR( MatSetType(self.mat, cval) )
 
-    def setSizes(self, size, bsize=None):
+    def setSizes(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+    ) -> None:
+        """Set the local, global and block sizes.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            `int` or nested `tuple` of `int` describing the matrix size. See
+            the "Examples" section and `Sys.splitOwnership` for more
+            information.
+        bsize
+            The row and column block sizes. If a single `int` is provided then
+            rows and columns share the same block size. If `None` then a block
+            size of ``1`` is set.
+
+        Examples
+        --------
+        Create a `Mat` with ``n`` rows and columns and the same local and
+        global sizes.
+
+        >>> mat = PETSc.Mat().create()
+        >>> mat.setFromOptions()
+        >>> mat.setSizes(n)
+
+        Create a `Mat` with ``nr`` rows, ``nc`` columns and the same local and
+        global sizes.
+
+        >>> mat = PETSc.Mat().create()
+        >>> mat.setFromOptions()
+        >>> mat.setSizes([nr, nc])
+
+        Create a `Mat` with ``nrl`` local rows, ``nrg`` global rows, ``ncl``
+        local columns and ``ncg`` global columns.
+
+        >>> mat = PETSc.Mat().create()
+        >>> mat.setFromOptions()
+        >>> mat.setSizes([[nrl, nrg], [ncl, ncg]])
+
+        See Also
+        --------
+        setBlockSize, setBlockSizes
+        petsc.MatSetSizes, petsc.MatSetBlockSize, petsc.MatSetBlockSizes
+
+        """
         cdef PetscInt rbs = 0, cbs = 0, m = 0, n = 0, M = 0, N = 0
         Mat_Sizes(size, bsize, &rbs, &cbs, &m, &n, &M, &N)
         CHKERR( MatSetSizes(self.mat, m, n, M, N) )
@@ -327,28 +454,123 @@ cdef class Mat(Object):
             else:
                 CHKERR( MatSetBlockSize(self.mat, rbs) )
 
-    def setBlockSize(self, bsize):
+    def setBlockSize(self, bsize: int) -> None:
+        """Set the matrix block size (same for rows and columns).
+
+        Logically collective.
+
+        Parameters
+        ----------
+        bsize
+            Block size.
+
+        See Also
+        --------
+        setBlockSizes, setSizes, petsc.MatSetBlockSize
+
+        """
         cdef PetscInt bs = asInt(bsize)
         CHKERR( MatSetBlockSize(self.mat, bs) )
 
-    def setBlockSizes(self, row_bsize, col_bsize):
+    def setBlockSizes(self, row_bsize: int, col_bsize: int) -> None:
+        """Set the row and column block sizes.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        row_bsize
+            Row block size.
+        col_bsize
+            Column block size.
+
+        See Also
+        --------
+        setBlockSize, setSizes, petsc.MatSetBlockSizes
+
+        """
         cdef PetscInt rbs = asInt(row_bsize)
         cdef PetscInt cbs = asInt(col_bsize)
         CHKERR( MatSetBlockSizes(self.mat, rbs, cbs) )
 
-    def setVecType(self, vec_type):
+    def setVecType(self, vec_type: Vec.Type | str) -> None:
+        """Set the vector type the matrix returns with `createVecs`.
+
+        Collective.
+
+        Parameters
+        ----------
+        vec_type
+            Vector type.
+
+        Notes
+        -----
+        This method is rarely needed since matrices internally set the proper
+        vector type.
+
+        See Also
+        --------
+        getVecType, petsc.MatSetVecType
+
+        """
         cdef PetscVecType cval = NULL
         vec_type = str2bytes(vec_type, &cval)
         CHKERR( MatSetVecType(self.mat, cval) )
 
-    def getVecType(self):
+    def getVecType(self) -> str:
+        """Return the vector type used by the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        setVecType, petsc.MatGetVecType
+
+        """
         cdef PetscVecType cval = NULL
         CHKERR( MatGetVecType(self.mat, &cval) )
         return bytes2str(cval)
 
     #
 
-    def createAIJ(self, size, bsize=None, nnz=None, csr=None, comm=None):
+    def createAIJ(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse unblocked matrix, optionally preallocating.
+
+        To preallocate the matrix the user can either pass ``nnz`` or ``csr``
+        describing the sparsity. If neither is set then preallocation will not
+        occur. Consult the `PETSc manual <petsc:sec_matsparse>` for
+        more information.
+
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize
+            Matrix size attributes. See `setSizes` for usage information.
+        nnz
+            Non-zero preallocation pattern. See `setPreallocationNNZ` for
+            usage information.
+        csr
+            Compressed sparse row layout information. See
+            `setPreallocationCSR` for usage information.
+        comm
+            MPI communicators, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        createBAIJ
+        petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ, petsc.MatCreateAIJ
+        petsc.MatSeqAIJSetPreallocation, petsc.MatSeqAIJSetPreallocationCSR
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATAIJ, comm, size, bsize, &newmat)
@@ -357,7 +579,30 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def createBAIJ(self, size, bsize, nnz=None, csr=None, comm=None):
+    def createBAIJ(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse blocked matrix, optionally preallocating.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize, nnz, csr, comm
+            See `createAIJ` for information on the meaning of the
+            parameters. Note in this case that ``bsize`` cannot be `None`.
+
+        See Also
+        --------
+        createAIJ
+        petsc.MATBAIJ, petsc.MATSEQBAIJ, petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATBAIJ, comm, size, bsize, &newmat)
@@ -366,7 +611,31 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def createSBAIJ(self, size, bsize, nnz=None, csr=None, comm=None):
+    def createSBAIJ(
+        self,
+        size: MatSizeType,
+        bsize: int,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse matrix in symmetric block AIJ format.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize, nnz, csr, comm
+            See `createAIJ` for information on the meaning of the
+            parameters. Note in this case that ``bsize`` must be an `int`,
+            that is, blocks *must* be square.
+
+        See Also
+        --------
+        createAIJ, createBAIJ
+        petsc.MatCreateSBAIJ
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATSBAIJ, comm, size, bsize, &newmat)
@@ -375,7 +644,33 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def createAIJCRL(self, size, bsize=None, nnz=None, csr=None, comm=None):
+    def createAIJCRL(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        nnz: NNZType | None = None,
+        csr: CSRIndicesType | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse matrix with type `Type.AIJCRL`.
+
+        This is similar to `Type.AIJ` matrices but stores some additional
+        information that improves vectorisation for the matrix-vector product.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize, nnz, csr, comm
+            See `createAIJ` for information on the meaning of the
+            parameters.
+
+        See Also
+        --------
+        createAIJ, createBAIJ
+        petsc.MatCreateSeqAIJCRL, petsc.MatCreateMPIAIJCRL
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATAIJCRL, comm, size, bsize, &newmat)
@@ -384,21 +679,105 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def setPreallocationNNZ(self, nnz):
+    def setPreallocationNNZ(self, nnz: NNZType) -> Self:
+        """Preallocate memory for the matrix with a non-zero pattern.
+
+        This method is only valid for `Type.AIJ`, `Type.BAIJ`,
+        `Type.SBAIJ` matrices.
+
+        Correct preallocation can result in a dramatic reduction in matrix
+        assembly time.
+
+        Collective.
+
+        Parameters
+        ----------
+        nnz
+            The number of non-zeros per row. If an `int` is passed then this
+            is treated as the number of non-zeros for every row. If a 2-`tuple`
+            is passed then these correspond to the diagonal and off-diagonal
+            parts of the matrix. See `petsc.MatMPIAIJSetPreallocation` for
+            more information.
+
+        See Also
+        --------
+        setPreallocationCSR, createAIJ
+        petsc.MatSeqAIJSetPreallocation
+        petsc.MatMPIAIJSetPreallocation
+
+        """
         cdef PetscBool done = PETSC_FALSE
         CHKERR( MatIsPreallocated(self.mat, &done) )
         # if done: raise Error(PETSC_ERR_ORDER)
         Mat_AllocAIJ_NNZ(self.mat, nnz)
         return self
 
-    def setPreallocationCSR(self, csr):
+    def setPreallocationCSR(self, csr: CSRIndicesType) -> Self:
+        """Preallocate memory for the matrix with a CSR layout.
+
+        This method is only valid for `Type.AIJ`, `Type.BAIJ` and
+        `Type.SBAIJ` matrices.
+
+        Correct preallocation can result in a dramatic reduction in matrix
+        assembly time.
+
+        Collective.
+
+        Parameters
+        ----------
+        csr
+            Compressed sparse row (local) layout consisting of
+            ``(row_start, col)`` where ``row_start`` points to the start of
+            each row and ``col`` gives the column index for each entry. See
+            `petsc.MatMPIAIJSetPreallocationCSR` for more information.
+
+        See Also
+        --------
+        setPreallocationNNZ, createAIJ
+        petsc.MatSeqAIJSetPreallocationCSR
+        petsc.MatMPIAIJSetPreallocationCSR
+
+        """
         cdef PetscBool done = PETSC_FALSE
         CHKERR( MatIsPreallocated(self.mat, &done) )
         # if done: raise Error(PETSC_ERR_ORDER)
         Mat_AllocAIJ_CSR(self.mat, csr)
         return self
 
-    def createAIJWithArrays(self, size, csr, bsize=None, comm=None):
+    def createAIJWithArrays(
+        self,
+        size: MatSizeType,
+        csr: CSRType | tuple[CSRType, CSRType],
+        bsize: MatBlockSizeType | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a sparse matrix with provided data in CSR format.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Matrix size. See `setSizes` for usage information.
+        csr
+            Matrix data expressed in compressed sparse row format. Note that
+            in this function this argument is a 3-tuple of
+            ``(row_start, col, data)`` instead of ``(row_start, col)``. One
+            can also pass a 2-tuple of CSR 3-tuples representing the
+            diagonal and off-diagonal portions of the parallel matrix. Doing
+            so will avoid any copies.
+        bsize
+            Block size. See `setSizes` for usage information.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        createAIJ
+        petsc.MatCreateSeqAIJWithArrays, petsc.MatCreateMPIAIJWithArrays
+        petsc.MatCreateMPIAIJWithSplitArrays
+
+        """
         # communicator
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         # sizes and block sizes
@@ -441,6 +820,8 @@ cdef class Mat(Object):
                 ccomm, m, n, i, j, v, &newmat) )
             csr = (pi, pj, pv)
         else:
+            # if off-diagonal components are provided then SplitArrays can be
+            # used (and not cause a copy).
             if oi != NULL and oj != NULL and ov != NULL:
                 CHKERR( MatCreateMPIAIJWithSplitArrays(
                     ccomm, m, n, M, N, i, j, v, oi, oj, ov, &newmat) )
@@ -455,7 +836,32 @@ cdef class Mat(Object):
 
     #
 
-    def createDense(self, size, bsize=None, array=None, comm=None):
+    def createDense(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        array: Sequence[Scalar] | None = None,
+        comm: Comm | None = None
+    ) -> Self:
+        """Create a dense matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize
+            Matrix size parameters. See `createAIJ` for usage information.
+        array
+            Matrix data. If `None` then the matrix will not be preallocated.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        createDenseCUDA
+        petsc.MATDENSE, petsc.MatCreateDense
+
+        """
         # create matrix
         cdef PetscMat newmat = NULL
         Mat_Create(MATDENSE, comm, size, bsize, &newmat)
@@ -466,19 +872,35 @@ cdef class Mat(Object):
             self.set_attr('__array__', array)
         return self
 
-    def createDenseCUDA(self, size, bsize=None, array=None, cudahandle=None, comm=None):
-        """
-        Returns an instance of :class:`Mat`, a MATDENSECUDA with user provided
-        memory spaces for CPU and GPU arrays.
+    def createDenseCUDA(
+        self,
+        size: MatSizeType,
+        bsize: MatBlockSizeType | None = None,
+        array: Sequence[Scalar] | None = None,
+        cudahandle: int | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a dense CUDA matrix with optional host and device data.
 
-        :arg size: A list denoting the size of the Mat.
-        :arg bsize: A :class:`int` denoting the block size.
-        :arg array: A :class:`numpy.ndarray`. Will be lazily allocated if
-            *None*.
-        :arg cudahandle: Address of the array on the GPU. Will be lazily
-            allocated if *None*. If cudahandle is provided, array will be
+        Collective.
+
+        Parameters
+        ----------
+        size, bsize
+            Matrix size parameters. See `setSizes` for usage information.
+        array
+            Host data. Will be lazily allocated if `None`.
+        cudahandle
+            Address of the array on the GPU. Will be lazily allocated if
+            `None`. If ``cudahandle`` is provided, ``array`` will be
             ignored.
-        :arg comm: MPI communicator
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        createDense, petsc.MatCreateDenseCUDA
+
         """
         # create matrix
         cdef PetscMat newmat = NULL
@@ -505,7 +927,28 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def setPreallocationDense(self, array):
+    def setPreallocationDense(self, array: Sequence[Scalar]) -> Self:
+        """Set the array used for storing matrix elements for a dense matrix.
+
+        Only valid for matrices with types `Type.SEQDENSE` and
+        `Type.MPIDENSE`.
+
+        Collective.
+
+        Parameters
+        ----------
+        array
+            Array that will be used to store matrix data.
+
+        Notes
+        -----
+        Most users will not need to call this routine.
+
+        See Also
+        --------
+        petsc.MatSeqDenseSetPreallocation, petsc.MatMPIDenseSetPreallocation
+
+        """
         cdef PetscBool done = PETSC_FALSE
         CHKERR( MatIsPreallocated(self.mat, &done) )
         # if done: raise Error(PETSC_ERR_ORDER)
@@ -515,7 +958,25 @@ cdef class Mat(Object):
 
     #
 
-    def createScatter(self, Scatter scatter, comm=None):
+    def createScatter(self, Scatter scatter, comm: Comm | None = None) -> Self:
+        """Create a scattering matrix from a vector scatter.
+
+        The resulting matrix will have type `Type.SCATTER`.
+
+        Collective.
+
+        Parameters
+        ----------
+        scatter
+            Vector scatter.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.MATSCATTER, petsc.MatCreateScatter
+
+        """
         if comm is None: comm = scatter.getComm()
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscMat newmat = NULL
@@ -523,31 +984,153 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createNormal(self, Mat mat):
+    def createNormal(self, Mat mat) -> Self:
+        """Create a matrix representing AᵀA.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            The (possibly rectangular) matrix A.
+
+        Notes
+        -----
+        The product AᵀA is never actually formed. Instead A and Aᵀ are used
+        during `mult` etc.
+
+        See Also
+        --------
+        petsc.MATNORMAL, petsc.MatCreateNormal
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateNormal(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createTranspose(self, Mat mat):
+    def createTranspose(self, Mat mat) -> Self:
+        """Create a virtual matrix transpose that behaves like Aᵀ.
+
+        This sets the matrix to have type `Type.TRANSPOSE`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            Matrix A to represent the transpose of.
+
+        Notes
+        -----
+        The transpose is never actually formed. Instead `multTranspose` is
+        called whenever the matrix-vector product is computed.
+
+        See Also
+        --------
+        createNormal, petsc.MatCreateTranspose
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateTranspose(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createNormalHermitian(self, Mat mat):
+    def createNormalHermitian(self, Mat mat) -> Self:
+        """Create a matrix representing (A*)ᵀA.
+
+        This sets the matrix to have type `Type.NORMALHERMITIAN`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            The (possibly rectangular) matrix A.
+
+        Notes
+        -----
+        The product (A*)ᵀA is never actually formed. Instead things are
+        computed on the fly during `mult` etc.
+
+        See Also
+        --------
+        createHermitianTranspose
+        petsc.MATNORMAL, petsc.MATNORMALHERMITIAN, petsc.MatCreateNormalHermitian
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateNormalHermitian(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createHermitianTranspose(self, Mat mat):
+    def createHermitianTranspose(self, Mat mat) -> Self:
+        """Create a virtual matrix transpose that behaves like (A*)ᵀ.
+
+        This sets the matrix to have type `Type.HERMITIANTRANSPOSE`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            Matrix A to represent the hermitian transpose of.
+
+        Notes
+        -----
+        The Hermitian transpose is never actually formed. Instead
+        `petsc.MatMultHermitianTranspose` is called whenever the matrix-vector
+        product is computed.
+
+        See Also
+        --------
+        createNormal, createNormalHermitian
+        petsc.MATHERMITIANTRANSPOSEVIRTUAL, petsc.MatCreateHermitianTranspose
+
+        """
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateHermitianTranspose(mat.mat, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createLRC(self, Mat A or None, Mat U, Vec c or None, Mat V or None):
+    def createLRC(self, Mat A, Mat U, Vec c, Mat V) -> Self:
+        """Create a matrix representing A + UCVᵀ.
+
+        This sets the matrix to have type `Type.LRC`.
+
+        Collective.
+
+        Parameters
+        ----------
+        A
+            Sparse matrix, can be `None`.
+        U, V
+            Dense rectangular (tall and thin) matrices.
+        c
+            Vector containing the diagonal of C, can be `None`.
+
+        Notes
+        -----
+        The matrix A + UCVᵀ is never actually formed. Instead things are
+        computed on the fly during `mult` etc.
+
+        C is a diagonal matrix (represented as a vector) of order k, where k
+        is the number of columns of both U and V.
+
+        If A is `None` then the new object behaves like a low-rank matrix UCVᵀ.
+
+        Use the same matrix for ``V`` and ``U`` (or ``V=None``) for a symmetric
+        low-rank correction, A + UCUᵀ.
+
+        If ``c`` is `None` then the low-rank correction is just U*Vᵀ. If a
+        sequential ``c`` vector is used for a parallel matrix, PETSc assumes
+        that the values of the vector are consistently set across processors.
+
+        See Also
+        --------
+        petsc.MATLRC, petsc.MatCreateLRC
+
+        """
         cdef PetscMat Amat = NULL
         cdef PetscMat Umat = U.mat
         cdef PetscVec cvec = NULL
@@ -560,14 +1143,68 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None):
+    def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None) -> Self:
+        """Create a virtual matrix that acts as a submatrix.
+
+        This sets the matrix type to `Type.SUBMATRIX`.
+
+        Collective.
+
+        Parameters
+        ----------
+        A
+            Matrix to extract submatrix from.
+        isrow
+            Rows present in the submatrix.
+        iscol
+            Columns present in the submatrix, defaults to ``isrow``.
+
+        See Also
+        --------
+        petsc.MatCreateSubMatrixVirtual
+
+        """
         if iscol is None: iscol = isrow
         cdef PetscMat newmat = NULL
         CHKERR( MatCreateSubMatrixVirtual(A.mat, isrow.iset, iscol.iset, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createNest(self, mats, isrows=None, iscols=None, comm=None):
+    def createNest(
+        self,
+        mats: Sequence[Mat],
+        isrows: Sequence[IS] | None = None,
+        iscols: Sequence[IS] | None = None,
+        comm: Comm | None = None,
+    ) -> Self:
+        """Create a nested matrix containing multiple submatrices.
+
+        Each submatrix is stored separately.
+
+        The resulting matrix has type `Type.NEST`.
+
+        Collective.
+
+        Parameters
+        ----------
+        mats
+            Row-aligned iterable of matrices with size
+            ``len(isrows)*len(iscols)``. Empty submatrices can be set with
+            `None`.
+        isrows
+            Index set for each nested row block, default to contiguous
+            ordering.
+        iscols
+            Index set for each nested column block, defaults to contiguous
+            ordering.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.MatCreateNest, petsc.MATNEST
+
+        """
         cdef object mat
         mats = [list(mat) for mat in mats]
         if isrows:
@@ -605,7 +1242,51 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createH2OpusFromMat(self, Mat A, coordinates=None, dist=None, eta=None, leafsize=None, maxrank=None, bs=None, rtol=None):
+    def createH2OpusFromMat(
+        self,
+        Mat A,
+        coordinates: Sequence[Scalar] | None = None,
+        dist: bool | None = None,
+        eta: float | None = None,
+        leafsize: int | None = None,
+        maxrank: int | None = None,
+        bs: int | None = None,
+        rtol: float | None = None,
+    ) -> Self:
+        """Create a `Type.H2OPUS` sampling from a provided operator.
+
+        Serial execution only.
+
+        Parameters
+        ----------
+        A
+            Matrix to be sampled.
+        coordinates
+            Coordinates of the points.
+        dist
+            Whether or not coordinates are distributed, defaults to `False`.
+        eta
+            Admissibility condition tolerance, defaults to `DECIDE`.
+        leafsize
+            Leaf size in cluster tree, defaults to `DECIDE`.
+        maxrank
+            Maximum rank permitted, defaults to `DECIDE`.
+        bs
+            Maximum number of samples to take concurrently, defaults to
+            `DECIDE`.
+        rtol
+            Relative tolerance for construction, defaults to `DECIDE`.
+
+        Notes
+        -----
+        See `petsc.MatCreateH2OpusFromMat` for the appropriate database
+        options.
+
+        See Also
+        --------
+        petsc_options, petsc.MatCreateH2OpusFromMat
+
+        """
         cdef PetscInt cdim = 1
         cdef PetscReal *coords = NULL
         cdef PetscBool cdist = PETSC_FALSE
@@ -1481,7 +2162,44 @@ cdef class Mat(Object):
 
     # matrix-matrix product
 
-    def matMult(self, Mat mat, Mat result=None, fill=None):
+    def matMult(
+        self,
+        Mat mat,
+        Mat result=None,
+        fill: float | None = None
+    ) -> Mat:
+        """Performs matrix-matrix multiplication C=AB.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The optional resultant matrix C. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When C is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatMatMult, petsc.MatReuse
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal rval = 2
         if result is None:
@@ -1492,7 +2210,44 @@ cdef class Mat(Object):
         CHKERR( MatMatMult(self.mat, mat.mat, reuse, rval, &result.mat) )
         return result
 
-    def matTransposeMult(self, Mat mat, Mat result=None, fill=None):
+    def matTransposeMult(
+        self,
+        Mat mat,
+        Mat result=None,
+        fill: float | None = None
+    ):
+        """Perform matrix-matrix multiplication C=ABᵀ.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The optional resultant matrix C. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When C is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatMatTransposeMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal rval = 2
         if result is None:
@@ -1503,7 +2258,44 @@ cdef class Mat(Object):
         CHKERR( MatMatTransposeMult(self.mat, mat.mat, reuse, rval, &result.mat) )
         return result
 
-    def transposeMatMult(self, Mat mat, Mat result=None, fill=None):
+    def transposeMatMult(
+        self,
+        Mat mat,
+        Mat result=None,
+        fill: float | None = None
+    ):
+        """Perform matrix-matrix multiplication C=AᵀB.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The optional resultant matrix C. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When C is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatTransposeMatMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal rval = 2
         if result is None:
@@ -1514,7 +2306,48 @@ cdef class Mat(Object):
         CHKERR( MatTransposeMatMult(self.mat, mat.mat, reuse, rval, &result.mat) )
         return result
 
-    def ptap(self, Mat P, Mat result=None, fill=None):
+    def ptap(
+        self,
+        Mat P,
+        Mat result=None,
+        fill: float | None = None
+    ) -> Mat:
+        """Creates the matrix product C = PᵀAP.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        P
+            The matrix P.
+        result
+            The optional resultant matrix C. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When C is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+        fill
+            Expected fill as ratio of nnz(C)/(nnz(A) + nnz(P)), use
+            ``None`` if you do not have a good estimate. If the
+            result is a dense matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        An alternative approach to this function is to use
+        `petsc.MatProductCreate` and set the desired options before the
+        computation is done.
+
+        See also
+        --------
+        petsc.MatPtAP
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal cfill = PETSC_DEFAULT
         if result is None:
@@ -1525,7 +2358,44 @@ cdef class Mat(Object):
         CHKERR( MatPtAP(self.mat, P.mat, reuse, cfill, &result.mat) )
         return result
 
-    def rart(self, Mat R, Mat result=None, fill=None):
+    def rart(
+        self,
+        Mat R,
+        Mat result=None,
+        fill: float | None = None
+    ) -> Mat:
+        """Create the matrix product C = RARᵀ.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        R
+            The projection matrix.
+        result
+            The optional resultant matrix C. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When C is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+        fill
+            Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
+            you do not have a good estimate. If the result is a dense
+            matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix C.
+
+        Notes
+        -----
+        To determine the correct fill value, run with -info and search
+        for the string "Fill ratio" to see the value actually needed.
+
+        See also
+        --------
+        petsc.MatRARt
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal cfill = PETSC_DEFAULT
         if result is None:
@@ -1536,7 +2406,42 @@ cdef class Mat(Object):
         CHKERR( MatRARt(self.mat, R.mat, reuse, cfill, &result.mat) )
         return result
 
-    def matMatMult(self, Mat B, Mat C, Mat result=None, fill=None):
+    def matMatMult(
+        self,
+        Mat B,
+        Mat C,
+        Mat result=None,
+        fill: float | None = None
+    ) -> Mat:
+        """Perform matrix-matrix-matrix multiplication D=ABC.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        B
+            The middle matrix B.
+        C
+            The right hand matrix C.
+        result
+            The optional resultant matrix D. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When D is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+        fill
+            Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
+            you do not have a good estimate. If the result is a dense
+            matrix this is irrelevant.
+
+        Returns
+        -------
+        result: Mat
+            The resultant product matrix D.
+
+        See also
+        --------
+        petsc.MatMatMatMult
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscReal cfill = PETSC_DEFAULT
         if result is None:
@@ -1547,7 +2452,31 @@ cdef class Mat(Object):
         CHKERR( MatMatMatMult(self.mat, B.mat, C.mat, reuse, cfill, &result.mat) )
         return result
 
-    def kron(self, Mat mat, Mat result=None):
+    def kron(
+        self,
+        Mat mat,
+        Mat result=None
+    ) -> Mat:
+        """Compute C, the Kronecker product of A and B.
+
+        Parameters
+        ----------
+        mat
+            The right hand matrix B.
+        result
+            The resultant matrix C, can be ``None``.
+
+
+        Returns
+        -------
+        result: Mat
+            The resultant matrix C, the Kronecker product of A and B.
+
+        See also
+        --------
+        petsc.MatSeqAIJKron
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         if result is None:
             result = Mat()
@@ -1556,11 +2485,32 @@ cdef class Mat(Object):
         CHKERR( MatSeqAIJKron(self.mat, mat.mat, reuse, &result.mat) )
         return result
 
-    def bindToCPU(self, flg):
+    def bindToCPU(self, flg: bool) -> None:
+        """Mark a matrix to temporarily stay on the CPU.
+
+        Once marked, perform computations on the CPU.
+
+        Parameters
+        ----------
+        flg
+            Bind to the CPU if ``True``
+
+        See also
+        --------
+        petsc.MatBindToCPU
+
+        """
         cdef PetscBool bindFlg = asBool(flg)
         CHKERR( MatBindToCPU(self.mat, bindFlg) )
 
-    def boundToCPU(self):
+    def boundToCPU(self) -> bool:
+        """Query if a matrix is bound to the CPU.
+
+        See also
+        --------
+        petsc.MatBoundToCPU
+
+        """
         cdef PetscBool flg = PETSC_TRUE
         CHKERR( MatBoundToCPU(self.mat, &flg) )
         return toBool(flg)
@@ -1732,39 +2682,195 @@ cdef class Mat(Object):
 
     # solve
 
-    def solveForward(self, Vec b, Vec x):
+    def solveForward(self, Vec b, Vec x) -> None:
+        """Solve Lx = b, given a factored matrix A = LU.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector.
+
+        See Also
+        --------
+        petsc.MatForwardSolve
+
+        """
         CHKERR( MatForwardSolve(self.mat, b.vec, x.vec) )
 
-    def solveBackward(self, Vec b, Vec x):
+    def solveBackward(self, Vec b, Vec x) -> None:
+        """Solve Ux=b, given a factored matrix A=LU.
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector.
+
+        See Also
+        --------
+        petsc.MatBackwardSolve
+
+        """
         CHKERR( MatBackwardSolve(self.mat, b.vec, x.vec) )
 
-    def solve(self, Vec b, Vec x):
-        CHKERR( MatSolve(self.mat, b.vec, x.vec) )
+    def solve(self, Vec b, Vec x) -> None:
+        """Solve Ax=b, given a factored matrix.
 
-    def solveTranspose(self, Vec b, Vec x):
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+        Most users should employ the `KSP` interface for linear solvers instead
+        of working directly with matrix algebra routines.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, solveTranspose, petsc.MatSolve
+
+        """
+        CHKERR(MatSolve(self.mat, b.vec, x.vec) )
+
+    def solveTranspose(self, Vec b, Vec x) -> None:
+        """Solve Aᵀx=b, given a factored matrix.
+
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatSolve, petsc.MatSolveTranspose
+
+        """
         CHKERR( MatSolveTranspose(self.mat, b.vec, x.vec) )
 
-    def solveAdd(self, Vec b, Vec y, Vec x):
+    def solveAdd(self, Vec b, Vec y, Vec x) -> None:
+        """Solve x=y+A⁻¹b, given a factored matrix.
+
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        y
+            The vector to be added
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatSolve, petsc.MatSolveAdd
+
+        """
         CHKERR( MatSolveAdd(self.mat, b.vec, y.vec, x.vec) )
 
-    def solveTransposeAdd(self, Vec b, Vec y, Vec x):
+    def solveTransposeAdd(self, Vec b, Vec y, Vec x) -> None:
+        """Solve x=y+A⁻ᵀb, given a factored matrix.
+
+        Neighborwise collective. The vectors ``b`` and ``x`` cannot be the same.
+
+        Parameters
+        ----------
+        b
+            The right-hand side vector.
+        y
+            The vector to be added
+        x
+            The output solution vector, must be different than ``b``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatSolve, petsc.MatSolveTransposeAdd
+
+        """
         CHKERR( MatSolveTransposeAdd(self.mat, b.vec, y.vec, x.vec) )
 
-    def matSolve(self, Mat B, Mat X):
+    def matSolve(self, Mat B, Mat X) -> None:
+        """Solve AX=B, given a factored matrix A
+
+        Neighborwise collective.
+
+        Parameters
+        ----------
+        B
+            The right-hand-side matrix of type `Type.DENSE`. Can be of type
+            `Type.AIJ` if using MUMPS.
+        X
+            The output solution matrix, must be different than ``B``.
+
+        See Also
+        --------
+        KSP.create, petsc.MatMatSolve
+
+        """
         CHKERR( MatMatSolve(self.mat, B.mat, X.mat) )
 
     # dense matrices
 
-    def setDenseLDA(self, lda):
+    def setDenseLDA(self, lda: int) -> None:
+        """Set the leading dimension of the array used by the matrix.
+
+        Not collective. Only for `Type.DENSE` and `Type.DENSECUDA`.
+
+        Parameters
+        ----------
+        lda
+            The leading dimension.
+
+        See Also
+        --------
+        petsc.MatDenseSetLDA
+
+        """
         cdef PetscInt _ilda = asInt(lda)
         CHKERR( MatDenseSetLDA(self.mat, _ilda) )
 
-    def getDenseLDA(self):
+    def getDenseLDA(self) -> int:
+        """Return the leading dimension of the array used by the matrix.
+
+        Not collective. Only for `Type.DENSE` and `Type.DENSECUDA`.
+
+        See Also
+        --------
+        petsc.MatDenseGetLDA
+
+        """
         cdef PetscInt lda=0
         CHKERR( MatDenseGetLDA(self.mat, &lda) )
         return toInt(lda)
 
-    def getDenseArray(self,readonly=False):
+    def getDenseArray(self, readonly: bool = False) -> ArrayScalar:
+        """Return the array where the data is stored.
+
+        Not collective.
+
+        Parameters
+        ----------
+        readonly
+            Enable to obtain a read only array.
+
+        See Also
+        --------
+        petsc.MatDenseGetArrayRead, petsc.MatDenseGetArray
+
+        """
         cdef PetscInt m=0, N=0, lda=0
         cdef PetscScalar *data = NULL
         CHKERR( MatGetLocalSize(self.mat, &m, NULL) )
@@ -1788,13 +2894,35 @@ cdef class Mat(Object):
             CHKERR( MatDenseRestoreArray(self.mat, &data) )
         return array
 
-    def getDenseLocalMatrix(self):
+    def getDenseLocalMatrix(self) -> Mat:
+        """Return the matrix local to this process.
+
+        See Also
+        --------
+        petsc.MatDenseGetLocalMatrix
+
+        """
         cdef Mat mat = type(self)()
         CHKERR( MatDenseGetLocalMatrix(self.mat, &mat.mat) )
         PetscINCREF(mat.obj)
         return mat
 
-    def getDenseColumnVec(self, i, mode='rw'):
+    def getDenseColumnVec(self, i: int, mode: Literal['r','w','rw'] = 'rw') -> Vec:
+        """Return the iᵗʰ column vector of the matrix.
+
+        Parameters
+        ----------
+        i
+            The column index to return.
+        mode
+            The read type of the returned array
+
+        See Also
+        --------
+        petsc.MatDenseGetColumnVec, petsc.MatDenseGetColumnVecRead,
+        petsc.MatDenseGetColumnVecWrite
+
+        """
         if mode is None: mode = 'rw'
         if mode not in ['rw', 'r', 'w']:
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
@@ -1809,7 +2937,22 @@ cdef class Mat(Object):
         PetscINCREF(v.obj)
         return v
 
-    def restoreDenseColumnVec(self, i, mode='rw'):
+    def restoreDenseColumnVec(self, i: int, mode: Literal['r','w','rw'] = 'rw'):
+        """Restore the iᵗʰ column vector of the matrix.
+
+        Parameters
+        ----------
+        i
+            The column index to restored.
+        mode
+            The read type of the restored array
+
+        See Also
+        --------
+        petsc.MatDenseRestoreColumnVec, petsc.MatDenseRestoreColumnVecRead,
+        petsc.MatDenseRestoreColumnVecWrite
+
+        """
         cdef PetscInt _i = asInt(i)
         if mode == 'rw':
             CHKERR( MatDenseRestoreColumnVec(self.mat, _i, NULL) )
@@ -1820,12 +2963,30 @@ cdef class Mat(Object):
 
     # Nest
 
-    def getNestSize(self):
+    def getNestSize(self) -> tuple[int, int]:
+        """Return the number of rows and columns of the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNestGetSize
+
+        """
         cdef PetscInt nrows, ncols
         CHKERR( MatNestGetSize(self.mat, &nrows, &ncols) )
         return toInt(nrows), toInt(ncols)
 
-    def getNestISs(self):
+    def getNestISs(self) -> tuple[list[IS], list[IS]]:
+        """Return the index sets representing the row and column spaces.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNestGetISs
+
+        """
         cdef PetscInt i, nrows =0, ncols = 0
         cdef PetscIS *cisrows = NULL
         cdef PetscIS *ciscols = NULL
@@ -1837,7 +2998,16 @@ cdef class Mat(Object):
         cdef object isetscols = [ref_IS(ciscols[i]) for i from 0 <= i < ncols]
         return isetsrows, isetscols
 
-    def getNestLocalISs(self):
+    def getNestLocalISs(self) -> tuple[list[IS], list[IS]]:
+        """Return the local index sets representing the row and column spaces.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNestGetLocalISs
+
+        """
         cdef PetscInt i, nrows =0, ncols = 0
         cdef PetscIS *cisrows = NULL
         cdef PetscIS *ciscols = NULL
@@ -1849,7 +3019,23 @@ cdef class Mat(Object):
         cdef object isetscols = [ref_IS(ciscols[i]) for i from 0 <= i < ncols]
         return isetsrows, isetscols
 
-    def getNestSubMatrix(self, i, j):
+    def getNestSubMatrix(self, i: int, j: int) -> Mat:
+        """Return a single submatrix.
+
+        Not collective.
+
+        Parameters
+        ----------
+        i
+            The first index of the matrix within the nesting.
+        j
+            The second index of the matrix within the nesting.
+
+        See Also
+        --------
+        petsc.MatNestGetSubMat
+
+        """
         cdef Mat submat = Mat()
         cdef PetscInt idxm = asInt(i)
         cdef PetscInt jdxm = asInt(j)

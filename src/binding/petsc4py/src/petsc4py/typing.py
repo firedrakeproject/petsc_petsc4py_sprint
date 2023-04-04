@@ -5,6 +5,7 @@
 from __future__ import annotations
 from typing import (
     Callable,
+    Sequence,
 )
 from numpy.typing import (
     NDArray,
@@ -25,6 +26,11 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "MatSizeType",
+    "MatBlockSizeType",
+    "CSRIndicesType",
+    "CSRType",
+    "NNZType",
     "DMCoarsenHookFunction",
     "DMRestrictHookFunction",
     "KSPRHSFunction",
@@ -82,6 +88,14 @@ ArrayComplex = NDArray[complex]
 
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
+
+# --- Mat ---
+
+MatSizeType = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
+MatBlockSizeType = tuple[int, int] | int
+CSRIndicesType = tuple[Sequence[int], Sequence[int]]
+CSRType = tuple[Sequence[int], Sequence[int], Sequence[int]]
+NNZType = int | Sequence[int] | tuple[Sequence[int], Sequence[int]]
 
 # --- DM ---
 
