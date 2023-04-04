@@ -567,7 +567,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetCorners
+        getGhostRanges, petsc.DMDAGetCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -586,7 +586,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetGhostCorners
+        getRanges, petsc.DMDAGetGhostCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -624,23 +624,23 @@ cdef class DMDA(DM):
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
-        """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
+        """Return lower left corner and size of local region in each dimension.
 
-        Output Parameters
-        x - the corner index for the first dimension
-        y - the corner index for the second dimension (only used in 2D and 3D problems)
-        z - the corner index for the third dimension (only used in 3D problems)
-        m - the width in the first dimension
-        n - the width in the second dimension (only used in 2D and 3D problems)
-        p - the width in the third dimension (only used in 3D problems)
-        Note
-        The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
+        Returns the global (x,y,z) indices of the lower left corner (first
+        tuple) and size of the local region (second tuple).
+
+        Excluding ghost points.
+
+        The corner information is independent of the number of degrees of
+        freedom per node. Thus the returned values can be thought of as
+        coordinates on a logical grid, where each grid point has (potentially)
+        several degrees of freedom.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetCorners
+        getGhostCorners, petsc.DMDAGetCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -652,23 +652,23 @@ cdef class DMDA(DM):
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
     def getGhostCorners(self) -> tuple[()] | tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
-        """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
+        """Return lower left corner and size of local region in each dimension.
 
-        Output Parameters
-        x - the corner index for the first dimension
-        y - the corner index for the second dimension (only used in 2D and 3D problems)
-        z - the corner index for the third dimension (only used in 3D problems)
-        m - the width in the first dimension
-        n - the width in the second dimension (only used in 2D and 3D problems)
-        p - the width in the third dimension (only used in 3D problems)
-        Note
-        The corner information is independent of the number of degrees of freedom per node set with the DMDACreateXX() routine. Thus the x, y, z, and m, n, p can be thought of as coordinates on a logical grid, where each grid point has (potentially) several degrees of freedom. Any of y, z, n, and p can be passed in as NULL if not needed.
+        Returns the global (x,y,z) indices of the lower left corner (first
+        tuple) and size of the local region (second tuple).
+
+        Excluding ghost points.
+
+        The corner information is independent of the number of degrees of
+        freedom per node. Thus the returned values can be thought of as
+        coordinates on a logical grid, where each grid point has (potentially)
+        several degrees of freedom.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetGhostCorners
+        getCorners, petsc.DMDAGetGhostCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -682,17 +682,17 @@ cdef class DMDA(DM):
     #
 
     def setFieldName(self, field: int, name: str) -> None:
-        """Set the names of individual field components in multicomponent vectors associated with a DMDA.
+        """Set the name of individual field components.
 
-        It must be called after having called DMSetUp().
-
-        Logically collective; name must contain a common value.
+        Logically collective; ``name`` must contain a common value.
 
         Parameters
         ----------
-        nf
-            field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
-        names
+        field
+            The field number for the DMDA (0, 1, ... dof-1), where dof
+            indicates the number of degrees of freedom per node within the
+            DMDA.
+        name
             the name of the field (component)
 
         See Also
@@ -706,18 +706,16 @@ cdef class DMDA(DM):
         CHKERR( DMDASetFieldName(self.dm, ival, cval) )
 
     def getFieldName(self, field: int) -> str:
-        """Return the names of individual field components in multicomponent vectors associated with a DMDA.
-
-        It must be called after having called DMSetUp().
+        """Return the name of an individual field component.
 
         Not collective; name will contain a common value.
 
         Parameters
         ----------
-        da
-            the distributed array
-        nf
-            field number for the DMDA (0, 1, ... dof-1), where dof indicates the number of degrees of freedom per node within the DMDA
+        field
+            The field number for the DMDA (0, 1, ... dof-1), where dof
+            indicates the number of degrees of freedom per node within the
+            DMDA.
 
         See Also
         --------
