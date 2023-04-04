@@ -884,13 +884,11 @@ cdef class DMStag(DM):
         def __get__(self) -> int:
             return self.getStencilWidth()
 
-    # TODO: fix type once determined above
     property corners:
         """The lower left corner and size of local region in each dimension."""
         def __get__(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
             return self.getCorners()
 
-    # TODO: fix type once determined above
     property ghost_corners:
         """The lower left corner and size of local region in each dimension."""
         def __get__(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
