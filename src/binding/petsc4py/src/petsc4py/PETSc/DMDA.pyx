@@ -595,7 +595,7 @@ cdef class DMDA(DM):
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     # TODO: ??????
-    def getGhostRanges(self):
+    def getGhostRanges(self) -> # 2,4,6 tuples TODO: tuple of tuple tuple[tuple[int,int]] ...
         """TODO
 
         Not collective.
@@ -619,6 +619,7 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
+    # TODO: tuple of tuple tuple[tuple[int,int]] ...
     def getOwnershipRanges(self) -> tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]]:
         """Return the ranges of indices in the x, y and z direction that are owned by each process.
 
@@ -1067,7 +1068,6 @@ cdef class DMDA(DM):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
-    # TODO: or just int64/long? why is it not a string?
     def getInterpolationType(self) -> int:
         """Return the type of interpolation.
 
@@ -1100,8 +1100,7 @@ cdef class DMDA(DM):
         cdef PetscDMDAElementType ival = daelementtype(elem_type)
         CHKERR( DMDASetElementType(self.dm, ival) )
 
-    # TODO: or just int? why is it not a string?
-    def getElementType(self):
+    def getElementType(self) -> int:
         """Return the element type to be returned by DMDAGetElements()
 
         Output Parameter
