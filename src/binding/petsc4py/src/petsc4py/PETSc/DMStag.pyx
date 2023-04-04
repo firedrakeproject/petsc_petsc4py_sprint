@@ -362,7 +362,7 @@ cdef class DMStag(DM):
         CHKERR( DMGetDimension(self.dm, &dim) )
         return toDofs(dim+1,dof0,dof1,dof2,dof3)
 
-    def getCorners(self) -> tuple[tuple[int...], tuple[int...], tuple[int...]]:
+    def getCorners(self) -> tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...]]:
         """Return starting element index, width and number of partial elements.
 
         The returned value is calculated excluding ghost points.
