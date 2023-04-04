@@ -13,7 +13,7 @@ cdef class DMComposite(DM):
         comm
             The communicator of processors that will share the DM.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeCreate
 
@@ -36,7 +36,7 @@ cdef class DMComposite(DM):
         *args
             Additional DM objects.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeAddDM
 
@@ -52,7 +52,7 @@ cdef class DMComposite(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeGetNumberDM
 
@@ -67,7 +67,7 @@ cdef class DMComposite(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeGetEntriesArray
 
@@ -98,7 +98,7 @@ cdef class DMComposite(DM):
         lvecs
             Array of local vectors.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeScatterArray, gather
 
@@ -125,7 +125,7 @@ cdef class DMComposite(DM):
         lvecs
             The individual sequential vectors.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeGatherArray, scatter
 
@@ -151,7 +151,7 @@ cdef class DMComposite(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeGetGlobalISs
 
@@ -177,7 +177,7 @@ cdef class DMComposite(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeGetLocalISs
 
@@ -200,7 +200,7 @@ cdef class DMComposite(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMCompositeGetISLocalToGlobalMappings
 

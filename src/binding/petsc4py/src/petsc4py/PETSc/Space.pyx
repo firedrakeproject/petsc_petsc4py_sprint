@@ -24,7 +24,7 @@ cdef class Space(Object):
 
         Collective on `Space`.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSetUp
 
@@ -43,7 +43,7 @@ cdef class Space(Object):
         comm
             The MPI communicator for the `Space` object.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceCreate
 
@@ -59,7 +59,7 @@ cdef class Space(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceDestroy
 
@@ -77,7 +77,7 @@ cdef class Space(Object):
         viewer
             A `Viewer` to display the `Space`.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceView
 
@@ -91,7 +91,7 @@ cdef class Space(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSetFromOptions, petsc_options
 
@@ -101,7 +101,7 @@ cdef class Space(Object):
     def getDimension(self) -> int:
         """Return the dimension of this space, i.e. the number of basis vectors.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceGetDimension
 
@@ -120,7 +120,7 @@ cdef class Space(Object):
         maxDegree : int
             The degree of the smallest polynomial space containing the space.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceGetDegree, setDegree
 
@@ -141,7 +141,7 @@ cdef class Space(Object):
         maxDegree
             The degree of the largest polynomial space containing the space.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSetDegree, getDegree
 
@@ -156,7 +156,7 @@ cdef class Space(Object):
     def getNumVariables(self) -> int:
         """Return the number of variables for this space.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceGetNumVariables, setNumVariables
 
@@ -173,7 +173,7 @@ cdef class Space(Object):
         n
             The number of variables (``x``, ``y``, ``z`` etc.).
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSetNumVariables, getNumVariables
 
@@ -184,7 +184,7 @@ cdef class Space(Object):
     def getNumComponents(self) -> int:
         """Return the number of components for this space.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceGetNumComponents, setNumComponents
 
@@ -201,7 +201,7 @@ cdef class Space(Object):
         nc
             The number of components.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSetNumComponents, getNumComponents
 
@@ -225,7 +225,7 @@ cdef class Space(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceGetType, setType
 
@@ -244,7 +244,7 @@ cdef class Space(Object):
         space_type
             The kind of space.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSetType, getType
 
@@ -262,7 +262,7 @@ cdef class Space(Object):
         A non-concatenated, or direct sum space will have the same number of
         components as its subspaces.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSumGetConcatenate, setSumConcatenate
 
@@ -285,7 +285,7 @@ cdef class Space(Object):
             `True` if subspaces are concatenated components,
             `False` if direct summands.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSumSetConcatenate, getSumConcatenate
 
@@ -296,7 +296,7 @@ cdef class Space(Object):
     def getSumNumSubspaces(self) -> int:
         """Return the number of spaces in the sum.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSumGetNumSubspaces, setSumNumSubspaces
 
@@ -313,7 +313,7 @@ cdef class Space(Object):
         s
             The space number.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSumGetSubspace, setSumSubspace
 
@@ -333,7 +333,7 @@ cdef class Space(Object):
         subsp
             The number of spaces.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSumSetSubspace, getSumSubspace
 
@@ -349,7 +349,7 @@ cdef class Space(Object):
         numSumSpaces
             The number of spaces.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceSumSetNumSubspaces, getSumNumSubspaces
 
@@ -360,7 +360,7 @@ cdef class Space(Object):
     def getTensorNumSubspaces(self) -> int:
         """Return the number of spaces in the tensor product.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceTensorGetNumSubspaces, setTensorNumSubspaces
 
@@ -379,7 +379,7 @@ cdef class Space(Object):
         subsp
             The number of spaces.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceTensorSetSubspace, getTensorSubspace
 
@@ -395,7 +395,7 @@ cdef class Space(Object):
         s
             The space number.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceTensorGetSubspace, setTensorSubspace
 
@@ -413,7 +413,7 @@ cdef class Space(Object):
         numTensSpaces
             The number of spaces.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceTensorSetNumSubspaces, getTensorNumSubspaces
 
@@ -430,7 +430,7 @@ cdef class Space(Object):
         spanned by polynomials whose total degree—summing over all variables
         is bounded by the given order).
 
-        See also
+        See Also
         --------
         petsc.PetscSpacePolynomialGetTensor, setPolynomialTensor
 
@@ -454,7 +454,7 @@ cdef class Space(Object):
             `True` for a tensor polynomial space, `False` for a polynomial
             space.
 
-        See also
+        See Also
         --------
         petsc.PetscSpacePolynomialSetTensor, getPolynomialTensor
 
@@ -475,7 +475,7 @@ cdef class Space(Object):
         quad
             The `Quad` defining the points.
 
-        See also
+        See Also
         --------
         petsc.PetscSpacePointSetPoints, getPointPoints
 
@@ -487,7 +487,7 @@ cdef class Space(Object):
 
         Logically collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSpacePointGetPoints, setPointPoints
 
@@ -504,7 +504,7 @@ cdef class Space(Object):
         formDegree
             The form degree.
 
-        See also
+        See Also
         --------
         petsc.PetscSpacePTrimmedSetFormDegree, getPTrimmedFormDegree
 
@@ -515,7 +515,7 @@ cdef class Space(Object):
     def getPTrimmedFormDegree(self) -> int:
         """Return the form degree of the trimmed polynomials.
 
-        See also
+        See Also
         --------
         petsc.PetscSpacePTrimmedGetFormDegree, setPTrimmedFormDegree
 
@@ -536,7 +536,7 @@ cdef class Space(Object):
         obj
             Optional object that provides the options prefix.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceViewFromOptions, petsc_options
 
@@ -571,7 +571,7 @@ cdef class DualSpace(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSetUp
 
@@ -590,7 +590,7 @@ cdef class DualSpace(Object):
         comm
             The MPI communicator for the `DualSpace` object.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceCreate
 
@@ -611,7 +611,7 @@ cdef class DualSpace(Object):
         viewer
             A `Viewer` to display the `DualSpace`.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceView
 
@@ -625,7 +625,7 @@ cdef class DualSpace(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceDestroy
 
@@ -638,7 +638,7 @@ cdef class DualSpace(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceDuplicate
 
@@ -651,7 +651,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetDM, setDM
 
@@ -670,7 +670,7 @@ cdef class DualSpace(Object):
         dm
             The reference cell.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSetDM, getDM
 
@@ -684,7 +684,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetDimension
 
@@ -696,7 +696,7 @@ cdef class DualSpace(Object):
     def getNumComponents(self) -> int:
         """Return the number of components for this space.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetNumComponents, setNumComponents
 
@@ -713,7 +713,7 @@ cdef class DualSpace(Object):
         nc
             The number of components
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSetNumComponents, getNumComponents
 
@@ -726,7 +726,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetType, setType
 
@@ -745,7 +745,7 @@ cdef class DualSpace(Object):
         dualspace_type
             The kind of space.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSetType, getType
 
@@ -760,7 +760,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetOrder, setOrder
 
@@ -779,7 +779,7 @@ cdef class DualSpace(Object):
         order
             The order.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSetOrder, getOrder
 
@@ -792,7 +792,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetNumDof
 
@@ -813,7 +813,7 @@ cdef class DualSpace(Object):
         i
             The basis number.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetFunctional
 
@@ -831,7 +831,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceGetInteriorDimension
 
@@ -845,7 +845,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceLagrangeGetContinuity, setLagrangeContinuity
 
@@ -864,7 +864,7 @@ cdef class DualSpace(Object):
         continuous
             The flag for element continuity.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceLagrangeSetContinuity, getLagrangeContinuity
 
@@ -877,7 +877,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceLagrangeGetTensor, setLagrangeTensor
 
@@ -896,7 +896,7 @@ cdef class DualSpace(Object):
         tensor
             Whether the dual space has tensor layout (vs. simplicial).
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceLagrangeSetTensor, getLagrangeTensor
 
@@ -909,7 +909,7 @@ cdef class DualSpace(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceLagrangeGetTrimmed, setLagrangeTrimmed
 
@@ -930,7 +930,7 @@ cdef class DualSpace(Object):
             polynomial space (e.g. Raviart-Thomas and higher order /
             other form degree variants).
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceLagrangeSetTrimmed, getLagrangeTrimmed
 
@@ -950,7 +950,7 @@ cdef class DualSpace(Object):
         obj
             Optional object that provides the options prefix.
 
-        See also
+        See Also
         --------
         petsc.PetscSpaceViewFromOptions, petsc_options
 
@@ -971,7 +971,7 @@ cdef class DualSpace(Object):
         dim
             The basis dimension.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSimpleSetDimension
 
@@ -991,7 +991,7 @@ cdef class DualSpace(Object):
         functional
             The basis functional.
 
-        See also
+        See Also
         --------
         petsc.PetscDualSpaceSimpleSetFunctional
 

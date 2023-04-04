@@ -30,7 +30,7 @@ cdef class Partitioner(Object):
         viewer
             A `Viewer` to display the graph.
 
-        See also
+        See Also
         --------
         petsc.PetscPartitionerView
 
@@ -44,7 +44,7 @@ cdef class Partitioner(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscPartitionerDestroy
 
@@ -64,7 +64,7 @@ cdef class Partitioner(Object):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         setType, petsc.PetscPartitionerCreate
 
@@ -85,7 +85,7 @@ cdef class Partitioner(Object):
         part_type
             The kind of partitioner.
 
-        See also
+        See Also
         --------
         getType, petsc.PetscPartitionerSetType
 
@@ -99,7 +99,7 @@ cdef class Partitioner(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         setType, petsc.PetscPartitionerGetType
 
@@ -113,7 +113,7 @@ cdef class Partitioner(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscPartitionerSetFromOptions, petsc_options
 
@@ -125,7 +125,7 @@ cdef class Partitioner(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscPartitionerSetUp
 
@@ -137,7 +137,7 @@ cdef class Partitioner(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscPartitionerReset
 
@@ -163,7 +163,7 @@ cdef class Partitioner(Object):
             partition in order (i.e., partition 0 first, partition 1 next,
             etc.).
 
-        See also
+        See Also
         --------
         petsc.PetscPartitionerShellSetPartition
 

@@ -274,7 +274,7 @@ cdef class Scatter(Object):
         This call has to be concluded with a call to `end`.
         For additional details on the Parameters, see `scatter`.
 
-        See also
+        See Also
         --------
         create, end, petsc.VecScatterBegin
 
@@ -298,7 +298,7 @@ cdef class Scatter(Object):
         This call has to be preceded by a call to `begin`.
         For additional details on the Parameters, see `scatter`.
 
-        See also
+        See Also
         --------
         create, begin, petsc.VecScatterEnd
 
@@ -341,7 +341,7 @@ cdef class Scatter(Object):
             - `ScatterMode.REVERSE` If ``vec_from`` and ``vec_to`` are
               swapped with respect to the vectors used to create the scatter.
 
-        See also
+        See Also
         --------
         create, begin, end, petsc.VecScatterBegin, petsc.VecScatterEnd
 

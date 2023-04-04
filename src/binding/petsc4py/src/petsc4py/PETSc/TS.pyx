@@ -662,7 +662,7 @@ cdef class TS(Object):
         function
             The right-hand-side function.
         f
-            The vector to store values or ``None`` to be created internally.
+            The vector to store values or `None` to be created internally.
         args
             Additional positional arguments for ``function``.
         kargs
@@ -909,7 +909,7 @@ cdef class TS(Object):
         function
             The right-hand-side function.
         f
-            The vector to store values or ``None`` to be created internally.
+            The vector to store values or `None` to be created internally.
         args
             Additional positional arguments for ``function``.
         kargs
@@ -1599,9 +1599,9 @@ cdef class TS(Object):
         Parameters
         ----------
         rtol
-            The relative tolerance or ``None`` to leave the current value.
+            The relative tolerance or `None` to leave the current value.
         atol
-            The absolute tolerance or ``None`` to leave the current value.
+            The absolute tolerance or `None` to leave the current value.
 
         Notes
         -----
@@ -1860,10 +1860,10 @@ cdef class TS(Object):
         Parameters
         ----------
         tol
-            The scalar tolerance or ``None`` to leave at the current value
+            The scalar tolerance or `None` to leave at the current value
         vtol
             A sequence of scalar tolerance for each event. Used in preference to
-            ``tol`` if present. Set to ``None`` to leave at the current value.
+            ``tol`` if present. Set to `None` to leave at the current value.
 
         Notes
         -----
@@ -2049,7 +2049,7 @@ cdef class TS(Object):
         Parameters
         ----------
         u
-            The solution vector. Can be ``None`` if `setSolution` was used and
+            The solution vector. Can be `None` if `setSolution` was used and
             `setExactFinalTime` is not set as ``TS_EXACTFINALTIME_MATCHSTEP``.
             Otherwise this vector must contain the initial conditions and will
             contain the solution at the final requested time.
@@ -2545,11 +2545,11 @@ cdef class TS(Object):
         Parameters
         ----------
         alpha_m
-            Parameter, leave ``None``  to keep current value.
+            Parameter, leave `None`  to keep current value.
         alpha_f
-            Parameter, leave ``None``  to keep current value.
+            Parameter, leave `None`  to keep current value.
         gamma
-            Parameter, leave ``None``  to keep current value.
+            Parameter, leave `None`  to keep current value.
 
         See Also
         --------

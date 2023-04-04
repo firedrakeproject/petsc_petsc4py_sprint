@@ -20,7 +20,7 @@ cdef class DMInterpolation:
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationCreate, destroy
 
@@ -37,7 +37,7 @@ cdef class DMInterpolation:
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationDestroy, create
 
@@ -57,7 +57,7 @@ cdef class DMInterpolation:
         v
             A vector capable of holding the interpolated field values.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationEvaluate
 
@@ -77,7 +77,7 @@ cdef class DMInterpolation:
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationGetCoordinates
 
@@ -92,7 +92,7 @@ cdef class DMInterpolation:
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationGetDim, setDim
 
@@ -106,7 +106,7 @@ cdef class DMInterpolation:
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationGetDof, setDof
 
@@ -125,7 +125,7 @@ cdef class DMInterpolation:
         dim
             The spatial dimension.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationSetDim, getDim
 
@@ -143,7 +143,7 @@ cdef class DMInterpolation:
         dof
             The number of fields.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationSetDof, getDof
 
@@ -172,7 +172,7 @@ cdef class DMInterpolation:
             Ignore points outside of the domain if `True`; otherwise, return an
             error.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationSetUp
 
@@ -188,7 +188,7 @@ cdef class DMInterpolation:
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationGetVector, restoreVector
 
@@ -207,7 +207,7 @@ cdef class DMInterpolation:
         vec
             A vector capable of holding the interpolated field values.
 
-        See also
+        See Also
         --------
         petsc.DMInterpolationRestoreVector, getVector
 

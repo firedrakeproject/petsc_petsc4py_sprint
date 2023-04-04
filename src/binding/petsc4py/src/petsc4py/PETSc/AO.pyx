@@ -26,7 +26,7 @@ cdef class AO(Object):
         viewer
             A `Viewer` to display the ordering.
 
-        See also
+        See Also
         --------
         petsc.AOView
 
@@ -40,7 +40,7 @@ cdef class AO(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.AODestroy
 
@@ -73,7 +73,7 @@ cdef class AO(Object):
         comm
             The MPI communicator that is to share the application ordering.
 
-        See also
+        See Also
         --------
         petsc.AOCreateBasicIS, petsc.AOCreateBasic, createMemoryScalable,
         createMapping
@@ -126,7 +126,7 @@ cdef class AO(Object):
         comm
             The MPI communicator that is to share the application ordering.
 
-        See also
+        See Also
         --------
         petsc.AOCreateMemoryScalableIS, petsc.AOCreateMemoryScalable,
         createBasic, createMapping
@@ -172,7 +172,7 @@ cdef class AO(Object):
         comm
             The MPI communicator that is to share the application ordering.
 
-        See also
+        See Also
         --------
         petsc.AOCreateMappingIS, petsc.AOCreateMapping, createBasic
 
@@ -201,7 +201,7 @@ cdef class AO(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.AOGetType
 
@@ -229,7 +229,7 @@ cdef class AO(Object):
         indices
             The indices; to be replaced with their mapped values.
 
-        See also
+        See Also
         --------
         petsc.AOApplicationToPetscIS, petsc.AOApplicationToPetsc, petsc2app
 
@@ -263,7 +263,7 @@ cdef class AO(Object):
         indices
             The indices; to be replaced with their mapped values.
 
-        See also
+        See Also
         --------
         petsc.AOPetscToApplicationIS, petsc.AOPetscToApplication, app2petsc
 

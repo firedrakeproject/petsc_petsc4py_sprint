@@ -45,7 +45,7 @@ cdef class DMSwarm(DM):
         comm
             The MPI communicator for the DM object.
 
-        See also
+        See Also
         --------
         petsc.DMCreate, petsc.DMSetType
 
@@ -70,7 +70,7 @@ cdef class DMSwarm(DM):
         fieldname
             The textual name given to a registered field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmCreateGlobalVectorFromField, destroyGlobalVectorFromField
 
@@ -91,7 +91,7 @@ cdef class DMSwarm(DM):
         fieldname
             The textual name given to a registered field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmDestroyGlobalVectorFromField, createGlobalVectorFromField
 
@@ -114,7 +114,7 @@ cdef class DMSwarm(DM):
         fieldname
             The textual name given to a registered field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmCreateLocalVectorFromField, destroyLocalVectorFromField
 
@@ -135,7 +135,7 @@ cdef class DMSwarm(DM):
         fieldname
             The textual name given to a registered field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmDestroyLocalVectorFromField, createLocalVectorFromField
 
@@ -152,7 +152,7 @@ cdef class DMSwarm(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmInitializeFieldRegister, finalizeFieldRegister
 
@@ -164,7 +164,7 @@ cdef class DMSwarm(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmFinalizeFieldRegister, initializeFieldRegister
 
@@ -183,7 +183,7 @@ cdef class DMSwarm(DM):
         buffer
             The length of the buffer used for efficient dynamic resizing.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSetLocalSizes
 
@@ -208,7 +208,7 @@ cdef class DMSwarm(DM):
         dtype
             A valid PETSc data type.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmRegisterPetscDatatypeField
 
@@ -245,7 +245,7 @@ cdef class DMSwarm(DM):
             The type of the entries in the array will match the type of the
             field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmGetField, restoreField
 
@@ -277,7 +277,7 @@ cdef class DMSwarm(DM):
         fieldname
             The textual name to identify this field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmRestoreField, getField
 
@@ -301,7 +301,7 @@ cdef class DMSwarm(DM):
         fieldname
             The textual name given to a registered field.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmVectorDefineField
 
@@ -315,7 +315,7 @@ cdef class DMSwarm(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmAddPoint
 
@@ -332,7 +332,7 @@ cdef class DMSwarm(DM):
         npoints
             The number of new points to add.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmAddNPoints
 
@@ -345,7 +345,7 @@ cdef class DMSwarm(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmRemovePoint
 
@@ -362,7 +362,7 @@ cdef class DMSwarm(DM):
         index
             Index of point to remove
 
-        See also
+        See Also
         --------
         petsc.DMSwarmRemovePointAtIndex
 
@@ -382,7 +382,7 @@ cdef class DMSwarm(DM):
         pj
             The point index where the copy should be located (destination).
 
-        See also
+        See Also
         --------
         petsc.DMSwarmCopyPoint
 
@@ -396,7 +396,7 @@ cdef class DMSwarm(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmGetLocalSize
 
@@ -410,7 +410,7 @@ cdef class DMSwarm(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmGetSize
 
@@ -430,7 +430,7 @@ cdef class DMSwarm(DM):
             Flag indicating if sent points should be removed from the current
             MPI rank.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmMigrate
 
@@ -443,7 +443,7 @@ cdef class DMSwarm(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmCollectViewCreate, collectViewDestroy
 
@@ -455,7 +455,7 @@ cdef class DMSwarm(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmCollectViewDestroy, collectViewCreate
 
@@ -472,7 +472,7 @@ cdef class DMSwarm(DM):
         dm
             The `DM` to attach to the `DMSwarm`.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSetCellDM, getCellDM
 
@@ -484,7 +484,7 @@ cdef class DMSwarm(DM):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmGetCellDM, setCellDM
 
@@ -506,7 +506,7 @@ cdef class DMSwarm(DM):
         dmswarm_type
             The `DMSwarm` type.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSetType
 
@@ -539,7 +539,7 @@ cdef class DMSwarm(DM):
             Indicates whether to append points to the swarm (`InsertMode.ADD`),
             or override existing points (`InsertMode.INSERT`).
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSetPointsUniformCoordinates
 
@@ -580,7 +580,7 @@ cdef class DMSwarm(DM):
             Indicates whether to append points to the swarm (`InsertMode.ADD`),
             or override existing points (`InsertMode.INSERT`).
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSetPointCoordinates
 
@@ -609,7 +609,7 @@ cdef class DMSwarm(DM):
             Parameter controlling how many points per cell are added (the
             meaning of this parameter is dependent on the layout type).
 
-        See also
+        See Also
         --------
         petsc.DMSwarmInsertPointsUsingCellDM
 
@@ -631,7 +631,7 @@ cdef class DMSwarm(DM):
             The coordinates (defined in the local coordinate system for each
             cell) to insert.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSetPointCoordinatesCellwise
 
@@ -657,7 +657,7 @@ cdef class DMSwarm(DM):
         fieldnames
             Array containing the textual names of fields to write.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmViewFieldsXDMF
 
@@ -684,7 +684,7 @@ cdef class DMSwarm(DM):
         filename
             The file name of the XDMF file (must have the extension .xmf).
 
-        See also
+        See Also
         --------
         petsc.DMSwarmViewXDMF
 
@@ -704,7 +704,7 @@ cdef class DMSwarm(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSortGetAccess, sortRestoreAccess
 
@@ -716,7 +716,7 @@ cdef class DMSwarm(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSortRestoreAccess, sortGetAccess
 
@@ -733,7 +733,7 @@ cdef class DMSwarm(DM):
         e
             The index of the cell.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSortGetPointsPerCell
 
@@ -757,7 +757,7 @@ cdef class DMSwarm(DM):
         e
             The index of the cell.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSortGetNumberOfPointsPerCell
 
@@ -774,7 +774,7 @@ cdef class DMSwarm(DM):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSortGetIsValid
 
@@ -795,7 +795,7 @@ cdef class DMSwarm(DM):
         npoints : int
             Number of points used to create the sort context.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmSortGetSizes
 
@@ -818,7 +818,7 @@ cdef class DMSwarm(DM):
             Flag indicating whether the array and contents of fields should be
             reused or internally allocated.
 
-        See also
+        See Also
         --------
         petsc.DMSwarmProjectFields
 

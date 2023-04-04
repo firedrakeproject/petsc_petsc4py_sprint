@@ -1243,7 +1243,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.setTetGenOptions, DMPlex.generate, petsc.DMPlexTriangleSetOptions
+        petsc_options, DM, DMPlex, DMPlex.setTetGenOptions, DMPlex.generate, petsc.DMPlexTriangleSetOptions
 
         """
         cdef const char *copts = NULL
@@ -1262,7 +1262,7 @@ cdef class DMPlex(DM):
 
         See Also
         --------
-        DM, DMPlex, DMPlex.setTriangleOptions, DMPlex.generate, petsc.DMPlexTetgenSetOptions
+        petsc_options, DM, DMPlex, DMPlex.setTriangleOptions, DMPlex.generate, petsc.DMPlexTetgenSetOptions
 
         """
         cdef const char *copts = NULL

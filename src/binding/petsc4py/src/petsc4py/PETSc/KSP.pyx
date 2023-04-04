@@ -324,7 +324,7 @@ class KSPConvergedReason(object):
         subpreconditioner inside a nested preconditioner such as
         `PC.Type.FIELDSPLIT`.
 
-    See also
+    See Also
     --------
     `petsc.KSPConvergedReason`
 
@@ -371,7 +371,7 @@ cdef class KSP(Object):
     only application of the preconditioner is used as the linear
     solver.
 
-    See also
+    See Also
     --------
     create, setType, SNES, TS, PC, Type.CG, Type.GMRES,
     petsc.KSP
@@ -393,16 +393,19 @@ cdef class KSP(Object):
 
         Collective.
 
-        Parameters:
+        Parameters
+        ----------
         b
             Right hand side vector.
         x
             Solution vector.
 
-        Notes:
+        Notes
+        -----
         Shortcut for `solve`, which returns the solution vector.
 
-        See also:
+        See Also
+        --------
         solve, petsc_options, petsc.KSPSolve
 
         """
@@ -437,7 +440,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.KSPDestroy
 
@@ -450,7 +453,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.KSPCreate
 
@@ -488,7 +491,7 @@ cdef class KSP(Object):
         is taking responsibility for choosing the appropriate method.
         In other words, this routine is not for beginners.
 
-        See also
+        See Also
         --------
         petsc.KSPSetType
 
@@ -502,7 +505,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.KSPGetType
 
@@ -540,9 +543,9 @@ cdef class KSP(Object):
         -sys2_ksp_type bcgs  -sys2_ksp_rtol 1.e-4
         ```
 
-        See also
+        See Also
         --------
-        petsc.KSPSetOptionsPrefix
+        petsc_options, petsc.KSPSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -554,7 +557,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.KSPGetOptionsPrefix
 
@@ -579,7 +582,7 @@ cdef class KSP(Object):
         name. The first character of all runtime options is
         AUTOMATICALLY the hyphen.
 
-        See also
+        See Also
         --------
         petsc.KSPAppendOptionsPrefix
 
@@ -596,7 +599,7 @@ cdef class KSP(Object):
         This routine must be called before `setUp` if the user is
         to be allowed to set the Krylov type.
 
-        See also
+        See Also
         --------
         petsc_options, petsc.KSPSetFromOptions
 
@@ -623,7 +626,7 @@ cdef class KSP(Object):
         Use `getAppCtx` to get access to the context at a later
         time.
 
-        See also
+        See Also
         --------
         petsc.KSPSetApplicationContext
 
@@ -635,7 +638,7 @@ cdef class KSP(Object):
 
         Not collective
 
-        See also
+        See Also
         --------
         petsc.KSPGetApplicationContext
 
@@ -649,7 +652,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         PETSc.KSP, DM, petsc.KSPGetDM
 
@@ -686,7 +689,7 @@ cdef class KSP(Object):
         `DM` when solving different problems using the same function
         space.
 
-        See also
+        See Also
         --------
         PETSc.KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone,
         petsc.KSPSetDM
@@ -710,7 +713,7 @@ cdef class KSP(Object):
         ``setDMActive(False)`` after ``setDM(dm)`` to not
         have the `KSP` object use the `DM` to generate the matrices.
 
-        See also
+        See Also
         --------
         PETSc.KSP, DM, setDM, petsc.KSPSetDMActive
 
@@ -744,7 +747,7 @@ cdef class KSP(Object):
         The routine you provide will be called each time you call `solve`
         to prepare the new right hand side for that solve.
 
-        See also
+        See Also
         --------
         PETSc.KSP, solve, petsc.KSPSetComputeRHS
 
@@ -789,7 +792,7 @@ cdef class KSP(Object):
         not compute a new one based on the most recently computed
         matrix call `petsc.KSPSetReusePreconditioner`.
 
-        See also
+        See Also
         --------
         PETSc.KSP, solve, setOperators, petsc.KSPSetComputeOperators,
         petsc.KSPSetReusePreconditioner
@@ -831,7 +834,7 @@ cdef class KSP(Object):
         Passing `None` for ``A`` or ``P`` removes the matrix that is
         currently used.
 
-        See also
+        See Also
         --------
         PETSc.KSP, solve, setComputeOperators,
         petsc.KSPSetOperators
@@ -859,7 +862,7 @@ cdef class KSP(Object):
             Matrix to be used in constructing the preconditioner,
             usually the same as ``A``.
 
-        See also
+        See Also
         --------
         PETSc.KSP, solve, setOperators, petsc.KSPGetOperators
 
@@ -883,7 +886,7 @@ cdef class KSP(Object):
         pc
             The preconditioner object
 
-        See also
+        See Also
         --------
         PETSc.KSP, getPC, petsc.KSPSetPC
 
@@ -895,7 +898,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         PETSc.KSP, setPC, petsc.KSPGetPC
 
@@ -942,7 +945,7 @@ cdef class KSP(Object):
         Use `None` to retain the default value of any of the
         tolerances.
 
-        See also
+        See Also
         --------
         petsc_options, getTolerances, setConvergenceTest,
         petsc.KSPSetTolerances, petsc.KSPConvergedDefault,
@@ -976,7 +979,7 @@ cdef class KSP(Object):
         maxits: int
             Maximum number of iterations
 
-        See also
+        See Also
         --------
         setTolerances, petsc.KSPGetTolerances
 
@@ -1023,7 +1026,7 @@ cdef class KSP(Object):
         reason are macros such as ``KSP_CONVERGED_RTOL``, which are
         defined in ``petsch``.
 
-        See also
+        See Also
         --------
         setTolerances, getConvergenceTest,
         petsc.KSPSetConvergenceTest, petsc.KSPConvergedDefault
@@ -1055,7 +1058,7 @@ cdef class KSP(Object):
 
         Logically collective.
 
-        See also
+        See Also
         --------
         setTolerances, setConvergenceTest,
         petsc.KSPGetConvergenceTest, petsc.KSPConvergedDefault
@@ -1113,7 +1116,7 @@ cdef class KSP(Object):
         longer than the array length `solve` stops recording the
         history.
 
-        See also
+        See Also
         --------
         getConvergenceHistory, petsc.KSPSetResidualHistory
 
@@ -1134,7 +1137,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         setConvergenceHistory, petsc.KSPGetResidualHistory
 
@@ -1194,7 +1197,7 @@ cdef class KSP(Object):
         `setMonitor` multiple times; all will be called in the order
         in which they were set.
 
-        See also
+        See Also
         --------
         petsc_options, getMonitor, monitor, monitorCancel,
         petsc.KSPMonitorSet
@@ -1215,7 +1218,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc_options, setMonitor, monitor,
         monitorCancel, petsc.KSPGetMonitorContext
@@ -1228,7 +1231,7 @@ cdef class KSP(Object):
 
         Logically collective.
 
-        See also
+        See Also
         --------
         petsc_options, getMonitor, setMonitor, monitor,
         petsc.KSPMonitorCancel
@@ -1249,7 +1252,7 @@ cdef class KSP(Object):
         This routine is called by the `KSP` implementations. It does not
         typically need to be called by the user.
 
-        See also
+        See Also
         --------
         setMonitor, petsc.KSPMonitor
 
@@ -1286,7 +1289,7 @@ cdef class KSP(Object):
         Setting the PC side often affects the default norm type. See
         `setNormType` for details.
 
-        See also
+        See Also
         --------
         PC.Side, petsc_options, getPCSide, setNormType,
         getNormType, petsc.KSPSetPCSide
@@ -1299,7 +1302,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc_options, setPCSide, setNormType, getNormType,
         petsc.KSPGetPCSide
@@ -1324,7 +1327,7 @@ cdef class KSP(Object):
         change the other to find a compatible pair. If no such
         combination is supported, PETSc will generate an error.
 
-        See also
+        See Also
         --------
         NormType, petsc_options, setUp, solve, destroy,
         setPCSide, getPCSide, NormType,
@@ -1339,7 +1342,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         NormType, setNormType,
         petsc.KSPGetNormType, petsc.KSPConvergedSkip
@@ -1382,7 +1385,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         setComputeEigenvalues, petsc.KSPSetComputeEigenvalues
 
@@ -1409,7 +1412,7 @@ cdef class KSP(Object):
         -----
         Currently this option is not valid for all iterative methods.
 
-        See also
+        See Also
         --------
         getComputeSingularValues, petsc.KSPSetComputeSingularValues
 
@@ -1424,7 +1427,7 @@ cdef class KSP(Object):
         will be calculated via a Lanczos or Arnoldi process as the
         linear system is solved.
 
-        See also
+        See Also
         --------
         setComputeSingularValues, petsc.KSPGetComputeSingularValues
 
@@ -1449,7 +1452,7 @@ cdef class KSP(Object):
             `True` indicates the guess is non-zero, `False`
             indicates the guess is zero.
 
-        See also
+        See Also
         --------
         petsc.KSPSetInitialGuessNonzero
 
@@ -1462,7 +1465,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.KSPGetInitialGuessNonzero
 
@@ -1483,7 +1486,7 @@ cdef class KSP(Object):
         flag
             `True` uses Knoll trick.
 
-        See also
+        See Also
         --------
         petsc.KSPSetInitialGuessKnoll
 
@@ -1497,7 +1500,7 @@ cdef class KSP(Object):
         This uses the Knoll trick; using `PC.apply` to compute the
         initial guess.
 
-        See also
+        See Also
         --------
         petsc.KSPGetInitialGuessKnoll
 
@@ -1521,7 +1524,7 @@ cdef class KSP(Object):
         size
             Size of subspace used to generate initial guess.
 
-        See also
+        See Also
         --------
         petsc.KSPSetUseFischerGuess
 
@@ -1537,7 +1540,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.KSPSetUp
 
@@ -1552,7 +1555,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.KSPReset
 
@@ -1567,7 +1570,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.KSPSetUpOnBlocks
 
@@ -1643,7 +1646,7 @@ cdef class KSP(Object):
         information on additional options to monitor convergence and
         print eigenvalue information.
 
-        See also
+        See Also
         --------
         create, setUp, destroy, setTolerances, converged,
         solveTranspose, its, Mat.setNullSpace,
@@ -1674,7 +1677,7 @@ cdef class KSP(Object):
         For complex numbers this solve the non-Hermitian transpose
         system.
 
-        See also
+        See Also
         --------
         solve, petsc.KSPSolveTranspose
 
@@ -1694,7 +1697,7 @@ cdef class KSP(Object):
         X
             Block of solutions.
 
-        See also
+        See Also
         --------
         solve, petsc.KSPMatSolve
 
@@ -1711,7 +1714,7 @@ cdef class KSP(Object):
         X
             Block of solutions.
 
-        See also
+        See Also
         --------
         solveTranspose, petsc.KSPMatSolve
 
@@ -1773,7 +1776,7 @@ cdef class KSP(Object):
         flag
             `True` enables this behaviour.
 
-        See also
+        See Also
         --------
         petsc.KSPSetErrorIfNotConverged
 
@@ -1786,7 +1789,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.KSPGetErrorIfNotConverged
 
@@ -1800,7 +1803,7 @@ cdef class KSP(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.KSPGetRhs
 
@@ -1816,7 +1819,7 @@ cdef class KSP(Object):
         Note that this may not be the solution that is stored during
         the iterative process.
 
-        See also
+        See Also
         --------
         petsc.KSPGetSolution
 
@@ -1923,7 +1926,7 @@ cdef class KSP(Object):
         eigen: ArrayComplex
             An array of eigenvalues.
 
-        See also
+        See Also
         --------
         petsc.KSPComputeEigenvalues
 
@@ -1951,7 +1954,7 @@ cdef class KSP(Object):
         smin: float
             The minimum singular value.
 
-        See also
+        See Also
         --------
         petsc.KSPComputeExtremeSingularValues
 
@@ -1973,7 +1976,7 @@ cdef class KSP(Object):
         restart
             Integer restart value.
 
-        See also
+        See Also
         --------
         petsc.KSPGMRESSetRestart
 
@@ -2076,7 +2079,7 @@ cdef class KSP(Object):
     property appctx:
         """The solver application context.
 
-        See also
+        See Also
         --------
         petsc.KSPGetApplicationContext, petsc.KSPSetApplicationContext
 
@@ -2091,7 +2094,7 @@ cdef class KSP(Object):
     property dm:
         """ The solver data manager.
 
-        See also
+        See Also
         --------
         petsc.KSPGetDM, petsc.KSPSetDM
 
@@ -2106,7 +2109,7 @@ cdef class KSP(Object):
     property vec_sol:
         """The solver solution vector.
 
-        See also
+        See Also
         --------
         petsc.KSPGetSolution
 
@@ -2117,7 +2120,7 @@ cdef class KSP(Object):
     property vec_rhs:
         """The solver right hand side vector.
 
-        See also
+        See Also
         --------
         petsc.KSPGetRhs
 
@@ -2130,7 +2133,7 @@ cdef class KSP(Object):
     property mat_op:
         """The solver system matrix operator.
 
-        See also
+        See Also
         --------
         getOperators, petsc.KSPGetOperators
 
@@ -2141,7 +2144,7 @@ cdef class KSP(Object):
     property mat_pc:
         """The solver preconditioner operator.
 
-        See also
+        See Also
         --------
         getOperators, petsc.KSPGetOperators
 
@@ -2154,7 +2157,7 @@ cdef class KSP(Object):
     property guess_nonzero:
         """Whether guess is non-zero.
 
-        See also
+        See Also
         --------
         getInitialGuessNonzero, setInitialGuessNonzero
 
@@ -2167,7 +2170,7 @@ cdef class KSP(Object):
     property guess_knoll:
         """Whether solver uses Knoll trick.
 
-        See also
+        See Also
         --------
         getInitialGuessKnoll, setInitialGuessKnoll,
         petsc.KSPGetInitialGuessKnoll, petsc.KSPSetInitialGuessKnoll
@@ -2183,7 +2186,7 @@ cdef class KSP(Object):
     property pc:
         """The preconditioner for the solver.
 
-        See also
+        See Also
         --------
         getPC, setPC
 
@@ -2194,7 +2197,7 @@ cdef class KSP(Object):
     property pc_side:
         """The side on which preconditioning is performed.
 
-        See also
+        See Also
         --------
         getPCSide, setPCSide
 
@@ -2207,7 +2210,7 @@ cdef class KSP(Object):
     property norm_type:
         """The norm used by the solver.
 
-        See also
+        See Also
         --------
         getNormType, setNormType
 
@@ -2222,7 +2225,7 @@ cdef class KSP(Object):
     property rtol:
         """The relative tolerance of the solver.
 
-        See also
+        See Also
         --------
         getTolerances, setTolerances
 
@@ -2235,7 +2238,7 @@ cdef class KSP(Object):
     property atol:
         """The absolute tolerance of the solver.
 
-        See also
+        See Also
         --------
         getTolerances, setTolerances
 
@@ -2248,7 +2251,7 @@ cdef class KSP(Object):
     property divtol:
         """The divergence tolerance of the solver.
 
-        See also
+        See Also
         --------
         getTolerances, setTolerances
 
@@ -2261,7 +2264,7 @@ cdef class KSP(Object):
     property max_it:
         """The maximum number of iteration the solver may take.
 
-        See also
+        See Also
         --------
         getTolerances, setTolerances
 
@@ -2276,7 +2279,7 @@ cdef class KSP(Object):
     property its:
         """The current number of iterations the solver has taken.
 
-        See also
+        See Also
         --------
         getIterationNumber, setIterationNumber
 
@@ -2289,7 +2292,7 @@ cdef class KSP(Object):
     property norm:
         """The the norm of the residual at the current iteration.
 
-        See also
+        See Also
         --------
         getResidualNorm, setResidualNorm
 
@@ -2304,7 +2307,7 @@ cdef class KSP(Object):
 
         This is an array of norms at each iteration.
 
-        See also
+        See Also
         --------
         getConvergenceHistory
 
@@ -2317,7 +2320,7 @@ cdef class KSP(Object):
     property reason:
         """The reason for convergence.
 
-        See also
+        See Also
         --------
         getConvergedReason, setConvergedReason
 
