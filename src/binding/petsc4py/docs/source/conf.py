@@ -156,21 +156,19 @@ except ImportError:
 
 
 def _setup_mpi4py_typing():
-    try:
-        import mpi4py
-    except ImportError:
-        pkg = type(sys)('mpi4py')
-        sys.modules[pkg.__name__] = pkg
-        pkg.mod = type(sys)('mpi4py.MPI')
-        sys.modules[pkg.mod.__name__] = pkg.mod
-        for clsname in (
-            'Intracomm',
-            'Datatype',
-            'Op',
-        ):
-            cls = type(clsname, (), {})
-            cls.__module__ = pkg.mod.__name__
-            setattr(pkg.mod, clsname, cls)
+    pkg = type(sys)('mpi4py')
+    mod = type(sys)('mpi4py.MPI')
+    mod.__package__ = pkg.__name__
+    sys.modules[pkg.__name__] = pkg
+    sys.modules[mod.__name__] = mod
+    for clsname in (
+        'Intracomm',
+        'Datatype',
+        'Op',
+    ):
+        cls = type(clsname, (), {})
+        cls.__module__ = mod.__name__
+        setattr(mod, clsname, cls)
 
 
 def _patch_domain_python():
