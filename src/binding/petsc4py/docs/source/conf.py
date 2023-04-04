@@ -190,6 +190,8 @@ def _setup_autodoc(app):
         module = getattr(annotation, '__module__', '')
         args = getattr(annotation, '__args__', None)
         if module == 'builtins' and qualname and args is not None:
+            if qualname == 'tuple' and args == ():
+                args = ((),)
             args = ', '.join(stringify_annotation(a, mode) for a in args)
             return f'{qualname}[{args}]'
         return stringify_annotation_orig(annotation, mode)
