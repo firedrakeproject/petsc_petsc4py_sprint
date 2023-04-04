@@ -327,7 +327,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetDof, setDof
+        petsc.PetscSectionGetDof, setDof, addDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
