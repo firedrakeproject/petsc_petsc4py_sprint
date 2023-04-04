@@ -193,12 +193,12 @@ cdef class SF(Object):
         """Set star forest graph.
 
         The number of leaves argument can be determined from the size of
-        *local* and/or *remote*.
+        ``local`` and/or ``remote``.
 
         Collective.
 
         Parameters
-        -------
+        ----------
         nroots
             Number of root vertices on the current process (these are possible
             targets for other process to attach leaves).
@@ -385,8 +385,8 @@ cdef class SF(Object):
 
         Collective.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         rootSection
             Section defined on root space.
         leafSection
