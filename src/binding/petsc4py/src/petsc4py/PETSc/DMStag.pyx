@@ -42,18 +42,17 @@ cdef class DMStag(DM):
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
-    # TODO: can someone please double check descriptions in Parameters?
     # TODO: do all See Alsos render? they didn't before
     def create(
         self,
         dim: int,
-        dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
-        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
-        boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
+        dofs: tuple[int, ...] | None = None,
+        sizes: tuple[int, ...] | None = None,
+        boundary_types: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
-        proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
-        ownership_ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]] | None = None,
+        proc_sizes: tuple[int, ...] | None = None,
+        ownership_ranges: tuple[Sequence[int], ...] | None = None,
         comm: Comm | None = None,
         setUp: bool | None = False,
     ) -> Self:
@@ -70,8 +69,8 @@ cdef class DMStag(DM):
         dim
             The number of dimensions.
         dofs
-            The number of degrees of freedom per vertex, element (1D), vertex,
-            face, element (2D), or vertex, edge, face, element (3D).
+            The number of degrees of freedom per vertex, element (1D); vertex,
+            face, element (2D); or vertex, edge, face, element (3D).
         sizes
             The number of elements in each dimension.
         boundary_types
@@ -163,7 +162,7 @@ cdef class DMStag(DM):
 
         The width value is not used when `StencilType.NONE` is specified.
 
-        Logically collective; stencilWidth must contain common value.
+        Logically collective; ``swidth`` must contain common value.
 
         Parameters
         ----------
@@ -181,7 +180,7 @@ cdef class DMStag(DM):
     def setStencilType(self, stenciltype: StencilType | str) -> None:
         """Set elementwise ghost/halo stencil type.
 
-        Logically collective; stenciltype must contain common value.
+        Logically collective; ``stenciltype`` must contain common value.
 
         Parameters
         ----------
@@ -198,7 +197,7 @@ cdef class DMStag(DM):
 
     def setBoundaryTypes(
         self,
-        boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]
+        boundary_types: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
     ) -> None:
         """Set the boundary types.
 
@@ -207,7 +206,7 @@ cdef class DMStag(DM):
         Parameters
         ----------
         boundary_types
-            Boundary types for x/y/z directions.
+            Boundary types for one/two/three directions.
 
         See Also
         --------
@@ -220,10 +219,7 @@ cdef class DMStag(DM):
         asBoundary(boundary_types, &btx, &bty, &btz)
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
-    def setDof(
-        self,
-        dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]
-    ) -> None:
+    def setDof(self, dofs: tuple[int, ...]) -> None:
         """Set dof/stratum.
 
         Logically collective; ``dofs`` must contain common values.
@@ -245,10 +241,7 @@ cdef class DMStag(DM):
         gdim = asDofs(gdofs, &dof0, &dof1, &dof2, &dof3)
         CHKERR( DMStagSetDOF(self.dm, dof0, dof1, dof2, dof3) )
 
-    def setGlobalSizes(
-        self,
-        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]
-    ) -> None:
+    def setGlobalSizes(self, sizes: tuple[int, ...]) -> None:
         """Set global element counts in each direction.
 
         Logically collective; ``sizes`` must contain common values.
@@ -256,7 +249,7 @@ cdef class DMStag(DM):
         Parameters
         ----------
         sizes
-            Global elementwise size in the x/y/z directions.
+            Global elementwise size in the one/two/three directions.
 
         See Also
         --------
@@ -268,20 +261,15 @@ cdef class DMStag(DM):
         gdim = asStagDims(gsizes, &M, &N, &P)
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
-    def setProcSizes(
-        self,
-        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]
-    ) -> None:
+    def setProcSizes(self, sizes: tuple[int, ...]) -> None:
         """Set the number of ranks in each direction in the global rank grid.
 
         Logically collective; ``sizes`` must contain common values.
 
         Parameters
         ----------
-        dm
-            The DMSTAG object.
         sizes
-            Number of ranks in the x/y/z directions.
+            Number of ranks in one/two/three directions.
 
         See Also
         --------
@@ -293,10 +281,7 @@ cdef class DMStag(DM):
         pdim = asStagDims(psizes, &m, &n, &p)
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
-    def setOwnershipRanges(
-        self,
-        ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]]
-    ) -> None:
+    def setOwnershipRanges(self, ranges: tuple[Sequence[int], ...]) -> None:
         """Set elements per rank in each direction.
 
         Logically collective; ``ranges`` must contain common values.
@@ -304,7 +289,7 @@ cdef class DMStag(DM):
         Parameters
         ----------
         ranges
-            Element counts for each rank in the x/y/z directions.
+            Element counts for each rank in one/two/three directions.
 
         See Also
         --------
@@ -321,25 +306,16 @@ cdef class DMStag(DM):
     # Getters
 
     def getDim(self) -> int:
-        """TODO.
+        """Return the number of dimensions.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
-
-        See Also
-        --------
-        ``TODO``
 
         """
         return self.getDimension()
 
     # TODO: are the dof+1, dof+2, etc. correct?
     def getEntriesPerElement(self) -> int:
-        """Return number of entries per element in the local representation.
+        """Return the number of entries per element in the local representation.
 
         This is the natural block size for most local operations. In 1D it is
         equal to ``dof[0]+dof[1]``, in 2D it is equal to
@@ -371,8 +347,8 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetStencilWidth(self.dm, &swidth) )
         return toInt(swidth)
 
-    def getDof(self) -> tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]:
-        """Get number of dof associated with each stratum of the grid.
+    def getDof(self) -> tuple[int, ...]:
+        """Get number of DOFs associated with each stratum of the grid.
 
         Not collective.
 
@@ -392,9 +368,10 @@ cdef class DMStag(DM):
 
         The returned value is calculated excluding ghost points.
 
-        The number of extra partial elements is either 1 or 0. The value is 1
-        on right, top, and front non-periodic domain (“physical”) boundaries,
-        in the x, y, and z directions respectively, and otherwise 0.
+        The number of extra partial elements is either ``1`` or ``0``. The
+        value is ``1`` on right, top, and front non-periodic domain
+        ("physical") boundaries, in the x, y, and z directions respectively,
+        and otherwise ``0``.
 
         Not collective.
 
@@ -875,11 +852,11 @@ cdef class DMStag(DM):
         return (da,davec)
 
     def getVecArray(self, Vec vec) -> None:
-        """**Not implemented.**"""
+        """**Not implemented in petsc4py.**"""
         raise NotImplementedError('getVecArray for DMStag not yet implemented in petsc4py')
 
     def get1dCoordinatecArrays(self) -> None:
-        """**Not implemented.**"""
+        """**Not implemented in petsc4py.**"""
         raise NotImplementedError('get1dCoordinatecArrays for DMStag not yet implemented in petsc4py')
 
     property dim:
@@ -888,7 +865,7 @@ cdef class DMStag(DM):
             return self.getDim()
 
     property dofs:
-        """The number of dof associated with each stratum of the grid."""
+        """The number of DOFs associated with each stratum of the grid."""
         def __get__(self) -> tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]:
             return self.getDof()
 
@@ -929,13 +906,13 @@ cdef class DMStag(DM):
 
     # TODO: fix type once determined above
     property corners:
-        """Global element indices of the local region."""
+        """The lower left corner and size of local region in each dimension."""
         def __get__(self) -> None:
             return self.getCorners()
 
     # TODO: fix type once determined above
     property ghost_corners:
-        """Global element indices of the local region, with ghost points."""
+        """The lower left corner and size of local region in each dimension."""
         def __get__(self) -> None:
             return self.getGhostCorners()
 
