@@ -147,7 +147,7 @@ cdef class Section(Object):
         Parameters
         ----------
         numFields
-            The number of fields
+            The number of fields.
 
         See Also
         --------
