@@ -58,7 +58,7 @@ class ViewerFormat(object):
     LOAD_BALANCE      = PETSC_VIEWER_LOAD_BALANCE
     FAILED            = PETSC_VIEWER_FAILED
 
-class FileMode(object):
+class ViewerFileMode(object):
     """Viewer file mode."""
     # native
     READ          = PETSC_FILE_MODE_READ
@@ -70,7 +70,7 @@ class FileMode(object):
     R, W, A, U = READ, WRITE, APPEND, UPDATE
     AU = UA    = APPEND_UPDATE
 
-class DrawSize(object):
+class ViewerDrawSize(object):
     """Window size."""
     # native
     FULL_SIZE    = PETSC_DRAW_FULL_SIZE
@@ -111,13 +111,12 @@ cdef class Viewer(Object):
 
     Type   = ViewerType
     Format = ViewerFormat
+    FileMode = ViewerFileMode
+    DrawSize = ViewerDrawSize
 
     # backward compatibility
-    Mode   = FileMode
-    Size   = DrawSize
-
-    FileMode = FileMode
-    DrawSize = DrawSize
+    Mode = ViewerFileMode
+    Size = ViewerFileMode
 
     #
 
@@ -198,7 +197,7 @@ cdef class Viewer(Object):
     def createASCII(
         self,
         name: str,
-        mode: FileMode | None = None,
+        mode: FileMode | str | None = None,
         comm: Comm | None = None,
         ) -> Self:
         """Create a viewer of type `Type.ASCII`.
@@ -237,7 +236,7 @@ cdef class Viewer(Object):
     def createBinary(
         self,
         name: str,
-        mode: FileMode | None = None,
+        mode: FileMode | str | None = None,
         comm: Comm | None = None,
         ) -> Self:
         """Create a viewer of type `Type.BINARY`.
@@ -271,7 +270,7 @@ cdef class Viewer(Object):
     def createMPIIO(
         self,
         name: str,
-        mode: FileMode | None = None,
+        mode: FileMode | str | None = None,
         comm: Comm | None = None,
         ) -> Self:
         """Create a viewer of type `Type.BINARY` supporting MPI-IO.
@@ -309,7 +308,7 @@ cdef class Viewer(Object):
     def createVTK(
         self,
         name: str,
-        mode: FileMode | None = None,
+        mode: FileMode | str | None = None,
         comm: Comm | None = None,
         ) -> Self:
         """Create a viewer of type `Type.VTK`.
@@ -346,7 +345,7 @@ cdef class Viewer(Object):
     def createHDF5(
         self,
         name: str,
-        mode: FileMode | None = None,
+        mode: FileMode | str | None = None,
         comm: Comm | None = None,
         ) -> Self:
         """Create a viewer of type `Type.HDF5`.
@@ -960,7 +959,7 @@ cdef class ViewerHDF5(Viewer):
 
 del ViewerType
 del ViewerFormat
-del FileMode
-del DrawSize
+del ViewerFileMode
+del ViewerDrawSize
 
 # --------------------------------------------------------------------
