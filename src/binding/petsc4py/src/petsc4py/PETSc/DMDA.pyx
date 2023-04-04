@@ -36,26 +36,49 @@ cdef class DMDA(DM):
         ownership_ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]] | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """
+        """Create a ``DMDA`` object.
 
-        692   PetscCall(DMDACreate(comm,&da));
-        693   PetscCall(DMSetDimension(da,dim));
-        694   PetscCall(DMDASetDof(da,dof));
-        695   PetscCall(DMDASetSizes(da,M,N,P));
-        696   PetscCall(DMDASetNumProcs(da,m,n,p));
-        697   PetscCall(DMDASetOwnershipRanges(da,lx,ly,lz));
-        698   PetscCall(DMDASetBoundaryType(da,bx,by,bz));
-        699   PetscCall(DMDASetStencilType(da,stencil_type));
-        700   PetscCall(DMDASetStencilWidth(da,stencil_width));
+        This routine performs the following steps of the C API:
+        - ``petsc.DMDACreate``
+        - ``petsc.DMSetDimension``
+        - ``petsc.DMDASetDof``
+        - ``petsc.DMDASetSizes``
+        - ``petsc.DMDASetNumProcs``
+        - ``petsc.DMDASetOwnershipRanges``
+        - ``petsc.DMDASetBoundaryType``
+        - ``petsc.DMDASetStencilType``
+        - ``petsc.DMDASetStencilWidth``
+        - ``petsc.DMSetUp`` (optionally)
 
         Parameters
         ----------
-        TODO
+        dim
+            TODO.
+        dofs
+            TODO.
+        sizes
+            TODO.
+        proc_sizes
+            TODO.
+        boundary_type
+            TODO.
+        stencil_type
+            TODO.
+        stencil_width
+            TODO.
+        setup
+            TODO.
+        ownership_ranges
+            TODO.
+        comm
             TODO.
 
         See Also
         --------
-        petsc.DMDACreateND
+        petsc.DMDACreate, petsc.DMSetDimension, petsc.DMDASetDof,
+        petsc.DMDASetSizes, petsc.DMDASetNumProcs,
+        petsc.DMDASetOwnershipRanges, petsc.DMDASetBoundaryType,
+        petsc.DMDASetStencilType, petsc.DMDASetStencilWidth, petsc.DMSetUp
 
         """
         #
@@ -238,33 +261,9 @@ cdef class DMDA(DM):
         CHKERR( DMDASetDof(self.dm, ndof) )
 
     def getDof(self) -> int:
-        """
-        getINFO
-        Gets information about a given distributed array.
-
-        Output Parameters
-        dim - dimension of the distributed array (1, 2, or 3)
-        M - global dimension in first direction of the array
-        N - global dimension in second direction of the array
-        P - global dimension in third direction of the array
-        m - corresponding number of procs in first dimension
-        n - corresponding number of procs in second dimension
-        p - corresponding number of procs in third dimension
-        dof - number of degrees of freedom per node
-        s - stencil width
-        bx - type of ghost nodes at boundary in first dimension
-        by - type of ghost nodes at boundary in second dimension
-        bz - type of ghost nodes at boundary in third dimension
-        st - stencil type, either DMDA_STENCIL_STAR or DMDA_STENCIL_BOX
-        Note
-        Use NULL (NULL_INTEGER in Fortran) in place of any output parameter that is not of interest.
+        """Return the number of degrees of freedom per node.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -316,14 +315,9 @@ cdef class DMDA(DM):
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
     def getSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """TODO
+        """Return the global dimension in first/second/third direction.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -344,7 +338,7 @@ cdef class DMDA(DM):
         return toDims(dim, M, N, P)
 
     def setProcSizes(self, proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]) -> None:
-        """Set the number of processes in each dimension
+        """Set the number of processes in each dimension.
 
         Logically collective.
 
@@ -375,14 +369,9 @@ cdef class DMDA(DM):
         CHKERR( DMDASetNumProcs(self.dm, m, n, p) )
 
     def getProcSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
-        """TODO
+        """Return the number of processes in first/second/third dimensions.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -427,7 +416,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetBoundaryType(self.dm, btx, bty, btz) )
 
     def getBoundaryType(self) -> tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]:
-        """TODO
+        """Return the type of ghost nodes at boundary in each dimensions.
 
         Not collective.
 
@@ -470,14 +459,9 @@ cdef class DMDA(DM):
         CHKERR( DMDASetStencilType(self.dm, stype) )
 
     def getStencilType(self) -> StencilType:
-        """TODO
+        """Return the stencil type.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -512,14 +496,9 @@ cdef class DMDA(DM):
         CHKERR( DMDASetStencilWidth(self.dm, swidth) )
 
     def getStencilWidth(self) -> int:
-        """TODO
+        """Return the stencil width.
 
         Not collective.
-
-        Parameters
-        ----------
-        TODO
-            TODO.
 
         See Also
         --------
@@ -561,7 +540,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetStencilWidth(self.dm, swidth) )
 
     def getStencil(self) -> tuple[StencilType, int]:
-        """TODO
+        """Return the stencil type and width.
 
         Not collective.
 
@@ -1207,51 +1186,62 @@ cdef class DMDA(DM):
     #
 
     property dim:
-        def __get__(self):
+        """The dimension."""
+        def __get__(self) -> int:
             return self.getDim()
 
     property dof:
-        def __get__(self):
+        """The number of dof associated with each stratum of the grid."""
+        def __get__(self) -> int:
             return self.getDof()
 
     property sizes:
-        def __get__(self):
+        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
             return self.getSizes()
 
     property proc_sizes:
-        def __get__(self):
+        """The number of ranks in each direction in the global decomposition."""
+        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
             return self.getProcSizes()
 
     property boundary_type:
-        def __get__(self):
+        """Boundary types in each direction."""
+        def __get__(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
             return self.getBoundaryType()
 
     property stencil:
-        def __get__(self):
+        """Stencil type and width."""
+        def __get__(self) -> tuple[StencilType, int]:
             return self.getStencil()
 
     property stencil_type:
-        def __get__(self):
+        """Elementwise ghost/halo stencil type."""
+        def __get__(self) -> str:
             return self.getStencilType()
 
     property stencil_width:
-        def __get__(self):
+        """Elementwise stencil width."""
+        def __get__(self) -> int:
             return self.getStencilWidth()
 
+    # TODO: fix type once determined above
     property ranges:
-        def __get__(self):
+        def __get__(self) -> None:
             return self.getRanges()
 
+    # TODO: fix type once determined above
     property ghost_ranges:
-        def __get__(self):
+        def __get__(self) -> None:
             return self.getGhostRanges()
 
+    # TODO: fix type once determined above
     property corners:
-        def __get__(self):
+        def __get__(self) -> None:
             return self.getCorners()
 
+    # TODO: fix type once determined above
     property ghost_corners:
-        def __get__(self):
+        def __get__(self) -> None:
             return self.getGhostCorners()
 
     # backward compatibility
