@@ -384,7 +384,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetCorners(self.dm, &x, &y, &z, &m, &n, &p, &nExtrax, &nExtray, &nExtraz) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim], (asInt(nExtrax), asInt(nExtray), asInt(nExtraz))[:<Py_ssize_t>dim]
 
-    def getGhostCorners(self) -> tuple[tuple[int...], tuple[int...]]:
+    def getGhostCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
         """Return starting element index and  width of local region.
 
         Not collective.
