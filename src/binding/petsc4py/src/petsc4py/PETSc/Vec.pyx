@@ -2579,7 +2579,7 @@ cdef class Vec(Object):
         alpha
             Scale factor.
         x
-            Input vector, must not be the current vector.
+            Input vector.
 
         See Also
         --------
