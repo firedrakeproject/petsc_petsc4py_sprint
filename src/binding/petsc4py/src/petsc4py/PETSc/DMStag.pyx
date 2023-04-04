@@ -48,11 +48,11 @@ cdef class DMStag(DM):
         self,
         dim: int,
         dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
-        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
         boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
-        proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
         ownership_ranges: tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]] | None = None,
         comm: Comm | None = None,
         setUp: bool | None = False,
@@ -247,7 +247,7 @@ cdef class DMStag(DM):
 
     def setGlobalSizes(
         self,
-        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]
+        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]
     ) -> None:
         """Set global element counts in each direction.
 
@@ -270,7 +270,7 @@ cdef class DMStag(DM):
 
     def setProcSizes(
         self,
-        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]
+        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]
     ) -> None:
         """Set the number of ranks in each direction in the global rank grid.
 
@@ -443,7 +443,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGhostCorners(self.dm, &x, &y, &z, &m, &n, &p) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
-    def getLocalSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getLocalSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return local elementwise sizes in each direction.
 
         The returned value is calculated excluding ghost points.
@@ -460,7 +460,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getGlobalSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getGlobalSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return global element counts in each direction.
 
         Not collective.
@@ -475,7 +475,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGlobalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getProcSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getProcSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return number of ranks in each direction in the global decomposition.
 
         Not collective.
@@ -539,7 +539,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetBoundaryTypes(self.dm, &btx, &bty, &btz) )
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
-    def getIsFirstRank(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getIsFirstRank(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return whether this rank is first in each direction in the rank grid.
 
         Not collective.
@@ -555,7 +555,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetIsFirstRank(self.dm, &rank0, &rank1, &rank2) )
         return toStagDims(dim, rank0, rank1, rank2)
 
-    def getIsLastRank(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getIsLastRank(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return whether this rank is last in each direction in the rank grid.
 
         Not collective.
@@ -899,17 +899,17 @@ cdef class DMStag(DM):
 
     property global_sizes:
         """Global element counts in each direction."""
-        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
             return self.getGlobalSizes()
 
     property local_sizes:
         """Local elementwise sizes in each direction."""
-        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
             return self.getLocalSizes()
 
     property proc_sizes:
         """The number of ranks in each direction in the global decomposition."""
-        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
             return self.getProcSizes()
 
     property boundary_types:
