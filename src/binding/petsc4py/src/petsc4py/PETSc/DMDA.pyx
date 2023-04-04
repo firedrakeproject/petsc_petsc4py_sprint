@@ -651,11 +651,6 @@ cdef class DMDA(DM):
         Returns the global (x,y,z) indices of the lower left corner (first
         tuple) and size of the local region (second tuple).
 
-        The corner information is independent of the number of degrees of
-        freedom per node. Thus the returned values can be thought of as
-        coordinates on a logical grid, where each grid point has (potentially)
-        several degrees of freedom.
-
         Not collective.
 
         See Also
