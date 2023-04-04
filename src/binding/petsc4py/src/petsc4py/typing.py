@@ -118,7 +118,7 @@ CSRIndicesSpec = tuple[Sequence[int], Sequence[int]]
 
 """
 
-CSRSpec = tuple[Sequence[int], Sequence[int], Sequence[float]]
+CSRSpec = tuple[Sequence[int], Sequence[int], Sequence[Scalar]]
 """CSR format specification.
 
    A 3-tuple carrying the ``(row_start, col_indices, values)`` information.

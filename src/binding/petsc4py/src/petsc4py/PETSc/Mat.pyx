@@ -2067,61 +2067,178 @@ cdef class Mat(Object):
         CHKERR( MatPermute(self.mat, row.iset, col.iset, &mat.mat) )
         return mat
 
-    def equal(self, Mat mat):
+    def equal(self, Mat mat) -> bool:
+        """Returns the result of matrix comparison.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatEqual
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatEqual(self.mat, mat.mat, &flag) )
         return toBool(flag)
 
-    def isTranspose(self, Mat mat=None, tol=0):
+    def isTranspose(self, Mat mat=None, tol: float = 0) -> bool:
+        """Returns the result of matrix comparison with transposition.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+          Matrix to compare against. Uses ``self`` if `None`.
+        tol
+          Tolerance for comparison.
+
+        See Also
+        --------
+        petsc.MatIsTranspose
+
+        """
         if mat is None: mat = self
         cdef PetscReal rval = asReal(tol)
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatIsTranspose(self.mat, mat.mat, rval, &flag) )
         return toBool(flag)
 
-    def isSymmetric(self, tol=0):
+    def isSymmetric(self, tol: float = 0) -> bool:
+        """Return the boolean indicating if the matrix is symmetric.
+
+        Collective.
+
+        Parameters
+        ----------
+        tol
+          Tolerance for comparison.
+
+        See Also
+        --------
+        petsc.MatIsSymmetric
+
+        """
         cdef PetscReal rval = asReal(tol)
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatIsSymmetric(self.mat, rval, &flag) )
         return toBool(flag)
 
-    def isSymmetricKnown(self):
+    def isSymmetricKnown(self) -> tuple[bool, bool]:
+        """Return the 2-tuple indicating if the matrix is known to be symmetric.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatIsSymmetricKnown
+
+        """
         cdef PetscBool flag1 = PETSC_FALSE
         cdef PetscBool flag2 = PETSC_FALSE
         CHKERR( MatIsSymmetricKnown(self.mat, &flag1, &flag2) )
         return (toBool(flag1), toBool(flag2))
 
-    def isHermitian(self, tol=0):
+    def isHermitian(self, tol: float = 0) -> bool:
+        """Return the boolean indicating if the matrix is Hermitian.
+
+        Collective.
+
+        Parameters
+        ----------
+        tol
+          Tolerance for comparison.
+
+        See Also
+        --------
+        petsc.MatIsHermitian
+
+        """
         cdef PetscReal rval = asReal(tol)
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatIsHermitian(self.mat, rval, &flag) )
         return toBool(flag)
 
-    def isHermitianKnown(self):
+    def isHermitianKnown(self) -> tuple[bool, bool]:
+        """Return the 2-tuple indicating if the matrix is known to be Hermitian.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatIsHermitianKnown
+
+        """
         cdef PetscBool flag1 = PETSC_FALSE
         cdef PetscBool flag2 = PETSC_FALSE
         CHKERR( MatIsHermitianKnown(self.mat, &flag1, &flag2) )
         return (toBool(flag1), toBool(flag2))
 
-    def isStructurallySymmetric(self):
+    def isStructurallySymmetric(self) -> bool:
+        """Return the boolean indicating if the matrix is structurally symmetric."""
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatIsStructurallySymmetric(self.mat, &flag) )
         return toBool(flag)
 
-    def zeroEntries(self):
+    def zeroEntries(self) -> None:
+        """Zero the entries of the matrix.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatZeroEntries
+
+        """
         CHKERR( MatZeroEntries(self.mat) )
 
-    def getValue(self, row, col):
+    def getValue(self, row, col) -> Scalar:
+        """Return the value in the (row,col) position.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatGetValues
+
+        """
         cdef PetscInt    ival1 = asInt(row)
         cdef PetscInt    ival2 = asInt(col)
         cdef PetscScalar sval  = 0
         CHKERR( MatGetValues(self.mat, 1, &ival1, 1, &ival2, &sval) )
         return toScalar(sval)
 
-    def getValues(self, rows, cols, values=None):
+    def getValues(self, rows : Sequence[int], cols : Sequence[int], values : ArrayScalar = None) -> ArrayScalar:
+        """Return the values in the ``zip(rows,cols)`` positions.
+
+        Not collective.
+
+        Parameters
+        ----------
+        rows
+          Row indices.
+        cols
+          Column indices.
+        values
+          Optional array where to store the values.
+
+        See Also
+        --------
+        petsc.MatGetValues
+
+        """
         return matgetvalues(self.mat, rows, cols, values)
 
-    def getValuesCSR(self):
+    def getValuesCSR(self) -> tuple[ArrayInt, ArrayInt, ArrayScalar]:
+        """Return the CSR representation of the local part of the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatGetRow
+
+        """
         # row ownership
         cdef PetscInt rstart=0, rend=0, nrows=0
         CHKERR( MatGetOwnershipRange(self.mat, &rstart, &rend) )
@@ -2150,7 +2267,16 @@ cdef class Mat(Object):
         #
         return (ai, aj, av)
 
-    def getRow(self, row):
+    def getRow(self, row : int) -> tuple[ArrayInt, ArrayScalar]:
+        """Return the column indices and values for the requested row.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatGetRow
+
+        """
         cdef PetscInt irow = asInt(row)
         cdef PetscInt ncols = 0
         cdef const PetscInt *icols=NULL
@@ -2605,7 +2731,19 @@ cdef class Mat(Object):
 
     #
 
-    def norm(self, norm_type=None):
+    def norm(
+        self,
+        norm_type: NormType | int | None = None,
+    ) -> float | tuple[float, float]:
+        """Compute the requested matrix norm.
+
+        Collective.
+
+        See Also
+        --------
+        NormType, petsc.MatNorm, petsc.NormType
+
+        """
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2
         cdef PetscNormType ntype = PETSC_NORM_FROBENIUS
         if norm_type is not None: ntype = norm_type
@@ -2614,29 +2752,32 @@ cdef class Mat(Object):
         if ntype != norm_1_2: return toReal(rval[0])
         else: return (toReal(rval[0]), toReal(rval[1]))
 
-    def scale(self, alpha):
+    def scale(self, alpha: Scalar) -> None:
+        """Scale the matrix."""
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( MatScale(self.mat, sval) )
 
-    def shift(self, alpha):
+    def shift(self, alpha: Scalar) -> None:
+        """Shift the matrix."""
         cdef PetscScalar sval = asScalar(alpha)
         CHKERR( MatShift(self.mat, sval) )
 
-    def chop(self, tol):
+    def chop(self, tol: float) -> None:
+        """Set entries smallest of tol (in absolute values) to zero."""
         cdef PetscReal rval = asReal(tol)
         CHKERR( MatChop(self.mat, rval) )
 
-    def setRandom(self, Random random=None):
+    def setRandom(self, Random random=None) -> None:
         cdef PetscRandom rnd = NULL
         if random is not None: rnd = random.rnd
         CHKERR( MatSetRandom(self.mat, rnd) )
 
-    def axpy(self, alpha, Mat X, structure=None):
+    def axpy(self, alpha, Mat X, structure=None) -> None:
         cdef PetscScalar sval = asScalar(alpha)
         cdef PetscMatStructure flag = matstructure(structure)
         CHKERR( MatAXPY(self.mat, sval, X.mat, flag) )
 
-    def aypx(self, alpha, Mat X, structure=None):
+    def aypx(self, alpha, Mat X, structure=None) -> None:
         cdef PetscScalar sval = asScalar(alpha)
         cdef PetscMatStructure flag = matstructure(structure)
         CHKERR( MatAYPX(self.mat, sval, X.mat, flag) )
