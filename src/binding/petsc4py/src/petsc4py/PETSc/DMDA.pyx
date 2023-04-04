@@ -26,7 +26,7 @@ cdef class DMDA(DM):
     def create(
         self,
         dim: int | None = None,
-        dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
+        dof: int | None = None,
         sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
         proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
         boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
@@ -54,7 +54,7 @@ cdef class DMDA(DM):
         ----------
         dim
             TODO.
-        dofs
+        dof
             TODO.
         sizes
             TODO.
@@ -1085,8 +1085,8 @@ cdef class DMDA(DM):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
-    # TODO: or just int?
-    def getInterpolationType(self) -> int64:
+    # TODO: or just int64/long?
+    def getInterpolationType(self) -> int:
         """Return the type of interpolation that will be used by DMCreateInterpolation()
 
         Output Parameter
