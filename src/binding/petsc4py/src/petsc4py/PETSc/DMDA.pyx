@@ -645,7 +645,7 @@ cdef class DMDA(DM):
         return ((toInt(x), toInt(y), toInt(z))[:<Py_ssize_t>dim],
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
-    def getGhostCorners(self) -> tuple[()] | tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
+    def getGhostCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
         """Return the lower left corner and the size of the local region in each dimension, including ghost points.
 
         Returns the global (x,y,z) indices of the lower left corner (first
