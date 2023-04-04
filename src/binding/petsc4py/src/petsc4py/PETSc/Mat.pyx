@@ -3709,33 +3709,129 @@ cdef class Mat(Object):
         CHKERR( MatBoundToCPU(self.mat, &flg) )
         return toBool(flg)
 
-    # FIXME REMOVE: NATHAN FROM HERE ON
-
     # XXX factorization
 
-    def getOrdering(self, ord_type):
+    def getOrdering(self, ord_type: OrderingType) -> tuple[IS, IS]:
+        """Return a reordering for a matrix to improve a LU factorization.
+
+        Collective.
+
+        Parameters
+        ----------
+        ord_type
+            The type of reordering.
+
+        Returns
+        -------
+        rp: IS
+            The row permutation indices
+        cp: IS
+            The column permutation indices
+
+        See Also
+        --------
+        petsc.MatGetOrdering
+
+        """
         cdef PetscMatOrderingType cval = NULL
         ord_type = str2bytes(ord_type, &cval)
         cdef IS rp = IS(), cp = IS()
         CHKERR( MatGetOrdering(self.mat, cval, &rp.iset, &cp.iset) )
         return (rp, cp)
 
-    def reorderForNonzeroDiagonal(self, IS isrow, IS iscol, atol=0):
+    def reorderForNonzeroDiagonal(
+        self,
+        IS isrow,
+        IS iscol,
+        atol: float = 0
+        ) -> None:
+        """Change a matrix ordering to remove zeros from the diagonal.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrow
+            The row reordering.
+        iscol
+            The column reordering.
+        atol
+            The absolute tolerance. Values along the diagonal whose absolute value
+            are smaller than this tolerance are moved off the diagonal.
+
+        See Also
+        --------
+        getOrdering, petsc.MatReorderForNonzeroDiagonal
+
+        """
         cdef PetscReal rval = asReal(atol)
         cdef PetscIS rp = isrow.iset, cp = iscol.iset
         CHKERR( MatReorderForNonzeroDiagonal(self.mat, rval, rp, cp) )
 
-    def factorLU(self, IS isrow, IS iscol, options=None):
+    def factorLU(
+        self,
+        IS isrow,
+        IS iscol,
+        options: dict[str, Any] | None = None
+        ) -> None:
+        """Perform an in-place LU factorization.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrow
+            The row permutation.
+        iscol
+            The column permutation.
+        options
+            An optional dictionary of options for the factorization. These include
+            ``fill``, the expected fill as a ratio of the original fill and
+            ``dtcol``, the pivot tolerance where ``0`` indicates no pivot and ``1``
+            indicates full column pivoting.
+
+        See Also
+        --------
+        petsc.MatLUFactor
+
+        """
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_FALSE, PETSC_FALSE, options, &info)
         CHKERR( MatLUFactor(self.mat, isrow.iset, iscol.iset, &info) )
+
     def factorSymbolicLU(self, Mat mat, IS isrow, IS iscol, options=None):
         <void>self; <void>mat; <void>isrow; <void>iscol; <void>options; # unused
         raise NotImplementedError
     def factorNumericLU(self, Mat mat, options=None):
         <void>self; <void>mat; <void>options; # unused
         raise NotImplementedError
-    def factorILU(self, IS isrow, IS iscol, options=None):
+    def factorILU(
+        self,
+        IS isrow,
+        IS iscol,
+        options: dict[str, Any] | None = None
+        ) -> None:
+        """Perform an in-place ILU factorization.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrow
+            The row permutation.
+        iscol
+            The column permutation.
+        options
+            An optional dictionary of options for the factorization. These include
+            ``levels``, the number of levels of fill, ``fill``, the expected fill
+            as a ratio of the original fill, and ``dtcol``, the pivot tolerance
+            where ``0`` indicates no pivot and ``1`` indicates full column pivoting.
+
+        See Also
+        --------
+        petsc.MatILUFactor
+
+        """
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_TRUE, PETSC_FALSE, options, &info)
         CHKERR( MatILUFactor(self.mat, isrow.iset, iscol.iset, &info) )
@@ -3743,7 +3839,28 @@ cdef class Mat(Object):
         <void>self; <void>isrow; <void>iscol; <void>options; # unused
         raise NotImplementedError
 
-    def factorCholesky(self, IS isperm, options=None):
+    def factorCholesky(
+        self,
+        IS isperm,
+        options: dict[str, Any] | None = None
+        ) -> None:
+        """Perform an in-place Cholesky factorization.
+
+        Collective.
+
+        Parameters
+        ----------
+        isperm
+            The row and column permutations
+        options
+            An optional dictionary of options for the factorization. These include
+            ``fill``, the expected fill as a ratio of the original fill.
+
+        See Also
+        --------
+        factorLU, petsc.MatCholeskyFactor
+
+        """
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_FALSE, PETSC_TRUE, options, &info)
         CHKERR( MatCholeskyFactor(self.mat, isperm.iset, &info) )
@@ -3753,7 +3870,28 @@ cdef class Mat(Object):
     def factorNumericCholesky(self, Mat mat, options=None):
         <void>self; <void>mat; <void>options; # unused
         raise NotImplementedError
-    def factorICC(self, IS isperm, options=None):
+    def factorICC(
+        self,
+        IS isperm,
+        options: dict[str, Any] | None = None
+        ) -> None:
+        """Perform an in-place an incomplete Cholesky factorization.
+
+        Collective.
+
+        Parameters
+        ----------
+        isperm
+            The row and column permutations
+        options
+            An optional dictionary of options for the factorization. These include
+            ``fill``, the expected fill as a ratio of the original fill.
+
+        See Also
+        --------
+        factorILU, petsc.MatICCFactor
+
+        """
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_TRUE, PETSC_TRUE, options, &info)
         CHKERR( MatICCFactor(self.mat, isperm.iset, &info) )
@@ -3761,33 +3899,128 @@ cdef class Mat(Object):
         <void>self; <void>isperm; <void>options; # unused
         raise NotImplementedError
 
-    def getInertia(self):
+    def getInertia(self) -> tuple[int, int, int]:
+        """Return the inertia from a factored matrix.
+
+        Collective. The matrix must have been factored by calling `factorCholesky`.
+
+        Returns
+        -------
+        ival1: int
+            The number of negative eigenvalues.
+        ival2: int
+            The number of zero eigenvalues.
+        ival3: int
+            The number of positive eigenvalues.
+
+        See Also
+        --------
+        petsc.MatGetInertia
+
+        """
         cdef PetscInt ival1 = 0, ival2 = 0, ival3 = 0
         CHKERR( MatGetInertia(self.mat, &ival1, &ival2, &ival3) )
         return (toInt(ival1), toInt(ival2), toInt(ival3))
 
-    def setUnfactored(self):
+    def setUnfactored(self) -> None:
+        """Set a factored matrix to be treated as unfactored.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc.MatSetUnfactored
+
+        """
         CHKERR( MatSetUnfactored(self.mat) )
 
     # IS
 
-    def fixISLocalEmpty(self, fix):
+    def fixISLocalEmpty(self, fix: bool) -> None:
+        """Compress out zero local rows from the local matrices.
+
+        Collective.
+
+        Parameters
+        ----------
+        fix
+            When `True`, new local matrices and local to global maps are generated
+            during the final assembly process.
+
+        See Also
+        --------
+        petsc.MatISFixLocalEmpty
+
+        """
         cdef PetscBool cfix = asBool(fix)
         CHKERR( MatISFixLocalEmpty(self.mat, cfix) )
 
-    def getISLocalMat(self):
+    def getISLocalMat(self) -> Mat:
+        """Return the local matrix stored inside a `Type.IS` matrix.
+
+        See Also
+        --------
+        petsc.MatISGetLocalMat
+
+        """
         cdef Mat local = Mat()
         CHKERR( MatISGetLocalMat(self.mat, &local.mat) )
         PetscINCREF(local.obj)
         return local
 
-    def restoreISLocalMat(self, Mat local not None):
+    def restoreISLocalMat(self, Mat local not None) -> None:
+        """Restore the local matrix obtained with `getISLocalMat`.
+
+        Parameters
+        ----------
+        local
+            The local matrix.
+
+        See Also
+        --------
+        petsc.MatISRestoreLocalMat
+
+        """
         CHKERR( MatISRestoreLocalMat(self.mat, &local.mat) )
 
-    def setISLocalMat(self, Mat local not None):
+    def setISLocalMat(self, Mat local not None) -> None:
+        """Set the local matrix stored inside a `Type.IS`.
+
+        Parameters
+        ----------
+        local
+            The local matrix.
+
+        See Also
+        --------
+        petsc.MatISSetLocalMat
+
+        """
         CHKERR( MatISSetLocalMat(self.mat, local.mat) )
 
-    def setISPreallocation(self, nnz, onnz):
+    def setISPreallocation(
+        self,
+        nnz: Sequence[int],
+        onnz: Sequence[int]
+        ) -> Self:
+        """Preallocate memory for a `Type.IS` parallel matrix.
+
+        Parameters
+        ----------
+        nnz
+            The sequence whose length corresponds to the number of local rows
+            and values which represent the number of nonzeros in the various
+            rows of the *diagonal* of the local submatrix.
+        onnz:
+            The sequence whose length corresponds to the number of local rows
+            and values which represent the number of nonzeros in the various
+            rows of the *off diagonal* of the local submatrix.
+
+        See Also
+        --------
+        petsc.MatISSetPreallocation
+
+        """
         cdef PetscInt *cnnz = NULL
         cdef PetscInt *connz = NULL
         nnz = iarray_i(nnz, NULL, &cnnz)
@@ -3797,7 +4030,27 @@ cdef class Mat(Object):
 
     # LRC
 
-    def getLRCMats(self):
+    def getLRCMats(self) -> tuple[Mat, Mat, Vec, Mat]:
+        """Return the constituents of a LRC matrix.
+
+        Collective.
+
+        Returns
+        -------
+        A
+            The (sparse) matrix.
+        U
+            The first dense rectangle (tall and skinny) matrix.
+        c
+            The sequential vector containing the diagonal of ``C``.
+        V
+            The second dense rectangle (tall and skinny) matrix.
+
+        See Also
+        --------
+        Type.LRC, petsc.MatLRCGetMats
+
+        """
         cdef Mat A = Mat()
         cdef Mat U = Mat()
         cdef Vec c = Vec()
@@ -3811,16 +4064,52 @@ cdef class Mat(Object):
 
     # H2Opus
 
-    def H2OpusOrthogonalize(self):
+    def H2OpusOrthogonalize(self) -> Self:
+        """Orthogonalize the basis tree of a hierarchical matrix.
+
+        See Also
+        --------
+        petsc.MatH2OpusOrthogonalize
+
+        """
         CHKERR( MatH2OpusOrthogonalize(self.mat) )
         return self
 
-    def H2OpusCompress(self, tol):
+    def H2OpusCompress(self, tol: float):
+        """Compress a hierachical matrix.
+
+        Parameters
+        ----------
+        tol
+            The absolute truncation threshold.
+
+        See Also
+        --------
+        petsc.MatH2OpusCompress
+
+        """
         cdef PetscReal _tol = asReal(tol)
         CHKERR( MatH2OpusCompress(self.mat, _tol) )
         return self
 
-    def H2OpusLowRankUpdate(self, Mat U, Mat V=None, s = 1.0):
+    def H2OpusLowRankUpdate(self, Mat U, Mat V=None, s: float = 1.0):
+        """Perform a low-rank update of the form A = A + sUVᵀ.
+
+        Parameters
+        ----------
+        U
+            The dense low-rank update matrix
+        V
+            The optional dense low-rank update matrix. If left `None`, then
+            ``U`` is used.
+        s
+            The scaling factor.
+
+        See Also
+        --------
+        petsc.MatH2OpusLowRankUpdate
+
+        """
         cdef PetscScalar _s = asScalar(s)
         cdef PetscMat vmat = NULL
         if V is not None:
@@ -3830,47 +4119,153 @@ cdef class Mat(Object):
 
     # MUMPS
 
-    def setMumpsIcntl(self, icntl, ival):
+    def setMumpsIcntl(self, icntl: int, ival: int) -> None:
+        """Set a MUMPS parameter, ICNTL[icntl] = ival.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        icntl
+            The index of the MUMPS parameter array.
+        ival
+            The value to set
+
+        See Also
+        --------
+        petsc_options, petsc.MatMumpsSetIcntl
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscInt _ival = asInt(ival)
         CHKERR( MatMumpsSetIcntl(self.mat, _icntl, _ival) );
 
-    def getMumpsIcntl(self, icntl):
+    def getMumpsIcntl(self, icntl: int) -> int:
+        """Return the MUMPS parameter, ICNTL[icntl].
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc_options, petsc.MatMumpsGetIcntl
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscInt ival = 0
         CHKERR( MatMumpsGetIcntl(self.mat, _icntl, &ival) );
         return toInt(ival)
 
-    def setMumpsCntl(self, icntl, val):
+    def setMumpsCntl(self, icntl: int, val: float):
+        """Set a MUMPS parameter, CNTL[icntl] = val.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        icntl
+            The index of the MUMPS parameter array.
+        val
+            The value to set
+
+        See Also
+        --------
+        petsc_options, petsc.MatMumpsSetCntl
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscReal _val = asReal(val)
         CHKERR( MatMumpsSetCntl(self.mat, _icntl, _val) );
 
-    def getMumpsCntl(self, icntl):
+    def getMumpsCntl(self, icntl: int) -> float:
+        """Return the MUMPS parameter, CNTL[icntl].
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc_options, petsc.MatMumpsGetCntl
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscReal val = 0
         CHKERR( MatMumpsGetCntl(self.mat, _icntl, &val) );
         return toReal(val)
 
-    def getMumpsInfo(self, icntl):
+    def getMumpsInfo(self, icntl: int) -> int:
+        """Return the MUMPS parameter, INFO[icntl].
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        icntl
+            The index of the MUMPS INFO array.
+
+        See Also
+        --------
+        petsc.MatMumpsGetInfo
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscInt ival = 0
         CHKERR( MatMumpsGetInfo(self.mat, _icntl, &ival) );
         return toInt(ival)
 
-    def getMumpsInfog(self, icntl):
+    def getMumpsInfog(self, icntl: int) -> int:
+        """Return the MUMPS parameter, INFOG[icntl].
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        icntl
+            The index of the MUMPS INFOG array.
+
+        See Also
+        --------
+        petsc.MatMumpsGetInfog
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscInt ival = 0
         CHKERR( MatMumpsGetInfog(self.mat, _icntl, &ival) );
         return toInt(ival)
 
-    def getMumpsRinfo(self, icntl):
+    def getMumpsRinfo(self, icntl: int) -> float:
+        """Return the MUMPS parameter, RINFO[icntl].
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        icntl
+            The index of the MUMPS RINFO array.
+
+        See Also
+        --------
+        petsc.MatMumpsGetRinfo
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscReal val = 0
         CHKERR( MatMumpsGetRinfo(self.mat, _icntl, &val) );
         return toReal(val)
 
-    def getMumpsRinfog(self, icntl):
+    def getMumpsRinfog(self, icntl: int) -> float:
+        """Return the MUMPS parameter, RINFOG[icntl].
+
+        Logically Collective.
+
+        Parameters
+        ----------
+        icntl
+            The index of the MUMPS RINFOG array.
+
+        See Also
+        --------
+        petsc.MatMumpsGetRinfog
+
+        """
         cdef PetscInt _icntl = asInt(icntl)
         cdef PetscReal val = 0
         CHKERR( MatMumpsGetRinfog(self.mat, _icntl, &val) );
@@ -4241,15 +4636,25 @@ cdef class Mat(Object):
 
     # MatIS
 
-    def getISLocalMat(self):
-        cdef Mat localmat = type(self)()
-        CHKERR( MatISGetLocalMat(self.mat, &localmat.mat) )
-        PetscINCREF(localmat.obj)
-        return localmat
+    # FIX: Duplicate function, already exists above
+    #def getISLocalMat(self) -> Mat:
+    #    cdef Mat localmat = type(self)()
+    #    CHKERR( MatISGetLocalMat(self.mat, &localmat.mat) )
+    #    PetscINCREF(localmat.obj)
+    #    return localmat
 
     # DM
 
-    def getDM(self):
+    def getDM(self) -> DM:
+        """Return the DM defining the data layout of the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatGetDM
+
+        """
         cdef PetscDM newdm = NULL
         CHKERR( MatGetDM(self.mat, &newdm) )
         cdef DM dm = subtype_DM(newdm)()
@@ -4257,7 +4662,21 @@ cdef class Mat(Object):
         PetscINCREF(dm.obj)
         return dm
 
-    def setDM(self, DM dm):
+    def setDM(self, DM dm) -> None:
+        """Set the DM defining the data layout of the matrix.
+
+        Not collective.
+
+        Parameters
+        ----------
+        dm
+            The `DM`
+
+        See Also
+        --------
+        petsc.MatSetDM
+
+        """
         CHKERR( MatSetDM(self.mat, dm.dm) )
 
     # backward compatibility
@@ -4391,7 +4810,13 @@ cdef class Mat(Object):
 # --------------------------------------------------------------------
 
 cdef class NullSpace(Object):
+    """Object which removes a null space from a vector.
 
+    See Also
+    --------
+    petsc.MatNullSpace
+
+    """
     #
 
     def __cinit__(self):
@@ -4403,16 +4828,62 @@ cdef class NullSpace(Object):
 
     #
 
-    def view(self, Viewer viewer=None):
+    def view(self, Viewer viewer=None) -> None:
+        """View the null space.
+
+        Collective.
+
+        Parameters
+        ----------
+        viewer
+          A `Viewer` instance or `None` for the default viewer.
+
+        See Also
+        --------
+        Viewer, petsc.MatNullSpaceView
+
+        """
         cdef PetscViewer vwr = NULL
         if viewer is not None: vwr = viewer.vwr
         CHKERR( MatNullSpaceView(self.nsp, vwr) )
 
-    def destroy(self):
+    def destroy(self) -> Self:
+        """Destroy the null space.
+
+        Collective.
+
+        See Also
+        --------
+        create, petsc.MatNullSpaceDestroy
+
+        """
         CHKERR( MatNullSpaceDestroy(&self.nsp) )
         return self
 
-    def create(self, constant=False, vectors=(),  comm=None):
+    def create(
+        self,
+        constant: bool = False,
+        vectors: Sequence[Vec] = (),
+        comm=None
+        ) -> Self:
+        """Create the null space.
+
+        Collective.
+
+        Parameters
+        ----------
+        constant
+            A flag to indicate the null space contains the constant vector.
+        vectors
+            The sequence of vectors that span the null space, excluding the constant vector.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        destroy, petsc.MatNullSpaceCreate
+
+        """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscBool has_const = PETSC_FALSE
         if constant: has_const = PETSC_TRUE
@@ -4426,13 +4897,27 @@ cdef class NullSpace(Object):
         PetscCLEAR(self.obj); self.nsp = newnsp
         return self
 
-    def createRigidBody(self, Vec coords):
+    def createRigidBody(self, Vec coords) -> Self:
+        """Create rigid body modes from coordinates.
+
+        Parameters
+        ----------
+        coords
+            The block coordinates of each node. This requires the block size to have been set.
+
+        See Also
+        --------
+        petsc.MatNullSpaceCreateRigidBody
+
+        """
         cdef PetscNullSpace newnsp = NULL
         CHKERR( MatNullSpaceCreateRigidBody(coords.vec, &newnsp) )
         PetscCLEAR(self.obj); self.nsp = newnsp
         return self
 
     def setFunction(self, function, args=None, kargs=None):
+        """FIX: Could not sort out what to do with the type of function
+        """
         if function is not None:
             CHKERR( MatNullSpaceSetFunction(
                     self.nsp, NullSpace_Function, NULL) )
@@ -4444,12 +4929,28 @@ cdef class NullSpace(Object):
             self.set_attr('__function__', None)
     #
 
-    def hasConstant(self):
+    def hasConstant(self) -> bool:
+        """Return whether the null space contains the constant.
+
+        See Also
+        --------
+        petsc.MatNullSpaceGetVecs
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatNullSpaceGetVecs(self.nsp, &flag, NULL, NULL) )
         return toBool(flag)
 
-    def getVecs(self):
+    def getVecs(self) -> list[Vec]:
+        """Return the vectors defining the null space.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatNullSpaceGetVecs
+
+        """
         cdef PetscInt i = 0, nv = 0
         cdef const PetscVec *v = NULL
         CHKERR( MatNullSpaceGetVecs(self.nsp, NULL, &nv, &v) )
@@ -4463,14 +4964,43 @@ cdef class NullSpace(Object):
         return vectors
 
     def getFunction(self):
+        """FIX: Return the function. """
         return self.get_attr('__function__')
 
     #
 
-    def remove(self, Vec vec):
+    def remove(self, Vec vec) -> None:
+        """Remove all components of a null space from a vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        vec
+            The vector from which the null space is removed.
+
+        See Also
+        --------
+        petsc.MatNullSpaceRemove
+
+        """
         CHKERR( MatNullSpaceRemove(self.nsp, vec.vec) )
 
-    def test(self, Mat mat):
+    def test(self, Mat mat) -> bool:
+        """Return if the claimed null space is valid for a matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat
+            The matrix to check.
+
+        See Also
+        --------
+        petsc.MatNullSpaceTest
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatNullSpaceTest(self.nsp, mat.mat, &flag) )
         return toBool(flag)
