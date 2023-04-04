@@ -2466,7 +2466,6 @@ cdef class Mat(Object):
         result
             The resultant matrix C, can be `None`.
 
-
         Returns
         -------
         result: Mat
@@ -2493,7 +2492,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         flg
-            Bind to the CPU if ``True``
+            Bind to the CPU if `True`.
 
         See also
         --------
