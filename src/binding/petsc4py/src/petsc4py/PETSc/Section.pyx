@@ -100,7 +100,7 @@ cdef class Section(Object):
     def setUp(self) -> None:
         """Calculate offsets.
 
-        Offsets are based  on the number of degrees of freedom for each point.
+        Offsets are based on the number of degrees of freedom for each point.
 
         Not collective.
 
