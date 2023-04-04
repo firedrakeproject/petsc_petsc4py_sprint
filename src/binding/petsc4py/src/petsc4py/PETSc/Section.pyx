@@ -668,7 +668,7 @@ cdef class Section(Object):
         self,
         point: int,
         field: int,
-        indices: Sequence[int]
+        indices: Sequence[int],
     ) -> None:
         """Set the field dof numbers, in [0, fdof), which are constrained.
 
