@@ -23,7 +23,6 @@ cdef class DMDA(DM):
 
     #
 
-    # TODO: please verify
     def create(
         self,
         dim: int | None = None,
