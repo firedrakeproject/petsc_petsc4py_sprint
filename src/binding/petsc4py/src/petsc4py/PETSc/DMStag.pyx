@@ -42,7 +42,6 @@ cdef class DMStag(DM):
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
-    # TODO: do all See Alsos render? they didn't before
     def create(
         self,
         dim: int,
