@@ -2412,8 +2412,22 @@ cdef class TS(Object):
 
     # --- Python ---
 
-    def createPython(self, context=None, comm=None) -> Self:
-        """
+    def createPython(self, context: Any = None, comm: Comm | None = None) -> Self:
+        """Create an integrator of Python type.
+
+        Collective.
+
+        Parameters
+        ----------
+        context
+          An instance of the Python class implementing the required methods.
+        comm
+          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc_python_ts, setType, setPythonContext, Type.PYTHON
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscTS newts = NULL
@@ -2423,28 +2437,56 @@ cdef class TS(Object):
         CHKERR( TSPythonSetContext(self.ts, <void*>context) )
         return self
 
-    def setPythonContext(self, context) -> None:
-        """
+    def setPythonContext(self, context: Any) -> None:
+        """Set the instance of the Python class implementing the required Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_ts, getPythonContext
+
         """
         CHKERR( TSPythonSetContext(self.ts, <void*>context) )
 
     def getPythonContext(self) -> Any:
-        """
+        """Return the instance of the Python class implementing the required Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_ts, setPythonContext
+
         """
         cdef void *context = NULL
         CHKERR( TSPythonGetContext(self.ts, &context) )
         if context == NULL: return None
         else: return <object> context
 
-    def setPythonType(self, py_type) -> None:
-        """
+    def setPythonType(self, py_type: str) -> None:
+        """Set the fully qualified Python name of the class to be used.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_python_ts, setPythonContext, getPythonType, petsc.TSPythonSetType
+
         """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
         CHKERR( TSPythonSetType(self.ts, cval) )
 
     def getPythonType(self) -> str:
-        """
+        """Return the fully qualified Python name of the class used by the solver.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_ts, setPythonContext, setPythonType, petsc.TSPythonGetType
+
         """
         cdef const char *cval = NULL
         CHKERR( TSPythonGetType(self.ts, &cval) )

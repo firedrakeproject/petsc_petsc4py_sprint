@@ -326,7 +326,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_options, Mat.load, petsc.MatView
+        petsc_options, load, petsc.MatView
 
         """
         cdef PetscViewer vwr = NULL
@@ -340,7 +340,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.create, petsc.MatDestroy
+        create, petsc.MatDestroy
 
         """
         CHKERR( MatDestroy(&self.mat) )
@@ -349,10 +349,10 @@ cdef class Mat(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create the matrix.
 
-        Once created, the user should call `Mat.setType` or
-        `Mat.setFromOptions` before using the matrix. Alternatively, specific
-        creation routines can be used such as `Mat.createAIJ` or
-        `Mat.createBAIJ` can be used.
+        Once created, the user should call `setType` or
+        `setFromOptions` before using the matrix. Alternatively, specific
+        creation routines can be used such as `createAIJ` or
+        `createBAIJ` can be used.
 
         Collective.
 
@@ -363,7 +363,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        Mat.destroy, petsc.MatCreate
+        destroy, petsc.MatCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -372,7 +372,7 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def setType(self, mat_type: Mat.Type | str) -> None:
+    def setType(self, mat_type: Type | str) -> None:
         """Set the matrix type.
 
         Collective.
@@ -384,12 +384,12 @@ cdef class Mat(Object):
 
         Notes
         -----
-        `Mat.setFromOptions` can be used instead to set the type using the
-        options database. For more information see `petsc_options`.
+        `setFromOptions` can be used instead to set the type using the
+        options database.
 
         See Also
         --------
-        Mat.setFromOptions, Mat.create, petsc.MatSetType
+        petsc_options, setFromOptions, create, petsc.MatSetType
 
         """
         cdef PetscMatType cval = NULL
@@ -1347,7 +1347,26 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createPython(self, size, context=None, comm=None):
+    def createPython(self, size: MatSizeType, context: Any = None, comm: Comm | None = None) -> Self:
+        """Create a matrix of Python type.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+          `int` or nested `tuple` of `int` describing the matrix size.
+          See `Sys.splitOwnership` for more information.
+        context
+          An instance of the Python class implementing the required methods.
+        comm
+          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc_python_mat, setType, setPythonContext, Type.PYTHON
+
+        """
         # communicator and sizes
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscInt rbs = 0, cbs = 0, m = 0, n = 0, M = 0, N = 0
@@ -1363,21 +1382,57 @@ cdef class Mat(Object):
         CHKERR( MatPythonSetContext(self.mat, <void*>context) )
         return self
 
-    def setPythonContext(self, context):
+    def setPythonContext(self, context: Any) -> None:
+        """Set the instance of the Python class implementing the required Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_mat, getPythonContext
+
+        """
         CHKERR( MatPythonSetContext(self.mat, <void*>context) )
 
-    def getPythonContext(self):
+    def getPythonContext(self) -> Any:
+        """Return the instance of the Python class implementing the required Python methods.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_mat, setPythonContext
+
+        """
         cdef void *context = NULL
         CHKERR( MatPythonGetContext(self.mat, &context) )
         if context == NULL: return None
         else: return <object> context
 
-    def setPythonType(self, py_type):
+    def setPythonType(self, py_type: str) -> None:
+        """Set the fully qualified Python name of the class to be used.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_python_mat, setPythonContext, getPythonType, petsc.MatPythonSetType
+
+        """
         cdef const char *cval = NULL
         py_type = str2bytes(py_type, &cval)
         CHKERR( MatPythonSetType(self.mat, cval) )
 
-    def getPythonType(self):
+    def getPythonType(self) -> str:
+        """Return the fully qualified Python name of the class used by the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_python_mat, setPythonContext, setPythonType, petsc.MatPythonGetType
+
+        """
         cdef const char *cval = NULL
         CHKERR( MatPythonGetType(self.mat, &cval) )
         return bytes2str(cval)
@@ -2245,7 +2300,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatMatTransposeMult
+        petsc.MatMatTransposeMult, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
@@ -2293,7 +2348,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatTransposeMatMult
+        petsc.MatTransposeMatMult, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
@@ -2345,7 +2400,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatPtAP
+        petsc.MatPtAP, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
@@ -2393,7 +2448,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatRARt
+        petsc.MatRARt, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
@@ -2439,7 +2494,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatMatMatMult
+        petsc.MatMatMatMult, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
@@ -2464,7 +2519,9 @@ cdef class Mat(Object):
         mat
             The right hand matrix B.
         result
-            The resultant matrix C, can be `None`.
+            The optional resultant matrix. When `None`, a new matrix
+            is created, and ``MAT_INITIAL_MATRIX`` is used. When it is
+            not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
 
         Returns
         -------
@@ -2473,7 +2530,7 @@ cdef class Mat(Object):
 
         See also
         --------
-        petsc.MatSeqAIJKron
+        petsc.MatSeqAIJKron, petsc.MatReuse
 
         """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX

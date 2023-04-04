@@ -787,7 +787,7 @@ cdef class PC(Object):
         CHKERR( PCPythonSetType(self.pc, cval) )
 
     def getPythonType(self) -> str:
-        """Return the fully qualified Python name of the class used by the `PC`.
+        """Return the fully qualified Python name of the class used by the preconditioner.
 
         Not collective.
 

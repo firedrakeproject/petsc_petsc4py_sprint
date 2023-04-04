@@ -1988,10 +1988,10 @@ cdef class KSP(Object):
 
     def createPython(
         self,
-        context: Any | None = None,
+        context: Any = None,
         comm: Comm | None = None
     ) -> Self:
-        """Create an solver of Python type.
+        """Create a linear solver of Python type.
 
         Collective.
 
@@ -2029,7 +2029,7 @@ cdef class KSP(Object):
         """
         CHKERR( KSPPythonSetContext(self.ksp, <void*>context) )
 
-    def getPythonContext(self) -> Any | None:
+    def getPythonContext(self) -> Any:
         """Return the instance of the Python class implementing Python methods.
 
         Not collective.
@@ -2052,7 +2052,7 @@ cdef class KSP(Object):
         See Also
         --------
         petsc_python_ksp, setPythonContext, getPythonType,
-        petsc.TaoPythonSetType
+        petsc.KSPPythonSetType
 
         """
         cdef const char *cval = NULL
@@ -2067,7 +2067,7 @@ cdef class KSP(Object):
         See Also
         --------
         petsc_python_ksp, setPythonContext, setPythonType,
-        petsc.TaoPythonGetType
+        petsc.KSPPythonGetType
 
         """
         cdef const char *cval = NULL
