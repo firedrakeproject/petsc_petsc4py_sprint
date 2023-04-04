@@ -61,7 +61,7 @@ cdef class Section(Object):
         if the vector being indexed is a local vector, we call the section a
         local section. If the section indexes a global vector, we call it a
         global section. For parallel vectors, like global vectors, we use
-        negative indices to indicate dofs owned by other processes.
+        negative indices to indicate DOFs owned by other processes.
 
         Collective.
 
@@ -344,7 +344,7 @@ cdef class Section(Object):
         point
             The point.
         numDof
-            The number of dof.
+            The number of DOFs.
 
         See Also
         --------
@@ -365,7 +365,7 @@ cdef class Section(Object):
         point
             The point.
         numDof
-            The number of additional dof.
+            The number of additional DOFs.
 
         See Also
         --------
@@ -377,7 +377,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddDof(self.sec,cpoint,cnumDof) )
 
     def getFieldDof(self, point: int, field: int) -> int:
-        """Return the number of dof associated with a field on a given point.
+        """Return the number of DOFs associated with a field on a given point.
 
         Not collective.
 
@@ -399,7 +399,7 @@ cdef class Section(Object):
         return toInt(cnumDof)
 
     def setFieldDof(self, point: int, field: int, numDof: int) -> None:
-        """Set the number of dof associated with a field on a given point.
+        """Set the number of DOFs associated with a field on a given point.
 
         Not collective.
 
@@ -410,7 +410,7 @@ cdef class Section(Object):
         field
             The field.
         numDof
-            The number of dof.
+            The number of DOFs.
 
         See Also
         --------
@@ -423,7 +423,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldDof(self.sec,cpoint,cfield,cnumDof) )
 
     def addFieldDof(self, point: int, field: int, numDof: int) -> None:
-        """Add ``numDof`` dof associated with a field on a given point.
+        """Add ``numDof`` DOFs associated with a field on a given point.
 
         Not collective.
 
@@ -434,7 +434,7 @@ cdef class Section(Object):
         field
             The field.
         numDof
-            The number of additional dof.
+            The number of additional DOFs.
 
         See Also
         --------
@@ -447,7 +447,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddFieldDof(self.sec,cpoint,cfield,cnumDof) )
 
     def getConstraintDof(self, point: int) -> int:
-        """Return the number of constrained dof associated with a given point.
+        """Return the number of constrained DOFs associated with a given point.
 
         Not collective.
 
@@ -466,7 +466,7 @@ cdef class Section(Object):
         return toInt(cnumDof)
 
     def setConstraintDof(self, point: int, numDof: int) -> None:
-        """Set the number of constrained dof associated with a given point.
+        """Set the number of constrained DOFs associated with a given point.
 
         Not collective.
 
@@ -475,7 +475,7 @@ cdef class Section(Object):
         point
             The point.
         numDof
-            The number of dof which are fixed by constraints.
+            The number of DOFs which are fixed by constraints.
 
         See Also
         --------
@@ -487,7 +487,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetConstraintDof(self.sec,cpoint,cnumDof) )
 
     def addConstraintDof(self, point: int, numDof: int) -> None:
-        """Increment the number of constrained dof for a given point.
+        """Increment the number of constrained DOFs for a given point.
 
         Not collective.
 
@@ -496,7 +496,7 @@ cdef class Section(Object):
         point
             The point.
         numDof
-            The number of additional dof which are fixed by constraints.
+            The number of additional DOFs which are fixed by constraints.
 
         See Also
         --------
@@ -508,7 +508,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddConstraintDof(self.sec,cpoint,cnumDof) )
 
     def getFieldConstraintDof(self, point: int, field: int) -> int:
-        """Return the number of constrained dof for a given field on a point.
+        """Return the number of constrained DOFs for a given field on a point.
 
         Not collective.
 
@@ -535,7 +535,7 @@ cdef class Section(Object):
         field: int,
         numDof: int,
     ) -> None:
-        """Set the number of constrained dof for a given field on a point.
+        """Set the number of constrained DOFs for a given field on a point.
 
         Not collective.
 
@@ -546,7 +546,7 @@ cdef class Section(Object):
         field
             The field.
         numDof
-            The number of dof which are fixed by constraints.
+            The number of DOFs which are fixed by constraints.
 
         See Also
         --------
@@ -565,7 +565,7 @@ cdef class Section(Object):
         field: int,
         numDof: int,
     ) -> None:
-        """Add ``numDof`` constrained dof for a given field on a point.
+        """Add ``numDof`` constrained DOFs for a given field on a point.
 
         Not collective.
 
@@ -576,7 +576,7 @@ cdef class Section(Object):
         field
             The field.
         numDof
-            The number of additional dof which are fixed by constraints.
+            The number of additional DOFs which are fixed by constraints.
 
         See Also
         --------
@@ -590,9 +590,9 @@ cdef class Section(Object):
         CHKERR( PetscSectionAddFieldConstraintDof(self.sec,cpoint,cfield,cnumDof) )
 
     def getConstraintIndices(self, point: int) -> ArrayInt:
-        """Return the point dof numbers which are constrained for a given point.
+        """Return the point DOFs numbers which are constrained for a given point.
 
-        The range is in [0, dof).
+        The range is in [0, DOFs).
 
         Not collective.
 
@@ -614,7 +614,7 @@ cdef class Section(Object):
         return array_i(nindex, indices)
 
     def setConstraintIndices(self, point: int, indices: Sequence[int]) -> None:
-        """Set the point dof numbers, in [0, dof), which are constrained.
+        """Set the point DOFs numbers, in [0, DOFs), which are constrained.
 
         Not collective.
 
@@ -623,7 +623,7 @@ cdef class Section(Object):
         point
             The point.
         indices
-            The constrained dofs.
+            The constrained DOFs.
 
         See Also
         --------
@@ -638,9 +638,9 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetConstraintIndices(self.sec,cpoint,cindices) )
 
     def getFieldConstraintIndices(self, point: int, field: int) -> ArrayInt:
-        """Return the field dof numbers, in [0, fdof), which are constrained.
+        """Return the field DOFs numbers, in [0, DOFs), which are constrained.
 
-        The constrained dofs are sorted in ascending order.
+        The constrained DOFs are sorted in ascending order.
 
         Not collective.
 
@@ -670,7 +670,7 @@ cdef class Section(Object):
         field: int,
         indices: Sequence[int],
     ) -> None:
-        """Set the field dof numbers, in [0, fdof), which are constrained.
+        """Set the field DOFs numbers, in [0, DOFs), which are constrained.
 
         Not collective.
 
@@ -681,7 +681,7 @@ cdef class Section(Object):
         field
             The field number.
         indices
-            The constrained dofs.
+            The constrained DOFs.
 
         See Also
         --------
@@ -697,7 +697,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetFieldConstraintIndices(self.sec,cpoint,cfield,cindices) )
 
     def getMaxDof(self) -> int:
-        """Return the maximum number of dof on any point in the section.
+        """Return the maximum number of DOFs for any point in the section.
 
         Not collective.
 
@@ -711,7 +711,7 @@ cdef class Section(Object):
         return toInt(maxDof)
 
     def getStorageSize(self) -> int:
-        """Return the size capable of holding all the dof defined in a section.
+        """Return the size capable of holding all the DOFs defined in a section.
 
         Not collective.
 
@@ -725,7 +725,7 @@ cdef class Section(Object):
         return toInt(size)
 
     def getConstrainedStorageSize(self) -> int:
-        """Return the size capable of holding all unconstrained dof in a section.
+        """Return the size capable of holding all unconstrained DOFs in a section.
 
         Not collective.
 
@@ -739,7 +739,7 @@ cdef class Section(Object):
         return toInt(size)
 
     def getOffset(self, point: int) -> int:
-        """Return the offset for the dof associated with the given point.
+        """Return the offset for the DOFs associated with the given point.
 
         In a global section, this offset will be negative for points not owned
         by this process.
@@ -761,7 +761,7 @@ cdef class Section(Object):
         return toInt(offset)
 
     def setOffset(self, point: int, offset: int) -> None:
-        """Set the offset for the dof associated with the given point.
+        """Set the offset for the DOFs associated with the given point.
 
         The user usually does not call this function, but uses `setUp`.
 
@@ -784,7 +784,7 @@ cdef class Section(Object):
         CHKERR( PetscSectionSetOffset(self.sec,cpoint,coffset) )
 
     def getFieldOffset(self, point: int, field: int) -> int:
-        """Return the offset for the field dof on the given point.
+        """Return the offset for the field DOFs on the given point.
 
         In a global section, this offset will be negative for points not owned
         by this process.
@@ -810,7 +810,7 @@ cdef class Section(Object):
         return toInt(offset)
 
     def setFieldOffset(self, point: int, field: int, offset: int) -> None:
-        """Set the offset for the dof on the given field at a point.
+        """Set the offset for the DOFs on the given field at a point.
 
         The user usually does not call this function, but uses `setUp`.
 
