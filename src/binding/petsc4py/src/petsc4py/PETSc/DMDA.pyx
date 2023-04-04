@@ -398,12 +398,12 @@ cdef class DMDA(DM):
     ) -> None:
         """Set the type of ghost nodes on domain boundaries.
 
+        Not collective.
+
         Parameters
         ----------
         bx
-            bx,by,bz is one of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
-
-        Not collective.
+            bx, by, bz is one of DM_BOUNDARY_NONE, DM_BOUNDARY_GHOSTED, DM_BOUNDARY_PERIODIC
 
         See Also
         --------
@@ -486,7 +486,8 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        width - The stencil width
+        width
+            The stencil width.
 
         See Also
         --------
@@ -772,10 +773,6 @@ cdef class DMDA(DM):
         TODO
             TODO.
 
-        See Also
-        --------
-        petsc._DMDA_Vec_array
-
         """
         return _DMDA_Vec_array(self, vec)
 
@@ -1059,7 +1056,8 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        ctype - DMDA_Q1 and DMDA_Q0 are currently the only supported forms.
+        ctype
+            DMDA_Q1 and DMDA_Q0 are currently the only supported forms.
 
         See Also
         --------
