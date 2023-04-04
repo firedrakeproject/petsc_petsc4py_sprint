@@ -874,7 +874,7 @@ cdef class DMStag(DM):
             return self.getBoundaryTypes()
 
     property stencil_type:
-        """Elementwise ghost/halo stencil type."""
+        """Stencil type."""
         def __get__(self) -> str:
             return self.getStencilType()
 
