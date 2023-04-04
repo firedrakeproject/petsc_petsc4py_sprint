@@ -1,6 +1,13 @@
 # --------------------------------------------------------------------
 
 class MatType(object):
+    """Matrix type.
+
+    See Also
+    --------
+    petsc.MatType
+
+    """
     SAME            = S_(MATSAME)
     MAIJ            = S_(MATMAIJ)
     SEQMAIJ         = S_(MATSEQMAIJ)
@@ -86,6 +93,13 @@ class MatType(object):
     H2OPUS           = S_(MATH2OPUS)
 
 class MatOption(object):
+    """Matrix option.
+
+    See Also
+    --------
+    petsc.MatOption
+
+    """
     OPTION_MIN                  = MAT_OPTION_MIN
     UNUSED_NONZERO_LOCATION_ERR = MAT_UNUSED_NONZERO_LOCATION_ERR
     ROW_ORIENTED                = MAT_ROW_ORIENTED
@@ -115,6 +129,13 @@ class MatOption(object):
     OPTION_MAX                  = MAT_OPTION_MAX
 
 class MatAssemblyType(object):
+    """Matrix assembly type.
+
+    See Also
+    --------
+    petsc.MatAssemblyType
+
+    """
     # native
     FINAL_ASSEMBLY = MAT_FINAL_ASSEMBLY
     FLUSH_ASSEMBLY = MAT_FLUSH_ASSEMBLY
@@ -123,11 +144,19 @@ class MatAssemblyType(object):
     FLUSH = FLUSH_ASSEMBLY
 
 class MatInfoType(object):
+    """Matrix info type."""
     LOCAL = MAT_LOCAL
     GLOBAL_MAX = MAT_GLOBAL_MAX
     GLOBAL_SUM = MAT_GLOBAL_SUM
 
 class MatStructure(object):
+    """Matrix modification structure.
+
+    See Also
+    --------
+    petsc.MatStructure
+
+    """
     # native
     SAME_NONZERO_PATTERN      = MAT_SAME_NONZERO_PATTERN
     DIFFERENT_NONZERO_PATTERN = MAT_DIFFERENT_NONZERO_PATTERN
@@ -140,11 +169,25 @@ class MatStructure(object):
     UNKNOWN   = UNKNOWN_NZ   = UNKNOWN_NONZERO_PATTERN
 
 class MatDuplicateOption(object):
+    """Matrix duplicate option.
+
+    See Also
+    --------
+    petsc.MatDuplicateOption
+
+    """
     DO_NOT_COPY_VALUES    = MAT_DO_NOT_COPY_VALUES
     COPY_VALUES           = MAT_COPY_VALUES
     SHARE_NONZERO_PATTERN = MAT_SHARE_NONZERO_PATTERN
 
 class MatOrderingType(object):
+    """Factored matrix ordering type.
+
+    See Also
+    --------
+    petsc.MatOrderingType
+
+    """
     NATURAL     = S_(MATORDERINGNATURAL)
     ND          = S_(MATORDERINGND)
     OWD         = S_(MATORDERING1WD)
@@ -157,6 +200,13 @@ class MatOrderingType(object):
     METISND     = S_(MATORDERINGMETISND)
 
 class MatSolverType(object):
+    """Factored matrix solver type.
+
+    See Also
+    --------
+    petsc.MatSolverType
+
+    """
     SUPERLU         = S_(MATSOLVERSUPERLU)
     SUPERLU_DIST    = S_(MATSOLVERSUPERLU_DIST)
     STRUMPACK       = S_(MATSOLVERSTRUMPACK)
@@ -180,6 +230,13 @@ class MatSolverType(object):
     SPQR            = S_(MATSOLVERSPQR)
 
 class MatFactorShiftType(object):
+    """Factored matrix shift type.
+
+    See Also
+    --------
+    petsc.MatFactorShiftType
+
+    """
     # native
     NONE              = MAT_SHIFT_NONE
     NONZERO           = MAT_SHIFT_NONZERO
@@ -190,6 +247,13 @@ class MatFactorShiftType(object):
     PD = MAT_SHIFT_POSITIVE_DEFINITE
 
 class MatSORType(object):
+    """Matrix SOR type.
+
+    See Also
+    --------
+    petsc.MatSORType
+
+    """
     FORWARD_SWEEP         = SOR_FORWARD_SWEEP
     BACKWARD_SWEEP        = SOR_BACKWARD_SWEEP
     SYMMETRY_SWEEP        = SOR_SYMMETRIC_SWEEP
