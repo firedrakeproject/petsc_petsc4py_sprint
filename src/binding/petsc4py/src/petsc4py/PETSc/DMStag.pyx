@@ -189,7 +189,7 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagSetStencilType
+        getStencilType, petsc.DMStagSetStencilType
 
         """
         cdef PetscDMStagStencilType stype = asStagStencil(stenciltype)
@@ -210,7 +210,7 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagSetBoundaryTypes
+        getBoundaryTypes, petsc.DMStagSetBoundaryTypes
 
         """
         cdef PetscDMBoundaryType btx = DM_BOUNDARY_NONE
@@ -293,7 +293,7 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagSetOwnershipRanges
+        getOwnershipRanges, petsc.DMStagSetOwnershipRanges
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -362,9 +362,8 @@ cdef class DMStag(DM):
         CHKERR( DMGetDimension(self.dm, &dim) )
         return toDofs(dim+1,dof0,dof1,dof2,dof3)
 
-    # TODO: I need help deciphering this type.
-    def getCorners(self):
-        """Return global element indices of the local region.
+    def getCorners(self) -> tuple[tuple[int...], tuple[int...], tuple[int...]]:
+        """Return starting element index, width and number of partial elements.
 
         The returned value is calculated excluding ghost points.
 
@@ -375,20 +374,9 @@ cdef class DMStag(DM):
 
         Not collective.
 
-        ? Output Parameters
-        ? x          starting element index in first direction
-        ? y          starting element index in second direction
-        ? z          starting element index in third direction
-        ? m          element width in first direction
-        ? n          element width in second direction
-        ? p          element width in third direction
-        ? nExtrax    number of extra partial elements in first direction
-        ? nExtray    number of extra partial elements in second direction
-        ? nExtraz    number of extra partial elements in third direction
-
         See Also
         --------
-        petsc.DMStagGetCorners, petsc.DMGetDimension
+        getGhostCorners, petsc.DMStagGetCorners, petsc.DMGetDimension
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0, nExtrax=0, nExtray=0, nExtraz=0
@@ -396,23 +384,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetCorners(self.dm, &x, &y, &z, &m, &n, &p, &nExtrax, &nExtray, &nExtraz) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim], (asInt(nExtrax), asInt(nExtray), asInt(nExtraz))[:<Py_ssize_t>dim]
 
-    # TODO: I need help deciphering this type.
-    def getGhostCorners(self):
-        """Return global element indices of the local region, with ghost points.
+    def getGhostCorners(self) -> tuple[tuple[int...], tuple[int...]]:
+        """Return starting element index and  width of local region.
 
         Not collective.
 
-        ? Output Parameters
-        ? x    the starting element index in the first direction
-        ? y    the starting element index in the second direction
-        ? z    the starting element index in the third direction
-        ? m    the element width in the first direction
-        ? n    the element width in the second direction
-        ? p    the element width in the third direction
-
         See Also
         --------
-        petsc.DMStagGetGhostCorners
+        getCorners, petsc.DMStagGetGhostCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -420,7 +399,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGhostCorners(self.dm, &x, &y, &z, &m, &n, &p) )
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
-    def getLocalSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getLocalSizes(self) -> tuple[int, ...]:
         """Return local elementwise sizes in each direction.
 
         The returned value is calculated excluding ghost points.
@@ -429,7 +408,7 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagGetLocalSizes
+        getGlobalSizes, petsc.DMStagGetLocalSizes
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -437,14 +416,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetLocalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getGlobalSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getGlobalSizes(self) -> tuple[int, ...]:
         """Return global element counts in each direction.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMStagGetGlobalSizes
+        getLocalSizes, petsc.DMStagGetGlobalSizes
 
         """
         cdef PetscInt dim=0, m=PETSC_DECIDE, n=PETSC_DECIDE, p=PETSC_DECIDE
@@ -452,8 +431,8 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetGlobalSizes(self.dm, &m, &n, &p) )
         return toStagDims(dim, m, n, p)
 
-    def getProcSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
-        """Return number of ranks in each direction in the global decomposition.
+    def getProcSizes(self) -> tuple[int, ...]:
+        """Return number of ranks in each direction.
 
         Not collective.
 
@@ -474,21 +453,21 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagGetStencilType
+        setStencilType, petsc.DMStagGetStencilType
 
         """
         cdef PetscDMStagStencilType stype = DMSTAG_STENCIL_BOX
         CHKERR( DMStagGetStencilType(self.dm, &stype) )
         return toStagStencil(stype)
 
-    def getOwnershipRanges(self) -> tuple[ArrayInt] | tuple[ArrayInt, ArrayInt] | tuple[ArrayInt, ArrayInt, ArrayInt]:
+    def getOwnershipRanges(self) -> tuple[Sequence[int], ...]:
         """Return elements per rank in each direction.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMStagGetOwnershipRanges
+        setOwnershipRanges, petsc.DMStagGetOwnershipRanges
 
         """
         cdef PetscInt dim=0, m=0, n=0, p=0
@@ -498,14 +477,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetOwnershipRanges(self.dm, &lx, &ly, &lz) )
         return toStagOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
-    def getBoundaryTypes(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
+    def getBoundaryTypes(self) -> tuple[str, ...]:
         """Return boundary types in each direction.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMStagGetBoundaryTypes
+        setBoundaryTypes, petsc.DMStagGetBoundaryTypes
 
         """
         cdef PetscInt dim=0
@@ -516,7 +495,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetBoundaryTypes(self.dm, &btx, &bty, &btz) )
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
-    def getIsFirstRank(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getIsFirstRank(self) -> tuple[int, ...]:
         """Return whether this rank is first in each direction in the rank grid.
 
         Not collective.
@@ -532,7 +511,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagGetIsFirstRank(self.dm, &rank0, &rank1, &rank2) )
         return toStagDims(dim, rank0, rank1, rank2)
 
-    def getIsLastRank(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+    def getIsLastRank(self) -> tuple[int, ...]:
         """Return whether this rank is last in each direction in the rank grid.
 
         Not collective.
@@ -600,7 +579,7 @@ cdef class DMStag(DM):
     ) -> None:
         """Create uniform coordinates, as a product of 1D arrays.
 
-        The per-dimension 1-dimensional DMSTAG objects that comprise the
+        The per-dimension 1-dimensional `DMStag` objects that comprise the
         product always have active 0-cells (vertices, element boundaries) and
         1-cells (element centers).
 
@@ -671,6 +650,7 @@ cdef class DMStag(DM):
 
         See Also
         --------
+        setUniformCoordinatesExplicit, setUniformCoordinatesProduct
         petsc.DMStagSetUniformCoordinates
 
         """
@@ -687,7 +667,7 @@ cdef class DMStag(DM):
         Parameters
         ----------
         dmtype
-            The type for coordinates.
+            The type to store coordinates.
 
         See Also
         --------
@@ -744,7 +724,7 @@ cdef class DMStag(DM):
         return toInt(slot)
 
     def getLocationDof(self, loc: StencilLocation) -> int:
-        """Return number of dof associated with a given point in the grid.
+        """Return number of DOFs associated with a given point on the grid.
 
         Not collective.
 
@@ -789,14 +769,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagMigrateVec(self.dm, vec.vec, dmTo.dm, vecTo.vec ) )
 
     def createCompatibleDMStag(self, dofs) -> DM:
-        """Create a compatible ``DMStag`` with different dof/stratum.
+        """Create a compatible ``DMStag`` with different DOFs/stratum.
 
         Collective.
 
         Parameters
         ----------
         dofs
-            The number of dof on the strata  in the new DMSTAG.
+            The number of DOFs on the strata in the new `DMStag`.
 
         See Also
         --------
@@ -818,9 +798,9 @@ cdef class DMStag(DM):
         loc: StencilLocation,
         c: int,
     ) -> tuple[DMDA, Vec]:
-        """Return a ``DMDA``, ``Vec`` from a subgrid of a ``DMStag``, its ``Vec``.
+        """Return ``DMDA``, ``Vec`` from a subgrid of a ``DMStag``, its ``Vec``.
 
-        If a ``c`` value of ``-k`` is provided, the first ``k`` dof for that
+        If a ``c`` value of ``-k`` is provided, the first ``k`` DOFs for that
         position are extracted, padding with zero values if needed. If a
         non-negative value is provided, a single DOF is extracted.
 
@@ -829,7 +809,7 @@ cdef class DMStag(DM):
         Parameters
         ----------
         vec
-            ``Vec`` object.
+            The ``Vec`` object.
         loc
             Which subgrid to extract.
         c
@@ -866,7 +846,7 @@ cdef class DMStag(DM):
 
     property dofs:
         """The number of DOFs associated with each stratum of the grid."""
-        def __get__(self) -> tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getDof()
 
     property entries_per_element:
@@ -876,22 +856,22 @@ cdef class DMStag(DM):
 
     property global_sizes:
         """Global element counts in each direction."""
-        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getGlobalSizes()
 
     property local_sizes:
         """Local elementwise sizes in each direction."""
-        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getLocalSizes()
 
     property proc_sizes:
         """The number of ranks in each direction in the global decomposition."""
-        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
     property boundary_types:
         """Boundary types in each direction."""
-        def __get__(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
+        def __get__(self) -> tuple[str, ...]:
             return self.getBoundaryTypes()
 
     property stencil_type:
@@ -907,13 +887,13 @@ cdef class DMStag(DM):
     # TODO: fix type once determined above
     property corners:
         """The lower left corner and size of local region in each dimension."""
-        def __get__(self) -> None:
+        def __get__(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
             return self.getCorners()
 
     # TODO: fix type once determined above
     property ghost_corners:
         """The lower left corner and size of local region in each dimension."""
-        def __get__(self) -> None:
+        def __get__(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
             return self.getGhostCorners()
 
 
