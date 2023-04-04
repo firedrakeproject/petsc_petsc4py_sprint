@@ -30,6 +30,10 @@ cdef CSRIndicesSpec
 cdef CSRSpec
 cdef NNZSpec
 
+# --- MatNullSpace ---
+
+cdef MatNullFunction
+
 # --- DM ---
 
 cdef DMCoarsenHookFunction

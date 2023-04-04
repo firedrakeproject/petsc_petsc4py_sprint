@@ -14,6 +14,7 @@ from .PETSc import (
     InsertMode,
     Vec,
     Mat,
+    NullSpace,
     KSP,
     SNES,
     TS,
@@ -34,6 +35,7 @@ __all__ = [
     "CSRIndicesSpec",
     "CSRSpec",
     "NNZSpec",
+    "MatNullFunction",
     "DMCoarsenHookFunction",
     "DMRestrictHookFunction",
     "KSPRHSFunction",
@@ -169,6 +171,11 @@ NNZSpec = int | Sequence[int] | tuple[Sequence[int], Sequence[int]]
    petsc.MatSeqAIJSetPreallocation, petsc.MatMPIAIJSetPreallocation
 
 """
+
+# --- MatNullSpace ---
+
+MatNullFunction = Callable[[NullSpace, Vec], None]
+"""`PETSc.NullSpace` callback."""
 
 # --- DM ---
 

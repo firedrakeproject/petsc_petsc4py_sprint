@@ -4634,15 +4634,6 @@ cdef class Mat(Object):
         PetscINCREF(submat.obj)
         return submat
 
-    # MatIS
-
-    # FIX: Duplicate function, already exists above
-    #def getISLocalMat(self) -> Mat:
-    #    cdef Mat localmat = type(self)()
-    #    CHKERR( MatISGetLocalMat(self.mat, &localmat.mat) )
-    #    PetscINCREF(localmat.obj)
-    #    return localmat
-
     # DM
 
     def getDM(self) -> DM:
@@ -4915,8 +4906,29 @@ cdef class NullSpace(Object):
         PetscCLEAR(self.obj); self.nsp = newnsp
         return self
 
-    def setFunction(self, function, args=None, kargs=None):
-        """FIX: Could not sort out what to do with the type of function
+    def setFunction(
+        self,
+        function: MatNullFunction,
+        args: tuple[Any, ...] | None = None,
+        kargs: dict[str, Any] | None = None,
+        ) -> None:
+        """Set the callback to remove the nullspace.
+
+        Logically collective.
+
+        Parameters
+        ----------
+        function
+          The callback.
+        args
+          Positional arguments for the callback.
+        kargs
+          Keyword arguments for the callback.
+
+        See Also
+        --------
+        getFunction, petsc.MatNullSpaceSetFunction
+
         """
         if function is not None:
             CHKERR( MatNullSpaceSetFunction(
@@ -4963,8 +4975,16 @@ cdef class NullSpace(Object):
             vectors.append(vec)
         return vectors
 
-    def getFunction(self):
-        """FIX: Return the function. """
+    def getFunction(self) -> MatNullFunction:
+        """Return the callback to remove the nullspace.
+
+        Not collective.
+
+        See Also
+        --------
+        setFunction
+
+        """
         return self.get_attr('__function__')
 
     #
