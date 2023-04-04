@@ -86,7 +86,7 @@ cdef class Log:
         Parameters
         ----------
         viewer : None, optional
-            Viewer instance. If ``None`` then will default to an instance of `Viewer.Type.ASCII`.
+            Viewer instance. If `None` then will default to an instance of `Viewer.Type.ASCII`.
 
         See Also
         --------
