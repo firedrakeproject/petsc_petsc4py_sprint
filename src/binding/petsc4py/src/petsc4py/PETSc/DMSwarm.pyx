@@ -72,7 +72,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmCreateGlobalVectorFromField, destroyGlobalVectorFromField
+        destroyGlobalVectorFromField, petsc.DMSwarmCreateGlobalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -93,7 +93,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmDestroyGlobalVectorFromField, createGlobalVectorFromField
+        createGlobalVectorFromField, petsc.DMSwarmDestroyGlobalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -116,7 +116,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmCreateLocalVectorFromField, destroyLocalVectorFromField
+        destroyLocalVectorFromField, petsc.DMSwarmCreateLocalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -137,7 +137,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmDestroyLocalVectorFromField, createLocalVectorFromField
+        createLocalVectorFromField, petsc.DMSwarmDestroyLocalVectorFromField
 
         """
         cdef const char *cfieldname = NULL
@@ -154,7 +154,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmInitializeFieldRegister, finalizeFieldRegister
+        finalizeFieldRegister, petsc.DMSwarmInitializeFieldRegister
 
         """
         CHKERR( DMSwarmInitializeFieldRegister(self.dm) )
@@ -166,7 +166,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmFinalizeFieldRegister, initializeFieldRegister
+        initializeFieldRegister, petsc.DMSwarmFinalizeFieldRegister
 
         """
         CHKERR( DMSwarmFinalizeFieldRegister(self.dm) )
@@ -247,7 +247,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmGetField, restoreField
+        restoreField, petsc.DMSwarmGetField
 
         """
         cdef const char *cfieldname = NULL
@@ -279,7 +279,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmRestoreField, getField
+        getField, petsc.DMSwarmRestoreField
 
         """
         cdef const char *cfieldname = NULL
@@ -445,7 +445,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmCollectViewCreate, collectViewDestroy
+        collectViewDestroy, petsc.DMSwarmCollectViewCreate
 
         """
         CHKERR( DMSwarmCollectViewCreate(self.dm) )
@@ -457,7 +457,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmCollectViewDestroy, collectViewCreate
+        collectViewCreate, petsc.DMSwarmCollectViewDestroy
 
         """
         CHKERR( DMSwarmCollectViewDestroy(self.dm) )
@@ -474,7 +474,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmSetCellDM, getCellDM
+        getCellDM, petsc.DMSwarmSetCellDM
 
         """
         CHKERR( DMSwarmSetCellDM(self.dm, dm.dm) )
@@ -486,7 +486,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmGetCellDM, setCellDM
+        setCellDM, petsc.DMSwarmGetCellDM
 
         """
         cdef PetscDM newdm = NULL
@@ -706,7 +706,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmSortGetAccess, sortRestoreAccess
+        sortRestoreAccess, petsc.DMSwarmSortGetAccess
 
         """
         CHKERR( DMSwarmSortGetAccess(self.dm) )
@@ -718,7 +718,7 @@ cdef class DMSwarm(DM):
 
         See Also
         --------
-        petsc.DMSwarmSortRestoreAccess, sortGetAccess
+        sortGetAccess, petsc.DMSwarmSortRestoreAccess
 
         """
         CHKERR( DMSwarmSortRestoreAccess(self.dm) )

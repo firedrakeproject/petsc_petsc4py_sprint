@@ -530,7 +530,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc.VecCreateSeqViennaCLWithArrays, petsc.VecCreateMPIViennaCLWithArrays
+        petsc.VecCreateSeqViennaCLWithArrays
+        petsc.VecCreateMPIViennaCLWithArrays
 
         """
         cdef PetscInt na=0
@@ -865,8 +866,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createGhostWithArray
-        petsc.VecCreateGhost, petsc.VecCreateGhostBlock
+        Vec.createGhostWithArray, petsc.VecCreateGhost
+        petsc.VecCreateGhostBlock
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -914,8 +915,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createGhost
-        petsc.VecCreateGhostWithArray, petsc.VecCreateGhostBlockWithArray
+        Vec.createGhost, petsc.VecCreateGhostWithArray
+        petsc.VecCreateGhostBlockWithArray
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -1077,8 +1078,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc_options
-        Vec.getOptionsPrefix, Vec.setOptionsPrefix
+        petsc_options, Vec.getOptionsPrefix, Vec.setOptionsPrefix
         petsc.VecAppendOptionsPrefix
 
         """
@@ -1189,8 +1189,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getSize, Vec.getLocalSize
-        petsc.VecGetLocalSize, petsc.VecGetSize
+        Vec.getSize, Vec.getLocalSize, petsc.VecGetLocalSize, petsc.VecGetSize
 
         """
         cdef PetscInt n = 0, N = 0
@@ -1658,8 +1657,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.restoreHIPHandle, petsc.VecHIPGetArray
-        petsc.VecHIPGetArrayRead, petsc.VecHIPGetArrayWrite
+        Vec.restoreHIPHandle, petsc.VecHIPGetArray, petsc.VecHIPGetArrayRead
+        petsc.VecHIPGetArrayWrite
 
         """
         cdef PetscScalar *hdl = NULL
@@ -3552,6 +3551,7 @@ cdef class Vec(Object):
         --------
         Vec.createGhost, Vec.ghostUpdateBegin, Vec.ghostUpdateEnd
         petsc.VecGhostGetLocalForm, petsc.VecGhostRestoreLocalForm
+
         """
         return _Vec_LocalForm(self)
 

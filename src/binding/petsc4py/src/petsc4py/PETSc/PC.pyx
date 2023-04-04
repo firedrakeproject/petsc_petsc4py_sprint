@@ -1310,7 +1310,7 @@ cdef class PC(Object):
 
         See Also
         --------
-        petsc.PCFactorSetMatOrderingType,
+        petsc.PCFactorSetMatOrderingType
         petsc.PCFactorReorderForNonzeroDiagonal, petsc.PCFactorSetReuseOrdering
 
         """

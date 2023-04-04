@@ -127,7 +127,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelSetValue, getValue, setDefaultValue
+        getValue, setDefaultValue, petsc.DMLabelSetValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -150,7 +150,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGetValue, setValue, setDefaultValue
+        setValue, setDefaultValue, petsc.DMLabelGetValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -168,7 +168,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGetDefaultValue, setDefaultValue
+        setDefaultValue, petsc.DMLabelGetDefaultValue
 
         """
         cdef PetscInt cvalue = 0
@@ -190,7 +190,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelSetDefaultValue, getDefaultValue
+        getDefaultValue, petsc.DMLabelSetDefaultValue
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -227,7 +227,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelAddStratum, addStrata, addStrataIS
+        addStrata, addStrataIS, petsc.DMLabelAddStratum
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -245,7 +245,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelAddStrata, addStrataIS, addStratum
+        addStrataIS, addStratum, petsc.DMLabelAddStrata
 
         """
         cdef PetscInt *istrata = NULL
@@ -265,7 +265,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelAddStrataIS, addStrata, addStratum
+        addStrata, addStratum, petsc.DMLabelAddStrataIS
 
         """
         CHKERR( DMLabelAddStrataIS(self.dmlabel, iset.iset) )
@@ -373,7 +373,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGetStratumIS, setStratumIS
+        setStratumIS, petsc.DMLabelGetStratumIS
 
         """
         cdef PetscInt cstratum = asInt(stratum)
@@ -395,7 +395,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelSetStratumIS, getStratumIS
+        getStratumIS, petsc.DMLabelSetStratumIS
 
         """
         cdef PetscInt cstratum = asInt(stratum)
@@ -447,7 +447,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelCreateIndex, destroyIndex
+        destroyIndex, petsc.DMLabelCreateIndex
 
         """
         cdef PetscInt cpstart = asInt(pStart), cpend = asInt(pEnd)
@@ -460,7 +460,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelDestroyIndex, createIndex
+        createIndex, petsc.DMLabelDestroyIndex
 
         """
         CHKERR( DMLabelDestroyIndex(self.dmlabel) )
@@ -477,7 +477,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelHasValue, hasPoint
+        hasPoint, petsc.DMLabelHasValue
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -499,7 +499,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelHasPoint, hasValue
+        hasValue, petsc.DMLabelHasPoint
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -574,7 +574,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelDistribute, gather
+        gather, petsc.DMLabelDistribute
 
         """
         cdef DMLabel new = DMLabel()
@@ -595,7 +595,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGather, distribute
+        distribute, petsc.DMLabelGather
 
         """
         cdef DMLabel new = DMLabel()

@@ -123,7 +123,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFSetFromOptions, petsc_options
+        petsc_options, petsc.PetscSFSetFromOptions
 
         """
         CHKERR( PetscSFSetFromOptions(self.sf) )
@@ -455,7 +455,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFBcastBegin, bcastEnd
+        bcastEnd, petsc.PetscSFBcastBegin
 
         """
 
@@ -482,7 +482,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFBcastEnd, bcastBegin
+        bcastBegin, petsc.PetscSFBcastEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -510,7 +510,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFReduceBegin, reduceEnd
+        reduceEnd, petsc.PetscSFReduceBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -536,7 +536,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFReduceEnd, reduceBegin
+        reduceBegin, petsc.PetscSFReduceEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -563,7 +563,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFScatterBegin, scatterEnd
+        scatterEnd, petsc.PetscSFScatterBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -586,7 +586,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFScatterEnd, scatterBegin
+        scatterBegin, petsc.PetscSFScatterEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -612,7 +612,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFGatherBegin, gatherEnd
+        gatherEnd, petsc.PetscSFGatherBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -636,7 +636,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFGatherEnd, gatherBegin
+        gatherBegin, petsc.PetscSFGatherEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -670,7 +670,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFFetchAndOpBegin, fetchAndOpEnd
+        fetchAndOpEnd, petsc.PetscSFFetchAndOpBegin
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
@@ -701,7 +701,7 @@ cdef class SF(Object):
 
         See Also
         --------
-        petsc.PetscSFFetchAndOpEnd, fetchAndOpBegin
+        fetchAndOpBegin, petsc.PetscSFFetchAndOpEnd
 
         """
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)

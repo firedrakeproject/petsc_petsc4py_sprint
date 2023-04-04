@@ -115,7 +115,7 @@ cdef class Partitioner(Object):
 
         See Also
         --------
-        petsc.PetscPartitionerSetFromOptions, petsc_options
+        petsc_options, petsc.PetscPartitionerSetFromOptions
 
         """
         CHKERR( PetscPartitionerSetFromOptions(self.part) )

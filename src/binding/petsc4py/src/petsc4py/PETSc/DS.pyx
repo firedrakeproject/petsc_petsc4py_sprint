@@ -42,7 +42,7 @@ cdef class DS(Object):
 
         See Also
         --------
-        petsc.PetscDSDestroy, create
+        create, petsc.PetscDSDestroy
 
         """
         CHKERR( PetscDSDestroy(&self.ds) )
@@ -62,7 +62,7 @@ cdef class DS(Object):
 
         See Also
         --------
-        petsc.PetscDSCreate, setType, destroy
+        setType, destroy, petsc.PetscDSCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -83,7 +83,7 @@ cdef class DS(Object):
 
         See Also
         --------
-        petsc.PetscDSSetType, getType
+        getType, petsc.PetscDSSetType
 
         """
         cdef PetscDSType cval = NULL
@@ -97,7 +97,7 @@ cdef class DS(Object):
 
         See Also
         --------
-        petsc.PetscDSGetType, setType
+        setType, petsc.PetscDSGetType
 
         """
         cdef PetscDSType cval = NULL
@@ -111,7 +111,7 @@ cdef class DS(Object):
 
         See Also
         --------
-        petsc.PetscDSSetFromOptions, petsc_options
+        petsc_options, petsc.PetscDSSetFromOptions
 
         """
         CHKERR( PetscDSSetFromOptions(self.ds) )
