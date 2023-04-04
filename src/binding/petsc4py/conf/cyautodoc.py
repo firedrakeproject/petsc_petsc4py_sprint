@@ -1,7 +1,6 @@
 # ruff: noqa: UP008,UP031
 from Cython.Compiler import Options
 from Cython.Compiler import PyrexTypes
-from Cython.Compiler.ExprNodes import TupleNode
 from Cython.Compiler.Visitor import CythonTransform
 from Cython.Compiler.StringEncoding import EncodedString
 from Cython.Compiler.AutoDocTransforms import (
@@ -11,18 +10,6 @@ from Cython.Compiler.AutoDocTransforms import (
 
 
 class ExpressionWriter(BaseExpressionWriter):
-
-    def visit_IndexNode(self, node):
-        self.visit(node.base)
-        self.put(u"[")
-        if isinstance(node.index, TupleNode):
-            if node.index.subexpr_nodes():
-                self.emit_sequence(node.index)
-            else:
-                self.put(u"()")
-        else:
-            self.visit(node.index)
-        self.put(u"]")
 
     def visit_UnicodeNode(self, node):
         self.emit_string(node, "")
