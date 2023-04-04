@@ -372,25 +372,22 @@ cdef class Mat(Object):
     def view(self, Viewer viewer=None) -> None:
         """View the matrix.
 
-        For more information about the different viewers available and
-        relevant database options see `petsc_options` and `petsc.MatView`.
-
         Collective.
 
         Parameters
         ----------
         viewer
-            Viewer instance. If `None` the matrix will print to screen.
+          A `Viewer` instance or `None` for the default viewer.
 
         Notes
         -----
         Viewers with type `Viewer.Type.ASCII` are only recommended for small
         matrices on small numbers of processes. Larger matrices should use a
-        binary format.
+        binary format like `Viewer.Type.BINARY`.
 
         See Also
         --------
-        petsc_options, load, petsc.MatView
+        load, Viewer, petsc.MatView
 
         """
         cdef PetscViewer vwr = NULL
@@ -473,7 +470,7 @@ cdef class Mat(Object):
         ----------
         size
             `int` or nested `tuple` of `int` describing the matrix size. See
-            the "Examples" section and `Sys.splitOwnership` for more
+            the "Examples" section below and `Sys.splitOwnership` for more
             information.
         bsize
             The row and column block sizes. If a single `int` is provided then
@@ -558,19 +555,14 @@ cdef class Mat(Object):
         CHKERR( MatSetBlockSizes(self.mat, rbs, cbs) )
 
     def setVecType(self, vec_type: Vec.Type | str) -> None:
-        """Set the vector type the matrix returns with `createVecs`.
+        """Set the vector type.
 
         Collective.
 
         Parameters
         ----------
         vec_type
-            Vector type.
-
-        Notes
-        -----
-        This method is rarely needed since matrices internally set the proper
-        vector type.
+            Vector type used when creating vectors with `createVecs`.
 
         See Also
         --------
@@ -605,7 +597,7 @@ cdef class Mat(Object):
         csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse unblocked matrix, optionally preallocating.
+        """Create a sparse `Type.AIJ` matrix, optionally preallocating.
 
         To preallocate the matrix the user can either pass ``nnz`` or ``csr``
         describing the sparsity. If neither is set then preallocation will not
@@ -651,7 +643,7 @@ cdef class Mat(Object):
         csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse blocked matrix, optionally preallocating.
+        """Create a sparse blocked `Type.BAIJ` matrix, optionally preallocating.
 
         Collective.
 
@@ -683,7 +675,7 @@ cdef class Mat(Object):
         csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse matrix in symmetric block AIJ format.
+        """Create a sparse `Type.SBAIJ` matrix in symmetric block format.
 
         Collective.
 
@@ -716,7 +708,7 @@ cdef class Mat(Object):
         csr: CSRIndicesType | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse matrix with type `Type.AIJCRL`.
+        """Create a sparse `Type.AIJCRL` matrix.
 
         This is similar to `Type.AIJ` matrices but stores some additional
         information that improves vectorisation for the matrix-vector product.
@@ -745,9 +737,6 @@ cdef class Mat(Object):
 
     def setPreallocationNNZ(self, nnz: NNZType) -> Self:
         """Preallocate memory for the matrix with a non-zero pattern.
-
-        This method is only valid for `Type.AIJ`, `Type.BAIJ`,
-        `Type.SBAIJ` matrices.
 
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
@@ -778,9 +767,6 @@ cdef class Mat(Object):
 
     def setPreallocationCSR(self, csr: CSRIndicesType) -> Self:
         """Preallocate memory for the matrix with a CSR layout.
-
-        This method is only valid for `Type.AIJ`, `Type.BAIJ` and
-        `Type.SBAIJ` matrices.
 
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
@@ -815,7 +801,7 @@ cdef class Mat(Object):
         bsize: MatBlockSizeType | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse matrix with provided data in CSR format.
+        """Create a sparse `Type.AIJ` matrix with provided data in CSR format.
 
         Collective.
 
@@ -907,7 +893,7 @@ cdef class Mat(Object):
         array: Sequence[Scalar] | None = None,
         comm: Comm | None = None
     ) -> Self:
-        """Create a dense matrix.
+        """Create a `Type.DENSE` matrix.
 
         Collective.
 
@@ -916,7 +902,7 @@ cdef class Mat(Object):
         size, bsize
             Matrix size parameters. See `createAIJ` for usage information.
         array
-            Matrix data. If `None` then the matrix will not be preallocated.
+            Optional matrix data. If `None`, memory is internally allocated.
         comm
             MPI communicator, defaults to `Sys.getDefaultComm`.
 
@@ -944,7 +930,7 @@ cdef class Mat(Object):
         cudahandle: int | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a dense CUDA matrix with optional host and device data.
+        """Create a `Type.DENSECUDA` matrix with optional host and device data.
 
         Collective.
 
@@ -973,6 +959,7 @@ cdef class Mat(Object):
         # sizes and block sizes
         cdef PetscInt rbs = 0, cbs = 0, m = 0, n = 0, M = 0, N = 0
 
+        # FIXME handle the case of array not None?
         if cudahandle is not None:
             Mat_Sizes(size, None, &rbs, &cbs, &m, &n, &M, &N)
             if rbs == PETSC_DECIDE: rbs = 1
@@ -993,9 +980,6 @@ cdef class Mat(Object):
 
     def setPreallocationDense(self, array: Sequence[Scalar]) -> Self:
         """Set the array used for storing matrix elements for a dense matrix.
-
-        Only valid for matrices with types `Type.SEQDENSE` and
-        `Type.MPIDENSE`.
 
         Collective.
 
@@ -1023,9 +1007,7 @@ cdef class Mat(Object):
     #
 
     def createScatter(self, Scatter scatter, comm: Comm | None = None) -> Self:
-        """Create a scattering matrix from a vector scatter.
-
-        The resulting matrix will have type `Type.SCATTER`.
+        """Create a `Type.SCATTER` matrix from a vector scatter.
 
         Collective.
 
@@ -1049,7 +1031,7 @@ cdef class Mat(Object):
         return self
 
     def createNormal(self, Mat mat) -> Self:
-        """Create a matrix representing AᵀA.
+        """Create a `Type.NORMAL` matrix representing AᵀA.
 
         Collective.
 
@@ -1061,7 +1043,7 @@ cdef class Mat(Object):
         Notes
         -----
         The product AᵀA is never actually formed. Instead A and Aᵀ are used
-        during `mult` etc.
+        during `mult` and various other matrix operations.
 
         See Also
         --------
@@ -1074,9 +1056,7 @@ cdef class Mat(Object):
         return self
 
     def createTranspose(self, Mat mat) -> Self:
-        """Create a virtual matrix transpose that behaves like Aᵀ.
-
-        This sets the matrix to have type `Type.TRANSPOSE`.
+        """Create a `Type.TRANSPOSE` matrix that behaves like Aᵀ.
 
         Collective.
 
@@ -1101,9 +1081,7 @@ cdef class Mat(Object):
         return self
 
     def createNormalHermitian(self, Mat mat) -> Self:
-        """Create a matrix representing (A*)ᵀA.
-
-        This sets the matrix to have type `Type.NORMALHERMITIAN`.
+        """Create a `Type.NORMALHERMITIAN` matrix representing (A*)ᵀA.
 
         Collective.
 
@@ -1114,8 +1092,7 @@ cdef class Mat(Object):
 
         Notes
         -----
-        The product (A*)ᵀA is never actually formed. Instead things are
-        computed on the fly during `mult` etc.
+        The product (A*)ᵀA is never actually formed.
 
         See Also
         --------
@@ -1129,9 +1106,7 @@ cdef class Mat(Object):
         return self
 
     def createHermitianTranspose(self, Mat mat) -> Self:
-        """Create a virtual matrix transpose that behaves like (A*)ᵀ.
-
-        This sets the matrix to have type `Type.HERMITIANTRANSPOSE`.
+        """Create a `Type.HERMITIANTRANSPOSE` matrix that behaves like (A*)ᵀ.
 
         Collective.
 
@@ -1142,9 +1117,7 @@ cdef class Mat(Object):
 
         Notes
         -----
-        The Hermitian transpose is never actually formed. Instead
-        `petsc.MatMultHermitianTranspose` is called whenever the matrix-vector
-        product is computed.
+        The Hermitian transpose is never actually formed.
 
         See Also
         --------
@@ -1158,9 +1131,7 @@ cdef class Mat(Object):
         return self
 
     def createLRC(self, Mat A, Mat U, Vec c, Mat V) -> Self:
-        """Create a matrix representing A + UCVᵀ.
-
-        This sets the matrix to have type `Type.LRC`.
+        """Create a `Type.LRC` matrix representing A + UCVᵀ.
 
         Collective.
 
@@ -1175,8 +1146,7 @@ cdef class Mat(Object):
 
         Notes
         -----
-        The matrix A + UCVᵀ is never actually formed. Instead things are
-        computed on the fly during `mult` etc.
+        The matrix A + UCVᵀ is never actually formed.
 
         C is a diagonal matrix (represented as a vector) of order k, where k
         is the number of columns of both U and V.
@@ -1208,9 +1178,7 @@ cdef class Mat(Object):
         return self
 
     def createSubMatrixVirtual(self, Mat A, IS isrow, IS iscol=None) -> Self:
-        """Create a virtual matrix that acts as a submatrix.
-
-        This sets the matrix type to `Type.SUBMATRIX`.
+        """Create a `Type.SUBMATRIX` matrix that acts as a submatrix.
 
         Collective.
 
@@ -1241,11 +1209,7 @@ cdef class Mat(Object):
         iscols: Sequence[IS] | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a nested matrix containing multiple submatrices.
-
-        Each submatrix is stored separately.
-
-        The resulting matrix has type `Type.NEST`.
+        """Create a `Type.NEST` matrix containing multiple submatrices.
 
         Collective.
 
@@ -1319,8 +1283,6 @@ cdef class Mat(Object):
     ) -> Self:
         """Create a `Type.H2OPUS` sampling from a provided operator.
 
-        Serial execution only.
-
         Parameters
         ----------
         A
@@ -1388,7 +1350,35 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createIS(self, size, LGMap lgmapr=None, LGMap lgmapc=None, comm=None):
+    def createIS(
+        self,
+        size: MatSizeType,
+        LGMap lgmapr = None,
+        LGMap lgmapc = None,
+        comm: Comm | None = None,
+        ) -> Self:
+        """Create a `Type.IS` matrix representing globally unassembled operators.
+
+        Collective.
+
+        Parameters
+        ----------
+        size
+            Matrix size parameters. See `setSizes` for usage information.
+        lgmapr
+            Optional local-to-global mapping for the rows.
+            If `None`, the local row space matches the global row space.
+        lgmapc
+            Optional local-to-global mapping for the columns.
+            If `None`, the local column space matches the global column space.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        See Also
+        --------
+        petsc.MATIS
+
+        """
         # communicator and sizes
         if comm is None and lgmapr is not None: comm = lgmapr.getComm()
         if comm is None and lgmapc is not None: comm = lgmapc.getComm()
@@ -1412,7 +1402,7 @@ cdef class Mat(Object):
         return self
 
     def createPython(self, size: MatSizeType, context: Any = None, comm: Comm | None = None) -> Self:
-        """Create a matrix of Python type.
+        """Create a `Type.PYTHON` matrix.
 
         Collective.
 
@@ -1438,6 +1428,7 @@ cdef class Mat(Object):
         Sys_Layout(ccomm, rbs, &m, &M)
         Sys_Layout(ccomm, cbs, &n, &N)
         # create matrix
+        # FIXME: propagate block sizes?
         cdef PetscMat newmat = NULL
         CHKERR( MatCreate(ccomm, &newmat) )
         PetscCLEAR(self.obj); self.mat = newmat
@@ -2634,6 +2625,8 @@ cdef class Mat(Object):
         cdef PetscBool flg = PETSC_TRUE
         CHKERR( MatBoundToCPU(self.mat, &flg) )
         return toBool(flg)
+
+    # FIXME REMOVE: NATHAN FROM HERE ON
 
     # XXX factorization
 
