@@ -92,7 +92,7 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagCreate1d, petsc.DMStagCreate2d, petsc.DMStagCreate3d,
+        petsc.DMStagCreate1d, petsc.DMStagCreate2d, petsc.DMStagCreate3d
         petsc.DMSetUp
 
         """
@@ -603,8 +603,8 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagSetUniformCoordinatesExplicit,
         setUniformCoordinatesProduct, setUniformCoordinates
+        petsc.DMStagSetUniformCoordinatesExplicit
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
@@ -646,8 +646,8 @@ cdef class DMStag(DM):
 
         See Also
         --------
-        petsc.DMStagSetUniformCoordinatesProduct,
         setUniformCoordinatesExplicit, setUniformCoordinates
+        petsc.DMStagSetUniformCoordinatesProduct
 
         """
         cdef PetscReal _xmin = asReal(xmin), _xmax = asReal(xmax)
