@@ -27,8 +27,8 @@ cdef class DMDA(DM):
         self,
         dim: int | None = None,
         dof: int | None = None,
-        sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
-        proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
+        sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
+        proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
         boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
@@ -281,7 +281,7 @@ cdef class DMDA(DM):
                             NULL) )
         return toInt(dof)
 
-    def setSizes(self, sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]) -> None:
+    def setSizes(self, sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]) -> None:
         """Set the number of grid points in the three dimensional directions.
 
         Developer Note
@@ -315,7 +315,7 @@ cdef class DMDA(DM):
             CHKERR( DMSetDimension(self.dm, gdim) )
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
-    def getSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return the global dimension in first/second/third direction.
 
         Not collective.
@@ -338,7 +338,7 @@ cdef class DMDA(DM):
                             NULL) )
         return toDims(dim, M, N, P)
 
-    def setProcSizes(self, proc_sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]) -> None:
+    def setProcSizes(self, proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]) -> None:
         """Set the number of processes in each dimension.
 
         Logically collective.
@@ -369,7 +369,7 @@ cdef class DMDA(DM):
             CHKERR( DMSetDimension(self.dm, pdim) )
         CHKERR( DMDASetNumProcs(self.dm, m, n, p) )
 
-    def getProcSizes(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+    def getProcSizes(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
         """Return the number of processes in first/second/third dimensions.
 
         Not collective.
@@ -1174,12 +1174,12 @@ cdef class DMDA(DM):
             return self.getDof()
 
     property sizes:
-        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
             return self.getSizes()
 
     property proc_sizes:
         """The number of ranks in each direction in the global decomposition."""
-        def __get__(self) -> tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)]:
+        def __get__(self) -> tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int]:
             return self.getProcSizes()
 
     property boundary_type:
