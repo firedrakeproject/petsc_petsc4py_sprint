@@ -46,7 +46,7 @@ cdef class DMStag(DM):
     # TODO: do all See Alsos render? they didn't before
     def create(
         self,
-        dim,
+        dim: int,
         dofs: tuple[int, int] | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
         sizes: tuple[()] | tuple[(int,)] | tuple[(int, int)] | tuple[(int, int, int)] | None = None,
         boundary_types: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
