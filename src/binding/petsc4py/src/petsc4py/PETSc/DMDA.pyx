@@ -306,7 +306,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
     def getSizes(self) -> tuple[int, ...]:
-        """Return the global dimension in one/two/three directions.
+        """Return the number of grid points in each direction.
 
         Not collective.
 
@@ -427,7 +427,7 @@ cdef class DMDA(DM):
         return toDims(dim, btx, bty, btz)
 
     def setStencilType(self, stencil_type: StencilType) -> None:
-        """Set the type of the communication stencil.
+        """Set the stencil type.
 
         Logically collective.
 
@@ -465,7 +465,7 @@ cdef class DMDA(DM):
         return stype
 
     def setStencilWidth(self, stencil_width: int) -> None:
-        """Set the width of the communication stencil.
+        """Set the stencil width.
 
         Logically collective.
 
@@ -554,7 +554,7 @@ cdef class DMDA(DM):
 
     # TODO: should we clarify how is getRanges different than getGhostRanges and getCorners?
     def getRanges(self) -> tuple[tuple[int, int], ...]:
-        """Return the ranges of the local region in each dimension.
+        """Return the ranges of the owned local region in each dimension.
 
         Excluding ghost nodes.
 
@@ -575,7 +575,7 @@ cdef class DMDA(DM):
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     def getGhostRanges(self) -> tuple[tuple[int, int], ...]:
-        """Return the ranges of local region in each dim. including ghost nodes.
+        """Return the ranges of the local region in each dimension, including ghost nodes.
 
         Not collective.
 
@@ -619,7 +619,7 @@ cdef class DMDA(DM):
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
-        """Return lower left corner and size of local region in each dimension.
+        """Return the lower left corner and the size of the owned local region in each dimension.
 
         Returns the global (x,y,z) indices of the lower left corner (first
         tuple) and size of the local region (second tuple).
@@ -647,12 +647,10 @@ cdef class DMDA(DM):
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
     def getGhostCorners(self) -> tuple[()] | tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
-        """Return lower left corner and size of local region in each dimension.
+        """Return the lower left corner and the size of the local region in each dimension, including ghost points.
 
         Returns the global (x,y,z) indices of the lower left corner (first
         tuple) and size of the local region (second tuple).
-
-        Excluding ghost points.
 
         The corner information is independent of the number of degrees of
         freedom per node. Thus the returned values can be thought of as
@@ -679,7 +677,7 @@ cdef class DMDA(DM):
     def setFieldName(self, field: int, name: str) -> None:
         """Set the name of individual field components.
 
-        Logically collective; ``name`` must contain a common value.
+        Logically collective.
 
         Parameters
         ----------
@@ -703,7 +701,7 @@ cdef class DMDA(DM):
     def getFieldName(self, field: int) -> str:
         """Return the name of an individual field component.
 
-        Not collective; name will contain a common value.
+        Not collective.
 
         Parameters
         ----------
@@ -855,11 +853,6 @@ cdef class DMDA(DM):
     ) -> None:
         """Map values to the "natural" grid ordering.
 
-        Output Parameter
-        l - the natural ordering values
-        l - the natural ordering values
-        l - the global values in the natural ordering
-
         Notes
         The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
 
@@ -920,7 +913,7 @@ cdef class DMDA(DM):
     def getAO(self) -> AO:
         """Return the application ordering context for a distributed array.
 
-        In this case, the AO maps to the natural grid ordering that would be
+        The returned `AO` maps to the natural grid ordering that would be
         used for the `DMDA` if only 1 processor were employed (ordering most
         rapidly in the x-direction, then y, then z). Multiple degrees of
         freedom are numbered for each node (rather than 1 component for the
@@ -1029,6 +1022,7 @@ cdef class DMDA(DM):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
+    # FIXME: Return type
     def getInterpolationType(self) -> int:
         """Return the type of interpolation.
 
@@ -1058,6 +1052,7 @@ cdef class DMDA(DM):
         cdef PetscDMDAElementType ival = daelementtype(elem_type)
         CHKERR( DMDASetElementType(self.dm, ival) )
 
+    # FIXME: Return type
     def getElementType(self) -> int:
         """Return the element type to be returned by `getElements`.
 
@@ -1112,12 +1107,12 @@ cdef class DMDA(DM):
     #
 
     property dim:
-        """The dimension."""
+        """The grid dimension."""
         def __get__(self) -> int:
             return self.getDim()
 
     property dof:
-        """The number of dof associated with each stratum of the grid."""
+        """The number of DOFs associated with each stratum of the grid."""
         def __get__(self) -> int:
             return self.getDof()
 
@@ -1143,7 +1138,7 @@ cdef class DMDA(DM):
             return self.getStencil()
 
     property stencil_type:
-        """Elementwise ghost/halo stencil type."""
+        """Stencil type."""
         def __get__(self) -> str:
             return self.getStencilType()
 
