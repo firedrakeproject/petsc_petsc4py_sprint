@@ -126,7 +126,7 @@ cdef class Section(Object):
     def getNumFields(self) -> int:
         """Return the number of fields in a section.
 
-        Returns 0 if no fields were defined.
+        Returns ``0`` if no fields were defined.
 
         Not collective.
 
