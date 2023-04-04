@@ -2182,7 +2182,7 @@ cdef class Mat(Object):
             not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
-            ``None`` if you do not have a good estimate. If the
+            `None` if you do not have a good estimate. If the
             result is a dense matrix this is irrelevant.
 
         Returns
@@ -2230,7 +2230,7 @@ cdef class Mat(Object):
             not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
-            ``None`` if you do not have a good estimate. If the
+            `None` if you do not have a good estimate. If the
             result is a dense matrix this is irrelevant.
 
         Returns
@@ -2278,7 +2278,7 @@ cdef class Mat(Object):
             not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(B)), use
-            ``None`` if you do not have a good estimate. If the
+            `None` if you do not have a good estimate. If the
             result is a dense matrix this is irrelevant.
 
         Returns
@@ -2326,7 +2326,7 @@ cdef class Mat(Object):
             not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
         fill
             Expected fill as ratio of nnz(C)/(nnz(A) + nnz(P)), use
-            ``None`` if you do not have a good estimate. If the
+            `None` if you do not have a good estimate. If the
             result is a dense matrix this is irrelevant.
 
         Returns
@@ -2377,7 +2377,7 @@ cdef class Mat(Object):
             is created, and ``MAT_INITIAL_MATRIX`` is used. When C is
             not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
         fill
-            Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
+            Expected fill as ratio of nnz(C)/nnz(A), use `None` if
             you do not have a good estimate. If the result is a dense
             matrix this is irrelevant.
 
@@ -2428,7 +2428,7 @@ cdef class Mat(Object):
             is created, and ``MAT_INITIAL_MATRIX`` is used. When D is
             not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
         fill
-            Expected fill as ratio of nnz(C)/nnz(A), use ``None`` if
+            Expected fill as ratio of nnz(C)/nnz(A), use `None` if
             you do not have a good estimate. If the result is a dense
             matrix this is irrelevant.
 
@@ -2464,8 +2464,7 @@ cdef class Mat(Object):
         mat
             The right hand matrix B.
         result
-            The resultant matrix C, can be ``None``.
-
+            The resultant matrix C, can be `None`.
 
         Returns
         -------
@@ -2493,7 +2492,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         flg
-            Bind to the CPU if ``True``
+            Bind to the CPU if `True`.
 
         See also
         --------

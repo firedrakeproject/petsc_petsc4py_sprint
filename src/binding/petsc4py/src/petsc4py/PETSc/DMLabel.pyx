@@ -10,7 +10,7 @@ cdef class DMLabel(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelDestroy
 
@@ -28,7 +28,7 @@ cdef class DMLabel(Object):
         viewer
             A `Viewer` to display the graph.
 
-        See also
+        See Also
         --------
         petsc.DMLabelView
 
@@ -49,7 +49,7 @@ cdef class DMLabel(Object):
         comm
             The MPI communicator, usually `COMM_SELF`.
 
-        See also
+        See Also
         --------
         petsc.DMLabelCreate
 
@@ -67,7 +67,7 @@ cdef class DMLabel(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelDuplicate
 
@@ -81,7 +81,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelReset
 
@@ -100,7 +100,7 @@ cdef class DMLabel(Object):
         value
             The point value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelInsertIS
 
@@ -125,7 +125,7 @@ cdef class DMLabel(Object):
         value
             The point value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelSetValue, getValue, setDefaultValue
 
@@ -148,7 +148,7 @@ cdef class DMLabel(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetValue, setValue, setDefaultValue
 
@@ -166,7 +166,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetDefaultValue, setDefaultValue
 
@@ -188,7 +188,7 @@ cdef class DMLabel(Object):
         value
             The default value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelSetDefaultValue, getDefaultValue
 
@@ -208,7 +208,7 @@ cdef class DMLabel(Object):
         value
             The point value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelClearValue
 
@@ -225,7 +225,7 @@ cdef class DMLabel(Object):
         value
             The stratum value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelAddStratum, addStrata, addStrataIS
 
@@ -243,7 +243,7 @@ cdef class DMLabel(Object):
         strata
             The stratum values.
 
-        See also
+        See Also
         --------
         petsc.DMLabelAddStrata, addStrataIS, addStratum
 
@@ -263,7 +263,7 @@ cdef class DMLabel(Object):
         iset
             Index set with stratum values.
 
-        See also
+        See Also
         --------
         petsc.DMLabelAddStrataIS, addStrata, addStratum
 
@@ -275,7 +275,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetNumValues
 
@@ -289,7 +289,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetValueIS
 
@@ -310,7 +310,7 @@ cdef class DMLabel(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.DMLabelStratumHasPoint
 
@@ -331,7 +331,7 @@ cdef class DMLabel(Object):
         value
             The stratum value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelHasStratum
 
@@ -351,7 +351,7 @@ cdef class DMLabel(Object):
         stratum
             The stratum value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetStratumSize
 
@@ -371,7 +371,7 @@ cdef class DMLabel(Object):
         stratum
             The stratum value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetStratumIS, setStratumIS
 
@@ -393,7 +393,7 @@ cdef class DMLabel(Object):
         iset
             The stratum points.
 
-        See also
+        See Also
         --------
         petsc.DMLabelSetStratumIS, getStratumIS
 
@@ -411,7 +411,7 @@ cdef class DMLabel(Object):
         stratum
             The stratum value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelClearStratum
 
@@ -426,7 +426,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelComputeIndex
 
@@ -445,7 +445,7 @@ cdef class DMLabel(Object):
         pEnd
             The largest point + 1.
 
-        See also
+        See Also
         --------
         petsc.DMLabelCreateIndex, destroyIndex
 
@@ -458,7 +458,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelDestroyIndex, createIndex
 
@@ -475,7 +475,7 @@ cdef class DMLabel(Object):
         value
             The value.
 
-        See also
+        See Also
         --------
         petsc.DMLabelHasValue, hasPoint
 
@@ -497,7 +497,7 @@ cdef class DMLabel(Object):
         point
             The point.
 
-        See also
+        See Also
         --------
         petsc.DMLabelHasPoint, hasValue
 
@@ -514,7 +514,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetBounds
 
@@ -535,7 +535,7 @@ cdef class DMLabel(Object):
         end
             One more than the last point kept.
 
-        See also
+        See Also
         --------
         petsc.DMLabelFilter
 
@@ -553,7 +553,7 @@ cdef class DMLabel(Object):
         permutation
             The point permutation.
 
-        See also
+        See Also
         --------
         petsc.DMLabelPermute
 
@@ -572,7 +572,7 @@ cdef class DMLabel(Object):
         sf
             The map from old to new distribution.
 
-        See also
+        See Also
         --------
         petsc.DMLabelDistribute, gather
 
@@ -593,7 +593,7 @@ cdef class DMLabel(Object):
         sf
             The `SF` communication map.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGather, distribute
 
@@ -607,7 +607,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelConvertToSection
 
@@ -622,7 +622,7 @@ cdef class DMLabel(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.DMLabelGetNonEmptyStratumValuesIS
 

@@ -74,7 +74,7 @@ cdef class DM(Object):
         ----------
         viewer
             The DM viewer.
-        
+
         See Also
         --------
         petsc.DMView
@@ -93,7 +93,7 @@ cdef class DM(Object):
         ----------
         viewer
             Viewer used to display the `DM`, either `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
-        
+
         Notes
         -----
         When using `Viewer.Type.HDF5` format, one can save  multiple `DMPlex` meshes in a single HDF5 files.
@@ -124,16 +124,16 @@ cdef class DM(Object):
         """Return an empty `DM`.
 
         Collective.
-        
+
         Parameters
         ----------
         comm
             MPI communicator, defaults to `Sys.getDefaultComm`.
-       
+
         See Also
         --------
         petsc.DMCreate
-        
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscDM newdm = NULL
@@ -145,7 +145,7 @@ cdef class DM(Object):
         """Return the cloned `DM` .
 
         Collective.
-        
+
         See Also
         --------
         petsc.DMClone
@@ -219,7 +219,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMSetDimension
-        
+
         """
         cdef PetscInt cdim = asInt(dim)
         CHKERR( DMSetDimension(self.dm, cdim) )
@@ -232,7 +232,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMGetCoordinateDim
-        
+
         """
         cdef PetscInt dim = 0
         CHKERR( DMGetCoordinateDim(self.dm, &dim) )
@@ -251,7 +251,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMSetCoordinateDim
-        
+
         """
         cdef PetscInt cdim = asInt(dim)
         CHKERR( DMSetCoordinateDim(self.dm, cdim) )
@@ -269,7 +269,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc_options, petsc.DMSetOptionsPrefix
-        
+
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -283,7 +283,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc_options, petsc.DMGetOptionsPrefix
-        
+
         """
         cdef const char *cval = NULL
         CHKERR( DMGetOptionsPrefix(self.dm, &cval) )
@@ -302,7 +302,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc_options, petsc.DMAppendOptionsPrefix
-        
+
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -310,7 +310,7 @@ cdef class DM(Object):
 
     def setFromOptions(self) -> None:
         """Set parameters in a `DM` from the options database.
-        
+
         Collective.
 
         Notes
@@ -356,7 +356,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMSetUp
-        
+
         """
         CHKERR( DMSetUp(self.dm) )
         return self
@@ -403,7 +403,7 @@ cdef class DM(Object):
             This flag provides the variable influence starting with the cone operation if `True`.
         toBool(uCl) : bool
             This flag provides the variable influence using transitive closure.
-        
+
         See Also
         --------
         petsc.DMGetBasicAdjacency
@@ -454,7 +454,7 @@ cdef class DM(Object):
             This flag provides the variable influence starting with the cone operation if `True`.
         toBool(uCl) : bool
             This flag provides the variable influence using transitive closure.
-        
+
         See Also
         --------
         petsc.DMGetAdjacency
@@ -470,7 +470,7 @@ cdef class DM(Object):
 
     def createSubDM(self, fields: Sequence[int]) -> tuple[IS, DM]:
         """Return `IS` and `DM` encapsuling a subproblem.
-       
+
         Not collective.
 
         Returns
@@ -524,7 +524,7 @@ cdef class DM(Object):
         if cval == NULL: cval = b"" # XXX Should be fixed upstream
         CHKERR( DMGetLabel(self.dm, cval, &clbl) )
         CHKERR( DMSetAuxiliaryVec(self.dm, clbl, cvalue, cpart, aux.vec) )
-    
+
     def getAuxiliaryVec(self, label: str | None = None, value: int | None = 0, part: int | None = 0) -> Vec:
         """Return an auxiliary vector for region.
 
@@ -559,7 +559,7 @@ cdef class DM(Object):
         """Set the number of fields in the `DM`.
 
         Logically collective.
-        
+
         See Also
         --------
         petsc.DMSetNumFields
@@ -609,9 +609,9 @@ cdef class DM(Object):
 
     def getField(self, index: int) -> tuple[Object, None]:
         """Return the discretization object for a given `DM` field.
-        
+
         Not collective.
-        
+
         Parameters
         ----------
         index
@@ -685,7 +685,7 @@ cdef class DM(Object):
 
     def createDS(self) -> None:
         """Create discrete systems.
-        
+
         Collective.
 
         See Also
@@ -715,7 +715,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMGetDS
-        
+
         """
         cdef DS ds = DS()
         CHKERR( DMGetDS(self.dm, &ds.ds) )
@@ -968,7 +968,7 @@ cdef class DM(Object):
 
     def getCoordinateDM(self) -> DM:
         """Return the coordinate layout and scatters betweem global and local coordinates.
-        
+
         Collective.
 
         See Also
@@ -1062,7 +1062,7 @@ cdef class DM(Object):
 
     def projectCoordinates(self, FE disc) -> Self:
         """Project coordinates to a different space.
-        
+
         Parameters
         ----------
         disc
@@ -1129,7 +1129,7 @@ cdef class DM(Object):
 
     def setMatType(self, mat_type: Mat.Type | str) -> None:
         """Set matrix type to be used by `DM.createMat`.
-        
+
         Logically collective.
 
         Parameters
@@ -1144,7 +1144,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc_options, petsc.DMSetMatType
-        
+
         """
         cdef PetscMatType mtype = NULL
         mat_type = str2bytes(mat_type, &mtype)
@@ -1370,7 +1370,7 @@ cdef class DM(Object):
 
     def getRefineLevel(self) -> int:
         """Return the number of refinements that have generated this `DM` from some initial `DM`.
-       
+
         Not collective.
 
         See Also
@@ -1420,7 +1420,7 @@ cdef class DM(Object):
         """Adapt a `DM` based on a `DMLabel`.
 
         Collective.
-        
+
         Parameters
         ----------
         label
@@ -1505,7 +1505,7 @@ cdef class DM(Object):
 
     def getSection(self) -> Section:
         """Return the `Section` encoding the the local data layout for the `DM`.
-        
+
         See Also
         --------
         petsc.DMGetSection
@@ -1528,7 +1528,7 @@ cdef class DM(Object):
 
     def getGlobalSection(self) -> Section:
         """Return the `Section` encoding the global data layout for the `DM`.
-       
+
         See Also
         --------
         petsc.DMGetGlobalSection
@@ -1580,7 +1580,7 @@ cdef class DM(Object):
 
     def setSectionSF(self, SF sf) -> None:
         """Set the `Section` encoding the parallel dof overlap for the `DM`.
-        
+
         See Also
         --------
         petsc.DMSetSectionSF
@@ -1594,7 +1594,7 @@ cdef class DM(Object):
 
     def getPointSF(self) -> SF:
         """Return the `SF` encoding the parallel dof overlap for the `DM`.
-        
+
         See Also
         --------
         petsc.DMGetPointSF
@@ -1607,7 +1607,7 @@ cdef class DM(Object):
 
     def setPointSF(self, SF sf) -> None:
         """Set the `SF` encoding the parallel dof overlap for the `DM`.
-        
+
         See Also
         --------
         petsc.DMSetPointSF
@@ -1631,7 +1631,7 @@ cdef class DM(Object):
 
     def getLabelName(self, index: int) -> str:
         """Return the name of nth label.
-        
+
         Not collective.
 
         Parameters
@@ -1775,7 +1775,7 @@ cdef class DM(Object):
         See Also
         --------
         petsc.DMClearLabelValue
- 
+
         """
         cdef PetscInt cpoint = asInt(point), cvalue = asInt(value)
         cdef const char *cname = NULL
@@ -1959,7 +1959,7 @@ cdef class DM(Object):
           Positional arguments for the callback.
         kargs
           Keyword arguments for the callback.
-        
+
         See Also
         --------
         petsc.DMKSPSetComputeOperators
@@ -2053,12 +2053,12 @@ cdef class DM(Object):
             CHKERR( DMSNESSetFunction(self.dm, NULL, NULL) )
 
     def setSNESJacobian(
-            self, jacobian: SNESJacobianFunction, 
+            self, jacobian: SNESJacobianFunction,
             args: tuple[Any, ...] | None = None,
             kargs: dict[str, Any] | None = None,
             ) -> None:
         """Set the `SNES` Jacobian evaluation function.
-       
+
         Not collective
 
         Parameters
@@ -2086,13 +2086,13 @@ cdef class DM(Object):
 
     def addCoarsenHook(
         self,
-        coarsenhook: DMCoarsenHookFunction, 
-        restricthook: DMRestrictHookFunction, 
+        coarsenhook: DMCoarsenHookFunction,
+        restricthook: DMRestrictHookFunction,
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
         """Add a callback to be executed when restricting a nonlinear problem to a coarse grid.
-        
+
         Logically collective.
 
         Parameters
