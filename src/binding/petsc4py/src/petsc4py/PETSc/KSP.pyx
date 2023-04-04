@@ -545,7 +545,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc.KSPSetOptionsPrefix
+        petsc_options, petsc.KSPSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
