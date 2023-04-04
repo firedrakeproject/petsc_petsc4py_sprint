@@ -26,7 +26,7 @@ cdef class DS(Object):
         viewer
             A `Viewer` to display the system.
 
-        See also
+        See Also
         --------
         petsc.PetscDSView
 
@@ -40,7 +40,7 @@ cdef class DS(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSDestroy, create
 
@@ -60,7 +60,7 @@ cdef class DS(Object):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.PetscDSCreate, setType, destroy
 
@@ -81,7 +81,7 @@ cdef class DS(Object):
         ds_type
             The type of the discrete system.
 
-        See also
+        See Also
         --------
         petsc.PetscDSSetType, getType
 
@@ -95,7 +95,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetType, setType
 
@@ -109,7 +109,7 @@ cdef class DS(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSSetFromOptions, petsc_options
 
@@ -121,7 +121,7 @@ cdef class DS(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSSetUp
 
@@ -139,7 +139,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetSpatialDimension
 
@@ -156,7 +156,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetCoordinateDimension
 
@@ -170,7 +170,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetNumFields
 
@@ -189,7 +189,7 @@ cdef class DS(Object):
         disc
             The discretization object.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetFieldIndex
 
@@ -203,7 +203,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetTotalDimension
 
@@ -217,7 +217,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetTotalComponents
 
@@ -231,7 +231,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetDimensions
 
@@ -246,7 +246,7 @@ cdef class DS(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscDSGetComponents
 
@@ -268,7 +268,7 @@ cdef class DS(Object):
         disc
             The discretization object.
 
-        See also
+        See Also
         --------
         petsc.PetscDSSetDiscretization
 

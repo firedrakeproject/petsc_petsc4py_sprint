@@ -11,7 +11,7 @@ cdef class DMShell(DM):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.DMShellCreate
 
@@ -32,7 +32,7 @@ cdef class DMShell(DM):
         mat
             The template matrix.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetMatrix
 
@@ -49,7 +49,7 @@ cdef class DMShell(DM):
         gv
             Template vector.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetGlobalVector, setLocalVector
 
@@ -66,7 +66,7 @@ cdef class DMShell(DM):
         lv
             Template vector.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetLocalVector, setGlobalVector
 
@@ -92,7 +92,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``create_gvec``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateGlobalVector, setCreateLocalVector
 
@@ -125,7 +125,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``create_lvec``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateLocalVector, setCreateGlobalVector
 
@@ -169,7 +169,7 @@ cdef class DMShell(DM):
         end_kargs
             Additional keyword arguments for ``end``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetGlobalToLocal
 
@@ -199,7 +199,7 @@ cdef class DMShell(DM):
         gtol
             The global to local `Scatter` context.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetGlobalToLocalVecScatter
 
@@ -234,7 +234,7 @@ cdef class DMShell(DM):
         end_kargs
             Additional keyword arguments for ``end``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetLocalToGlobal
 
@@ -264,7 +264,7 @@ cdef class DMShell(DM):
         ltog
             The local to global `Scatter` context.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetLocalToGlobalVecScatter
 
@@ -299,7 +299,7 @@ cdef class DMShell(DM):
         end_kargs
             Additional keyword arguments for ``end``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetLocalToLocal
 
@@ -331,7 +331,7 @@ cdef class DMShell(DM):
         ltol
             The local to local ``Scatter`` context.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetLocalToLocalVecScatter
 
@@ -357,7 +357,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``create_matrix``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateMatrix
 
@@ -390,7 +390,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``coarsen``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCoarsen, setRefine
 
@@ -423,7 +423,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``refine``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetRefine, setCoarsen
 
@@ -456,7 +456,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``create_interpolation``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateInterpolation
 
@@ -489,7 +489,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``create_injection``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateInjection
 
@@ -522,7 +522,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``create_restriction``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateRestriction
 
@@ -555,7 +555,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``decomp``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateFieldDecomposition
 
@@ -588,7 +588,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``decomp``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateDomainDecomposition
 
@@ -621,7 +621,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``scatter``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateDomainDecompositionScatters
 
@@ -654,7 +654,7 @@ cdef class DMShell(DM):
         kargs
             Additional keyword arguments for ``subdm``.
 
-        See also
+        See Also
         --------
         petsc.DMShellSetCreateSubDM
 

@@ -1734,7 +1734,7 @@ cdef class Vec(Object):
         -------
         int
             Enum value from `petsc.PetscOffloadMask` describing the offloading
-            status. 
+            status.
 
         See Also
         --------
@@ -1839,7 +1839,7 @@ cdef class Vec(Object):
 
         Notes
         -----
-        This method will mark the host data as out of date and will cause 
+        This method will mark the host data as out of date and will cause
         a host-to-device copy the next time data is accessed on the host.
 
         See Also
@@ -2171,7 +2171,7 @@ cdef class Vec(Object):
 
             - `NormType.NORM_2` Compute √(Σₙ abs(xₙ)²)
 
-            - `NormType.NORM_INFINITY` Compute maxₙ abs(xₙ) 
+            - `NormType.NORM_INFINITY` Compute maxₙ abs(xₙ)
 
             - `NormType.NORM_1_AND_2` Compute both `NormType.NORM_1` and
               `NormType.NORM_2`.
@@ -2424,7 +2424,7 @@ cdef class Vec(Object):
         ----------
         random
             Random number generator. If `None` then one will be created
-            internally. 
+            internally.
 
         See Also
         --------
@@ -3451,7 +3451,7 @@ cdef class Vec(Object):
             Component index of ``vec``. Must be between ``0`` and
             `Vec.block_size`.
         vec
-            Multi-component vector to be scattered into. 
+            Multi-component vector to be scattered into.
         addv
             Insertion mode. Possible values are:
 
@@ -3496,7 +3496,7 @@ cdef class Vec(Object):
             Component index of the current vector. Must be between ``0`` and
             `Vec.block_size`.
         vec
-            Single-component vector to be inserted into. 
+            Single-component vector to be inserted into.
         addv
             Insertion mode. Possible values are:
 
@@ -3686,7 +3686,7 @@ cdef class Vec(Object):
         Parameters
         ----------
         iset
-            Index set describing which indices to extract into the subvector. 
+            Index set describing which indices to extract into the subvector.
         subvec
             Subvector to copy entries into. If `None` then a new `Vec` will
             be created.
@@ -3726,7 +3726,7 @@ cdef class Vec(Object):
         Parameters
         ----------
         iset
-            Index set describing the indices represented by the subvector. 
+            Index set describing the indices represented by the subvector.
         subvec
             Subvector to restore.
 

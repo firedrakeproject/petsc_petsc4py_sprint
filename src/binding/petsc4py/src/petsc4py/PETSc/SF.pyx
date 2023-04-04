@@ -39,7 +39,7 @@ cdef class SF(Object):
         viewer
             A `Viewer` to display the graph.
 
-        See also
+        See Also
         --------
         petsc.PetscSFView
 
@@ -53,7 +53,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFDestroy
 
@@ -71,7 +71,7 @@ cdef class SF(Object):
         comm
             The communicator on which the star forest will operate.
 
-        See also
+        See Also
         --------
         petsc.PetscSFCreate
 
@@ -93,7 +93,7 @@ cdef class SF(Object):
         sf_type
             The star forest type.
 
-        See also
+        See Also
         --------
         petsc.PetscSFSetType
 
@@ -107,7 +107,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFGetType
 
@@ -121,7 +121,7 @@ cdef class SF(Object):
 
         Logically collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFSetFromOptions, petsc_options
 
@@ -133,7 +133,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFSetUp
 
@@ -145,7 +145,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFReset
 
@@ -172,7 +172,7 @@ cdef class SF(Object):
             Remote locations of root vertices for each leaf on the current
             process.
 
-        See also
+        See Also
         --------
         petsc.PetscSFGetGraph
 
@@ -209,7 +209,7 @@ cdef class SF(Object):
             Remote locations of root vertices for each leaf on the current
             process. Should be ``2*nleaves`` long as (rank, index) pairs.
 
-        See also
+        See Also
         --------
         petsc.PetscSFSetGraph
 
@@ -239,7 +239,7 @@ cdef class SF(Object):
         flag
             `True` to sort, `False` to skip sorting.
 
-        See also
+        See Also
         --------
         petsc.PetscSFSetRankOrder
 
@@ -252,7 +252,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFGetMultiSF
 
@@ -270,7 +270,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFCreateInverseSF
 
@@ -284,7 +284,7 @@ cdef class SF(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscSFComputeDegreeBegin, petsc.PetscSFComputeDegreeEnd
 
@@ -309,7 +309,7 @@ cdef class SF(Object):
         selected
             Indices of the selected roots on this process.
 
-        See also
+        See Also
         --------
         petsc.PetscSFCreateEmbeddedRootSF
 
@@ -333,7 +333,7 @@ cdef class SF(Object):
         selected
             Indices of the selected roots on this process.
 
-        See also
+        See Also
         --------
         petsc.PetscSFCreateEmbeddedLeafSF
 
@@ -364,7 +364,7 @@ cdef class SF(Object):
             Data layout of local points for incoming data (this is the
             distributed section).
 
-        See also
+        See Also
         --------
         petsc.PetscSFCreateSectionSF
 
@@ -392,7 +392,7 @@ cdef class SF(Object):
         leafSection
             Section defined on the leaf space.
 
-        See also
+        See Also
         --------
         petsc.PetscSFDistributeSection
 
@@ -425,7 +425,7 @@ cdef class SF(Object):
         sf
             `SF` to put under this object.
 
-        See also
+        See Also
         --------
         petsc.PetscSFCompose
 
@@ -453,7 +453,7 @@ cdef class SF(Object):
         op
             MPI reduction operation.
 
-        See also
+        See Also
         --------
         petsc.PetscSFBcastBegin, bcastEnd
 
@@ -480,7 +480,7 @@ cdef class SF(Object):
         op
             MPI reduction operation.
 
-        See also
+        See Also
         --------
         petsc.PetscSFBcastEnd, bcastBegin
 
@@ -508,7 +508,7 @@ cdef class SF(Object):
         op
             MPI reduction operation.
 
-        See also
+        See Also
         --------
         petsc.PetscSFReduceBegin, reduceEnd
 
@@ -534,7 +534,7 @@ cdef class SF(Object):
         op
             MPI reduction operation.
 
-        See also
+        See Also
         --------
         petsc.PetscSFReduceEnd, reduceBegin
 
@@ -561,7 +561,7 @@ cdef class SF(Object):
         leafdata
             Leaf data to be updated with personal data from each respective root.
 
-        See also
+        See Also
         --------
         petsc.PetscSFScatterBegin, scatterEnd
 
@@ -584,7 +584,7 @@ cdef class SF(Object):
         leafdata
             Leaf data to be updated with personal data from each respective root.
 
-        See also
+        See Also
         --------
         petsc.PetscSFScatterEnd, scatterBegin
 
@@ -610,7 +610,7 @@ cdef class SF(Object):
             Root buffer to gather into, amount of space per root is
             equal to its degree.
 
-        See also
+        See Also
         --------
         petsc.PetscSFGatherBegin, gatherEnd
 
@@ -634,7 +634,7 @@ cdef class SF(Object):
             Root buffer to gather into, amount of space per root is
             equal to its degree.
 
-        See also
+        See Also
         --------
         petsc.PetscSFGatherEnd, gatherBegin
 
@@ -668,7 +668,7 @@ cdef class SF(Object):
         op
             MPI reduction operation.
 
-        See also
+        See Also
         --------
         petsc.PetscSFFetchAndOpBegin, fetchAndOpEnd
 
@@ -699,7 +699,7 @@ cdef class SF(Object):
         op
             MPI reduction operation.
 
-        See also
+        See Also
         --------
         petsc.PetscSFFetchAndOpEnd, fetchAndOpBegin
 

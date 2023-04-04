@@ -929,7 +929,7 @@ cdef class IS(Object):
         """`True` if index set is a permutation, `False` otherwise.
 
         Logically collective.
-        
+
         See Also
         --------
         IS.isPermutation
@@ -942,7 +942,7 @@ cdef class IS(Object):
         """`True` if index set is an identity, `False` otherwise.
 
         Collective.
-        
+
         See Also
         --------
         IS.isIdentity
@@ -955,7 +955,7 @@ cdef class IS(Object):
         """`True` if index set is sorted, `False` otherwise.
 
         Collective.
-        
+
         See Also
         --------
         IS.isSorted
@@ -970,7 +970,7 @@ cdef class IS(Object):
         """The local and global sizes of the index set.
 
         Not collective.
-        
+
         See Also
         --------
         IS.getSizes
@@ -983,7 +983,7 @@ cdef class IS(Object):
         """The global size of the index set.
 
         Not collective.
-        
+
         See Also
         --------
         IS.getSize
@@ -996,7 +996,7 @@ cdef class IS(Object):
         """The local size of the index set.
 
         Not collective.
-        
+
         See Also
         --------
         IS.getLocalSize
@@ -1009,7 +1009,7 @@ cdef class IS(Object):
         """The number of elements in a block.
 
         Not collective.
-        
+
         See Also
         --------
         IS.getBlockSize
@@ -1022,7 +1022,7 @@ cdef class IS(Object):
         """The indices of the index set.
 
         Not collective.
-        
+
         See Also
         --------
         IS.getIndices
@@ -1058,7 +1058,7 @@ class GLMapMode(object):
         Give missing global indices a local index of -1.
     DROP
         Drop missing global indices.
-        
+
     See Also
     --------
     petsc.ISGlobalToLocalMappingMode
@@ -1101,7 +1101,7 @@ cdef class LGMap(Object):
     ) -> None:
         """Convert a locally numbered list of integers to a global numbering.
 
-        Not collective. 
+        Not collective.
 
         Parameters
         ----------
@@ -1232,7 +1232,7 @@ cdef class LGMap(Object):
         Parameters
         ----------
         iset
-            Index set containing the global numbers for each local number. 
+            Index set containing the global numbers for each local number.
 
         See Also
         --------

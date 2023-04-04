@@ -337,7 +337,7 @@ cdef class PC(Object):
     def appendOptionsPrefix(self, prefix: str) -> None:
         """Append to the prefix used for all the `PC` options.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -572,7 +572,7 @@ cdef class PC(Object):
         y
             The output vector, cannot be the same as ``x``.
 
-        See also
+        See Also
         --------
         petsc.PCApply
 
@@ -591,7 +591,7 @@ cdef class PC(Object):
         y
             The output matrix, cannot be the same as ``x``.
 
-        See also
+        See Also
         --------
         petsc.PCMatApply, petsc.PCApply
 
@@ -611,7 +611,7 @@ cdef class PC(Object):
         y
             The output vector, cannot be the same as ``x``.
 
-        See also
+        See Also
         --------
         petsc.PCApply
 
@@ -630,7 +630,7 @@ cdef class PC(Object):
         y
             The output vector, cannot be the same as ``x``.
 
-        See also
+        See Also
         --------
         petsc.PCApplySymmetricLeft
 
@@ -649,7 +649,7 @@ cdef class PC(Object):
         y
             The output vector, cannot be the same as ``x``.
 
-        See also
+        See Also
         --------
         petsc.PCApplySymmetricRight
 
@@ -2152,7 +2152,7 @@ cdef class PC(Object):
         levels
             The maximum number of levels.
 
-        See also
+        See Also
         --------
         petsc.PCBDDCSetLevels
 

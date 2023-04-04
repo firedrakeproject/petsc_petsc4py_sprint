@@ -26,7 +26,7 @@ cdef class FE(Object):
         viewer
             A `Viewer` to display the graph.
 
-        See also
+        See Also
         --------
         petsc.PetscFEView
 
@@ -40,7 +40,7 @@ cdef class FE(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEDestroy
 
@@ -60,7 +60,7 @@ cdef class FE(Object):
         comm
             The communicator for the `FE` object.
 
-        See also
+        See Also
         --------
         petsc.PetscFECreate, setType
 
@@ -101,7 +101,7 @@ cdef class FE(Object):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.PetscFECreateDefault
 
@@ -148,7 +148,7 @@ cdef class FE(Object):
         comm
             The MPI communicator.
 
-        See also
+        See Also
         --------
         petsc.PetscFECreateLagrange
 
@@ -169,7 +169,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetQuadrature, setQuadrature
 
@@ -183,7 +183,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetDimension
 
@@ -197,7 +197,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetSpatialDimension
 
@@ -211,7 +211,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetNumComponents, setNumComponents
 
@@ -230,7 +230,7 @@ cdef class FE(Object):
         comp
             The number of field components.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetNumComponents, getNumComponents
 
@@ -246,7 +246,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetNumDof
 
@@ -273,7 +273,7 @@ cdef class FE(Object):
         numBatches : int
             The number of batches in a chunk.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetTileSizes, setTileSizes
 
@@ -305,7 +305,7 @@ cdef class FE(Object):
         numBatches
             The number of batches in a chunk.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetTileSizes, getTileSizes
 
@@ -319,7 +319,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetFaceQuadrature, setFaceQuadrature
 
@@ -338,7 +338,7 @@ cdef class FE(Object):
         quad
             The `Quad` object.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetQuadrature, getQuadrature
 
@@ -356,7 +356,7 @@ cdef class FE(Object):
         quad
             The `Quad` object.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetFaceQuadrature, getFaceQuadrature
 
@@ -374,7 +374,7 @@ cdef class FE(Object):
         fe_type
             The kind of FEM space.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetType
 
@@ -389,7 +389,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetBasisSpace, setBasisSpace
 
@@ -408,7 +408,7 @@ cdef class FE(Object):
         sp
             The `Space` object.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetBasisSpace, getBasisSpace
 
@@ -420,7 +420,7 @@ cdef class FE(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetFromOptions, petsc_options
 
@@ -432,7 +432,7 @@ cdef class FE(Object):
 
         Collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetUp
 
@@ -444,7 +444,7 @@ cdef class FE(Object):
 
         Not collective.
 
-        See also
+        See Also
         --------
         petsc.PetscFEGetDualSpace, setDualSpace, DualSpace
 
@@ -463,7 +463,7 @@ cdef class FE(Object):
         dspace
             The `DualSpace` object.
 
-        See also
+        See Also
         --------
         petsc.PetscFESetDualSpace, getDualSpace, DualSpace
 
@@ -482,7 +482,7 @@ cdef class FE(Object):
         obj
             Optional object that provides the options prefix.
 
-        See also
+        See Also
         --------
         petsc.PetscFEViewFromOptions, petsc_options
 
