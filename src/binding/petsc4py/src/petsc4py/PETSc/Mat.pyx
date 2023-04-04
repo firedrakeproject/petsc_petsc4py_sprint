@@ -1494,37 +1494,109 @@ cdef class Mat(Object):
 
     #
 
-    def setOptionsPrefix(self, prefix):
+    def setOptionsPrefix(self, prefix: str) -> None:
+        """Set the prefix used for searching for options in the database.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc_options, petsc.MatSetOptionsPrefix
+
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( MatSetOptionsPrefix(self.mat, cval) )
 
-    def getOptionsPrefix(self):
+    def getOptionsPrefix(self) -> str:
+        """Return the prefix used for searching for options in the database.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc_options, setOptionsPrefix, petsc.MatGetOptionsPrefix
+
+        """
         cdef const char *cval = NULL
         CHKERR( MatGetOptionsPrefix(self.mat, &cval) )
         return bytes2str(cval)
 
-    def appendOptionsPrefix(self, prefix):
+    def appendOptionsPrefix(self, prefix: str) -> None:
+        """Append to the prefix used for searching for options in the database.
+
+        Logically collective.
+
+        See Also
+        --------
+        petsc_options, setOptionsPrefix, petsc.MatAppendOptionsPrefix
+
+        """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
         CHKERR( MatAppendOptionsPrefix(self.mat, cval) )
 
-    def setFromOptions(self):
+    def setFromOptions(self) -> None:
+        """Configure the matrix from the options database.
+
+        Collective.
+
+        See Also
+        --------
+        petsc_options, petsc.MatSetFromOptions
+
+        """
         CHKERR( MatSetFromOptions(self.mat) )
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Set up the internal data structures for using the matrix.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatSetUp
+
+        """
         CHKERR( MatSetUp(self.mat) )
         return self
 
-    def setOption(self, option, flag):
+    def setOption(self, option : Option, flag : bool) -> None:
+        """Set option.
+
+        Collective.
+
+        See Also
+        --------
+        getOption, petsc.MatSetOption
+
+        """
         CHKERR( MatSetOption(self.mat, option, flag) )
 
-    def getOption(self, option):
+    def getOption(self, option : Option) -> bool:
+        """Return the option value.
+
+        Not collective.
+
+        See Also
+        --------
+        setOption, petsc.MatGetOption
+
+        """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( MatGetOption(self.mat, option, &flag) )
         return toBool(flag)
 
-    def getType(self):
+    def getType(self) -> str:
+        """Return the type of the matrix.
+
+        Not collective.
+
+        See Also
+        --------
+        setType, Type, petsc.MatGetType
+
+        """
         cdef PetscMatType cval = NULL
         CHKERR( MatGetType(self.mat, &cval) )
         return bytes2str(cval)
