@@ -847,10 +847,7 @@ cdef class DMDA(DM):
     ) -> None:
         """Map values to the "natural" grid ordering.
 
-        Notes
-        The global and natural vectors used here need not be the same as those obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
-
-        You must call DMDACreateNaturalVector() before using this routine
+        You must call `createNaturalVec` before using this routine.
 
         Neighbor-wise collective.
 
