@@ -23,13 +23,14 @@ cdef class DMDA(DM):
 
     #
 
+    # TODO: please verify
     def create(
         self,
         dim: int | None = None,
         dof: int | None = None,
         sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
         proc_sizes: tuple[()] | tuple[int] | tuple[int, int] | tuple[int, int, int] | None = None,
-        boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
+        boundary_type: tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
         bint setup: bool | None = True,
@@ -55,25 +56,26 @@ cdef class DMDA(DM):
         Parameters
         ----------
         dim
-            TODO.
+            The number of dimensions.
         dof
             The number of degrees of freedom.
         sizes
-            TODO.
+            The number of elements in each dimension.
         proc_sizes
-            TODO.
+            The number of processes in x, y, z dimensions.
         boundary_type
-            TODO.
+            The boundary types.
         stencil_type
             The ghost/halo stencil type.
         stencil_width
             The width of the ghost/halo region.
         setup
-            TODO.
+            Whether to call the setup routine after creating the object.
         ownership_ranges
-            TODO.
+            Local x, y, z element counts, of length equal to ``proc_sizes``,
+            summing to ``sizes``.
         comm
-            TODO.
+            The MPI communicator.
 
         See Also
         --------
@@ -142,7 +144,7 @@ cdef class DMDA(DM):
     def duplicate(
         self,
         dof: int | None = None,
-        boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)] | None = None,
+        boundary_type: tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
     ) -> DMDA:
@@ -394,7 +396,7 @@ cdef class DMDA(DM):
 
     def setBoundaryType(
         self,
-        boundary_type: tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]
+        boundary_type: tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType]
     ) -> None:
         """Set the type of ghost nodes on domain boundaries.
 
@@ -416,7 +418,7 @@ cdef class DMDA(DM):
         asBoundary(boundary_type, &btx, &bty, &btz)
         CHKERR( DMDASetBoundaryType(self.dm, btx, bty, btz) )
 
-    def getBoundaryType(self) -> tuple[()] | tuple[(DM.BoundaryType,)] | tuple[(DM.BoundaryType, DM.BoundaryType)] | tuple[(DM.BoundaryType, DM.BoundaryType, DM.BoundaryType)]:
+    def getBoundaryType(self) -> tuple[()] | tuple[DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType] | tuple[DM.BoundaryType, DM.BoundaryType, DM.BoundaryType]:
         """Return the type of ghost nodes at boundary in each dimensions.
 
         Not collective.
@@ -569,8 +571,7 @@ cdef class DMDA(DM):
 
     #
 
-    # TODO: ??????
-    def getRanges(self):
+    def getRanges(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
         """TODO
 
         Not collective.
@@ -594,8 +595,7 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
-    # TODO: ??????
-    def getGhostRanges(self) -> # 2,4,6 tuples TODO: tuple of tuple tuple[tuple[int,int]] ...
+    def getGhostRanges(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
         """TODO
 
         Not collective.
@@ -619,7 +619,6 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
-    # TODO: tuple of tuple tuple[tuple[int,int]] ...
     def getOwnershipRanges(self) -> tuple[Sequence[int]] | tuple[Sequence[int], Sequence[int]] | tuple[Sequence[int], Sequence[int], Sequence[int]]:
         """Return the ranges of indices in the x, y and z direction that are owned by each process.
 
@@ -653,8 +652,7 @@ cdef class DMDA(DM):
         CHKERR( DMDAGetOwnershipRanges(self.dm, &lx, &ly, &lz) )
         return toOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
-    # TODO: ??????????
-    def getCorners(self):
+    def getCorners(self) -> tuple[()] | tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, excluding ghost points.
 
         Output Parameters
@@ -682,8 +680,7 @@ cdef class DMDA(DM):
         return ((toInt(x), toInt(y), toInt(z))[:<Py_ssize_t>dim],
                 (toInt(m), toInt(n), toInt(p))[:<Py_ssize_t>dim])
 
-    # TODO: ???????
-    def getGhostCorners(self):
+    def getGhostCorners(self) -> tuple[()] | tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
         """Return the global (x,y,z) indices of the lower left corner and size of the local region, including ghost points.
 
         Output Parameters
@@ -763,7 +760,6 @@ cdef class DMDA(DM):
 
     #
 
-    # TODO: ?????
     def getVecArray(self, Vec vec) -> Any:
         """TODO
 
@@ -1202,24 +1198,20 @@ cdef class DMDA(DM):
         def __get__(self) -> int:
             return self.getStencilWidth()
 
-    # TODO: fix type once determined above
     property ranges:
-        def __get__(self) -> None:
+        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]::
             return self.getRanges()
 
-    # TODO: fix type once determined above
     property ghost_ranges:
-        def __get__(self) -> None:
+        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]::
             return self.getGhostRanges()
 
-    # TODO: fix type once determined above
     property corners:
-        def __get__(self) -> None:
+        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]::
             return self.getCorners()
 
-    # TODO: fix type once determined above
     property ghost_corners:
-        def __get__(self) -> None:
+        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]::
             return self.getGhostCorners()
 
     # backward compatibility
