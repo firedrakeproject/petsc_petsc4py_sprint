@@ -459,8 +459,8 @@ cdef class Mat(Object):
 
     def setSizes(
         self,
-        size: MatSizeType,
-        bsize: MatBlockSizeType | None = None,
+        size: MatSizeSpec,
+        bsize: MatBlockSizeSpec | None = None,
     ) -> None:
         """Set the local, global and block sizes.
 
@@ -469,13 +469,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         size
-            `int` or nested `tuple` of `int` describing the matrix size. See
-            the "Examples" section below and `Sys.splitOwnership` for more
-            information.
+            Matrix size.
         bsize
-            The row and column block sizes. If a single `int` is provided then
-            rows and columns share the same block size. If `None` then a block
-            size of ``1`` is set.
+            Matrix block size. If `None`, a block size of ``1`` is set.
 
         Examples
         --------
@@ -591,38 +587,38 @@ cdef class Mat(Object):
 
     def createAIJ(
         self,
-        size: MatSizeType,
-        bsize: MatBlockSizeType | None = None,
-        nnz: NNZType | None = None,
-        csr: CSRIndicesType | None = None,
+        size: MatSizeSpec,
+        bsize: MatBlockSizeSpec | None = None,
+        nnz: NNZSpec | None = None,
+        csr: CSRIndicesSpec | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse `Type.AIJ` matrix, optionally preallocating.
+
+        Collective.
 
         To preallocate the matrix the user can either pass ``nnz`` or ``csr``
         describing the sparsity. If neither is set then preallocation will not
         occur. Consult the `PETSc manual <petsc:sec_matsparse>` for
         more information.
 
-
-        Collective.
-
         Parameters
         ----------
-        size, bsize
-            Matrix size attributes. See `setSizes` for usage information.
+        size
+            Matrix size.
+        bsize
+            Matrix block size. If `None`, a block size of ``1`` is set.
         nnz
-            Non-zero preallocation pattern. See `setPreallocationNNZ` for
-            usage information.
+            Optional non-zeros preallocation pattern.
         csr
-            Compressed sparse row layout information. See
-            `setPreallocationCSR` for usage information.
+            Optional compressed sparse row layout information.
+            If provided, it takes precedence on ``nnz``.
         comm
-            MPI communicators, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        createBAIJ
+        setSizes, createBAIJ,
         petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ, petsc.MatCreateAIJ
         petsc.MatSeqAIJSetPreallocation, petsc.MatSeqAIJSetPreallocationCSR
 
@@ -637,25 +633,38 @@ cdef class Mat(Object):
 
     def createBAIJ(
         self,
-        size: MatSizeType,
-        bsize: MatBlockSizeType,
-        nnz: NNZType | None = None,
-        csr: CSRIndicesType | None = None,
+        size: MatSizeSpec,
+        bsize: MatBlockSizeSpec,
+        nnz: NNZSpec | None = None,
+        csr: CSRIndicesSpec | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse blocked `Type.BAIJ` matrix, optionally preallocating.
 
         Collective.
 
+        To preallocate the matrix the user can either pass ``nnz`` or ``csr``
+        describing the sparsity. If neither is set then preallocation will not
+        occur. Consult the `PETSc manual <petsc:sec_matsparse>` for
+        more information.
+
         Parameters
         ----------
-        size, bsize, nnz, csr, comm
-            See `createAIJ` for information on the meaning of the
-            parameters. Note in this case that ``bsize`` cannot be `None`.
+        size
+            Matrix size.
+        bsize
+            Matrix block size.
+        nnz
+            Optional non-zeros preallocation pattern for block rows.
+        csr
+            Optional block-compressed sparse row layout information.
+            If provided, it takes precedence on ``nnz``.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
-        createAIJ
+        setSizes, createAIJ
         petsc.MATBAIJ, petsc.MATSEQBAIJ, petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
 
         """
@@ -669,22 +678,35 @@ cdef class Mat(Object):
 
     def createSBAIJ(
         self,
-        size: MatSizeType,
+        size: MatSizeSpec,
         bsize: int,
-        nnz: NNZType | None = None,
-        csr: CSRIndicesType | None = None,
+        nnz: NNZSpec | None = None,
+        csr: CSRIndicesSpec | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse `Type.SBAIJ` matrix in symmetric block format.
 
         Collective.
 
+        To preallocate the matrix the user can either pass ``nnz`` or ``csr``
+        describing the sparsity. If neither is set then preallocation will not
+        occur. Consult the `PETSc manual <petsc:sec_matsparse>` for
+        more information.
+
         Parameters
         ----------
-        size, bsize, nnz, csr, comm
-            See `createAIJ` for information on the meaning of the
-            parameters. Note in this case that ``bsize`` must be an `int`,
-            that is, blocks *must* be square.
+        size
+            Matrix size.
+        bsize
+            Matrix block size.
+        nnz
+            Optional upper-triangular (including diagonal)
+            non-zeros preallocation pattern for block rows.
+        csr
+            Optional block-compressed sparse row layout information.
+            If provided, it takes precedence on ``nnz``.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -702,24 +724,37 @@ cdef class Mat(Object):
 
     def createAIJCRL(
         self,
-        size: MatSizeType,
-        bsize: MatBlockSizeType | None = None,
-        nnz: NNZType | None = None,
-        csr: CSRIndicesType | None = None,
+        size: MatSizeSpec,
+        bsize: MatBlockSizeSpec | None = None,
+        nnz: NNZSpec | None = None,
+        csr: CSRIndicesSpec | None = None,
         comm: Comm | None = None,
     ) -> Self:
         """Create a sparse `Type.AIJCRL` matrix.
 
+        Collective.
+
         This is similar to `Type.AIJ` matrices but stores some additional
         information that improves vectorisation for the matrix-vector product.
 
-        Collective.
+        To preallocate the matrix the user can either pass ``nnz`` or ``csr``
+        describing the sparsity. If neither is set then preallocation will not
+        occur. Consult the `PETSc manual <petsc:sec_matsparse>` for
+        more information.
 
         Parameters
         ----------
-        size, bsize, nnz, csr, comm
-            See `createAIJ` for information on the meaning of the
-            parameters.
+        size
+            Matrix size.
+        bsize
+            Matrix block size. If `None`, a block size of ``1`` is set.
+        nnz
+            Optional non-zeros preallocation pattern.
+        csr
+            Optional compressed sparse row layout information.
+            If provided, it takes precedence on ``nnz``.
+        comm
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -735,22 +770,19 @@ cdef class Mat(Object):
         Mat_AllocAIJ(self.mat, nnz, csr)
         return self
 
-    def setPreallocationNNZ(self, nnz: NNZType) -> Self:
+    def setPreallocationNNZ(self, nnz: NNZSpec) -> Self:
         """Preallocate memory for the matrix with a non-zero pattern.
+
+        Collective.
 
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
 
-        Collective.
-
         Parameters
         ----------
         nnz
-            The number of non-zeros per row. If an `int` is passed then this
-            is treated as the number of non-zeros for every row. If a 2-`tuple`
-            is passed then these correspond to the diagonal and off-diagonal
-            parts of the matrix. See `petsc.MatMPIAIJSetPreallocation` for
-            more information.
+            The number of non-zeros per row for the local portion of the matrix,
+            or a 2-tuple for the on-process and off-process part of the matrix.
 
         See Also
         --------
@@ -765,7 +797,7 @@ cdef class Mat(Object):
         Mat_AllocAIJ_NNZ(self.mat, nnz)
         return self
 
-    def setPreallocationCSR(self, csr: CSRIndicesType) -> Self:
+    def setPreallocationCSR(self, csr: CSRIndicesSpec) -> Self:
         """Preallocate memory for the matrix with a CSR layout.
 
         Correct preallocation can result in a dramatic reduction in matrix
@@ -776,16 +808,21 @@ cdef class Mat(Object):
         Parameters
         ----------
         csr
-            Compressed sparse row (local) layout consisting of
-            ``(row_start, col)`` where ``row_start`` points to the start of
-            each row and ``col`` gives the column index for each entry. See
-            `petsc.MatMPIAIJSetPreallocationCSR` for more information.
+            Local matrix data in compressed sparse row layout format.
+
+        Notes
+        -----
+        Must use the block-compressed form with `Type.BAIJ` and `Type.SBAIJ`.
 
         See Also
         --------
-        setPreallocationNNZ, createAIJ
+        setPreallocationNNZ, createAIJ, createBAIJ, createSBAIJ
         petsc.MatSeqAIJSetPreallocationCSR
         petsc.MatMPIAIJSetPreallocationCSR
+        petsc.MatSeqBAIJSetPreallocationCSR
+        petsc.MatMPIBAIJSetPreallocationCSR
+        petsc.MatSeqSBAIJSetPreallocationCSR
+        petsc.MatMPISBAIJSetPreallocationCSR
 
         """
         cdef PetscBool done = PETSC_FALSE
@@ -796,30 +833,31 @@ cdef class Mat(Object):
 
     def createAIJWithArrays(
         self,
-        size: MatSizeType,
-        csr: CSRType | tuple[CSRType, CSRType],
-        bsize: MatBlockSizeType | None = None,
+        size: MatSizeSpec,
+        csr: CSRSpec | tuple[CSRSpec, CSRSpec],
+        bsize: MatBlockSizeSpec | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a sparse `Type.AIJ` matrix with provided data in CSR format.
+        """Create a sparse `Type.AIJ` matrix with data in CSR format.
 
         Collective.
 
         Parameters
         ----------
         size
-            Matrix size. See `setSizes` for usage information.
+            Matrix size.
         csr
-            Matrix data expressed in compressed sparse row format. Note that
-            in this function this argument is a 3-tuple of
-            ``(row_start, col, data)`` instead of ``(row_start, col)``. One
-            can also pass a 2-tuple of CSR 3-tuples representing the
-            diagonal and off-diagonal portions of the parallel matrix. Doing
-            so will avoid any copies.
+            Local matrix data in compressed sparse row format.
         bsize
-            Block size. See `setSizes` for usage information.
+            Matrix block size. If `None`, a block size of ``1`` is set.
         comm
             MPI communicator, defaults to `Sys.getDefaultComm`.
+
+        Notes
+        -----
+        For `Type.SEQAIJ` matrices, the ``csr`` data is not copied.
+        For `Type.MPIAIJ` matrices, the ``csr`` data is not copied only
+        in the case it represents on-process and off-process information.
 
         See Also
         --------
@@ -888,8 +926,8 @@ cdef class Mat(Object):
 
     def createDense(
         self,
-        size: MatSizeType,
-        bsize: MatBlockSizeType | None = None,
+        size: MatSizeSpec,
+        bsize: MatBlockSizeSpec | None = None,
         array: Sequence[Scalar] | None = None,
         comm: Comm | None = None
     ) -> Self:
@@ -899,8 +937,10 @@ cdef class Mat(Object):
 
         Parameters
         ----------
-        size, bsize
-            Matrix size parameters. See `createAIJ` for usage information.
+        size
+            Matrix size.
+        bsize
+            Matrix block size. If `None`, a block size of ``1`` is set.
         array
             Optional matrix data. If `None`, memory is internally allocated.
         comm
@@ -924,8 +964,8 @@ cdef class Mat(Object):
 
     def createDenseCUDA(
         self,
-        size: MatSizeType,
-        bsize: MatBlockSizeType | None = None,
+        size: MatSizeSpec,
+        bsize: MatBlockSizeSpec | None = None,
         array: Sequence[Scalar] | None = None,
         cudahandle: int | None = None,
         comm: Comm | None = None,
@@ -936,8 +976,10 @@ cdef class Mat(Object):
 
         Parameters
         ----------
-        size, bsize
-            Matrix size parameters. See `setSizes` for usage information.
+        size
+            Matrix size.
+        bsize
+            Matrix block size. If `None`, a block size of ``1`` is set.
         array
             Host data. Will be lazily allocated if `None`.
         cudahandle
@@ -987,10 +1029,6 @@ cdef class Mat(Object):
         ----------
         array
             Array that will be used to store matrix data.
-
-        Notes
-        -----
-        Most users will not need to call this routine.
 
         See Also
         --------
@@ -1352,7 +1390,7 @@ cdef class Mat(Object):
 
     def createIS(
         self,
-        size: MatSizeType,
+        size: MatSizeSpec,
         LGMap lgmapr = None,
         LGMap lgmapc = None,
         comm: Comm | None = None,
@@ -1364,7 +1402,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         size
-            Matrix size parameters. See `setSizes` for usage information.
+            Matrix size.
         lgmapr
             Optional local-to-global mapping for the rows.
             If `None`, the local row space matches the global row space.
@@ -1401,7 +1439,7 @@ cdef class Mat(Object):
         PetscCLEAR(self.obj); self.mat = newmat
         return self
 
-    def createPython(self, size: MatSizeType, context: Any = None, comm: Comm | None = None) -> Self:
+    def createPython(self, size: MatSizeSpec, context: Any = None, comm: Comm | None = None) -> Self:
         """Create a `Type.PYTHON` matrix.
 
         Collective.
@@ -1409,8 +1447,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         size
-          `int` or nested `tuple` of `int` describing the matrix size.
-          See `Sys.splitOwnership` for more information.
+          Matrix size.
         context
           An instance of the Python class implementing the required methods.
         comm
@@ -1561,7 +1598,7 @@ cdef class Mat(Object):
         CHKERR( MatSetUp(self.mat) )
         return self
 
-    def setOption(self, option : Option, flag : bool) -> None:
+    def setOption(self, option: Option, flag: bool) -> None:
         """Set option.
 
         Collective.
@@ -1573,7 +1610,7 @@ cdef class Mat(Object):
         """
         CHKERR( MatSetOption(self.mat, option, flag) )
 
-    def getOption(self, option : Option) -> bool:
+    def getOption(self, option: Option) -> bool:
         """Return the option value.
 
         Not collective.
@@ -1601,39 +1638,103 @@ cdef class Mat(Object):
         CHKERR( MatGetType(self.mat, &cval) )
         return bytes2str(cval)
 
-    def getSize(self):
+    def getSize(self) -> tuple[int, int]:
+        """Return the global number of rows and columns.
+
+        Not collective.
+
+        See Also
+        --------
+        getLocalSize, getSizes, petsc.MatGetSize
+
+        """
         cdef PetscInt M = 0, N = 0
         CHKERR( MatGetSize(self.mat, &M, &N) )
         return (toInt(M), toInt(N))
 
-    def getLocalSize(self):
+    def getLocalSize(self) -> tuple[int, int]:
+        """Return the local number of rows and columns.
+
+        Not collective.
+
+        See Also
+        --------
+        getSize, petsc.MatGetLocalSize
+
+        """
         cdef PetscInt m = 0, n = 0
         CHKERR( MatGetLocalSize(self.mat, &m, &n) )
         return (toInt(m), toInt(n))
 
-    def getSizes(self):
+    def getSizes(self) -> tuple[tuple[int, int], tuple[int, int]]:
+        """Return the tuple of 2-tuples of the type ``(local, global)`` for rows and columns.
+
+        Not collective.
+
+        See Also
+        --------
+        getLocalSize, getSize
+
+        """
         cdef PetscInt m = 0, n = 0
         cdef PetscInt M = 0, N = 0
         CHKERR( MatGetLocalSize(self.mat, &m, &n) )
         CHKERR( MatGetSize(self.mat, &M, &N) )
         return ((toInt(m), toInt(M)), (toInt(n), toInt(N)))
 
-    def getBlockSize(self):
+    def getBlockSize(self) -> int:
+        """Return the matrix block size.
+
+        Not collective.
+
+        See Also
+        --------
+        getBlockSize, petsc.MatGetBlockSize
+
+        """
         cdef PetscInt bs = 0
         CHKERR( MatGetBlockSize(self.mat, &bs) )
         return toInt(bs)
 
-    def getBlockSizes(self):
+    def getBlockSizes(self) -> tuple[int, int]:
+        """Return the row and column block sizes.
+
+        Not collective.
+
+        See Also
+        --------
+        getBlockSize, petsc.MatGetBlockSizes
+
+        """
         cdef PetscInt rbs = 0, cbs = 0
         CHKERR( MatGetBlockSizes(self.mat, &rbs, &cbs) )
         return (toInt(rbs), toInt(cbs))
 
-    def getOwnershipRange(self):
+    def getOwnershipRange(self) -> tuple[int, int]:
+        """Return the locally owned range of rows.
+
+        Not collective.
+
+        See Also
+        --------
+        getOwnershipRanges, getOwnershipRangeColumn
+        petsc.MatGetOwnershipRange
+
+        """
         cdef PetscInt ival1 = 0, ival2 = 0
         CHKERR( MatGetOwnershipRange(self.mat, &ival1, &ival2) )
         return (toInt(ival1), toInt(ival2))
 
-    def getOwnershipRanges(self):
+    def getOwnershipRanges(self) -> ArrayInt:
+        """Return the range of rows owned by each process.
+
+        Not collective.
+
+        See Also
+        --------
+        getOwnershipRange, petsc.MatGetOwnershipRanges
+
+        """
         cdef const PetscInt *rowrng = NULL
         CHKERR( MatGetOwnershipRanges(self.mat, &rowrng) )
         cdef MPI_Comm comm = MPI_COMM_NULL
@@ -1642,12 +1743,31 @@ cdef class Mat(Object):
         CHKERR( <PetscErrorCode>MPI_Comm_size(comm, &size) )
         return array_i(size+1, rowrng)
 
-    def getOwnershipRangeColumn(self):
+    def getOwnershipRangeColumn(self) -> tuple[int, int]:
+        """Return the locally owned range of columns.
+
+        Not collective.
+
+        See Also
+        --------
+        getOwnershipRangesColumn, getOwnershipRange
+        petsc.MatGetOwnershipRangeColumn
+
+        """
         cdef PetscInt ival1 = 0, ival2 = 0
         CHKERR( MatGetOwnershipRangeColumn(self.mat, &ival1, &ival2) )
         return (toInt(ival1), toInt(ival2))
 
-    def getOwnershipRangesColumn(self):
+    def getOwnershipRangesColumn(self) -> ArrayInt:
+        """Return the range of columns owned by each process.
+
+        Not collective.
+
+        See Also
+        --------
+        getOwnershipRangeColumn, petsc.MatGetOwnershipRangesColumn
+
+        """
         cdef const PetscInt *colrng = NULL
         CHKERR( MatGetOwnershipRangesColumn(self.mat, &colrng) )
         cdef MPI_Comm comm = MPI_COMM_NULL
@@ -1656,19 +1776,57 @@ cdef class Mat(Object):
         CHKERR( <PetscErrorCode>MPI_Comm_size(comm, &size) )
         return array_i(size+1, colrng)
 
-    def getOwnershipIS(self):
+    def getOwnershipIS(self) -> tuple[IS, IS]:
+        """Return the ranges of rows and columns owned by each process as index sets.
+
+        Not collective.
+
+        See Also
+        --------
+        getOwnershipRanges, getOwnershipRangesColumn
+        petsc.MatGetOwnershipIS
+
+        """
         cdef IS rows = IS()
         cdef IS cols = IS()
         CHKERR( MatGetOwnershipIS(self.mat, &rows.iset, &cols.iset) )
         return (rows, cols)
 
-    def getInfo(self, info=None):
+    def getInfo(self, info: InfoType = None) -> dict[str, float]:
+        """Return summary information.
+
+        Collective.
+
+        Parameters
+        ----------
+        info
+           If `None`, it uses `InfoType.GLOBAL_SUM`
+
+        See Also
+        --------
+        petsc.MatInfo, petsc.MatGetInfo
+
+        """
         cdef PetscMatInfoType itype = infotype(info)
         cdef PetscMatInfo cinfo
         CHKERR( MatGetInfo(self.mat, itype, &cinfo) )
         return cinfo
 
-    def duplicate(self, copy=False):
+    def duplicate(self, copy: bool = False) -> Mat:
+        """Return a clone of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        copy
+           If `True`, it also copies the values.
+
+        See Also
+        --------
+        petsc.MatDuplicate
+
+        """
         cdef PetscMatDuplicateOption flag = MAT_DO_NOT_COPY_VALUES
         if copy: flag = MAT_COPY_VALUES
         if copy > MAT_COPY_VALUES: flag = MAT_SHARE_NONZERO_PATTERN
@@ -1676,7 +1834,23 @@ cdef class Mat(Object):
         CHKERR( MatDuplicate(self.mat, flag, &mat.mat) )
         return mat
 
-    def copy(self, Mat result=None, structure=None):
+    def copy(self, Mat result=None, structure: Structure | None = None) -> Mat:
+        """Return a copy of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        result
+           Optional return matrix. If `None`, it is internally created.
+        structure
+           The copy structure. Only relevant if ``result`` is not None.
+
+        See Also
+        --------
+        petsc.MatCopy, petsc.MatDuplicate
+
+        """
         cdef PetscMatDuplicateOption copy = MAT_COPY_VALUES
         cdef PetscMatStructure mstr = matstructure(structure)
         if result is None:
@@ -1687,7 +1861,16 @@ cdef class Mat(Object):
             CHKERR( MatCopy(self.mat, result.mat, mstr) )
         return result
 
-    def load(self, Viewer viewer):
+    def load(self, Viewer viewer) -> Self:
+        """Load a matrix.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatLoad
+
+        """
         cdef MPI_Comm comm = MPI_COMM_NULL
         cdef PetscObject obj = <PetscObject>(viewer.vwr)
         if self.mat == NULL:
@@ -1696,7 +1879,24 @@ cdef class Mat(Object):
         CHKERR( MatLoad(self.mat, viewer.vwr) )
         return self
 
-    def convert(self, mat_type=None, Mat out=None):
+    def convert(self, mat_type: Type | str = None, Mat out=None) -> Mat:
+        """Convert the matrix type.
+
+        Collective.
+
+        Parameters
+        ----------
+        mat_type
+          The type of the new matrix. If `None` uses `Type.SAME`.
+        out
+           Optional return matrix. If `None`, inplace conversion is performed.
+           Otherwise, the matrix is reused.
+
+        See Also
+        --------
+        petsc.MatConvert
+
+        """
         cdef PetscMatType mtype = MATSAME
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         mat_type = str2bytes(mat_type, &mtype)
@@ -1711,7 +1911,22 @@ cdef class Mat(Object):
         CHKERR( MatConvert(self.mat, mtype, reuse, &out.mat) )
         return out
 
-    def transpose(self, Mat out=None):
+    def transpose(self, Mat out=None) -> Mat:
+        """Return the transposed matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        out
+           Optional return matrix. If `None`, inplace tranposition is performed.
+           Otherwise, the matrix is reused.
+
+        See Also
+        --------
+        petsc.MatTranspose
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         if out is None: out = self
         if out.mat == self.mat:
@@ -1723,11 +1938,34 @@ cdef class Mat(Object):
         CHKERR( MatTranspose(self.mat, reuse, &out.mat) )
         return out
 
-    def setTransposePrecursor(self, Mat out):
+    # FIXME return None
+    def setTransposePrecursor(self, Mat out) -> Mat:
+        """Set transpose precursor.
+
+        See Also
+        --------
+        petsc.MatTransposeSetPrecursor
+
+        """
         CHKERR( MatTransposeSetPrecursor(self.mat, out.mat) )
         return out
 
-    def hermitianTranspose(self, Mat out=None):
+    def hermitianTranspose(self, Mat out=None) -> Mat:
+        """Return the transposed Hermitian matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        out
+           Optional return matrix. If `None`, inplace tranposition is performed.
+           Otherwise, the matrix is reused.
+
+        See Also
+        --------
+        petsc.MatHermitianTranspose
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         if out is None: out = self
         if out.mat == self.mat:
@@ -1739,7 +1977,22 @@ cdef class Mat(Object):
         CHKERR( MatHermitianTranspose(self.mat, reuse, &out.mat) )
         return out
 
-    def realPart(self, Mat out=None):
+    def realPart(self, Mat out=None) -> Mat:
+        """Return the real part of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        out
+           Optional return matrix. If `None`, the operation is performed in-place.
+           Otherwise, the operation is performed on ``out``.
+
+        See Also
+        --------
+        imagPart, conjugate, petsc.MatRealPart
+
+        """
         if out is None:
             out = self
         elif out.mat == NULL:
@@ -1747,7 +2000,22 @@ cdef class Mat(Object):
         CHKERR( MatRealPart(out.mat) )
         return out
 
-    def imagPart(self, Mat out=None):
+    def imagPart(self, Mat out=None) -> Mat:
+        """Return the imaginary part of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        out
+           Optional return matrix. If `None`, the operation is performed in-place.
+           Otherwise, the operation is performed on ``out``.
+
+        See Also
+        --------
+        realPart, conjugate, petsc.MatImaginaryPart
+
+        """
         if out is None:
             out = self
         elif out.mat == NULL:
@@ -1755,7 +2023,22 @@ cdef class Mat(Object):
         CHKERR( MatImaginaryPart(out.mat) )
         return out
 
-    def conjugate(self, Mat out=None):
+    def conjugate(self, Mat out=None) -> Mat:
+        """Return the conjugate matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        out
+           Optional return matrix. If `None`, the operation is performed in-place.
+           Otherwise, the operation is performed on ``out``.
+
+        See Also
+        --------
+        realPart, imagPart, petsc.MatConjugate
+
+        """
         if out is None:
             out = self
         elif out.mat == NULL:
@@ -1763,7 +2046,23 @@ cdef class Mat(Object):
         CHKERR( MatConjugate(out.mat) )
         return out
 
-    def permute(self, IS row, IS col):
+    def permute(self, IS row, IS col) -> Mat:
+        """Return the permuted matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        row
+           Row permutation.
+        col
+           Column permutation.
+
+        See Also
+        --------
+        petsc.MatPermute
+
+        """
         cdef Mat mat = Mat()
         CHKERR( MatPermute(self.mat, row.iset, col.iset, &mat.mat) )
         return mat

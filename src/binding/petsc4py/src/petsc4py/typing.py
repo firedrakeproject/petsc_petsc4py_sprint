@@ -26,11 +26,11 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
-    "MatSizeType",
-    "MatBlockSizeType",
-    "CSRIndicesType",
-    "CSRType",
-    "NNZType",
+    "MatSizeSpec",
+    "MatBlockSizeSpec",
+    "CSRIndicesSpec",
+    "CSRSpec",
+    "NNZSpec",
     "DMCoarsenHookFunction",
     "DMRestrictHookFunction",
     "KSPRHSFunction",
@@ -91,16 +91,61 @@ ArrayScalar = NDArray[Scalar]
 
 # --- Mat ---
 
-MatSizeType = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
-MatBlockSizeType = tuple[int, int] | int
-CSRIndicesType = tuple[Sequence[int], Sequence[int]]
-CSRType = tuple[Sequence[int], Sequence[int], Sequence[int]]
-NNZType = int | Sequence[int] | tuple[Sequence[int], Sequence[int]]
+MatSizeSpec = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
+"""`int` or (nested) `tuple` of `int` describing the matrix sizes.
+
+   If `int` then rows = columns.
+   A single `tuple` of `int` indicates ``(rows, columns)``.
+   A nested `tuple` of `int` indicates ``((localrows, rows), (localcolumns, columns))``.
+
+   See Also
+   --------
+   Sys.splitOwnership
+
+"""
+
+MatBlockSizeSpec = int | tuple[int, int]
+"""The row and column block sizes.
+
+   If a single `int` is provided then rows and columns share the same block size.
+
+"""
+
+CSRIndicesSpec = tuple[Sequence[int], Sequence[int]]
+"""CSR indices format specification.
+
+   A 2-tuple carrying the ``(row_start, col_indices)`` information.
+
+"""
+
+CSRSpec = tuple[Sequence[int], Sequence[int], Sequence[float]]
+"""CSR format specification.
+
+   A 3-tuple carrying the ``(row_start, col_indices, values)`` information.
+
+"""
+
+NNZSpec = int | Sequence[int] | tuple[Sequence[int], Sequence[int]]
+"""Nonzero pattern specification.
+
+   A single `int` corresponds to fixed number of non-zeros per row.
+   A `Sequence` of `int` indicates different non-zeros per row.
+   If a 2-`tuple` is used, the elements of the tuple corresponds
+   to the on-process and off-process parts of the matrix.
+
+   See Also
+   --------
+   petsc.MatSeqAIJSetPreallocation, petsc.MatMPIAIJSetPreallocation
+
+"""
 
 # --- DM ---
 
 DMCoarsenHookFunction = Callable[[DM, DM], None]
+"""`PETSc.DM` coarsening hook callback."""
+
 DMRestrictHookFunction = Callable[[DM, Mat, Vec, Mat, DM], None]
+"""`PETSc.DM` restriction hook callback."""
 
 # --- KSP ---
 

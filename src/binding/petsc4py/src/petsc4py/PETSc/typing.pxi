@@ -22,11 +22,11 @@ cdef ArrayScalar
 
 # --- Mat ---
 
-cdef MatSizeType
-cdef MatBlockSizeType
-cdef CSRIndicesType
-cdef CSRType
-cdef NNZType
+cdef MatSizeSpec
+cdef MatBlockSizeSpec
+cdef CSRIndicesSpec
+cdef CSRSpec
+cdef NNZSpec
 
 # --- DM ---
 
