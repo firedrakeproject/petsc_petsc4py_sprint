@@ -689,15 +689,15 @@ cdef class DMDA(DM):
         Parameters
         ----------
         field
-            The field number for the DMDA (0, 1, ... dof-1), where dof
-            indicates the number of degrees of freedom per node within the
-            DMDA.
+            The field number for the DMDA (``0``, ``1``, ..., ``dof-1``),
+            where ``dof`` indicates the number of degrees of freedom per node
+            within the `DMDA`.
         name
-            the name of the field (component)
+            The name of the field (component).
 
         See Also
         --------
-        petsc.DMDASetFieldName
+        getFieldName, petsc.DMDASetFieldName
 
         """
         cdef PetscInt ival = asInt(field)
@@ -713,13 +713,13 @@ cdef class DMDA(DM):
         Parameters
         ----------
         field
-            The field number for the DMDA (0, 1, ... dof-1), where dof
-            indicates the number of degrees of freedom per node within the
-            DMDA.
+            The field number for the DMDA (``0``, ``1``, ..., ``dof-1``),
+            where ``dof`` indicates the number of degrees of freedom per node
+            within the `DMDA`.
 
         See Also
         --------
-        petsc.DMDAGetFieldName
+        setFieldName, petsc.DMDAGetFieldName
 
         """
         cdef PetscInt ival = asInt(field)
@@ -730,14 +730,16 @@ cdef class DMDA(DM):
     #
 
     def getVecArray(self, Vec vec) -> Any:
-        """TODO
+        """Get access to the vector.
+
+        Use via `with` context manager (PEP 343).
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        vec
+            The vector to which access is being requested.
 
         """
         return _DMDA_Vec_array(self, vec)
@@ -764,13 +766,17 @@ cdef class DMDA(DM):
         xmax
             The maximum in the ``x`` direction.
         ymin
-            The minimum in the ``y`` direction (value ignored for 1 dimensional problems).
+            The minimum in the ``y`` direction (value ignored for 1 dimensional
+             problems).
         ymax
-            The maximum in the ``y`` direction (value ignored for 1 dimensional problems).
+            The maximum in the ``y`` direction (value ignored for 1 dimensional
+             problems).
         zmin
-            The minimum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
+            The minimum in the ``z`` direction (value ignored for 1 or 2
+            dimensional problems).
         zmax
-            The maximum in the ``z`` direction (value ignored for 1 or 2 dimensional problems).
+            The maximum in the ``z`` direction (value ignored for 1 or 2
+            dimensional problems).
 
         See Also
         --------
@@ -786,22 +792,20 @@ cdef class DMDA(DM):
                                           _zmin, _zmax) )
 
     def setCoordinateName(self, index: int, name: str) -> None:
-        """Set the name of the coordinate directions associated with a DMDA, for example "x" or "y"
+        """Set the name of the coordinate direction.
 
-        It must be called after having called DMSetUp().
-
-        Logically collective; name must contain a common value.
+        Logically collective; ``name`` must contain a common value.
 
         Parameters
         ----------
         index
-            coordinate number for the DMDA (0, 1, ... dim-1),
+            The coordinate number for the DMDA (``0``, ``1``, ..., ``dim-1``).
         name
-            the name of the coordinate
+            The name of the coordinate.
 
         See Also
         --------
-        petsc.DMDASetCoordinateName
+        getCoordinateName, petsc.DMDASetCoordinateName
 
         """
         cdef PetscInt ival = asInt(index)
@@ -810,18 +814,18 @@ cdef class DMDA(DM):
         CHKERR( DMDASetCoordinateName(self.dm, ival, cval) )
 
     def getCoordinateName(self, index: int) -> str:
-        """Return the name of a coordinate direction associated with a DMDA.
+        """Return the name of a coordinate direction.
 
-        Not collective; name will contain a common value; No Fortran Support
+        Not collective; the returned value will contain a common value.
 
         Parameters
         ----------
-        nf
-            number for the DMDA (0, 1, ... dim-1)
+        index
+            The coordinate number for the DMDA (``0``, ``1``, ..., ``dim-1``).
 
         See Also
         --------
-        petsc.DMDAGetCoordinateName
+        setCoordinateName, petsc.DMDAGetCoordinateName
 
         """
         cdef PetscInt ival = asInt(index)
@@ -832,14 +836,10 @@ cdef class DMDA(DM):
     #
 
     def createNaturalVec(self) -> Vec:
-        """Create a parallel PETSc vector that will hold vector values in the natural numbering, rather than in the PETSc parallel numbering associated with the DMDA.
+        """Create a vector that will hold values in the natural numbering.
 
-        The output parameter, g, is a regular PETSc vector that should be destroyed with a call to VecDestroy() when usage is finished.
-
-        The number of local entries in the vector on each process is the same as in a vector created with DMCreateGlobalVector().
-
-        Output Parameter
-        g - the distributed global vector
+        The number of local entries in the vector on each process is the same
+        as in a vector created with `DM.createGlobalVector`.
 
         Collective.
 
@@ -858,7 +858,7 @@ cdef class DMDA(DM):
         Vec vn,
         addv: InsertMode | None = None,
     ) -> None:
-        """Map values from the global vector to a global vector in the "natural" grid ordering. Must be followed by DMDAGlobalToNaturalEnd() to complete the exchange.
+        """Map values to the "natural" grid ordering.
 
         Output Parameter
         l - the natural ordering values
@@ -874,14 +874,17 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        g
-            the global vector
-        mode
-            one of INSERT_VALUES or ADD_VALUES
+        vg
+            The global vector in a grid ordering.
+        vn
+            The global vector in a "natural" ordering.
+        addv
+            The insertion mode.
 
         See Also
         --------
-        petsc.DMDAGlobalToNaturalBegin, petsc.DMDAGlobalToNaturalEnd
+        naturalToGlobal, petsc.DMDAGlobalToNaturalBegin
+        petsc.DMDAGlobalToNaturalEnd
 
         """
         cdef PetscInsertMode im = insertmode(addv)
@@ -894,14 +897,7 @@ cdef class DMDA(DM):
         Vec vg,
         addv: InsertMode | None = None,
     ) -> None:
-        """Map values from a global vector from "natural" to grid ordering.
-
-        Maps values from a global vector in the "natural" ordering to a global
-        vector in the DMDA grid ordering.
-
-        The global and natural vectors used here need not be the same as those
-        obtained from DMCreateGlobalVector() and DMDACreateNaturalVector(), BUT
-        they must have the same parallel data layout; they could, for example, be obtained with VecDuplicate() from the DMDA originating vectors.
+        """Map values the to grid ordering.
 
         Neighbor-wise collective.
 
@@ -912,11 +908,12 @@ cdef class DMDA(DM):
         vg
             the global vector in a grid ordering.
         addv
-            Insertion mode.
+            The insertion mode.
 
         See Also
         --------
-        petsc.DMDANaturalToGlobalBegin, petsc.DMDANaturalToGlobalEnd
+        globalToNatural, petsc.DMDANaturalToGlobalBegin
+        petsc.DMDANaturalToGlobalEnd
 
         """
         cdef PetscInsertMode im = insertmode(addv)
@@ -928,7 +925,11 @@ cdef class DMDA(DM):
     def getAO(self) -> AO:
         """Return the application ordering context for a distributed array.
 
-        In this case, the AO maps to the natural grid ordering that would be used for the DMDA if only 1 processor were employed (ordering most rapidly in the x-direction, then y, then z). Multiple degrees of freedom are numbered for each node (rather than 1 component for the whole grid, then the next component, etc.)
+        In this case, the AO maps to the natural grid ordering that would be
+        used for the `DMDA` if only 1 processor were employed (ordering most
+        rapidly in the x-direction, then y, then z). Multiple degrees of
+        freedom are numbered for each node (rather than 1 component for the
+        whole grid, then the next component, etc.).
 
         Collective.
 
@@ -982,7 +983,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDASetRefinementFactor
+        getRefinementFactor, petsc.DMDASetRefinementFactor
 
         """
         cdef PetscInt refine[3]
@@ -994,14 +995,14 @@ cdef class DMDA(DM):
                                       refine[1],
                                       refine[2]) )
 
-    def getRefinementFactor(self):
+    def getRefinementFactor(self) -> tuple[int, ...]:
         """Return the ratios that the DMDA grid is refined in each dimension.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetRefinementFactor
+        setRefinementFactor, petsc.DMDAGetRefinementFactor
 
         """
         cdef PetscInt i, dim = 0, refine[3]
@@ -1022,12 +1023,12 @@ cdef class DMDA(DM):
 
         Parameters
         ----------
-        ctype
-            DMDA_Q1 and DMDA_Q0 are currently the only supported forms.
+        interp_type
+            The interpolation type.
 
         See Also
         --------
-        petsc.DMDASetInterpolationType
+        getInterpolationType, petsc.DMDASetInterpolationType
 
         """
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
@@ -1040,7 +1041,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetInterpolationType
+        setInterpolationType, petsc.DMDAGetInterpolationType
 
         """
         cdef PetscDMDAInterpolationType ival = DMDA_INTERPOLATION_Q0
@@ -1050,32 +1051,26 @@ cdef class DMDA(DM):
     #
 
     def setElementType(self, elem_type: ElementType | str) -> None:
-        """Set the element type to be returned by DMDAGetElements()
-
-        Output Parameter
-        etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
+        """Set the element type to be returned by `getElements`.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDASetElementType
+        getElementType, petsc.DMDASetElementType
 
         """
         cdef PetscDMDAElementType ival = daelementtype(elem_type)
         CHKERR( DMDASetElementType(self.dm, ival) )
 
     def getElementType(self) -> int:
-        """Return the element type to be returned by DMDAGetElements()
-
-        Output Parameter
-        etype - the element type, currently either DMDA_ELEMENT_P1 or DMDA_ELEMENT_Q1
+        """Return the element type to be returned by `getElements`.
 
         Not collective.
 
         See Also
         --------
-        petsc.DMDAGetElementType
+        setElementType, petsc.DMDAGetElementType
 
         """
         cdef PetscDMDAElementType ival = DMDA_ELEMENT_Q1
@@ -1083,26 +1078,19 @@ cdef class DMDA(DM):
         return <long>ival
 
     def getElements(self, elem_type: ElementType | None = None) -> ArrayInt:
-        """Return an array containing the indices (in local coordinates) of all the local elements.
+        """Return an array containing the indices of all the local elements.
 
+        The elements are in local coordinates.
 
-        Call DMDARestoreElements() once you have finished accessing the elements.
-
-        Each process uniquely owns a subset of the elements. That is no element is owned by two or more processes.
-
-        If on each process you integrate over its owned elements and use ADD_VALUES in Vec/MatSetValuesLocal() then you'll obtain the correct result.
-
-        Output Parameters
-        nel - number of local elements
-        nen - number of element nodes
-        e - the local indices of the elements’ vertices
+        Each process uniquely owns a subset of the elements. That is, no
+        element is owned by two or more processes.
 
         Not collective.
 
         Parameters
         ----------
-        TODO
-            TODO.
+        elem_type
+            The element type.
 
         See Also
         --------
@@ -1139,6 +1127,7 @@ cdef class DMDA(DM):
             return self.getDof()
 
     property sizes:
+        """The global dimension in each direction."""
         def __get__(self) -> tuple[int, ...]:
             return self.getSizes()
 
@@ -1147,9 +1136,10 @@ cdef class DMDA(DM):
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
+    # TODO: see not above at getBoundaryType
     property boundary_type:
         """Boundary types in each direction."""
-        def __get__(self) -> tuple[(str,)] | tuple[(str, str)] | tuple[(str, str, str)]:
+        def __get__(self) -> tuple[int, ...]:
             return self.getBoundaryType()
 
     property stencil:
@@ -1168,19 +1158,23 @@ cdef class DMDA(DM):
             return self.getStencilWidth()
 
     property ranges:
-        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
+        """Ranges of the local region in each dimension."""
+        def __get__(self) -> tuple[tuple[int, int], ...]:
             return self.getRanges()
 
     property ghost_ranges:
-        def __get__(self) -> tuple[tuple[int, int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
+        """Ranges of local region in each dim. including ghost nodes."""
+        def __get__(self) -> tuple[tuple[int, int], ...]:
             return self.getGhostRanges()
 
     property corners:
-        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
+        """The lower left corner and size of local region in each dimension."""
+        def __get__(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
             return self.getCorners()
 
     property ghost_corners:
-        def __get__(self) -> tuple[tuple[int], tuple[int]] | tuple[tuple[int, int], tuple[int, int]] | tuple[tuple[int, int, int], tuple[int, int, int]]:
+        """The lower left corner and size of local region in each dimension."""
+        def __get__(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
             return self.getGhostCorners()
 
     # backward compatibility
