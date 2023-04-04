@@ -77,9 +77,9 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDACreate, petsc.DMSetDimension, petsc.DMDASetDof,
-        petsc.DMDASetSizes, petsc.DMDASetNumProcs,
-        petsc.DMDASetOwnershipRanges, petsc.DMDASetBoundaryType,
+        petsc.DMDACreate, petsc.DMSetDimension, petsc.DMDASetDof
+        petsc.DMDASetSizes, petsc.DMDASetNumProcs
+        petsc.DMDASetOwnershipRanges, petsc.DMDASetBoundaryType
         petsc.DMDASetStencilType, petsc.DMDASetStencilWidth, petsc.DMSetUp
 
         """
@@ -167,7 +167,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        petsc.DMDAGetInfo, create, petsc.DMSetUp
+        create, petsc.DMDAGetInfo, petsc.DMSetUp
 
         """
         cdef PetscInt ndim = 0, ndof = 0
