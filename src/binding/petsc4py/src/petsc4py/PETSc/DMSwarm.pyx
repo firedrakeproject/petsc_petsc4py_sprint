@@ -193,8 +193,8 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetLocalSizes(self.dm, cnlocal, cbuffer) )
         return self
 
-    # TODO: check if dtype links
-    def registerField(self, fieldname: str, blocksize: int, dtype: dtype | None = ScalarType) -> None:
+    # TODO: check if dtype links in the documentation
+    def registerField(self, fieldname: str, blocksize: int, dtype: dtype = ScalarType) -> None:
         """Register a field to a `DMSwarm` with a native PETSc data type.
 
         Collective.
@@ -419,7 +419,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmGetSize(self.dm, &size) )
         return toInt(size)
 
-    def migrate(self, remove_sent_points: bool | None = False) -> None:
+    def migrate(self, remove_sent_points: bool = False) -> None:
         """Relocate points defined in the `DMSwarm` to other MPI ranks.
 
         Collective.
@@ -562,7 +562,7 @@ cdef class DMSwarm(DM):
     def setPointCoordinates(
         self,
         coordinates: Sequence[float],
-        redundant: bool | None = False,
+        redundant: bool = False,
         mode: InsertMode | None = None
     ) -> None:
         """Set point coordinates in a `DMSwarm` from a user-defined list.
@@ -805,7 +805,7 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSortGetSizes(self.dm, &ncells, &npoints) )
         return (toInt(ncells), toInt(npoints))
 
-    def projectFields(self, fieldnames: Sequence[str], reuse: bool | None = False) -> list[Vec]:
+    def projectFields(self, fieldnames: Sequence[str], reuse: bool = False) -> list[Vec]:
         """Project a set of `DMSwarm` fields onto the cell `DM`.
 
         Collective.
