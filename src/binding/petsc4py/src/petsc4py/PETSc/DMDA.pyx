@@ -550,7 +550,6 @@ cdef class DMDA(DM):
 
     #
 
-    # TODO: should we clarify how is getRanges different than getGhostRanges and getCorners?
     def getRanges(self) -> tuple[tuple[int, int], ...]:
         """Return the ranges of the owned local region in each dimension.
 
@@ -1105,12 +1104,12 @@ cdef class DMDA(DM):
             return self.getDof()
 
     property sizes:
-        """The global dimension in each dimension."""
+        """The global dimension."""
         def __get__(self) -> tuple[int, ...]:
             return self.getSizes()
 
     property proc_sizes:
-        """The number of ranks in each dimension in the global decomposition."""
+        """The number of processes in each dimension in the global decomposition."""
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
