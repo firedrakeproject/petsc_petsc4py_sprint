@@ -2701,7 +2701,7 @@ cdef class DMPlex(DM):
         """Enforce symmetric positive-definiteness of a metric.
 
         Parameters
-        ---------
+        ----------
         metric
             The metric.
         ometric
