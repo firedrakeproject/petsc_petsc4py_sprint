@@ -767,7 +767,7 @@ cdef class DMStag(DM):
         """
         CHKERR( DMStagMigrateVec(self.dm, vec.vec, dmTo.dm, vecTo.vec ) )
 
-    def createCompatibleDMStag(self, dofs) -> DM:
+    def createCompatibleDMStag(self, dofs: tuple[int, ...]) -> DM:
         """Create a compatible ``DMStag`` with different DOFs/stratum.
 
         Collective.
