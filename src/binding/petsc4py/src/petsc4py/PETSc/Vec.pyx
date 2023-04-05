@@ -170,7 +170,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.create, petsc.VecDestroy
+        create, petsc.VecDestroy
 
         """
 
@@ -180,8 +180,8 @@ cdef class Vec(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty vector object.
 
-        After creation the vector type can then be set with `Vec.setType`
-        or `Vec.setFromOptions`.
+        After creation the vector type can then be set with `setType`
+        or `setFromOptions`.
 
         Collective.
 
@@ -192,7 +192,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.destroy, petsc.VecCreate
+        destroy, petsc.VecCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -201,7 +201,7 @@ cdef class Vec(Object):
         PetscCLEAR(self.obj); self.vec = newvec
         return self
 
-    def setType(self, vec_type: Vec.Type | str) -> None:
+    def setType(self, vec_type: Type | str) -> None:
         """Set the type of the vector.
 
         Parameters
@@ -211,7 +211,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc_options, Vec.setFromOptions, petsc.VecSetType
+        petsc_options, setFromOptions, petsc.VecSetType
 
         """
         cdef PetscVecType cval = NULL
@@ -237,7 +237,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getSizes, petsc.VecSetSizes
+        getSizes, petsc.VecSetSizes
 
         """
         cdef PetscInt bs=0, n=0, N=0
@@ -270,7 +270,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createMPI, petsc.VecCreateSeq
+        createMPI, petsc.VecCreateSeq
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_SELF)
@@ -308,7 +308,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createSeq, petsc.VecCreateMPI
+        createSeq, petsc.VecCreateMPI
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -333,7 +333,7 @@ cdef class Vec(Object):
     ) -> Self:
         """Create a vector using a provided array.
 
-        This method will create either a `Vec.Type.SEQ` or `Vec.Type.MPI`
+        This method will create either a `Type.SEQ` or `Type.MPI`
         depending on whether the communicator has more than one rank.
 
         Collective.
@@ -386,7 +386,7 @@ cdef class Vec(Object):
         bsize: int | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a vector with type `Vec.Type.CUDA` with optional arrays.
+        """Create a vector with type `Type.CUDA` with optional arrays.
 
         Collective.
 
@@ -447,7 +447,7 @@ cdef class Vec(Object):
         bsize: int | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a vector with type `Vec.Type.HIP` with optional arrays.
+        """Create a vector with type `Type.HIP` with optional arrays.
 
         Collective.
 
@@ -508,7 +508,7 @@ cdef class Vec(Object):
         bsize: int | None = None,
         comm: Comm | None = None,
     ) -> Self:
-        """Create a vector with type `Vec.Type.VIENNACL` with optional arrays.
+        """Create a vector with type `Type.VIENNACL` with optional arrays.
 
         Collective.
 
@@ -573,9 +573,9 @@ cdef class Vec(Object):
         row-major order (e.g. PyTorch tensors), the resulting vector will look
         like an unrolled tensor using row-major order.
 
-        The resulting vector type will be one of `Vec.Type.SEQ`, `Vec.Type.MPI`,
-        `Vec.Type.SEQCUDA`, `Vec.Type.MPICUDA`, `Vec.Type.SEQHIP` or
-        `Vec.Type.MPIHIP` depending on the type of ``dltensor`` and the number
+        The resulting vector type will be one of `Type.SEQ`, `Type.MPI`,
+        `Type.SEQCUDA`, `Type.MPICUDA`, `Type.SEQHIP` or
+        `Type.MPIHIP` depending on the type of ``dltensor`` and the number
         of ranks in the communicator.
 
         Collective.
@@ -677,7 +677,7 @@ cdef class Vec(Object):
         ----------
         vec
             Vector with attached tensor information. This is typically created
-            by calling `Vec.createWithDLPack`.
+            by calling `createWithDLPack`.
         dltensor
             DLPack tensor. This will only be used if ``vec`` is `None`.
 
@@ -687,7 +687,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.clearDLPackInfo, Vec.createWithDLPack
+        clearDLPackInfo, createWithDLPack
 
         """
         cdef object ctx0 = self.get_attr('__dltensor_ctx__'), ctx = None
@@ -731,7 +731,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.attachDLPackInfo, Vec.createWithDLPack
+        attachDLPackInfo, createWithDLPack
 
         """
         self.set_attr('__dltensor_ctx__', None)
@@ -769,7 +769,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createWithDLPack
+        createWithDLPack
 
         """
         if mode is None: mode = 'rw'
@@ -865,7 +865,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createGhostWithArray
+        createGhostWithArray
         petsc.VecCreateGhost, petsc.VecCreateGhostBlock
 
         """
@@ -914,7 +914,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createGhost
+        createGhost
         petsc.VecCreateGhostWithArray, petsc.VecCreateGhostBlockWithArray
 
         """
@@ -1044,7 +1044,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc_options, Vec.getOptionsPrefix, petsc.VecSetOptionsPrefix
+        petsc_options, getOptionsPrefix, petsc.VecSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -1058,7 +1058,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc_options, Vec.setOptionsPrefix, petsc.VecGetOptionsPrefix
+        petsc_options, setOptionsPrefix, petsc.VecGetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -1078,7 +1078,7 @@ cdef class Vec(Object):
         See Also
         --------
         petsc_options
-        Vec.getOptionsPrefix, Vec.setOptionsPrefix
+        getOptionsPrefix, setOptionsPrefix
         petsc.VecAppendOptionsPrefix
 
         """
@@ -1108,13 +1108,13 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.create, Vec.destroy, petsc.VecSetUp
+        create, destroy, petsc.VecSetUp
 
         """
         CHKERR( VecSetUp(self.vec) )
         return self
 
-    def setOption(self, option: Vec.Option | str, flag: bool) -> None:
+    def setOption(self, option: Option | str, flag: bool) -> None:
         """Set a database option to control the vector's behaviour.
 
         Collective.
@@ -1154,7 +1154,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.setSizes, Vec.getLocalSize, petsc.VecGetSize
+        setSizes, getLocalSize, petsc.VecGetSize
 
         """
         cdef PetscInt N = 0
@@ -1168,7 +1168,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.setSizes, Vec.getSize, petsc.VecGetLocalSize
+        setSizes, getSize, petsc.VecGetLocalSize
 
         """
         cdef PetscInt n = 0
@@ -1189,7 +1189,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getSize, Vec.getLocalSize
+        getSize, getLocalSize
         petsc.VecGetLocalSize, petsc.VecGetSize
 
         """
@@ -1251,7 +1251,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getOwnershipRanges, petsc.VecGetOwnershipRange
+        getOwnershipRanges, petsc.VecGetOwnershipRange
 
         """
         cdef PetscInt low=0, high=0
@@ -1271,7 +1271,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getOwnershipRange, petsc.VecGetOwnershipRanges
+        getOwnershipRange, petsc.VecGetOwnershipRanges
 
         """
         cdef const PetscInt *rng = NULL
@@ -1285,7 +1285,7 @@ cdef class Vec(Object):
     def createLocalVector(self) -> Vec:
         """Create a vector storing the local portion of the current vector.
 
-        `Vec.destroy` must be called when this vector is no longer needed.
+        `destroy` must be called when this vector is no longer needed.
 
         Not collective.
 
@@ -1296,7 +1296,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getLocalVector, petsc.VecCreateLocalVector
+        getLocalVector, petsc.VecCreateLocalVector
 
         """
         lvec = Vec()
@@ -1306,7 +1306,7 @@ cdef class Vec(Object):
     def getLocalVector(self, Vec lvec, readonly: bool = False) -> None:
         """Load the local portion of the vector.
 
-        `Vec.restoreLocalVector` (with the same ``readonly`` value) should
+        `restoreLocalVector` (with the same ``readonly`` value) should
         be called once the local vector is no longer needed.
 
         Not collective if ``readonly`` is `True`, collective otherwise.
@@ -1321,7 +1321,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createLocalVector, Vec.restoreLocalVector
+        createLocalVector, restoreLocalVector
         petsc.VecGetLocalVectorRead, petsc.VecGetLocalVector
 
         """
@@ -1338,7 +1338,7 @@ cdef class Vec(Object):
         Parameters
         ----------
         lvec
-            Local vector. `Vec.getLocalVector` should already have been
+            Local vector. `getLocalVector` should already have been
             called with it.
         readonly
             Whether the local vector is only read. If `True` then the local
@@ -1346,7 +1346,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createLocalVector, Vec.getLocalVector
+        createLocalVector, getLocalVector
         petsc.VecRestoreLocalVectorRead, petsc.VecRestoreLocalVector
 
         """
@@ -1393,7 +1393,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getArray
+        getArray
 
         """
         if readonly:
@@ -1415,7 +1415,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.setArray, Vec.getBuffer
+        setArray, getBuffer
 
         """
         if readonly:
@@ -1439,7 +1439,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.placeArray
+        placeArray
 
         """
         vec_setarray(self, array)
@@ -1447,10 +1447,10 @@ cdef class Vec(Object):
     def placeArray(self, array: Sequence[Scalar]) -> None:
         """Set the local portion of the vector to a provided array.
 
-        This method can be used instead of `Vec.setArray` to avoid copying
+        This method can be used instead of `setArray` to avoid copying
         data.
 
-        The original array can be returned to using `Vec.resetArray`. It is
+        The original array can be returned to using `resetArray`. It is
         the user's responsibility to free the provided array.
 
         Not collective.
@@ -1459,11 +1459,11 @@ cdef class Vec(Object):
         ----------
         array
             Data to set as the local portion of the vector. An error will be
-            raised if the size does not match `Vec.getLocalSize`.
+            raised if the size does not match `getLocalSize`.
 
         See Also
         --------
-        Vec.resetArray, Vec.setArray, petsc.VecPlaceArray
+        resetArray, setArray, petsc.VecPlaceArray
 
         """
         cdef PetscInt nv=0
@@ -1486,18 +1486,18 @@ cdef class Vec(Object):
         ----------
         force
             Force the calling of `petsc.VecResetArray` even if no user array
-            has been placed with `Vec.placeArray`.
+            has been placed with `placeArray`.
 
         Returns
         -------
         ArrayScalar
-            The array previously provided by the user with `Vec.placeArray`.
+            The array previously provided by the user with `placeArray`.
             Can be `None` if ``force`` is `True` and no array was placed
             before.
 
         See Also
         --------
-        Vec.placeArray, petsc.VecResetArray
+        placeArray, petsc.VecResetArray
 
         """
         cdef object array = None
@@ -1517,11 +1517,11 @@ cdef class Vec(Object):
         flg
             If `True` then subsequent operations must be performed on the CPU.
             If `False` then they must all be performed on the device, assuming
-            that the vector type (`Vec.Type`) is capable of offloading.
+            that the vector type (`Type`) is capable of offloading.
 
         See Also
         --------
-        Vec.boundToCPU, petsc.VecBindToCPU
+        boundToCPU, petsc.VecBindToCPU
 
         """
         cdef PetscBool bindFlg = asBool(flg)
@@ -1532,7 +1532,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.bindToCPU, petsc.VecBoundToCPU
+        bindToCPU, petsc.VecBoundToCPU
 
         """
         cdef PetscBool flg = PETSC_TRUE
@@ -1545,7 +1545,7 @@ cdef class Vec(Object):
     ) -> Any:  # FIXME What is the right return type?
         """Return a pointer to the CUDA buffer inside the vector.
 
-        The returned pointer should be released using `Vec.restoreCUDAHandle`
+        The returned pointer should be released using `restoreCUDAHandle`
         with the same access mode.
 
         Not collective.
@@ -1568,7 +1568,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.restoreCUDAHandle, petsc.VecCUDAGetArray
+        restoreCUDAHandle, petsc.VecCUDAGetArray
         petsc.VecCUDAGetArrayRead, petsc.VecCUDAGetArrayWrite
 
         """
@@ -1592,7 +1592,7 @@ cdef class Vec(Object):
     ) -> None:
         """Restore a pointer to the CUDA buffer inside the vector.
 
-        The pointer should have been obtained by calling `Vec.getCUDAHandle`
+        The pointer should have been obtained by calling `getCUDAHandle`
         with the same access mode.
 
         Not collective.
@@ -1613,7 +1613,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getCUDAHandle, petsc.VecCUDARestoreArray
+        getCUDAHandle, petsc.VecCUDARestoreArray
         petsc.VecCUDARestoreArrayRead, petsc.VecCUDARestoreArrayWrite
 
         """
@@ -1635,7 +1635,7 @@ cdef class Vec(Object):
     ) -> Any:  # FIXME What is the right return type?
         """Return a pointer to the HIP buffer inside the vector.
 
-        The returned pointer should be released using `Vec.restoreHIPHandle`
+        The returned pointer should be released using `restoreHIPHandle`
         with the same access mode.
 
         Not collective.
@@ -1658,7 +1658,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.restoreHIPHandle, petsc.VecHIPGetArray
+        restoreHIPHandle, petsc.VecHIPGetArray
         petsc.VecHIPGetArrayRead, petsc.VecHIPGetArrayWrite
 
         """
@@ -1682,7 +1682,7 @@ cdef class Vec(Object):
     ) -> None:
         """Restore a pointer to the HIP buffer inside the vector.
 
-        The pointer should have been obtained by calling `Vec.getHIPHandle`
+        The pointer should have been obtained by calling `getHIPHandle`
         with the same access mode.
 
         Not collective.
@@ -1703,7 +1703,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getHIPHandle, petsc.VecHIPRestoreArray
+        getHIPHandle, petsc.VecHIPRestoreArray
         petsc.VecHIPRestoreArrayRead, petsc.VecHIPRestoreArrayWrite
 
         """
@@ -1758,7 +1758,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getCLQueueHandle, petsc.VecViennaCLGetCLContext
+        getCLQueueHandle, petsc.VecViennaCLGetCLContext
 
         """
         cdef Py_uintptr_t ctxhdl = 0
@@ -1778,7 +1778,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getCLContextHandle, petsc.VecViennaCLGetCLQueue
+        getCLContextHandle, petsc.VecViennaCLGetCLQueue
 
         """
         cdef Py_uintptr_t queuehdl = 0
@@ -1812,7 +1812,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.restoreCLMemHandle, petsc.VecViennaCLGetCLMem
+        restoreCLMemHandle, petsc.VecViennaCLGetCLMem
         petsc.VecViennaCLGetCLMemRead, petsc.VecViennaCLGetCLMemWrite
 
         """
@@ -1833,7 +1833,7 @@ cdef class Vec(Object):
         """Restore a pointer to the OpenCL buffer inside the vector.
 
         This method only needs to be called after accessing the buffer
-        (with `Vec.getCLMemHandle`) with ``"w"`` or ``"rw"`` modes.
+        (with `getCLMemHandle`) with ``"w"`` or ``"rw"`` modes.
 
         Not collective.
 
@@ -1844,7 +1844,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getCLMemHandle, petsc.VecViennaCLRestoreCLMemWrite
+        getCLMemHandle, petsc.VecViennaCLRestoreCLMemWrite
 
         """
         CHKERR( VecViennaCLRestoreCLMemWrite(self.vec) )
@@ -1868,7 +1868,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.copy, petsc.VecDuplicate
+        copy, petsc.VecDuplicate
 
         """
         cdef Vec vec = type(self)()
@@ -1892,7 +1892,7 @@ cdef class Vec(Object):
         ----------
         result
             Target vector for the copy. If `None` then a new vector is
-            allocated with `Vec.duplicate`.
+            allocated with `duplicate`.
 
         Returns
         -------
@@ -1902,7 +1902,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.duplicate, petsc.VecCopy
+        duplicate, petsc.VecCopy
 
         """
         if result is None:
@@ -1931,7 +1931,7 @@ cdef class Vec(Object):
     def load(self, Viewer viewer) -> Self:
         """Load a vector that has been stored in a binary format.
 
-        The vector must have been stored with `Vec.view` with a viewer with
+        The vector must have been stored with `view` with a viewer with
         type `Viewer.Type.BINARY` or `Viewer.Type.HDF5`.
 
         Collective
@@ -1944,13 +1944,13 @@ cdef class Vec(Object):
 
         Notes
         -----
-        Vector type defaults to either `Vec.Type.SEQ` or `Vec.Type.MPI`. To
-        load other types `Vec.setType` or `Vec.setFromOptions` should be
+        Vector type defaults to either `Type.SEQ` or `Type.MPI`. To
+        load other types `setType` or `setFromOptions` should be
         called in advance.
 
         See Also
         --------
-        Vec.view, petsc.VecLoad
+        view, petsc.VecLoad
 
         """
         cdef MPI_Comm comm = MPI_COMM_NULL
@@ -1994,7 +1994,7 @@ cdef class Vec(Object):
         For complex numbers this computes yᴴ·x with ``self`` as x, ``vec``
         as y and where yᴴ denotes the conjugate transpose of y.
 
-        Use `Vec.tDot` for the indefinite form yᵀ·x where yᵀ denotes the
+        Use `tDot` for the indefinite form yᵀ·x where yᵀ denotes the
         transpose of y.
 
         Collective.
@@ -2006,7 +2006,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.dotBegin, Vec.dotEnd, Vec.tDot, petsc.VecDot
+        dotBegin, dotEnd, tDot, petsc.VecDot
 
         """
         cdef PetscScalar sval = 0
@@ -2016,7 +2016,7 @@ cdef class Vec(Object):
     def dotBegin(self, Vec vec) -> None:
         """Begin computing the dot product.
 
-        This should be paired with a call to `Vec.dotEnd`.
+        This should be paired with a call to `dotEnd`.
 
         Parameters
         ----------
@@ -2025,7 +2025,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.dotEnd, Vec.dot, petsc.VecDotBegin
+        dotEnd, dot, petsc.VecDotBegin
 
         """
         cdef PetscScalar sval = 0
@@ -2046,7 +2046,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.dotBegin, Vec.dot, petsc.VecDotEnd
+        dotBegin, dot, petsc.VecDotEnd
 
         """
         cdef PetscScalar sval = 0
@@ -2059,7 +2059,7 @@ cdef class Vec(Object):
         This computes yᵀ·x with ``self`` as x, ``vec``
         as y and where yᵀ denotes the transpose of y.
 
-        Use `Vec.dot` for the inner product yᴴ·x where yᴴ denotes the
+        Use `dot` for the inner product yᴴ·x where yᴴ denotes the
         conjugate transpose of y.
 
         Collective.
@@ -2076,7 +2076,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.tDotBegin, Vec.tDotEnd, Vec.dot, petsc.VecTDot
+        tDotBegin, tDotEnd, dot, petsc.VecTDot
 
         """
         cdef PetscScalar sval = 0
@@ -2086,7 +2086,7 @@ cdef class Vec(Object):
     def tDotBegin(self, Vec vec) -> None:
         """Begin computing the indefinite dot product.
 
-        This should be paired with a call to `Vec.tDotEnd`.
+        This should be paired with a call to `tDotEnd`.
 
         Parameters
         ----------
@@ -2095,7 +2095,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.tDotEnd, Vec.tDot, petsc.VecTDotBegin
+        tDotEnd, tDot, petsc.VecTDotBegin
 
         """
         cdef PetscScalar sval = 0
@@ -2116,7 +2116,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.tDotBegin, Vec.tDot, petsc.VecTDotEnd
+        tDotBegin, tDot, petsc.VecTDotEnd
 
         """
         cdef PetscScalar sval = 0
@@ -2203,17 +2203,17 @@ cdef class Vec(Object):
     ) -> None:
         """Begin computing the vector norm.
 
-        This should be paired with a call to `Vec.normEnd`.
+        This should be paired with a call to `normEnd`.
 
         Parameters
         ----------
         norm_type
             The type of norm to compute, defaults to `NormType.NORM_2`. See
-            `Vec.norm` for more information.
+            `norm` for more information.
 
         See Also
         --------
-        Vec.normEnd, Vec.norm, petsc.VecNormBegin
+        normEnd, norm, petsc.VecNormBegin
 
         """
         cdef PetscNormType ntype = PETSC_NORM_2
@@ -2227,13 +2227,13 @@ cdef class Vec(Object):
     ) -> float | tuple[float, float]:
         """Finish computing the vector norm.
 
-        `Vec.normBegin` should already have been called.
+        `normBegin` should already have been called.
 
         Parameters
         ----------
         norm_type
             The type of norm to compute, defaults to `NormType.NORM_2`. See
-            `Vec.norm` for more information.
+            `norm` for more information.
 
         Returns
         -------
@@ -2243,7 +2243,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.normBegin, Vec.norm, petsc.VecNormEnd
+        normBegin, norm, petsc.VecNormEnd
 
         """
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2
@@ -2288,7 +2288,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.max, petsc.VecMin
+        max, petsc.VecMin
 
         """
         cdef PetscInt  ival = 0
@@ -2316,7 +2316,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.min, petsc.VecMax
+        min, petsc.VecMax
 
         """
         cdef PetscInt  ival = 0
@@ -2336,7 +2336,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.norm, petsc.VecNormalize
+        norm, petsc.VecNormalize
 
         """
         cdef PetscReal rval = 0
@@ -2362,7 +2362,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.log, petsc.VecExp
+        log, petsc.VecExp
 
         """
         CHKERR( VecExp(self.vec) )
@@ -2374,7 +2374,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.exp, petsc.VecLog
+        exp, petsc.VecLog
 
         """
         CHKERR( VecLog(self.vec) )
@@ -2466,7 +2466,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.set, petsc.VecZeroEntries
+        set, petsc.VecZeroEntries
 
         """
         CHKERR( VecZeroEntries(self.vec) )
@@ -2483,12 +2483,12 @@ cdef class Vec(Object):
 
         Notes
         -----
-        This method should not be called between `Vec.setValues` and
-        `Vec.assemblyBegin`.
+        This method should not be called between `setValues` and
+        `assemblyBegin`.
 
         See Also
         --------
-        Vec.zeroEntries, Vec.isset, petsc.VecSet
+        zeroEntries, isset, petsc.VecSet
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2506,7 +2506,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.set, Vec.zeroEntries, petsc.VecISSet
+        set, zeroEntries, petsc.VecISSet
 
         """
         cdef PetscScalar aval = asScalar(alpha)
@@ -2526,7 +2526,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.shift, petsc.VecScale
+        shift, petsc.VecScale
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2546,7 +2546,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.scale, petsc.VecShift
+        scale, petsc.VecShift
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2583,7 +2583,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.isaxpy, petsc.VecAXPY
+        isaxpy, petsc.VecAXPY
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2605,7 +2605,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.axpy, Vec.aypx, Vec.axpby, petsc.VecISAXPY
+        axpy, aypx, axpby, petsc.VecISAXPY
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2625,7 +2625,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.axpy, Vec.axpby, petsc.VecAYPX
+        axpy, axpby, petsc.VecAYPX
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2647,7 +2647,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.axpy, Vec.aypx, Vec.waxpy, petsc.VecAXPBY
+        axpy, aypx, waxpy, petsc.VecAXPBY
 
         """
         cdef PetscScalar sval1 = asScalar(alpha)
@@ -2675,7 +2675,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.axpy, Vec.aypx, Vec.axpby, Vec.maxpy, petsc.VecWAXPY
+        axpy, aypx, axpby, maxpy, petsc.VecWAXPY
 
         """
         cdef PetscScalar sval = asScalar(alpha)
@@ -2702,7 +2702,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.axpy, Vec.aypx, Vec.axpby, Vec.waxpy, petsc.VecMAXPY
+        axpy, aypx, axpby, waxpy, petsc.VecMAXPY
 
         """
         cdef PetscInt n = 0
@@ -2734,7 +2734,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.pointwiseDivide, petsc.VecPointwiseMult
+        pointwiseDivide, petsc.VecPointwiseMult
 
         """
         CHKERR( VecPointwiseMult(self.vec, x.vec, y.vec) )
@@ -2759,7 +2759,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.pointwiseMult, petsc.VecPointwiseDivide
+        pointwiseMult, petsc.VecPointwiseDivide
 
         """
         CHKERR( VecPointwiseDivide(self.vec, x.vec, y.vec) )
@@ -2784,7 +2784,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.pointwiseMax, Vec.pointwiseMaxAbs, petsc.VecPointwiseMin
+        pointwiseMax, pointwiseMaxAbs, petsc.VecPointwiseMin
 
         """
         CHKERR( VecPointwiseMin(self.vec, x.vec, y.vec) )
@@ -2809,7 +2809,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.pointwiseMin, Vec.pointwiseMaxAbs, petsc.VecPointwiseMax
+        pointwiseMin, pointwiseMaxAbs, petsc.VecPointwiseMax
 
         """
         CHKERR( VecPointwiseMax(self.vec, x.vec, y.vec) )
@@ -2832,7 +2832,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.pointwiseMin, Vec.pointwiseMax, petsc.VecPointwiseMaxAbs
+        pointwiseMin, pointwiseMax, petsc.VecPointwiseMaxAbs
 
         """
         CHKERR( VecPointwiseMaxAbs(self.vec, x.vec, y.vec) )
@@ -2859,7 +2859,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.pointwiseMin, Vec.pointwiseMax, Vec.pointwiseMaxAbs
+        pointwiseMin, pointwiseMax, pointwiseMaxAbs
         petsc.VecMaxPointwiseDivide
 
         """
@@ -2879,12 +2879,12 @@ cdef class Vec(Object):
 
         Notes
         -----
-        If `Vec.setValues` has been called then `Vec.assemblyBegin` and
-        `Vec.assemblyEnd` must precede this method.
+        If `setValues` has been called then `assemblyBegin` and
+        `assemblyEnd` must precede this method.
 
         See Also
         --------
-        Vec.getValues, petsc.VecGetValues
+        getValues, petsc.VecGetValues
 
         """
         cdef PetscInt    ival = asInt(index)
@@ -2918,12 +2918,12 @@ cdef class Vec(Object):
 
         Notes
         -----
-        If `Vec.setValues` has been called then `Vec.assemblyBegin` and
-        `Vec.assemblyEnd` must precede this method.
+        If `setValues` has been called then `assemblyBegin` and
+        `assemblyEnd` must precede this method.
 
         See Also
         --------
-        Vec.getValue, Vec.setValues, petsc.VecGetValues
+        getValue, setValues, petsc.VecGetValues
 
         """
         return vecgetvalues(self.vec, indices, values)
@@ -2958,16 +2958,16 @@ cdef class Vec(Object):
 
         Notes
         -----
-        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        The values may be cached so `assemblyBegin` and `assemblyEnd`
         must be called after all calls of this method are completed.
 
-        Multiple calls to `Vec.setValue` cannot be made with different values
-        for ``addv`` without intermediate calls to `Vec.assemblyBegin` and
-        `Vec.assemblyEnd`.
+        Multiple calls to `setValue` cannot be made with different values
+        for ``addv`` without intermediate calls to `assemblyBegin` and
+        `assemblyEnd`.
 
         See Also
         --------
-        Vec.getValue, Vec.getValues, Vec.setValues, petsc.VecSetValues
+        getValue, getValues, setValues, petsc.VecSetValues
 
         """
         cdef PetscInt    ival = asInt(index)
@@ -3001,16 +3001,16 @@ cdef class Vec(Object):
 
         Notes
         -----
-        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        The values may be cached so `assemblyBegin` and `assemblyEnd`
         must be called after all calls of this method are completed.
 
-        Multiple calls to `Vec.setValues` cannot be made with different values
-        for ``addv`` without intermediate calls to `Vec.assemblyBegin` and
-        `Vec.assemblyEnd`.
+        Multiple calls to `setValues` cannot be made with different values
+        for ``addv`` without intermediate calls to `assemblyBegin` and
+        `assemblyEnd`.
 
         See Also
         --------
-        Vec.getValue, Vec.getValues, Vec.setValue, petsc.VecSetValues
+        getValue, getValues, setValue, petsc.VecSetValues
 
         """
         vecsetvalues(self.vec, indices, values, addv, 0, 0)
@@ -3024,7 +3024,7 @@ cdef class Vec(Object):
         """Insert or add blocks of values in the vector.
 
         Equivalent to ``x[bs*indices[i]+j] = y[bs*i+j]`` for
-        ``0 <= i < len(indices)``, ``0 <= j < bs`` and ``bs`` `Vec.block_size`.
+        ``0 <= i < len(indices)``, ``0 <= j < bs`` and ``bs`` `block_size`.
 
         Not collective.
 
@@ -3045,16 +3045,16 @@ cdef class Vec(Object):
 
         Notes
         -----
-        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        The values may be cached so `assemblyBegin` and `assemblyEnd`
         must be called after all calls of this method are completed.
 
-        Multiple calls to `Vec.setValuesBlocked` cannot be made with different
-        values for ``addv`` without intermediate calls to `Vec.assemblyBegin`
-        and `Vec.assemblyEnd`.
+        Multiple calls to `setValuesBlocked` cannot be made with different
+        values for ``addv`` without intermediate calls to `assemblyBegin`
+        and `assemblyEnd`.
 
         See Also
         --------
-        Vec.getValues, Vec.setValues, petsc.VecSetValues
+        getValues, setValues, petsc.VecSetValues
 
         """
         vecsetvalues(self.vec, indices, values, addv, 1, 0)
@@ -3067,7 +3067,7 @@ cdef class Vec(Object):
         """Set the local-to-global numbering.
 
         This allows users to insert vector entries using a local numbering
-        with `Vec.setValuesLocal`.
+        with `setValuesLocal`.
 
         Logically collective.
 
@@ -3078,11 +3078,11 @@ cdef class Vec(Object):
 
         Notes
         -----
-        Vectors created with `Vec.duplicate` inherit the same mapping.
+        Vectors created with `duplicate` inherit the same mapping.
 
         See Also
         --------
-        Vec.setValues, Vec.setValuesLocal, Vec.getLGMap
+        setValues, setValuesLocal, getLGMap
         petsc.VecSetLocalToGlobalMapping
 
         """
@@ -3095,7 +3095,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.setLGMap, petsc.VecGetLocalToGlobalMapping
+        setLGMap, petsc.VecGetLocalToGlobalMapping
 
         """
         cdef LGMap cmap = LGMap()
@@ -3129,16 +3129,16 @@ cdef class Vec(Object):
 
         Notes
         -----
-        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        The values may be cached so `assemblyBegin` and `assemblyEnd`
         must be called after all calls of this method are completed.
 
-        Multiple calls to `Vec.setValueLocal` cannot be made with different
-        values for ``addv`` without intermediate calls to `Vec.assemblyBegin`
-        and `Vec.assemblyEnd`.
+        Multiple calls to `setValueLocal` cannot be made with different
+        values for ``addv`` without intermediate calls to `assemblyBegin`
+        and `assemblyEnd`.
 
         See Also
         --------
-        Vec.setValuesLocal, petsc.VecSetValuesLocal
+        setValuesLocal, petsc.VecSetValuesLocal
 
         """
         cdef PetscInt    ival = asInt(index)
@@ -3172,16 +3172,16 @@ cdef class Vec(Object):
 
         Notes
         -----
-        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        The values may be cached so `assemblyBegin` and `assemblyEnd`
         must be called after all calls of this method are completed.
 
-        Multiple calls to `Vec.setValuesLocal` cannot be made with different
-        values for ``addv`` without intermediate calls to `Vec.assemblyBegin`
-        and `Vec.assemblyEnd`.
+        Multiple calls to `setValuesLocal` cannot be made with different
+        values for ``addv`` without intermediate calls to `assemblyBegin`
+        and `assemblyEnd`.
 
         See Also
         --------
-        Vec.setValueLocal, petsc.VecSetValuesLocal
+        setValueLocal, petsc.VecSetValuesLocal
 
         """
         vecsetvalues(self.vec, indices, values, addv, 0, 1)
@@ -3195,7 +3195,7 @@ cdef class Vec(Object):
         """Insert or add blocks of values in the vector with a local numbering.
 
         Equivalent to ``x[bs*indices[i]+j] = y[bs*i+j]`` for
-        ``0 <= i < len(indices)``, ``0 <= j < bs`` and ``bs`` `Vec.block_size`.
+        ``0 <= i < len(indices)``, ``0 <= j < bs`` and ``bs`` `block_size`.
 
         Not collective.
 
@@ -3216,16 +3216,16 @@ cdef class Vec(Object):
 
         Notes
         -----
-        The values may be cached so `Vec.assemblyBegin` and `Vec.assemblyEnd`
+        The values may be cached so `assemblyBegin` and `assemblyEnd`
         must be called after all calls of this method are completed.
 
-        Multiple calls to `Vec.setValuesBlockedLocal` cannot be made with
+        Multiple calls to `setValuesBlockedLocal` cannot be made with
         different values for ``addv`` without intermediate calls to
-        `Vec.assemblyBegin` and `Vec.assemblyEnd`.
+        `assemblyBegin` and `assemblyEnd`.
 
         See Also
         --------
-        Vec.setValuesBlocked, Vec.setValuesLocal
+        setValuesBlocked, setValuesLocal
         petsc.VecSetValuesBlockedLocal
 
         """
@@ -3235,13 +3235,13 @@ cdef class Vec(Object):
         """Begin assembling the vector.
 
         This routine should be called after completing all calls to
-        `Vec.setValues`.
+        `setValues`.
 
         Collective.
 
         See Also
         --------
-        Vec.assemblyEnd, Vec.setValues, petsc.VecAssemblyBegin
+        assemblyEnd, setValues, petsc.VecAssemblyBegin
 
         """
         CHKERR( VecAssemblyBegin(self.vec) )
@@ -3251,7 +3251,7 @@ cdef class Vec(Object):
     def assemblyEnd(self) -> None:
         """Finish assembling the vector.
 
-        This routine should be called after `Vec.assemblyBegin`.
+        This routine should be called after `assemblyBegin`.
 
         Collective.
 
@@ -3263,7 +3263,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.assemblyBegin, petsc.VecAssemblyEnd
+        assemblyBegin, petsc.VecAssemblyEnd
 
         """
         CHKERR( VecAssemblyEnd(self.vec) )
@@ -3271,14 +3271,14 @@ cdef class Vec(Object):
     def assemble(self) -> None:
         """Assemble the vector in one step.
 
-        To interleave communication and computation `Vec.assemblyBegin` and
-        `Vec.assemblyEnd` should be used instead.
+        To interleave communication and computation `assemblyBegin` and
+        `assemblyEnd` should be used instead.
 
         Collective.
 
         See Also
         --------
-        Vec.assemblyBegin, Vec.assemblyEnd
+        assemblyBegin, assemblyEnd
 
         """
         CHKERR( VecAssemblyBegin(self.vec) )
@@ -3294,13 +3294,13 @@ cdef class Vec(Object):
         Parameters
         ----------
         field
-            Component index. Must be between ``0`` and `Vec.block_size`.
+            Component index. Must be between ``0`` and `block_size`.
         alpha
             Factor to multiple the component entries by.
 
         See Also
         --------
-        Vec.strideSum, Vec.strideMin, Vec.strideMax, petsc.VecStrideScale
+        strideSum, strideMin, strideMax, petsc.VecStrideScale
 
         """
         cdef PetscInt    ival = asInt(field)
@@ -3311,18 +3311,18 @@ cdef class Vec(Object):
         """Sum subvector entries.
 
         Equivalent to ``sum(x[field], x[field+bs], x[field+2*bs], ...)`` where
-        ``bs`` is `Vec.block_size`.
+        ``bs`` is `block_size`.
 
         Collective.
 
         Parameters
         ----------
         field
-            Component index. Must be between ``0`` and `Vec.block_size`.
+            Component index. Must be between ``0`` and `block_size`.
 
         See Also
         --------
-        Vec.strideScale, Vec.strideMin, Vec.strideMax, petsc.VecStrideSum
+        strideScale, strideMin, strideMax, petsc.VecStrideSum
 
         """
         cdef PetscInt    ival = asInt(field)
@@ -3334,14 +3334,14 @@ cdef class Vec(Object):
         """Return the minimum of entries in a subvector.
 
         Equivalent to ``min(x[field], x[field+bs], x[field+2*bs], ...)`` where
-        ``bs`` is `Vec.block_size`.
+        ``bs`` is `block_size`.
 
         Collective.
 
         Parameters
         ----------
         field
-            Component index. Must be between ``0`` and `Vec.block_size`.
+            Component index. Must be between ``0`` and `block_size`.
 
         Returns
         -------
@@ -3352,7 +3352,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.strideScale, Vec.strideSum, Vec.strideMax, petsc.VecStrideMin
+        strideScale, strideSum, strideMax, petsc.VecStrideMin
 
         """
         cdef PetscInt  ival1 = asInt(field)
@@ -3365,14 +3365,14 @@ cdef class Vec(Object):
         """Return the maximum of entries in a subvector.
 
         Equivalent to ``max(x[field], x[field+bs], x[field+2*bs], ...)`` where
-        ``bs`` is `Vec.block_size`.
+        ``bs`` is `block_size`.
 
         Collective.
 
         Parameters
         ----------
         field
-            Component index. Must be between ``0`` and `Vec.block_size`.
+            Component index. Must be between ``0`` and `block_size`.
 
         Returns
         -------
@@ -3383,7 +3383,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.strideScale, Vec.strideSum, Vec.strideMin, petsc.VecStrideMax
+        strideScale, strideSum, strideMin, petsc.VecStrideMax
 
         """
         cdef PetscInt  ival1 = asInt(field)
@@ -3400,16 +3400,16 @@ cdef class Vec(Object):
         """Return the norm of entries in a subvector.
 
         Equivalent to ``norm(x[field], x[field+bs], x[field+2*bs], ...)`` where
-        ``bs`` is `Vec.block_size`.
+        ``bs`` is `block_size`.
 
         Collective.
 
         Parameters
         ----------
         field
-            Component index. Must be between ``0`` and `Vec.block_size`.
+            Component index. Must be between ``0`` and `block_size`.
         norm_type
-            The norm type. See `Vec.norm` for more information.
+            The norm type. See `norm` for more information.
 
         Returns
         -------
@@ -3419,7 +3419,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.strideScale, Vec.strideSum, petsc.VecStrideNorm
+        strideScale, strideSum, petsc.VecStrideNorm
 
         """
         cdef PetscInt ival = asInt(field)
@@ -3440,7 +3440,7 @@ cdef class Vec(Object):
         """Scatter entries into a component of another vector.
 
         The current vector is expected to be single-component
-        (`Vec.block_size` of ``1``) and the target vector is expected to be
+        (`block_size` of ``1``) and the target vector is expected to be
         multi-component.
 
         Collective.
@@ -3449,7 +3449,7 @@ cdef class Vec(Object):
         ----------
         field
             Component index of ``vec``. Must be between ``0`` and
-            `Vec.block_size`.
+            `block_size`.
         vec
             Multi-component vector to be scattered into.
         addv
@@ -3469,7 +3469,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.strideGather, petsc.VecStrideScatter
+        strideGather, petsc.VecStrideScatter
 
         """
         cdef PetscInt ival = asInt(field)
@@ -3484,7 +3484,7 @@ cdef class Vec(Object):
     ) -> None:
         """Insert component values into a single-component vector.
 
-        The current vector is expected to be multi-component (`Vec.block_size`
+        The current vector is expected to be multi-component (`block_size`
         greater than ``1``) and the target vector is expected to be
         single-component.
 
@@ -3494,7 +3494,7 @@ cdef class Vec(Object):
         ----------
         field
             Component index of the current vector. Must be between ``0`` and
-            `Vec.block_size`.
+            `block_size`.
         vec
             Single-component vector to be inserted into.
         addv
@@ -3514,7 +3514,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.strideScatter, petsc.VecStrideScatter
+        strideScatter, petsc.VecStrideScatter
 
         """
         cdef PetscInt ival = asInt(field)
@@ -3536,7 +3536,7 @@ cdef class Vec(Object):
         Notes
         -----
         This operation does not perform a copy. To obtain up-to-date ghost
-        values `Vec.ghostUpdateBegin` and `Vec.ghostUpdateEnd` must be called
+        values `ghostUpdateBegin` and `ghostUpdateEnd` must be called
         first.
 
         Non-ghost values can be found
@@ -3550,7 +3550,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createGhost, Vec.ghostUpdateBegin, Vec.ghostUpdateEnd
+        createGhost, ghostUpdateBegin, ghostUpdateEnd
         petsc.VecGhostGetLocalForm, petsc.VecGhostRestoreLocalForm
         """
         return _Vec_LocalForm(self)
@@ -3562,13 +3562,13 @@ cdef class Vec(Object):
     ) -> None:
         """Start updating ghosted vector entries.
 
-        See `Vec.ghostUpdate` for more information.
+        See `ghostUpdate` for more information.
 
         Neighbour-wise collective.
 
         See Also
         --------
-        Vec.ghostUpdateEnd, Vec.ghostUpdate, Vec.createGhost
+        ghostUpdateEnd, ghostUpdate, createGhost
         petsc.VecGhostUpdateBegin
 
         """
@@ -3583,13 +3583,13 @@ cdef class Vec(Object):
     ) -> None:
         """Finish updating ghosted vector entries.
 
-        See `Vec.ghostUpdate` for more information.
+        See `ghostUpdate` for more information.
 
         Neighbour-wise collective.
 
         See Also
         --------
-        Vec.ghostUpdateBegin, Vec.ghostUpdate, Vec.createGhost
+        ghostUpdateBegin, ghostUpdate, createGhost
         petsc.VecGhostUpdateEnd
 
         """
@@ -3631,7 +3631,7 @@ cdef class Vec(Object):
         Notes
         -----
         This operation is blocking. To interleave computation and
-        communication use `Vec.ghostUpdateBegin` and `Vec.ghostUpdateEnd`
+        communication use `ghostUpdateBegin` and `ghostUpdateEnd`
         instead.
 
         Examples
@@ -3644,7 +3644,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.ghostUpdateBegin, Vec.ghostUpdateEnd
+        ghostUpdateBegin, ghostUpdateEnd
 
         """
         cdef PetscInsertMode  caddv = insertmode(addv)
@@ -3655,7 +3655,7 @@ cdef class Vec(Object):
     def setMPIGhost(self, ghosts: Sequence[int]) -> None:
         """Set the ghost points for a ghosted vector.
 
-        This method is an alternative to calling `Vec.createGhost`.
+        This method is an alternative to calling `createGhost`.
 
         Collective.
 
@@ -3666,7 +3666,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.createGhost
+        createGhost
 
         """
         cdef PetscInt ng=0, *ig=NULL
@@ -3679,7 +3679,7 @@ cdef class Vec(Object):
         """Return a subvector from given indices.
 
         Once finished with the subvector it should be returned with
-        `Vec.restoreSubVector`.
+        `restoreSubVector`.
 
         Collective.
 
@@ -3710,7 +3710,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.restoreSubVector, petsc.VecGetSubVector
+        restoreSubVector, petsc.VecGetSubVector
 
         """
         if subvec is None: subvec = Vec()
@@ -3719,7 +3719,7 @@ cdef class Vec(Object):
         return subvec
 
     def restoreSubVector(self, IS iset, Vec subvec) -> None:
-        """Restore a subvector extracted using `Vec.getSubVector`.
+        """Restore a subvector extracted using `getSubVector`.
 
         Collective.
 
@@ -3732,7 +3732,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getSubVector, petsc.VecRestoreSubVector
+        getSubVector, petsc.VecRestoreSubVector
 
         """
         CHKERR( VecRestoreSubVector(self.vec, iset.iset, &subvec.vec) )
@@ -3744,7 +3744,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.setNestSubVecs, petsc.VecNestGetSubVecs
+        setNestSubVecs, petsc.VecNestGetSubVecs
 
         """
         cdef PetscInt N=0
@@ -3777,7 +3777,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getNestSubVecs, petsc.VecNestSetSubVecs
+        getNestSubVecs, petsc.VecNestSetSubVecs
 
         """
         if idxm is None: idxm = range(len(sx))
@@ -3807,7 +3807,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getDM, petsc.VecSetDM
+        getDM, petsc.VecSetDM
 
         """
         CHKERR( VecSetDM(self.vec, dm.dm) )
@@ -3819,7 +3819,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.setDM, petsc.VecGetDM
+        setDM, petsc.VecGetDM
 
         """
         cdef DM dm = DM()
@@ -3833,7 +3833,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getSizes, Vec.setSizes
+        getSizes, setSizes
 
         """
         def __get__(self) -> tuple[int, int]:
@@ -3846,7 +3846,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getSize
+        getSize
 
         """
         def __get__(self) -> int:
@@ -3857,7 +3857,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getLocalSize
+        getLocalSize
 
         """
         def __get__(self) -> int:
@@ -3868,7 +3868,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getBlockSize
+        getBlockSize
 
         """
         def __get__(self) -> int:
@@ -3879,7 +3879,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getOwnershipRange
+        getOwnershipRange
 
         """
         def __get__(self) -> tuple[int, int]:
@@ -3890,7 +3890,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getOwnershipRanges
+        getOwnershipRanges
 
         """
         def __get__(self) -> ArrayInt:
@@ -3901,7 +3901,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getBuffer
+        getBuffer
 
         """
         def __get__(self) -> Any:
@@ -3912,7 +3912,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getBuffer
+        getBuffer
 
         """
         def __get__(self) -> Any:
@@ -3923,7 +3923,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getArray
+        getArray
 
         """
         def __get__(self) -> ArrayScalar:
@@ -3937,19 +3937,19 @@ cdef class Vec(Object):
 
         See Also
         --------
-        Vec.getArray
+        getArray
 
         """
         def __get__(self) -> ArrayScalar:
             return self.getArray(True)
 
     property buffer:
-        """Alias for `Vec.buffer_w`."""
+        """Alias for `buffer_w`."""
         def __get__(self) -> Any:
             return self.buffer_w
 
     property array:
-        """Alias for `Vec.array_w`."""
+        """Alias for `array_w`."""
         def __get__(self) -> ArrayScalar:
             return self.array_w
         def __set__(self, value):
