@@ -154,8 +154,8 @@ cdef class DMInterpolation:
     def setUp(
         self,
         DM dm,
-        redundantPoints: bool | None = False,
-        ignoreOutsideDomain: bool | None = False,
+        redundantPoints: bool = False,
+        ignoreOutsideDomain: bool = False,
     ) -> None:
         """Compute spatial indices for point location during interpolation.
 
