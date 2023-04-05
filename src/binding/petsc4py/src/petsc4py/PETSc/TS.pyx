@@ -278,7 +278,7 @@ cdef class TS(Object):
 
         Parameters
         ----------
-        flag : bool
+        flag
             Set to True for fully implicit.
 
         See Also

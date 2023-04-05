@@ -1737,11 +1737,11 @@ cdef class SNES(Object):
 
         Parameters
         ----------
-        flag :
+        flag
           Whether or not to use the Eisenstat-Walker trick.
-        *targs :
+        *targs
           Positional arguments for `setParamsEW`.
-        **kargs :
+        **kargs
           Keyword arguments for `setParamsEW`.
 
         See Also
