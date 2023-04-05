@@ -39,6 +39,7 @@ class DMStagStencilLocation(object):
 
 cdef class DMStag(DM):
     """A DM object representing a "staggered grid" or a structured cell complex."""
+
     StencilType       = DMStagStencilType
     StencilLocation   = DMStagStencilLocation
 
@@ -530,12 +531,12 @@ cdef class DMStag(DM):
 
     def setUniformCoordinatesExplicit(
         self,
-        xmin: float | None = 0,
-        xmax: float | None = 1,
-        ymin: float | None = 0,
-        ymax: float | None = 1,
-        zmin: float | None = 0,
-        zmax: float | None = 1,
+        xmin: float = 0,
+        xmax: float = 1,
+        ymin: float = 0,
+        ymax: float = 1,
+        zmin: float = 0,
+        zmax: float = 1,
     ) -> None:
         """Set coordinates to be a uniform grid, storing all values.
 
@@ -569,12 +570,12 @@ cdef class DMStag(DM):
 
     def setUniformCoordinatesProduct(
         self,
-        xmin: float | None = 0,
-        xmax: float | None = 1,
-        ymin: float | None = 0,
-        ymax: float | None = 1,
-        zmin: float | None = 0,
-        zmax: float | None = 1,
+        xmin: float = 0,
+        xmax: float = 1,
+        ymin: float = 0,
+        ymax: float = 1,
+        zmin: float = 0,
+        zmax: float = 1,
     ) -> None:
         """Create uniform coordinates, as a product of 1D arrays.
 
@@ -612,12 +613,12 @@ cdef class DMStag(DM):
 
     def setUniformCoordinates(
         self,
-        xmin: float | None = 0,
-        xmax: float | None = 1,
-        ymin: float | None = 0,
-        ymax: float | None = 1,
-        zmin: float | None = 0,
-        zmax: float | None = 1,
+        xmin: float = 0,
+        xmax: float = 1,
+        ymin: float = 0,
+        ymax: float = 1,
+        zmin: float = 0,
+        zmax: float = 1,
     ) -> None:
         """Set the coordinates to be a uniform grid..
 
