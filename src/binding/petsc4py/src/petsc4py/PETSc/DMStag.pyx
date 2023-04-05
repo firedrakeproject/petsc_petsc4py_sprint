@@ -162,7 +162,7 @@ cdef class DMStag(DM):
 
         The width value is not used when `StencilType.NONE` is specified.
 
-        Logically collective; ``swidth`` must contain common value.
+        Logically collective.
 
         Parameters
         ----------
@@ -180,7 +180,7 @@ cdef class DMStag(DM):
     def setStencilType(self, stenciltype: StencilType | str) -> None:
         """Set elementwise ghost/halo stencil type.
 
-        Logically collective; ``stenciltype`` must contain common value.
+        Logically collective.
 
         Parameters
         ----------
@@ -201,7 +201,7 @@ cdef class DMStag(DM):
     ) -> None:
         """Set the boundary types.
 
-        Logically collective; ``boundary_types`` must contain common values.
+        Logically collective.
 
         Parameters
         ----------
@@ -222,7 +222,7 @@ cdef class DMStag(DM):
     def setDof(self, dofs: tuple[int, ...]) -> None:
         """Set dof/stratum.
 
-        Logically collective; ``dofs`` must contain common values.
+        Logically collective.
 
         Parameters
         ----------
@@ -244,7 +244,7 @@ cdef class DMStag(DM):
     def setGlobalSizes(self, sizes: tuple[int, ...]) -> None:
         """Set global element counts in each dimension.
 
-        Logically collective; ``sizes`` must contain common values.
+        Logically collective.
 
         Parameters
         ----------
@@ -264,7 +264,7 @@ cdef class DMStag(DM):
     def setProcSizes(self, sizes: tuple[int, ...]) -> None:
         """Set the number of processes in each dimension in the global process grid.
 
-        Logically collective; ``sizes`` must contain common values.
+        Logically collective.
 
         Parameters
         ----------
@@ -284,7 +284,7 @@ cdef class DMStag(DM):
     def setOwnershipRanges(self, ranges: tuple[Sequence[int], ...]) -> None:
         """Set elements per process in each dimension.
 
-        Logically collective; ``ranges`` must contain common values.
+        Logically collective.
 
         Parameters
         ----------
@@ -313,14 +313,10 @@ cdef class DMStag(DM):
         """
         return self.getDimension()
 
-    # TODO: are the dof+1, dof+2, etc. correct?
     def getEntriesPerElement(self) -> int:
         """Return the number of entries per element in the local representation.
 
-        This is the natural block size for most local operations. In 1D it is
-        equal to ``dof[0]+dof[1]``, in 2D it is equal to
-        ``dof[0]+2dof[1]+dof[2]``, and in 3D it is equal to
-        ``dof[0]+3dof[1]+3dof[2]+dof[3]``.
+        This is the natural block size for most local operations.
 
         Not collective.
 
@@ -662,7 +658,7 @@ cdef class DMStag(DM):
     def setCoordinateDMType(self, dmtype: DM.Type) -> None:
         """Set the type to store coordinates.
 
-        Logically collective; ``dmtype`` must contain a common value.
+        Logically collective.
 
         Parameters
         ----------
