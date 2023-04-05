@@ -778,7 +778,7 @@ cdef class DMDA(DM):
     def setCoordinateName(self, index: int, name: str) -> None:
         """Set the name of the coordinate dimension.
 
-        Logically collective; ``name`` must contain a common value.
+        Logically collective.
 
         Parameters
         ----------
@@ -800,7 +800,7 @@ cdef class DMDA(DM):
     def getCoordinateName(self, index: int) -> str:
         """Return the name of a coordinate dimension.
 
-        Not collective; the returned value will contain a common value.
+        Not collective.
 
         Parameters
         ----------
@@ -1113,7 +1113,6 @@ cdef class DMDA(DM):
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
-    # TODO: see the note above at getBoundaryType
     property boundary_type:
         """Boundary types in each dimension."""
         def __get__(self) -> tuple[DM.BoundaryType, ...]:
