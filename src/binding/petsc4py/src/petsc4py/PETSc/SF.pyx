@@ -193,7 +193,7 @@ cdef class SF(Object):
         """Set star forest graph.
 
         The number of leaves argument can be determined from the size of
-        *local* and/or *remote*.
+        ``local`` and/or ``remote``.
 
         Collective.
 
