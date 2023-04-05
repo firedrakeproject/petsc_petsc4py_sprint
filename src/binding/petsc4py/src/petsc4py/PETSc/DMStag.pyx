@@ -206,7 +206,7 @@ cdef class DMStag(DM):
         Parameters
         ----------
         boundary_types
-            Boundary types for one/two/three directions.
+            Boundary types for one/two/three dimensions.
 
         See Also
         --------
@@ -242,14 +242,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetDOF(self.dm, dof0, dof1, dof2, dof3) )
 
     def setGlobalSizes(self, sizes: tuple[int, ...]) -> None:
-        """Set global element counts in each direction.
+        """Set global element counts in each dimension.
 
         Logically collective; ``sizes`` must contain common values.
 
         Parameters
         ----------
         sizes
-            Global elementwise size in the one/two/three directions.
+            Global elementwise size in the one/two/three dimensions.
 
         See Also
         --------
@@ -262,14 +262,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
     def setProcSizes(self, sizes: tuple[int, ...]) -> None:
-        """Set the number of ranks in each direction in the global rank grid.
+        """Set the number of ranks in each dimension in the global rank grid.
 
         Logically collective; ``sizes`` must contain common values.
 
         Parameters
         ----------
         sizes
-            Number of ranks in one/two/three directions.
+            Number of ranks in one/two/three dimensions.
 
         See Also
         --------
@@ -282,14 +282,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
     def setOwnershipRanges(self, ranges: tuple[Sequence[int], ...]) -> None:
-        """Set elements per rank in each direction.
+        """Set elements per rank in each dimension.
 
         Logically collective; ``ranges`` must contain common values.
 
         Parameters
         ----------
         ranges
-            Element counts for each rank in one/two/three directions.
+            Element counts for each rank in one/two/three dimensions.
 
         See Also
         --------
@@ -369,7 +369,7 @@ cdef class DMStag(DM):
 
         The number of extra partial elements is either ``1`` or ``0``. The
         value is ``1`` on right, top, and front non-periodic domain
-        ("physical") boundaries, in the x, y, and z directions respectively,
+        ("physical") boundaries, in the x, y, and z dimensions respectively,
         and otherwise ``0``.
 
         Not collective.
@@ -400,7 +400,7 @@ cdef class DMStag(DM):
         return (asInt(x), asInt(y), asInt(z))[:<Py_ssize_t>dim], (asInt(m), asInt(n), asInt(p))[:<Py_ssize_t>dim]
 
     def getLocalSizes(self) -> tuple[int, ...]:
-        """Return local elementwise sizes in each direction.
+        """Return local elementwise sizes in each dimension.
 
         The returned value is calculated excluding ghost points.
 
@@ -417,7 +417,7 @@ cdef class DMStag(DM):
         return toStagDims(dim, m, n, p)
 
     def getGlobalSizes(self) -> tuple[int, ...]:
-        """Return global element counts in each direction.
+        """Return global element counts in each dimension.
 
         Not collective.
 
@@ -432,7 +432,7 @@ cdef class DMStag(DM):
         return toStagDims(dim, m, n, p)
 
     def getProcSizes(self) -> tuple[int, ...]:
-        """Return number of ranks in each direction.
+        """Return number of ranks in each dimension.
 
         Not collective.
 
@@ -461,7 +461,7 @@ cdef class DMStag(DM):
         return toStagStencil(stype)
 
     def getOwnershipRanges(self) -> tuple[Sequence[int], ...]:
-        """Return elements per rank in each direction.
+        """Return elements per rank in each dimension.
 
         Not collective.
 
@@ -478,7 +478,7 @@ cdef class DMStag(DM):
         return toStagOwnershipRanges(dim, m, n, p, lx, ly, lz)
 
     def getBoundaryTypes(self) -> tuple[str, ...]:
-        """Return boundary types in each direction.
+        """Return boundary types in each dimension.
 
         Not collective.
 
@@ -496,7 +496,7 @@ cdef class DMStag(DM):
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
     def getIsFirstRank(self) -> tuple[int, ...]:
-        """Return whether this rank is first in each direction in the rank grid.
+        """Return whether this rank is first in each dimension in the rank grid.
 
         Not collective.
 
@@ -512,7 +512,7 @@ cdef class DMStag(DM):
         return toStagDims(dim, rank0, rank1, rank2)
 
     def getIsLastRank(self) -> tuple[int, ...]:
-        """Return whether this rank is last in each direction in the rank grid.
+        """Return whether this rank is last in each dimension in the rank grid.
 
         Not collective.
 
@@ -545,17 +545,17 @@ cdef class DMStag(DM):
         Parameters
         ----------
         xmin
-            The minimum global coordinate value in the x direction.
+            The minimum global coordinate value in the x dimension.
         xmax
-            The maximum global coordinate value in the x direction.
+            The maximum global coordinate value in the x dimension.
         ymin
-            The minimum global coordinate value in the y direction.
+            The minimum global coordinate value in the y dimension.
         ymax
-            The maximum global coordinate value in the y direction.
+            The maximum global coordinate value in the y dimension.
         zmin
-            The minimum global coordinate value in the z direction.
+            The minimum global coordinate value in the z dimension.
         zmax
-            The maximum global coordinate value in the z direction.
+            The maximum global coordinate value in the z dimension.
 
         See Also
         --------
@@ -588,17 +588,17 @@ cdef class DMStag(DM):
         Parameters
         ----------
         xmin
-            The minimum global coordinate value in the x direction.
+            The minimum global coordinate value in the x dimension.
         xmax
-            The maximum global coordinate value in the x direction.
+            The maximum global coordinate value in the x dimension.
         ymin
-            The minimum global coordinate value in the y direction.
+            The minimum global coordinate value in the y dimension.
         ymax
-            The maximum global coordinate value in the y direction.
+            The maximum global coordinate value in the y dimension.
         zmin
-            The minimum global coordinate value in the z direction.
+            The minimum global coordinate value in the z dimension.
         zmax
-            The maximum global coordinate value in the z direction.
+            The maximum global coordinate value in the z dimension.
 
         See Also
         --------
@@ -628,25 +628,25 @@ cdef class DMStag(DM):
         different coordinates in different local representations, which are
         equivalent assuming a periodicity implied by the arguments to this
         function, i.e., two points are equivalent if their difference is a
-        multiple of ``xmax-xmin`` in the x direction, ``ymax-ymin`` in the y
-        direction, and ``zmax-zmin`` in the z direction.
+        multiple of ``xmax-xmin`` in the x dimension, ``ymax-ymin`` in the y
+        dimension, and ``zmax-zmin`` in the z dimension.
 
         Collective.
 
         Parameters
         ----------
         xmin
-            The minimum global coordinate value in the x direction.
+            The minimum global coordinate value in the x dimension.
         xmax
-            The maximum global coordinate value in the x direction.
+            The maximum global coordinate value in the x dimension.
         ymin
-            The minimum global coordinate value in the y direction.
+            The minimum global coordinate value in the y dimension.
         ymax
-            The maximum global coordinate value in the y direction.
+            The maximum global coordinate value in the y dimension.
         zmin
-            The minimum global coordinate value in the z direction.
+            The minimum global coordinate value in the z dimension.
         zmax
-            The maximum global coordinate value in the z direction.
+            The maximum global coordinate value in the z dimension.
 
         See Also
         --------
@@ -855,22 +855,22 @@ cdef class DMStag(DM):
             return self.getEntriesPerElement()
 
     property global_sizes:
-        """Global element counts in each direction."""
+        """Global element counts in each dimension."""
         def __get__(self) -> tuple[int, ...]:
             return self.getGlobalSizes()
 
     property local_sizes:
-        """Local elementwise sizes in each direction."""
+        """Local elementwise sizes in each dimension."""
         def __get__(self) -> tuple[int, ...]:
             return self.getLocalSizes()
 
     property proc_sizes:
-        """The number of ranks in each direction in the global decomposition."""
+        """The number of ranks in each dimension in the global decomposition."""
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
     property boundary_types:
-        """Boundary types in each direction."""
+        """Boundary types in each dimension."""
         def __get__(self) -> tuple[str, ...]:
             return self.getBoundaryTypes()
 
