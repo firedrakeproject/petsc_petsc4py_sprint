@@ -32,7 +32,7 @@ cdef class DMDA(DM):
         boundary_type: tuple[DM.BoundaryType | int | str | bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
-        bint setup: bool | None = True,
+        bint setup: bool = True,
         ownership_ranges: tuple[Sequence[int], ...] | None = None,
         comm: Comm | None = None,
     ) -> Self:
