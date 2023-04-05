@@ -1117,7 +1117,7 @@ cdef class DMDA(DM):
     # TODO: see the note above at getBoundaryType
     property boundary_type:
         """Boundary types in each direction."""
-        def __get__(self) -> tuple[int, ...]:
+        def __get__(self) -> tuple[DM.BoundaryType, ...]:
             return self.getBoundaryType()
 
     property stencil:
