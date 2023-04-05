@@ -193,7 +193,6 @@ cdef class DMSwarm(DM):
         CHKERR( DMSwarmSetLocalSizes(self.dm, cnlocal, cbuffer) )
         return self
 
-    # TODO: check if dtype links in the documentation
     def registerField(self, fieldname: str, blocksize: int, dtype: dtype = ScalarType) -> None:
         """Register a field to a `DMSwarm` with a native PETSc data type.
 
