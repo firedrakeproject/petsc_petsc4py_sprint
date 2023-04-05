@@ -401,8 +401,7 @@ cdef class DMDA(DM):
         asBoundary(boundary_type, &btx, &bty, &btz)
         CHKERR( DMDASetBoundaryType(self.dm, btx, bty, btz) )
 
-    # TODO: expected a string, but this seems to be an int
-    def getBoundaryType(self) -> tuple[int, ...]:
+    def getBoundaryType(self) -> tuple[DM.BoundaryType, ...]:
         """Return the type of ghost nodes at boundary in each dimension.
 
         Not collective.
@@ -592,8 +591,7 @@ cdef class DMDA(DM):
                 (toInt(y), toInt(y+n)),
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
-    # TODO: this seems to be a sequence and not a tuple, right?
-    def getOwnershipRanges(self) -> tuple[Sequence[int], ...]:
+    def getOwnershipRanges(self) -> tuple[ArrayInt, ...]:
         """Return the ranges of indices in each direction owned by each process.
 
         These numbers are not multiplied by the number of DOFs per node.
@@ -943,9 +941,9 @@ cdef class DMDA(DM):
 
     def setRefinementFactor(
         self,
-        refine_x: int | None = 2,
-        refine_y: int | None = 2,
-        refine_z: int | None = 2,
+        refine_x: int = 2,
+        refine_y: int = 2,
+        refine_z: int = 2,
     ) -> None:
         """Set the ratios for the DMDA grid refinement.
 
@@ -1013,8 +1011,7 @@ cdef class DMDA(DM):
         cdef PetscDMDAInterpolationType ival = dainterpolationtype(interp_type)
         CHKERR( DMDASetInterpolationType(self.dm, ival) )
 
-    # FIXME: Return type
-    def getInterpolationType(self) -> int:
+    def getInterpolationType(self) -> InterpolationType:
         """Return the type of interpolation.
 
         Not collective.
@@ -1044,7 +1041,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetElementType(self.dm, ival) )
 
     # FIXME: Return type
-    def getElementType(self) -> int:
+    def getElementType(self) -> ElementType:
         """Return the element type to be returned by `getElements`.
 
         Not collective.
