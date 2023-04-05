@@ -85,7 +85,7 @@ cdef class Log:
 
         Parameters
         ----------
-        viewer : None, optional
+        viewer
             Viewer instance. If `None` then will default to an instance of `Viewer.Type.ASCII`.
 
         See Also
@@ -332,7 +332,7 @@ cdef class LogStage:
 
         Parameters
         ----------
-        flag : bool
+        flag
             Log if True, disable looging if False.
 
         See Also
@@ -373,7 +373,7 @@ cdef class LogStage:
 
         Parameters
         ----------
-        flag : bool
+        flag
             `True` to make the stage visible, `False` otherwise.
 
         See Also
@@ -602,7 +602,7 @@ cdef class LogEvent:
 
         Parameters
         ----------
-        flag : bool
+        flag
             Active (if True) or deactivate (if False) the logging of all events.
 
         See Also

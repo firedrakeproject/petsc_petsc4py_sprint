@@ -245,7 +245,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        dim : int
+        dim
             The embedding dimension.
 
         See Also
@@ -263,7 +263,7 @@ cdef class DM(Object):
 
         Parameters
         ----------
-        prefix : str
+        prefix
             The prefix to prepend by searching through the options database.
 
         See Also
