@@ -198,7 +198,7 @@ cdef class SF(Object):
         Collective.
 
         Parameters
-        -------
+        ----------
         nroots
             Number of root vertices on the current process (these are possible
             targets for other process to attach leaves).
@@ -385,8 +385,8 @@ cdef class SF(Object):
 
         Collective.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         rootSection
             Section defined on root space.
         leafSection
