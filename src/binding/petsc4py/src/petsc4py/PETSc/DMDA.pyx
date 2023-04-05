@@ -355,7 +355,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetNumProcs(self.dm, m, n, p) )
 
     def getProcSizes(self) -> tuple[int, ...]:
-        """Return the number of processes in each dimensions.
+        """Return the number of processes in each dimension.
 
         Not collective.
 
