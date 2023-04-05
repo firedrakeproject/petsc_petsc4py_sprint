@@ -265,6 +265,63 @@ class MatSORType(object):
     APPLY_UPPER           = SOR_APPLY_UPPER
     APPLY_LOWER           = SOR_APPLY_LOWER
 
+cdef class MatStencil:
+   """Associate structured grid coordinates with matrix indices.
+
+   See Also
+   --------
+   petsc.MatStencil
+   """
+
+   cdef PetscMatStencil stencil
+
+   property i:
+       "First logical grid coordinate."
+       def __get__(self) -> int:
+           return toInt(self.stencil.i)
+       def __set__(self, value: int) -> None:
+           self.stencil.i = asInt(value)
+
+   property j:
+       "Second logical grid coordinate."
+       def __get__(self) -> int:
+           return toInt(self.stencil.j)
+       def __set__(self, value: int) -> None:
+           self.stencil.j = asInt(value)
+
+   property k:
+       "Third logical grid coordinate."
+       def __get__(self) -> int:
+           return toInt(self.stencil.k)
+       def __set__(self, value: int) -> None:
+           self.stencil.k = asInt(value)
+
+   property c:
+       "Field component."
+       def __get__(self) -> int:
+           return toInt(self.stencil.c)
+       def __set__(self, value: int) -> None:
+           self.stencil.c = asInt(value)
+
+   property index:
+       "Logical grid coordinates ``(i, j, k)``."
+       def __get__(self) -> tuple[int, int, int]:
+           cdef PetscMatStencil *s = &self.stencil
+           return toInt(s.i), toInt(s.j), toInt(s.k)
+       def __set__(self, value: Sequence[int]) -> None:
+           cdef PetscMatStencil *s = &self.stencil
+           s.i = s.j = s.k = 0
+           asDims(value, &s.i, &s.j, &s.k)
+
+   property field:
+       "Field component."
+       def __get__(self) -> int:
+           cdef PetscMatStencil *s = &self.stencil
+           return toInt(s.c)
+       def __set__(self, value: int) -> None:
+           cdef PetscMatStencil *s = &self.stencil
+           s.c = asInt(value)
+
 # --------------------------------------------------------------------
 
 cdef class Mat(Object):
@@ -2830,7 +2887,7 @@ cdef class Mat(Object):
 
     #
 
-    Stencil = _Mat_Stencil
+    Stencil = MatStencil
 
     def setStencil(self, dims, starts=None, dof: int = 1) -> None:
         """Set matrix stencil.
@@ -2851,8 +2908,8 @@ cdef class Mat(Object):
 
     def setValueStencil(
         self,
-        row: _Mat_Stencil,
-        col: _Mat_Stencil,
+        row: MatStencil,
+        col: MatStencil,
         value: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
@@ -2876,7 +2933,7 @@ cdef class Mat(Object):
         petsc.MatSetValuesStencil
 
         """
-        cdef _Mat_Stencil r = row, c = col
+        cdef MatStencil r = row, c = col
         cdef PetscInsertMode im = insertmode(addv)
         matsetvaluestencil(self.mat, r, c, value, im, 0)
 
@@ -2886,8 +2943,8 @@ cdef class Mat(Object):
 
     def setValueBlockedStencil(
         self,
-        row: _Mat_Stencil,
-        col: _Mat_Stencil,
+        row: MatStencil,
+        col: MatStencil,
         value: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
@@ -2911,7 +2968,7 @@ cdef class Mat(Object):
         petsc.MatSetValuesBlockedStencil
 
         """
-        cdef _Mat_Stencil r = row, c = col
+        cdef MatStencil r = row, c = col
         cdef PetscInsertMode im = insertmode(addv)
         matsetvaluestencil(self.mat, r, c, value, im, 1)
 
@@ -3051,7 +3108,7 @@ cdef class Mat(Object):
             rows = iarray_i(rows, &ni, &i)
             CHKERR( MatZeroRowsColumnsLocal(self.mat, ni, i, sval, xvec, bvec) )
 
-    def zeroRowsColumnsStencil(self, rows: Sequence[_Mat_Stencil], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+    def zeroRowsColumnsStencil(self, rows: Sequence[MatStencil], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
         """Zero selected rows and columns of the matrix.
 
         Collective.
@@ -3076,7 +3133,7 @@ cdef class Mat(Object):
         cdef PetscScalar sval = asScalar(diag)
         cdef PetscInt nrows = asInt(len(rows))
         cdef PetscMatStencil st
-        cdef _Mat_Stencil r
+        cdef MatStencil r
         cdef PetscMatStencil *crows = NULL
         CHKERR( PetscMalloc(<size_t>(nrows+1)*sizeof(st), &crows) )
         for i in range(nrows):
@@ -4519,11 +4576,11 @@ cdef class Mat(Object):
 
         Returns
         -------
-        ival1: int
+        n: int
             The number of negative eigenvalues.
-        ival2: int
+        z: int
             The number of zero eigenvalues.
-        ival3: int
+        p: int
             The number of positive eigenvalues.
 
         See Also
@@ -4650,13 +4707,13 @@ cdef class Mat(Object):
 
         Returns
         -------
-        A
+        A: Mat
             The ``A`` matrix.
-        U
+        U: Mat
             The first dense rectangular matrix.
-        c
+        c: Vec
             The sequential vector containing the diagonal of ``C``.
-        V
+        V: Mat
             The second dense rectangular matrix.
 
         See Also
