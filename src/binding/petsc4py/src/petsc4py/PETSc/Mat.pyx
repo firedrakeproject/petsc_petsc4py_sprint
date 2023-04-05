@@ -1169,7 +1169,7 @@ cdef class Mat(Object):
         return self
 
     def createLRC(self, Mat A, Mat U, Vec c, Mat V) -> Self:
-        """Create a `Type.LRC` matrix representing A + UCVᵀ.
+        """Create a low-rank correction `Type.LRC` matrix representing A + UCVᵀ.
 
         Collective.
 
@@ -1178,7 +1178,7 @@ cdef class Mat(Object):
         A
             Sparse matrix, can be `None`.
         U, V
-            Dense rectangular (tall and thin) matrices.
+            Dense rectangular matrices.
         c
             Vector containing the diagonal of C, can be `None`.
 
@@ -1319,7 +1319,7 @@ cdef class Mat(Object):
         bs: int | None = None,
         rtol: float | None = None,
     ) -> Self:
-        """Create a `Type.H2OPUS` sampling from a provided operator.
+        """Create a hierarchical `Type.H2OPUS` matrix sampling from a provided operator.
 
         Parameters
         ----------
@@ -1938,8 +1938,7 @@ cdef class Mat(Object):
         CHKERR( MatTranspose(self.mat, reuse, &out.mat) )
         return out
 
-    # FIXME return None
-    def setTransposePrecursor(self, Mat out) -> Mat:
+    def setTransposePrecursor(self, Mat out) -> None:
         """Set transpose precursor.
 
         See Also
@@ -1948,7 +1947,6 @@ cdef class Mat(Object):
 
         """
         CHKERR( MatTransposeSetPrecursor(self.mat, out.mat) )
-        return out
 
     def hermitianTranspose(self, Mat out=None) -> Mat:
         """Return the transposed Hermitian matrix.
@@ -2208,7 +2206,7 @@ cdef class Mat(Object):
         CHKERR( MatGetValues(self.mat, 1, &ival1, 1, &ival2, &sval) )
         return toScalar(sval)
 
-    def getValues(self, rows : Sequence[int], cols : Sequence[int], values : ArrayScalar = None) -> ArrayScalar:
+    def getValues(self, rows: Sequence[int], cols: Sequence[int], values: ArrayScalar = None) -> ArrayScalar:
         """Return the values in the ``zip(rows,cols)`` positions.
 
         Not collective.
@@ -2267,7 +2265,7 @@ cdef class Mat(Object):
         #
         return (ai, aj, av)
 
-    def getRow(self, row : int) -> tuple[ArrayInt, ArrayScalar]:
+    def getRow(self, row: int) -> tuple[ArrayInt, ArrayScalar]:
         """Return the column indices and values for the requested row.
 
         Not collective.
@@ -2410,13 +2408,69 @@ cdef class Mat(Object):
         """
         matsetvalues(self.mat, rows, cols, values, addv, 0, 0)
 
-    def setValuesRCV(self, R, C, V, addv=None):
+    def setValuesRCV(self, R, C, V, addv=None) -> None:
+        """Undocumented."""
         matsetvalues_rcv(self.mat, R, C, V, addv, 0, 0)
 
-    def setValuesIJV(self, I, J, V, addv=None, rowmap=None):
+    def setValuesIJV(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        rowmap: Sequence[int] = None,
+        ) -> None:
+        """Set or add a subset of values stored in CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Row pointers.
+        J
+          Column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+        rowmap
+          Optional iterable indicating which row to insert.
+
+        See Also
+        --------
+        petsc.MatSetValues
+
+        """
         matsetvalues_ijv(self.mat, I, J, V, addv, rowmap, 0, 0)
 
-    def setValuesCSR(self, I, J, V, addv=None):
+    def setValuesCSR(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add values stored in CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Row pointers.
+        J
+          Column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValues
+
+        """
         matsetvalues_csr(self.mat, I, J, V, addv, 0, 0)
 
     def setValuesBlocked(
@@ -2449,20 +2503,101 @@ cdef class Mat(Object):
         """
         matsetvalues(self.mat, rows, cols, values, addv, 1, 0)
 
-    def setValuesBlockedRCV(self, R, C, V, addv=None):
+    def setValuesBlockedRCV(self, R, C, V, addv=None) -> None:
+        """Undocumented."""
         matsetvalues_rcv(self.mat, R, C, V, addv, 1, 0)
 
-    def setValuesBlockedIJV(self, I, J, V, addv=None, rowmap=None):
+    def setValuesBlockedIJV(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        rowmap: Sequence[int] = None,
+        ) -> None:
+        """Set or add a subset of values stored in block CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Block row pointers.
+        J
+          Block column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+        rowmap
+          Optional iterable indicating which block row to insert.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlocked
+
+        """
         matsetvalues_ijv(self.mat, I, J, V, addv, rowmap, 1, 0)
 
-    def setValuesBlockedCSR(self, I, J, V, addv=None):
+    def setValuesBlockedCSR(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add values stored in block CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Block row pointers.
+        J
+          Block column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlocked
+
+        """
         matsetvalues_csr(self.mat, I, J, V, addv, 1, 0)
 
-    def setLGMap(self, LGMap rmap, LGMap cmap=None):
+    def setLGMap(self, LGMap rmap, LGMap cmap=None) -> None:
+        """Set the local-to-global mappings.
+
+        Collective.
+
+        Parameters
+        ----------
+        rmap
+          Row mapping.
+        cmap
+          Column mapping. If `None`, ``cmap = rmap``.
+
+        See Also
+        --------
+        getLGMap, petsc.MatSetLocalToGlobalMapping
+
+        """
         if cmap is None: cmap = rmap
         CHKERR( MatSetLocalToGlobalMapping(self.mat, rmap.lgm, cmap.lgm) )
 
-    def getLGMap(self):
+    def getLGMap(self) -> tuple[LGMap, LGMap]:
+        """Return the local-to-global mappings.
+
+        Not collective.
+
+        See Also
+        --------
+        setLGMap, petsc.MatGetLocalToGlobalMapping
+
+        """
         cdef LGMap cmap = LGMap()
         cdef LGMap rmap = LGMap()
         CHKERR( MatGetLocalToGlobalMapping(self.mat, &rmap.lgm, &cmap.lgm) )
@@ -2533,13 +2668,69 @@ cdef class Mat(Object):
         """
         matsetvalues(self.mat, rows, cols, values, addv, 0, 1)
 
-    def setValuesLocalRCV(self, R, C, V, addv=None):
+    def setValuesLocalRCV(self, R, C, V, addv=None) -> None:
+        """Undocumented."""
         matsetvalues_rcv(self.mat, R, C, V, addv, 0, 1)
 
-    def setValuesLocalIJV(self, I, J, V, addv=None, rowmap=None):
+    def setValuesLocalIJV(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        rowmap: Sequence[int] = None,
+        ) -> None:
+        """Set or add a subset of values stored in CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Row pointers.
+        J
+          Local column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+        rowmap
+          Optional iterable indicating which row to insert.
+
+        See Also
+        --------
+        petsc.MatSetValuesLocal
+
+        """
         matsetvalues_ijv(self.mat, I, J, V, addv, rowmap, 0, 1)
 
-    def setValuesLocalCSR(self, I, J, V, addv=None):
+    def setValuesLocalCSR(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add values stored in CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Row pointers.
+        J
+          Local column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesLocal
+
+        """
         matsetvalues_csr(self.mat, I, J, V, addv, 0, 1)
 
     def setValuesBlockedLocal(
@@ -2572,20 +2763,82 @@ cdef class Mat(Object):
         """
         matsetvalues(self.mat, rows, cols, values, addv, 1, 1)
 
-    def setValuesBlockedLocalRCV(self, R, C, V, addv=None):
+    def setValuesBlockedLocalRCV(self, R, C, V, addv=None) -> None:
+        """Undocumented."""
         matsetvalues_rcv(self.mat, R, C, V, addv, 1, 1)
 
-    def setValuesBlockedLocalIJV(self, I, J, V, addv=None, rowmap=None):
+    def setValuesBlockedLocalIJV(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        rowmap: Sequence[int] = None,
+        ) -> None:
+        """Set or add a subset of values stored in block CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Block row pointers.
+        J
+          Local block column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+        rowmap
+          Optional iterable indicating which block row to insert.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlockedLocal
+
+        """
         matsetvalues_ijv(self.mat, I, J, V, addv, rowmap, 1, 1)
 
-    def setValuesBlockedLocalCSR(self, I, J, V, addv=None):
+    def setValuesBlockedLocalCSR(
+        self,
+        I: Sequence[int],
+        J: Sequence[int],
+        V: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add values stored in block CSR format.
+
+        Not collective.
+
+        Parameters
+        ----------
+        I
+          Block row pointers.
+        J
+          Local block column indices.
+        V
+          The scalar values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlockedLocal
+
+        """
         matsetvalues_csr(self.mat, I, J, V, addv, 1, 1)
 
     #
 
     Stencil = _Mat_Stencil
 
-    def setStencil(self, dims, starts=None, dof=1):
+    def setStencil(self, dims, starts=None, dof: int = 1) -> None:
+        """Set matrix stencil.
+
+        See Also
+        --------
+        petsc.MatSetStencil
+        """
         cdef PetscInt ndim, ndof
         cdef PetscInt cdims[3], cstarts[3]
         cdims[0] = cdims[1] = cdims[2] = 1
@@ -2596,23 +2849,75 @@ cdef class Mat(Object):
             asDims(dims, &cstarts[0], &cstarts[1], &cstarts[2])
         CHKERR( MatSetStencil(self.mat, ndim, cdims, cstarts, ndof) )
 
-    def setValueStencil(self, row, col, value, addv=None):
+    def setValueStencil(
+        self,
+        row: _Mat_Stencil,
+        col: _Mat_Stencil,
+        value: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a value to row and col stencil.
+
+        Not collective.
+
+        Parameters
+        ----------
+        row
+          Row stencil.
+        col
+          Column stencil.
+        value
+          The scalar values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesStencil
+
+        """
         cdef _Mat_Stencil r = row, c = col
         cdef PetscInsertMode im = insertmode(addv)
         matsetvaluestencil(self.mat, r, c, value, im, 0)
 
     def setValueStagStencil(self, row, col, value, addv=None) -> None:
-        """Not yet implemented."""
-        raise NotImplementedError('setValueStagStencil not yet implemented in petsc4py')
+        """Not implemented."""
+        raise NotImplementedError
 
-    def setValueBlockedStencil(self, row, col, value, addv=None):
+    def setValueBlockedStencil(
+        self,
+        row: _Mat_Stencil,
+        col: _Mat_Stencil,
+        value: Sequence[Scalar],
+        addv: InsertModeSpec = None,
+        ) -> None:
+        """Set or add a block values to row and col stencil.
+
+        Not collective.
+
+        Parameters
+        ----------
+        row
+          Row stencil.
+        col
+          Column stencil.
+        value
+          The scalar values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        petsc.MatSetValuesBlockedStencil
+
+        """
         cdef _Mat_Stencil r = row, c = col
         cdef PetscInsertMode im = insertmode(addv)
         matsetvaluestencil(self.mat, r, c, value, im, 1)
 
     def setValueBlockedStagStencil(self, row, col, value, addv=None) -> None:
-        """Not yet implemented."""
-        raise NotImplementedError('setValueBlockedStagStencil not yet implemented in petsc4py')
+        """Not implemented."""
+        raise NotImplementedError
 
     def zeroRows(self, rows: IS | Sequence[int], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
         """Zero selected rows of the matrix.
@@ -2624,7 +2929,7 @@ cdef class Mat(Object):
         rows
           Row indices to be zeroed.
         diag
-          Scalar value to insert into the diagonal.
+          Scalar value to be inserted into the diagonal.
         x
           Optional solution vector to be modified for zeroed rows.
         b
@@ -2657,7 +2962,7 @@ cdef class Mat(Object):
         rows
           Local row indices to be zeroed.
         diag
-          Scalar value to insert into the diagonal.
+          Scalar value to be inserted into the diagonal.
         x
           Optional solution vector to be modified for zeroed rows.
         b
@@ -2690,7 +2995,7 @@ cdef class Mat(Object):
         rows
           Row/column indices to be zeroed.
         diag
-          Scalar value to insert into the diagonal.
+          Scalar value to be inserted into the diagonal.
         x
           Optional solution vector to be modified for zeroed rows.
         b
@@ -2723,7 +3028,7 @@ cdef class Mat(Object):
         rows
           Local row/column indices to be zeroed.
         diag
-          Scalar value to insert into the diagonal.
+          Scalar value to be inserted into the diagonal.
         x
           Optional solution vector to be modified for zeroed rows.
         b
@@ -2746,7 +3051,28 @@ cdef class Mat(Object):
             rows = iarray_i(rows, &ni, &i)
             CHKERR( MatZeroRowsColumnsLocal(self.mat, ni, i, sval, xvec, bvec) )
 
-    def zeroRowsColumnsStencil(self, rows, diag=1, Vec x=None, Vec b=None):
+    def zeroRowsColumnsStencil(self, rows: Sequence[_Mat_Stencil], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+        """Zero selected rows and columns of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        rows
+          Iterable of stencil rows and columns.
+        diag
+          Scalar value to be inserted into the diagonal.
+        x
+          Optional solution vector to be modified for zeroed rows.
+        b
+          Optional right-hand side vector to be modified.
+          It will be adjusted with provided solution entries.
+
+        See Also
+        --------
+        zeroRowsLocal, zeroRowsColumns, petsc.MatZeroRowsColumnsStencil
+
+        """
         cdef PetscScalar sval = asScalar(diag)
         cdef PetscInt nrows = asInt(len(rows))
         cdef PetscMatStencil st
@@ -2943,7 +3269,23 @@ cdef class Mat(Object):
 
     #
 
-    def getColumnVector(self, column, Vec result=None):
+    def getColumnVector(self, column: int, Vec result=None) -> Vec:
+        """Return the columnᵗʰ column vector of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        column
+          Column index.
+        result
+          Optional vector to store the result.
+
+        See Also
+        --------
+        petsc.MatGetColumnVector
+
+        """
         cdef PetscInt ival = asInt(column)
         if result is None:
             result = Vec()
@@ -2952,7 +3294,25 @@ cdef class Mat(Object):
         CHKERR( MatGetColumnVector(self.mat, result.vec, ival) )
         return result
 
-    def getRedundantMatrix(self, nsubcomm, subcomm=None, Mat out=None):
+    def getRedundantMatrix(self, nsubcomm: int, subcomm: Comm | None = None, Mat out=None) -> Mat:
+        """Return redundant matrices on subcommunicators.
+
+        Parameters
+        ----------
+        nsubcomm
+          The number of subcommunicators
+        subcomm
+          Communicator split or `None` for the null communicator.
+        out
+          Optional resultant matrix.
+          When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
+          When not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+
+        See Also
+        --------
+        petsc.MatCreateRedundantMatrix
+
+        """
         cdef PetscInt _nsubcomm   = asInt(nsubcomm)
         cdef MPI_Comm _subcomm    = MPI_COMM_NULL
         if subcomm:   _subcomm    = def_Comm(subcomm, PETSC_COMM_DEFAULT)
@@ -2962,7 +3322,21 @@ cdef class Mat(Object):
         CHKERR( MatCreateRedundantMatrix(self.mat, _nsubcomm, _subcomm, reuse, &out.mat))
         return out
 
-    def getDiagonal(self, Vec result=None):
+    def getDiagonal(self, Vec result=None) -> Vec:
+        """Return the diagonal of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        result
+          Optional vector to store the result.
+
+        See Also
+        --------
+        setDiagonal, petsc.MatGetDiagonal
+
+        """
         if result is None:
             result = Vec()
         if result.vec == NULL:
@@ -2970,7 +3344,21 @@ cdef class Mat(Object):
         CHKERR( MatGetDiagonal(self.mat, result.vec) )
         return result
 
-    def getRowSum(self, Vec result=None):
+    def getRowSum(self, Vec result=None) -> Vec:
+        """Return the row-sum vector.
+
+        Collective.
+
+        Parameters
+        ----------
+        result
+          Optional vector to store the result.
+
+        See Also
+        --------
+        petsc.MatGetRowSum
+
+        """
         if result is None:
             result = Vec()
         if result.vec == NULL:
@@ -2978,17 +3366,58 @@ cdef class Mat(Object):
         CHKERR( MatGetRowSum(self.mat, result.vec) )
         return result
 
-    def setDiagonal(self, Vec diag, addv=None):
+    def setDiagonal(self, Vec diag, addv: InsertModeSpec = None) -> None:
+        """Set the diagonal values of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        diag
+          Vector storing diagonal values.
+        addv
+          Insertion mode.
+
+        See Also
+        --------
+        getDiagonal, petsc.MatDiagonalSet
+
+        """
         cdef PetscInsertMode caddv = insertmode(addv)
         CHKERR( MatDiagonalSet(self.mat, diag.vec, caddv) )
 
-    def diagonalScale(self, Vec L=None, Vec R=None):
+    def diagonalScale(self, Vec L=None, Vec R=None) -> None:
+        """Perform left and/or right diagonal scaling of the matrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        L
+          Optional left scaling vector.
+        R
+          Optional right scaling vector.
+
+        See Also
+        --------
+        petsc.MatDiagonalScale
+
+        """
         cdef PetscVec vecl=NULL, vecr=NULL
         if L is not None: vecl = L.vec
         if R is not None: vecr = R.vec
         CHKERR( MatDiagonalScale(self.mat, vecl, vecr) )
 
-    def invertBlockDiagonal(self):
+    def invertBlockDiagonal(self) -> ArrayScalar:
+        """Return the inverse of the block-diagonal entries.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatInvertBlockDiagonal
+
+        """
         cdef PetscInt bs = 0, m = 0
         cdef const PetscScalar *cibdiag = NULL
         CHKERR( MatGetBlockSize(self.mat, &bs) )
@@ -3000,28 +3429,86 @@ cdef class Mat(Object):
 
     # null space
 
-    def setNullSpace(self, NullSpace nsp):
+    def setNullSpace(self, NullSpace nsp) -> None:
+        """Set the nullspace.
+
+        Collective.
+
+        See Also
+        --------
+        getNullSpace, petsc.MatSetNullSpace
+
+        """
         CHKERR( MatSetNullSpace(self.mat, nsp.nsp) )
 
-    def getNullSpace(self):
+    def getNullSpace(self) -> NullSpace:
+        """Return the nullspace.
+
+        Not collective.
+
+        See Also
+        --------
+        setNullSpace, petsc.MatGetNullSpace
+
+        """
         cdef NullSpace nsp = NullSpace()
         CHKERR( MatGetNullSpace(self.mat, &nsp.nsp) )
         PetscINCREF(nsp.obj)
         return nsp
 
-    def setTransposeNullSpace(self, NullSpace nsp):
+    def setTransposeNullSpace(self, NullSpace nsp) -> None:
+        """Set the transpose nullspace.
+
+        Collective.
+
+        See Also
+        --------
+        setNullSpace, getTransposeNullSpace
+        petsc.MatSetTransposeNullSpace
+
+        """
         CHKERR( MatSetTransposeNullSpace(self.mat, nsp.nsp) )
 
-    def getTransposeNullSpace(self):
+    def getTransposeNullSpace(self) -> NullSpace:
+        """Return the transpose nullspace.
+
+        Not collective.
+
+        See Also
+        --------
+        getNullSpace, setTransposeNullSpace
+        petsc.MatGetTransposeNullSpace
+
+        """
         cdef NullSpace nsp = NullSpace()
         CHKERR( MatGetTransposeNullSpace(self.mat, &nsp.nsp) )
         PetscINCREF(nsp.obj)
         return nsp
 
-    def setNearNullSpace(self, NullSpace nsp):
+    def setNearNullSpace(self, NullSpace nsp) -> None:
+        """Set the near-nullspace.
+
+        Collective.
+
+        See Also
+        --------
+        setNullSpace, getNearNullSpace
+        petsc.MatSetNearNullSpace
+
+        """
         CHKERR( MatSetNearNullSpace(self.mat, nsp.nsp) )
 
-    def getNearNullSpace(self):
+    def getNearNullSpace(self) -> NullSpace:
+        """Return the near-nullspace.
+
+        Not collective.
+
+        See Also
+        --------
+        getNullSpace, setNearNullSpace
+        petsc.MatSetNearNullSpace
+
+        """
         cdef NullSpace nsp = NullSpace()
         CHKERR( MatGetNearNullSpace(self.mat, &nsp.nsp) )
         PetscINCREF(nsp.obj)
@@ -3151,29 +3638,85 @@ cdef class Mat(Object):
 
     # SOR
 
-    def SOR(self, Vec b, Vec x, omega=1.0, sortype=None, shift=0.0, its=1, lits=1):
+    def SOR(
+        self,
+        Vec b,
+        Vec x,
+        omega:float = 1.0,
+        sortype:SORType | None = None,
+        shift:float = 0.0,
+        its:int = 1,
+        lits:int = 1,
+        ) -> None:
+        """Compute relaxation (SOR, Gauss-Seidel) sweeps.
+
+        Neighborwise collective.
+
+        See Also
+        --------
+        petsc.MatSOR
+
+        """
         cdef PetscReal comega = asReal(omega)
         cdef PetscMatSORType csortype = SOR_LOCAL_SYMMETRIC_SWEEP
         if sortype is not None:
             csortype = <PetscMatSORType> asInt(sortype)
-        cdef PetscInt cshift = asInt(shift)
+        cdef PetscReal cshift = asReal(shift)
         cdef PetscInt cits = asInt(its)
         cdef PetscInt clits = asInt(lits)
         CHKERR( MatSOR(self.mat, b.vec, comega, csortype, cshift, cits, clits, x.vec) )
 
     #
 
-    def getDiagonalBlock(self):
+    def getDiagonalBlock(self) -> Mat:
+        """Return the part of the matrix associated with the on-process coupling.
+
+        Not collective.
+
+        See Also
+        --------
+        petsc.MatGetDiagonalBlock
+
+        """
         cdef Mat submat = Mat()
         CHKERR( MatGetDiagonalBlock(self.mat, &submat.mat) )
         PetscINCREF(submat.obj)
         return submat
 
-    def increaseOverlap(self, IS iset, overlap=1):
+    def increaseOverlap(self, IS iset, overlap: int = 1) -> None:
+        """Increase the overlap of a index set.
+
+        Collective.
+
+        See Also
+        --------
+        petsc.MatIncreaseOverlap
+
+        """
         cdef PetscInt ival = asInt(overlap)
         CHKERR( MatIncreaseOverlap(self.mat, 1, &iset.iset, ival) )
 
-    def createSubMatrix(self, IS isrow, IS iscol=None, Mat submat=None):
+    def createSubMatrix(self, IS isrow, IS iscol=None, Mat submat=None) -> Mat:
+        """Return a submatrix.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrow
+          Row index set
+        iscol
+          Column index set. If `None`, ``iscol = isrow``.
+        submat
+          Optional resultant matrix.
+          When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
+          When not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+
+        See Also
+        --------
+        petsc.MatCreateSubMatrix
+
+        """
         cdef PetscMatReuse reuse = MAT_INITIAL_MATRIX
         cdef PetscIS ciscol = NULL
         if iscol is not None: ciscol = iscol.iset
@@ -3183,7 +3726,32 @@ cdef class Mat(Object):
                                 reuse, &submat.mat) )
         return submat
 
-    def createSubMatrices(self, isrows, iscols=None, submats=None):
+    def createSubMatrices(
+        self,
+        isrows: IS | Sequence[IS],
+        iscols: IS | Sequence[IS] = None,
+        submats: Mat | Sequence[Mat] = None,
+        ) -> Sequence[Mat]:
+        """Return several sequential submatrices.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrows
+          Row index sets
+        iscols
+          Column index sets. If `None`, ``iscols = isrows``.
+        submats
+          Optional resultant matrices.
+          When `None`, new matrices are created, and ``MAT_INITIAL_MATRIX`` is used.
+          When not `None`, the matrices are reused with ``MAT_REUSE_MATRIX``.
+
+        See Also
+        --------
+        petsc.MatCreateSubMatrices
+
+        """
         if iscols is None: iscols = isrows
         isrows = [isrows] if isinstance(isrows, IS) else list(isrows)
         iscols = [iscols] if isinstance(iscols, IS) else list(iscols)
@@ -3217,13 +3785,51 @@ cdef class Mat(Object):
 
     #
 
-    def getLocalSubMatrix(self, IS isrow, IS iscol, Mat submat=None):
+    def getLocalSubMatrix(self, IS isrow, IS iscol, Mat submat=None) -> Mat:
+        """Return a reference to a submatrix specified in local numbering.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrow
+          Row index set.
+        iscol
+          Column index set.
+        submat
+          Optional resultant matrix.
+          When `None`, a new matrix is created.
+          When not `None`, the matrix is first destroyed and then recreated.
+
+        See Also
+        --------
+        restoreLocalSubMatrix, petsc.MatGetLocalSubMatrix
+
+        """
         if submat is None: submat = Mat()
         else: CHKERR( MatDestroy(&submat.mat) )
         CHKERR( MatGetLocalSubMatrix(self.mat, isrow.iset, iscol.iset, &submat.mat) )
         return submat
 
     def restoreLocalSubMatrix(self, IS isrow, IS iscol, Mat submat):
+        """Restore a reference to a submatrix obtained with `getLocalSubMatrix`.
+
+        Collective.
+
+        Parameters
+        ----------
+        isrow
+          Row index set.
+        iscol
+          Column index set.
+        submat
+          The submatrix.
+
+        See Also
+        --------
+        getLocalSubMatrix, petsc.MatRestoreLocalSubMatrix
+
+        """
         CHKERR( MatRestoreLocalSubMatrix(self.mat, isrow.iset, iscol.iset, &submat.mat) )
 
     #
@@ -3799,12 +4405,14 @@ cdef class Mat(Object):
         matfactorinfo(PETSC_FALSE, PETSC_FALSE, options, &info)
         CHKERR( MatLUFactor(self.mat, isrow.iset, iscol.iset, &info) )
 
-    def factorSymbolicLU(self, Mat mat, IS isrow, IS iscol, options=None):
-        <void>self; <void>mat; <void>isrow; <void>iscol; <void>options; # unused
+    def factorSymbolicLU(self, Mat mat, IS isrow, IS iscol, options=None) -> None:
+        """Not implemented."""
         raise NotImplementedError
-    def factorNumericLU(self, Mat mat, options=None):
-        <void>self; <void>mat; <void>options; # unused
+
+    def factorNumericLU(self, Mat mat, options=None) -> None:
+        """Not implemented."""
         raise NotImplementedError
+
     def factorILU(
         self,
         IS isrow,
@@ -3835,8 +4443,9 @@ cdef class Mat(Object):
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_TRUE, PETSC_FALSE, options, &info)
         CHKERR( MatILUFactor(self.mat, isrow.iset, iscol.iset, &info) )
-    def factorSymbolicILU(self, IS isrow, IS iscol, options=None):
-        <void>self; <void>isrow; <void>iscol; <void>options; # unused
+
+    def factorSymbolicILU(self, IS isrow, IS iscol, options=None) -> None:
+        """Not implemented."""
         raise NotImplementedError
 
     def factorCholesky(
@@ -3864,12 +4473,15 @@ cdef class Mat(Object):
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_FALSE, PETSC_TRUE, options, &info)
         CHKERR( MatCholeskyFactor(self.mat, isperm.iset, &info) )
-    def factorSymbolicCholesky(self, IS isperm, options=None):
-        <void>self; <void>isperm; <void>options; # unused
+
+    def factorSymbolicCholesky(self, IS isperm, options=None) -> None:
+        """Not implemented."""
         raise NotImplementedError
-    def factorNumericCholesky(self, Mat mat, options=None):
-        <void>self; <void>mat; <void>options; # unused
+
+    def factorNumericCholesky(self, Mat mat, options=None) -> None:
+        """Not implemented."""
         raise NotImplementedError
+
     def factorICC(
         self,
         IS isperm,
@@ -3895,8 +4507,9 @@ cdef class Mat(Object):
         cdef PetscMatFactorInfo info
         matfactorinfo(PETSC_TRUE, PETSC_TRUE, options, &info)
         CHKERR( MatICCFactor(self.mat, isperm.iset, &info) )
-    def factorSymbolicICC(self, IS isperm, options=None):
-        <void>self; <void>isperm; <void>options; # unused
+
+    def factorSymbolicICC(self, IS isperm, options=None) -> None:
+        """Not implemented."""
         raise NotImplementedError
 
     def getInertia(self) -> tuple[int, int, int]:
@@ -4031,24 +4644,24 @@ cdef class Mat(Object):
     # LRC
 
     def getLRCMats(self) -> tuple[Mat, Mat, Vec, Mat]:
-        """Return the constituents of a LRC matrix.
+        """Return the constituents of a `Type.LRC` matrix.
 
         Collective.
 
         Returns
         -------
         A
-            The (sparse) matrix.
+            The ``A`` matrix.
         U
-            The first dense rectangle (tall and skinny) matrix.
+            The first dense rectangular matrix.
         c
             The sequential vector containing the diagonal of ``C``.
         V
-            The second dense rectangle (tall and skinny) matrix.
+            The second dense rectangular matrix.
 
         See Also
         --------
-        Type.LRC, petsc.MatLRCGetMats
+        petsc.MatLRCGetMats
 
         """
         cdef Mat A = Mat()
@@ -4093,15 +4706,14 @@ cdef class Mat(Object):
         return self
 
     def H2OpusLowRankUpdate(self, Mat U, Mat V=None, s: float = 1.0):
-        """Perform a low-rank update of the form A = A + sUVᵀ.
+        """Perform a low-rank update of the form ``self`` += sUVᵀ.
 
         Parameters
         ----------
         U
             The dense low-rank update matrix
         V
-            The optional dense low-rank update matrix. If left `None`, then
-            ``U`` is used.
+            The dense low-rank update matrix. If `None`, ``V = U``.
         s
             The scaling factor.
 
@@ -4416,9 +5028,9 @@ cdef class Mat(Object):
     # dense matrices
 
     def setDenseLDA(self, lda: int) -> None:
-        """Set the leading dimension of the array used by the matrix.
+        """Set the leading dimension of the array used by the dense matrix.
 
-        Not collective. Only for `Type.DENSE` and `Type.DENSECUDA`.
+        Not collective.
 
         Parameters
         ----------
@@ -4434,9 +5046,9 @@ cdef class Mat(Object):
         CHKERR( MatDenseSetLDA(self.mat, _ilda) )
 
     def getDenseLDA(self) -> int:
-        """Return the leading dimension of the array used by the matrix.
+        """Return the leading dimension of the array used by the dense matrix.
 
-        Not collective. Only for `Type.DENSE` and `Type.DENSECUDA`.
+        Not collective.
 
         See Also
         --------
@@ -4486,7 +5098,9 @@ cdef class Mat(Object):
         return array
 
     def getDenseLocalMatrix(self) -> Mat:
-        """Return the matrix local to this process.
+        """Return the local part of the dense matrix.
+
+        Not collective.
 
         See Also
         --------
@@ -4498,18 +5112,21 @@ cdef class Mat(Object):
         PetscINCREF(mat.obj)
         return mat
 
-    def getDenseColumnVec(self, i: int, mode: Literal['r','w','rw'] = 'rw') -> Vec:
-        """Return the iᵗʰ column vector of the matrix.
+    def getDenseColumnVec(self, i: int, mode: AccessModeSpec = 'rw') -> Vec:
+        """Return the iᵗʰ column vector of dense the matrix.
+
+        Collective.
 
         Parameters
         ----------
         i
-            The column index to return.
+            The column index to access.
         mode
-            The read type of the returned array
+            The access type of the returned array
 
         See Also
         --------
+        restoreDenseColumnVec
         petsc.MatDenseGetColumnVec, petsc.MatDenseGetColumnVecRead,
         petsc.MatDenseGetColumnVecWrite
 
@@ -4528,18 +5145,21 @@ cdef class Mat(Object):
         PetscINCREF(v.obj)
         return v
 
-    def restoreDenseColumnVec(self, i: int, mode: Literal['r','w','rw'] = 'rw'):
-        """Restore the iᵗʰ column vector of the matrix.
+    def restoreDenseColumnVec(self, i: int, mode: AccessModeSpec = 'rw') -> None:
+        """Restore the iᵗʰ column vector of the dense matrix.
+
+        Collective.
 
         Parameters
         ----------
         i
-            The column index to restored.
+            The column index to be restored.
         mode
-            The read type of the restored array
+            The access type of the restored array
 
         See Also
         --------
+        getDenseColumnVec
         petsc.MatDenseRestoreColumnVec, petsc.MatDenseRestoreColumnVecRead,
         petsc.MatDenseRestoreColumnVecWrite
 
@@ -4677,48 +5297,59 @@ cdef class Mat(Object):
     #
 
     property sizes:
-        def __get__(self):
+        """Matrix local and global sizes."""
+        def __get__(self) -> tuple[tuple[int, int], tuple[int, int]]:
             return self.getSizes()
         def __set__(self, value):
             self.setSizes(value)
 
     property size:
-        def __get__(self):
+        """Matrix global size."""
+        def __get__(self) -> tuple[int, int]:
             return self.getSize()
 
     property local_size:
-        def __get__(self):
+        """Matrix local size."""
+        def __get__(self) -> int:
             return self.getLocalSize()
 
     property block_size:
-        def __get__(self):
+        """Matrix block size."""
+        def __get__(self) -> int:
             return self.getBlockSize()
 
     property block_sizes:
-        def __get__(self):
+        """Matrix row and column block sizes."""
+        def __get__(self) -> tuple[int, int]:
             return self.getBlockSizes()
 
     property owner_range:
-        def __get__(self):
+        """Matrix local row range."""
+        def __get__(self) -> tuple[int, int]:
             return self.getOwnershipRange()
 
     property owner_ranges:
-        def __get__(self):
+        """Matrix row ranges."""
+        def __get__(self) -> ArrayInt:
             return self.getOwnershipRanges()
 
     #
 
     property assembled:
-        def __get__(self):
+        """The boolean flag indicating if the matrix is assembled."""
+        def __get__(self) -> bool:
             return self.isAssembled()
     property symmetric:
-        def __get__(self):
+        """The boolean flag indicating if the matrix is symmetric."""
+        def __get__(self) -> bool:
             return self.isSymmetric()
     property hermitian:
-        def __get__(self):
+        """The boolean flag indicating if the matrix is Hermitian."""
+        def __get__(self) -> bool:
             return self.isHermitian()
     property structsymm:
-        def __get__(self):
+        """The boolean flag indicating if the matrix is structurally symmetric."""
+        def __get__(self) -> bool:
             return self.isStructurallySymmetric()
 
     # TODO Stream
@@ -4729,7 +5360,9 @@ cdef class Mat(Object):
         (dltype, devId, _, _, _) = mat_get_dlpack_ctx(self)
         return (dltype, devId)
 
-    def toDLPack(self, mode='rw'):
+    def toDLPack(self, mode: AccessModeSpec = 'rw') -> Any:
+        """Return a DLPack `PyCapsule` wrapping the vector data."""
+        if mode is None: mode = 'rw'
         if mode is None: mode = 'rw'
         if mode not in ['rw', 'r', 'w']:
             raise ValueError("Invalid mode: expected 'rw', 'r', or 'w'")
@@ -4801,7 +5434,7 @@ cdef class Mat(Object):
 # --------------------------------------------------------------------
 
 cdef class NullSpace(Object):
-    """Object which removes a null space from a vector.
+    """Nullspace object.
 
     See Also
     --------
