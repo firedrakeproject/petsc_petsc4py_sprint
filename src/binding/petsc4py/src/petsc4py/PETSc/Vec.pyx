@@ -746,7 +746,7 @@ cdef class Vec(Object):
         return (dltype, devId)
 
     # FIXME Not sure what the return type should be
-    def toDLPack(self, mode: Literal["rw", "r", "w"] | None = "rw") -> Any:
+    def toDLPack(self, mode: AccessModeSpec = 'rw') -> Any:
         """Return a DLPack `PyCapsule` wrapping the vector data.
 
         Collective.
@@ -1541,7 +1541,7 @@ cdef class Vec(Object):
 
     def getCUDAHandle(
         self,
-        mode: Literal["rw", "r", "w"] | None = "rw",
+        mode: AccessModeSpec = 'rw',
     ) -> Any:  # FIXME What is the right return type?
         """Return a pointer to the CUDA buffer inside the vector.
 
@@ -1588,7 +1588,7 @@ cdef class Vec(Object):
     def restoreCUDAHandle(
         self,
         handle: Any,  # FIXME What type hint is appropriate?
-        mode: Literal["rw", "r", "w"] | None = "rw",
+        mode: AccessModeSpec = 'rw',
     ) -> None:
         """Restore a pointer to the CUDA buffer inside the vector.
 
@@ -1631,7 +1631,7 @@ cdef class Vec(Object):
 
     def getHIPHandle(
         self,
-        mode: Literal["rw", "r", "w"] | None = "rw",
+        mode: AccessModeSpec = 'rw',
     ) -> Any:  # FIXME What is the right return type?
         """Return a pointer to the HIP buffer inside the vector.
 
@@ -1678,7 +1678,7 @@ cdef class Vec(Object):
     def restoreHIPHandle(
         self,
         handle: Any,  # FIXME What type hint is appropriate?
-        mode: Literal["rw", "r", "w"] | None = "rw",
+        mode: AccessModeSpec = 'rw',
     ) -> None:
         """Restore a pointer to the HIP buffer inside the vector.
 
@@ -1787,7 +1787,7 @@ cdef class Vec(Object):
 
     def getCLMemHandle(
         self,
-        mode: Literal["rw", "r", "w"] = "rw",
+        mode: AccessModeSpec = 'rw',
     ) -> int:
         """Return the OpenCL buffer associated with the vector.
 

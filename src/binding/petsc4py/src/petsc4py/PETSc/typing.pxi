@@ -20,6 +20,8 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+cdef AccessModeSpec
+
 # --- Mat ---
 
 cdef InsertModeSpec

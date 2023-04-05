@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import (
     Callable,
     Sequence,
+    Literal,
 )
 from numpy.typing import (
     NDArray,
@@ -28,6 +29,7 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "AccessModeSpec",
     "InsertModeSpec",
     "MatAssemblySpec",
     "MatSizeSpec",
@@ -94,7 +96,16 @@ ArrayComplex = NDArray[complex]
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
 
-# --- Mat ---
+AccessModeSpec = Literal['rw', 'r', 'w'] | None
+"""Access mode specification.
+
+   Possible values are:
+     - ``'rw'`` Read-Write mode.
+     - ``'r'`` Read-only mode.
+     - ``'w'`` Write-only mode.
+     - `None` as ``'rw'``.
+
+"""
 
 InsertModeSpec = InsertMode | bool | None
 """Insertion mode specification.
@@ -107,6 +118,8 @@ InsertModeSpec = InsertMode | bool | None
      - `True` as `InsertMode.ADD_VALUES`.
 
 """
+
+# --- Mat ---
 
 MatAssemblySpec = Mat.AssemblyType | bool | None
 """Matrix assembly specification.
