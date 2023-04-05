@@ -48,7 +48,7 @@ cdef class DMStag(DM):
         dim: int,
         dofs: tuple[int, ...] | None = None,
         sizes: tuple[int, ...] | None = None,
-        boundary_types: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
+        boundary_types: tuple[DM.BoundaryType | int | str | bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
         proc_sizes: tuple[int, ...] | None = None,
@@ -197,7 +197,7 @@ cdef class DMStag(DM):
 
     def setBoundaryTypes(
         self,
-        boundary_types: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
+        boundary_types: tuple[DM.BoundaryType | int | str | bool, ...],
     ) -> None:
         """Set the boundary types.
 
