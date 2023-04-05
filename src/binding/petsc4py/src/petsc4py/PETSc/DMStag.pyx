@@ -262,14 +262,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetGlobalSizes(self.dm, M, N, P) )
 
     def setProcSizes(self, sizes: tuple[int, ...]) -> None:
-        """Set the number of ranks in each dimension in the global rank grid.
+        """Set the number of processes in each dimension in the global process grid.
 
         Logically collective; ``sizes`` must contain common values.
 
         Parameters
         ----------
         sizes
-            Number of ranks in one/two/three dimensions.
+            Number of processes in one/two/three dimensions.
 
         See Also
         --------
@@ -282,14 +282,14 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetNumRanks(self.dm, m, n, p) )
 
     def setOwnershipRanges(self, ranges: tuple[Sequence[int], ...]) -> None:
-        """Set elements per rank in each dimension.
+        """Set elements per process in each dimension.
 
         Logically collective; ``ranges`` must contain common values.
 
         Parameters
         ----------
         ranges
-            Element counts for each rank in one/two/three dimensions.
+            Element counts for each process in one/two/three dimensions.
 
         See Also
         --------
@@ -432,7 +432,7 @@ cdef class DMStag(DM):
         return toStagDims(dim, m, n, p)
 
     def getProcSizes(self) -> tuple[int, ...]:
-        """Return number of ranks in each dimension.
+        """Return number of processes in each dimension.
 
         Not collective.
 
@@ -461,7 +461,7 @@ cdef class DMStag(DM):
         return toStagStencil(stype)
 
     def getOwnershipRanges(self) -> tuple[Sequence[int], ...]:
-        """Return elements per rank in each dimension.
+        """Return elements per process in each dimension.
 
         Not collective.
 
@@ -496,7 +496,7 @@ cdef class DMStag(DM):
         return toStagBoundaryTypes(dim, btx, bty, btz)
 
     def getIsFirstRank(self) -> tuple[int, ...]:
-        """Return whether this rank is first in each dimension in the rank grid.
+        """Return whether this process is first in each dimension in the process grid.
 
         Not collective.
 
@@ -512,7 +512,7 @@ cdef class DMStag(DM):
         return toStagDims(dim, rank0, rank1, rank2)
 
     def getIsLastRank(self) -> tuple[int, ...]:
-        """Return whether this rank is last in each dimension in the rank grid.
+        """Return whether this process is last in each dimension in the process grid.
 
         Not collective.
 
@@ -865,7 +865,7 @@ cdef class DMStag(DM):
             return self.getLocalSizes()
 
     property proc_sizes:
-        """The number of ranks in each dimension in the global decomposition."""
+        """The number of processes in each dimension in the global decomposition."""
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
