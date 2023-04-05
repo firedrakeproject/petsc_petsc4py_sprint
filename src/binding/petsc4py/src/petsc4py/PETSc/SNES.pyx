@@ -418,6 +418,7 @@ cdef class SNES(Object):
           The number of levels
         comms
           An optional sequence of communicators of length `levels`, or `None` for the default communicator `Sys.getDefaultComm`.
+
         See Also
         --------
         getFASLevels, petsc.SNESFASSetLevels, petsc.SNESFAS
@@ -1736,11 +1737,11 @@ cdef class SNES(Object):
 
         Parameters
         ----------
-        flag :
+        flag
           Whether or not to use the Eisenstat-Walker trick.
-        *targs :
+        *targs
           Positional arguments for `setParamsEW`.
-        **kargs :
+        **kargs
           Keyword arguments for `setParamsEW`.
 
         See Also
