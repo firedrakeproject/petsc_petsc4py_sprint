@@ -733,12 +733,12 @@ cdef class DMDA(DM):
 
     def setUniformCoordinates(
         self,
-        xmin: float | None = 0,
-        xmax: float | None = 1,
-        ymin: float | None = 0,
-        ymax: float | None = 1,
-        zmin: float | None = 0,
-        zmax: float | None = 1,
+        xmin: float = 0,
+        xmax: float = 1,
+        ymin: float = 0,
+        ymax: float = 1,
+        zmin: float = 0,
+        zmax: float = 1,
     ) -> None:
         """Set the DMDA coordinates to be a uniform grid.
 
