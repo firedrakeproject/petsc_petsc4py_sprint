@@ -13,6 +13,8 @@ from numpy.typing import (
 )
 from .PETSc import (
     InsertMode,
+    ScatterMode,
+    NormType,
     Vec,
     Mat,
     NullSpace,
@@ -29,8 +31,12 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
+    "DimsSpec",
     "AccessModeSpec",
     "InsertModeSpec",
+    "ScatterModeSpec",
+    "LayoutSizeSpec",
+    "NormTypeSpec",
     "MatAssemblySpec",
     "MatSizeSpec",
     "MatBlockSizeSpec",
@@ -96,6 +102,13 @@ ArrayComplex = NDArray[complex]
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
 
+DimsSpec = tuple[int, ...]
+"""Dimensions specification.
+
+   N-tuples indicates N-dimensional grid sizes.
+
+"""
+
 AccessModeSpec = Literal['rw', 'r', 'w'] | None
 """Access mode specification.
 
@@ -116,6 +129,58 @@ InsertModeSpec = InsertMode | bool | None
      - `None` as `InsertMode.INSERT_VALUES`.
      - `False` as `InsertMode.INSERT_VALUES`.
      - `True` as `InsertMode.ADD_VALUES`.
+
+   See Also
+   --------
+   InsertMode
+
+"""
+
+ScatterModeSpec = ScatterMode | bool | str | None
+"""Scatter mode specification.
+
+   Possible values are:
+     - `ScatterMode.FORWARD` Forward mode.
+     - `ScatterMode.REVERSE` Reverse mode.
+     - `None` as `ScatterMode.FORWARD`.
+     - `False` as `ScatterMode.FORWARD`.
+     - `True` as `ScatterMode.REVERSE`.
+     - ``'forward'`` as `ScatterMode.FORWARD`.
+     - ``'reverse'`` as `ScatterMode.REVERSE`.
+
+   See Also
+   --------
+   ScatterMode
+
+"""
+
+LayoutSizeSpec = int | tuple[int, int]
+"""`int` or 2-`tuple` of `int` describing the layout sizes.
+
+   A single `int` indicates global size.
+   A `tuple` of `int` indicates ``(localsize, globalsize)``.
+
+   See Also
+   --------
+   Sys.splitOwnership
+
+"""
+
+NormTypeSpec = NormType | None
+"""Norm type specification.
+
+    Possible values include:
+
+    - `NormType.NORM_1` The 1-norm: Σₙ abs(xₙ) for vectors, maxₙ (Σᵢ abs(xₙᵢ)) for matrices.
+    - `NormType.NORM_2` The 2-norm: √(Σₙ xₙ²) for vectors, largest singular values for matrices.
+    - `NormType.NORM_INFINITY` The ∞-norm: maxₙ abs(xₙ) for vectors, maxᵢ (Σₙ abs(xₙᵢ)) for matrices.
+    - `NormType.NORM_FROBENIUS` The Frobenius norm: same as 2-norm for vectors, √(Σₙᵢ xₙᵢ²) for matrices.
+    - `NormType.NORM_1_AND_2` Compute both `NormType.NORM_1` and `NormType.NORM_2`.
+    - `None` as `NormType.NORM_2` for vectors, `NormType.NORM_FROBENIUS` for matrices.
+
+    See Also
+    --------
+    PETSc.NormType, petsc.NormType
 
 """
 

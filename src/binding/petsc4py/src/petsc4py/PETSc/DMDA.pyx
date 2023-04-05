@@ -27,8 +27,8 @@ cdef class DMDA(DM):
         self,
         dim: int | None = None,
         dof: int | None = None,
-        sizes: tuple[int, ...] | None = None,
-        proc_sizes: tuple[int, ...] | None = None,
+        sizes: DimsSpec | None = None,
+        proc_sizes: DimsSpec | None = None,
         boundary_type: tuple[DM.BoundaryType | int | str | bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
@@ -277,7 +277,7 @@ cdef class DMDA(DM):
                             NULL) )
         return toInt(dof)
 
-    def setSizes(self, sizes: tuple[int, ...]) -> None:
+    def setSizes(self, sizes: DimsSpec) -> None:
         """Set the number of grid points in each dimension.
 
         Logically collective.
@@ -285,7 +285,7 @@ cdef class DMDA(DM):
         Parameters
         ----------
         sizes
-            The global (x), (x, y), or (x, y, z) size.
+            The global (x,), (x, y), or (x, y, z) size.
 
         See Also
         --------
@@ -327,7 +327,7 @@ cdef class DMDA(DM):
                             NULL) )
         return toDims(dim, M, N, P)
 
-    def setProcSizes(self, proc_sizes: tuple[int, ...]) -> None:
+    def setProcSizes(self, proc_sizes: DimsSpec) -> None:
         """Set the number of processes in each dimension.
 
         Logically collective.
@@ -335,7 +335,7 @@ cdef class DMDA(DM):
         Parameters
         ----------
         proc_sizes
-            The number of processes in (x), (x, y), or (x, y, z) dimensions.
+            The number of processes in (x,), (x, y), or (x, y, z) dimensions.
 
         See Also
         --------

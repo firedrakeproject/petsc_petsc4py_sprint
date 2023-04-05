@@ -1783,8 +1783,6 @@ cdef class Mat(Object):
 
         Not collective.
 
-        Notes
-        -----
         The returned array is the result of exclusive scan of the local sizes.
 
         See Also
@@ -2889,12 +2887,15 @@ cdef class Mat(Object):
 
     Stencil = MatStencil
 
-    def setStencil(self, dims, starts=None, dof: int = 1) -> None:
+    def setStencil(self, dims: DimsSpec, starts: DimsSpec | None = None, dof: int = 1) -> None:
         """Set matrix stencil.
+
+        Not collective.
 
         See Also
         --------
         petsc.MatSetStencil
+
         """
         cdef PetscInt ndim, ndof
         cdef PetscInt cdims[3], cstarts[3]
@@ -3893,15 +3894,19 @@ cdef class Mat(Object):
 
     def norm(
         self,
-        norm_type: NormType | int | None = None,
+        norm_type: NormTypeSpec = None,
     ) -> float | tuple[float, float]:
         """Compute the requested matrix norm.
 
         Collective.
 
+        Notes:
+        -------
+        A 2-tuple is returned if `NormType.NORM_1_AND_2` is specified.
+
         See Also
         --------
-        NormType, petsc.MatNorm, petsc.NormType
+        petsc.MatNorm, petsc.NormType
 
         """
         cdef PetscNormType norm_1_2 = PETSC_NORM_1_AND_2

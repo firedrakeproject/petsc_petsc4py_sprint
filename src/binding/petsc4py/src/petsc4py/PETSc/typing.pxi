@@ -20,11 +20,15 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+cdef DimsSpec
 cdef AccessModeSpec
+cdef InsertModeSpec
+cdef ScatterModeSpec
+cdef LayoutSizeSpec
+cdef NormTypeSpec
 
 # --- Mat ---
 
-cdef InsertModeSpec
 cdef MatAssemblySpec
 cdef MatSizeSpec
 cdef MatBlockSizeSpec
