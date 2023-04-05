@@ -278,7 +278,7 @@ cdef class DMDA(DM):
         return toInt(dof)
 
     def setSizes(self, sizes: tuple[int, ...]) -> None:
-        """Set the number of grid points in each direction.
+        """Set the number of grid points in each dimension.
 
         Logically collective.
 
@@ -305,7 +305,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetSizes(self.dm, M, N, P) )
 
     def getSizes(self) -> tuple[int, ...]:
-        """Return the number of grid points in each direction.
+        """Return the number of grid points in each dimension.
 
         Not collective.
 
@@ -592,7 +592,7 @@ cdef class DMDA(DM):
                 (toInt(z), toInt(z+p)))[:<Py_ssize_t>dim]
 
     def getOwnershipRanges(self) -> tuple[ArrayInt, ...]:
-        """Return the ranges of indices in each direction owned by each process.
+        """Return the ranges of indices in each dimension owned by each process.
 
         These numbers are not multiplied by the number of DOFs per node.
 
@@ -747,20 +747,20 @@ cdef class DMDA(DM):
         Parameters
         ----------
         xmin
-            The minimum in the ``x`` direction.
+            The minimum in the ``x`` dimension.
         xmax
-            The maximum in the ``x`` direction.
+            The maximum in the ``x`` dimension.
         ymin
-            The minimum in the ``y`` direction (value ignored for 1 dimensional
+            The minimum in the ``y`` dimension (value ignored for 1 dimensional
              problems).
         ymax
-            The maximum in the ``y`` direction (value ignored for 1 dimensional
+            The maximum in the ``y`` dimension (value ignored for 1 dimensional
              problems).
         zmin
-            The minimum in the ``z`` direction (value ignored for 1 or 2
+            The minimum in the ``z`` dimension (value ignored for 1 or 2
             dimensional problems).
         zmax
-            The maximum in the ``z`` direction (value ignored for 1 or 2
+            The maximum in the ``z`` dimension (value ignored for 1 or 2
             dimensional problems).
 
         See Also
@@ -777,7 +777,7 @@ cdef class DMDA(DM):
                                           _zmin, _zmax) )
 
     def setCoordinateName(self, index: int, name: str) -> None:
-        """Set the name of the coordinate direction.
+        """Set the name of the coordinate dimension.
 
         Logically collective; ``name`` must contain a common value.
 
@@ -799,7 +799,7 @@ cdef class DMDA(DM):
         CHKERR( DMDASetCoordinateName(self.dm, ival, cval) )
 
     def getCoordinateName(self, index: int) -> str:
-        """Return the name of a coordinate direction.
+        """Return the name of a coordinate dimension.
 
         Not collective; the returned value will contain a common value.
 
@@ -904,7 +904,7 @@ cdef class DMDA(DM):
 
         The returned `AO` maps to the natural grid ordering that would be
         used for the `DMDA` if only 1 processor were employed (ordering most
-        rapidly in the x-direction, then y, then z). Multiple degrees of
+        rapidly in the x-dimension, then y, then z). Multiple degrees of
         freedom are numbered for each node (rather than 1 component for the
         whole grid, then the next component, etc.).
 
@@ -952,11 +952,11 @@ cdef class DMDA(DM):
         Parameters
         ----------
         refine_x
-            Ratio of fine grid to coarse in x direction.
+            Ratio of fine grid to coarse in x dimension.
         refine_y
-            Ratio of fine grid to coarse in y direction.
+            Ratio of fine grid to coarse in y dimension.
         refine_z
-            Ratio of fine grid to coarse in z direction.
+            Ratio of fine grid to coarse in z dimension.
 
         See Also
         --------
@@ -1105,18 +1105,18 @@ cdef class DMDA(DM):
             return self.getDof()
 
     property sizes:
-        """The global dimension in each direction."""
+        """The global dimension in each dimension."""
         def __get__(self) -> tuple[int, ...]:
             return self.getSizes()
 
     property proc_sizes:
-        """The number of ranks in each direction in the global decomposition."""
+        """The number of ranks in each dimension in the global decomposition."""
         def __get__(self) -> tuple[int, ...]:
             return self.getProcSizes()
 
     # TODO: see the note above at getBoundaryType
     property boundary_type:
-        """Boundary types in each direction."""
+        """Boundary types in each dimension."""
         def __get__(self) -> tuple[DM.BoundaryType, ...]:
             return self.getBoundaryType()
 
