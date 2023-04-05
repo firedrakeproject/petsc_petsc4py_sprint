@@ -559,7 +559,8 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        getGhostRanges, petsc.DMDAGetCorners
+        getGhostRanges, getOwnershipRanges, getCorners, getGhostCorners
+        petsc.DMDAGetCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -578,7 +579,8 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        getRanges, petsc.DMDAGetGhostCorners
+        getRanges, getOwnershipRanges, getCorners, getGhostCorners
+        petsc.DMDAGetGhostCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -599,6 +601,7 @@ cdef class DMDA(DM):
 
         See Also
         --------
+        getRanges, getGhostRanges, getCorners, getGhostCorners
         petsc.DMDAGetOwnershipRanges
 
         """
@@ -631,7 +634,8 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        getGhostCorners, petsc.DMDAGetCorners
+        getRanges, getGhostRanges, getOwnershipRanges, getGhostCorners
+        petsc.DMDAGetCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
@@ -652,7 +656,8 @@ cdef class DMDA(DM):
 
         See Also
         --------
-        getCorners, petsc.DMDAGetGhostCorners
+        getRanges, getGhostRanges, getOwnershipRanges, getCorners
+        petsc.DMDAGetGhostCorners
 
         """
         cdef PetscInt dim=0, x=0, y=0, z=0, m=0, n=0, p=0
