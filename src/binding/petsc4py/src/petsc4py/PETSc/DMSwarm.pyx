@@ -789,7 +789,7 @@ cdef class DMSwarm(DM):
         Not collective.
 
         Returns
-        ----------
+        -------
         ncells : int
             Number of cells within the sort context.
         npoints : int

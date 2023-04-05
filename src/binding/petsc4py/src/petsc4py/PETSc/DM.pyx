@@ -638,7 +638,7 @@ cdef class DM(Object):
         Logically collective.
 
         Parameters
-        ---------
+        ----------
         field
             The discretization object.
         label
