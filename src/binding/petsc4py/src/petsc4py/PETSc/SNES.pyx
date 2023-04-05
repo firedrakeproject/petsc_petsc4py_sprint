@@ -418,6 +418,7 @@ cdef class SNES(Object):
           The number of levels
         comms
           An optional sequence of communicators of length `levels`, or `None` for the default communicator `Sys.getDefaultComm`.
+
         See Also
         --------
         getFASLevels, petsc.SNESFASSetLevels, petsc.SNESFAS
