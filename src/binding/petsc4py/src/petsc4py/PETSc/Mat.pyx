@@ -265,6 +265,7 @@ class MatSORType(object):
     APPLY_UPPER           = SOR_APPLY_UPPER
     APPLY_LOWER           = SOR_APPLY_LOWER
 
+@cython.internal
 cdef class MatStencil:
    """Associate structured grid coordinates with matrix indices.
 
@@ -2908,8 +2909,8 @@ cdef class Mat(Object):
 
     def setValueStencil(
         self,
-        row: MatStencil,
-        col: MatStencil,
+        row: Stencil,
+        col: Stencil,
         value: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
@@ -2943,8 +2944,8 @@ cdef class Mat(Object):
 
     def setValueBlockedStencil(
         self,
-        row: MatStencil,
-        col: MatStencil,
+        row: Stencil,
+        col: Stencil,
         value: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
@@ -3108,7 +3109,7 @@ cdef class Mat(Object):
             rows = iarray_i(rows, &ni, &i)
             CHKERR( MatZeroRowsColumnsLocal(self.mat, ni, i, sval, xvec, bvec) )
 
-    def zeroRowsColumnsStencil(self, rows: Sequence[MatStencil], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
+    def zeroRowsColumnsStencil(self, rows: Sequence[Stencil], diag: Scalar = 1, Vec x=None, Vec b=None) -> None:
         """Zero selected rows and columns of the matrix.
 
         Collective.
