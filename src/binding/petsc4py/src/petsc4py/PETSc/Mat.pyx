@@ -499,16 +499,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         mat_type
-            Matrix type.
-
-        Notes
-        -----
-        `setFromOptions` can be used instead to set the type using the
-        options database.
+            The matrix type.
 
         See Also
         --------
-        petsc_options, setFromOptions, create, petsc.MatSetType
+        create, getType, petsc.MatSetType
 
         """
         cdef PetscMatType cval = NULL
@@ -1316,7 +1311,7 @@ cdef class Mat(Object):
             ``len(isrows)*len(iscols)``. Empty submatrices can be set with
             `None`.
         isrows
-            Index set for each nested row block, default to contiguous
+            Index set for each nested row block, defaults to contiguous
             ordering.
         iscols
             Index set for each nested column block, defaults to contiguous
@@ -1596,7 +1591,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_options, petsc.MatSetOptionsPrefix
+        petsc_options, getOptionsPrefix, petsc.MatSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -1787,6 +1782,10 @@ cdef class Mat(Object):
         """Return the range of rows owned by each process.
 
         Not collective.
+
+        Notes
+        -----
+        The returned array is the result of exclusive scan of the local sizes.
 
         See Also
         --------
