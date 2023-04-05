@@ -29,7 +29,7 @@ cdef class DMDA(DM):
         dof: int | None = None,
         sizes: tuple[int, ...] | None = None,
         proc_sizes: tuple[int, ...] | None = None,
-        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
+        boundary_type: tuple[DM.BoundaryType | int | str | bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
         bint setup: bool | None = True,
@@ -143,7 +143,7 @@ cdef class DMDA(DM):
     def duplicate(
         self,
         dof: int | None = None,
-        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...] | None = None,
+        boundary_type: tuple[DM.BoundaryType | int | str | bool, ...] | None = None,
         stencil_type: StencilType | None = None,
         stencil_width: int | None = None,
     ) -> DMDA:
@@ -379,7 +379,7 @@ cdef class DMDA(DM):
 
     def setBoundaryType(
         self,
-        boundary_type: tuple[DM.BoundaryType, ...] | tuple[int, ...] | tuple[str, ...] | tuple[bool, ...],
+        boundary_type: tuple[DM.BoundaryType | int | str | bool, ...],
     ) -> None:
         """Set the type of ghost nodes on domain boundaries.
 
