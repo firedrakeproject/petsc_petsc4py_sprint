@@ -3901,8 +3901,6 @@ cdef class Mat(Object):
 
         Collective.
 
-        Notes:
-        -------
         A 2-tuple is returned if `NormType.NORM_1_AND_2` is specified.
 
         See Also
