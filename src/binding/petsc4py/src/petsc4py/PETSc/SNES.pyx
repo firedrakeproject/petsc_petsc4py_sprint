@@ -2085,7 +2085,7 @@ cdef class SNES(Object):
                                    subspaceOffsets,
                                    ghostBcNodes,
                                    globalBcNodes) -> None:
-        """Set patch discretisation information."""
+        """Set patch discretization information."""
         cdef PetscInt numSubSpaces = 0
         cdef PetscInt numGhostBcs = 0, numGlobalBcs = 0
         cdef PetscInt *nodesPerCell = NULL
