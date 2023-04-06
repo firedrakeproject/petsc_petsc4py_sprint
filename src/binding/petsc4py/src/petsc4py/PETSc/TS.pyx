@@ -645,8 +645,8 @@ cdef class TS(Object):
     def getRHSFunction(self) -> tuple[Vec, TSRHSFunction]:
         """Return the vector where the right hand side is stored and the
         function used to compute it.
-        Not collective.
 
+        Not collective.
 
         See Also
         --------
