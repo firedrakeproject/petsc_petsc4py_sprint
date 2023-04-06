@@ -254,18 +254,13 @@ cdef class DM(Object):
         CHKERR( DMSetCoordinateDim(self.dm, cdim) )
 
     def setOptionsPrefix(self, prefix: str) -> None:
-        """Set the prefix prepend to all `DM` options.
+        """Set the prefix used for searching for options in the database.
 
         Logically collective.
 
-        Parameters
-        ----------
-        prefix
-            The prefix to prepend by searching through the options database.
-
         See Also
         --------
-        petsc_options, petsc.DMSetOptionsPrefix
+        petsc_options, getOptionsPrefix, petsc.DMSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -273,13 +268,13 @@ cdef class DM(Object):
         CHKERR( DMSetOptionsPrefix(self.dm, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Return the prefix prepended to all `DM` options.
+        """Return the prefix used for searching for options in the database.
 
         Not collective.
 
         See Also
         --------
-        petsc_options, petsc.DMGetOptionsPrefix
+        petsc_options, setOptionsPrefix, petsc.DMGetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -287,18 +282,13 @@ cdef class DM(Object):
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix: str) -> None:
-        """Append an additional string to an already existing prefix.
+        """Append to the prefix used for searching for options in the database.
 
         Logically collective.
 
-        Parameters
-        ----------
-        prefix
-            The string to append to the current prefix.
-
         See Also
         --------
-        petsc_options, petsc.DMAppendOptionsPrefix
+        petsc_options, setOptionsPrefix, petsc.DMAppendOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -306,7 +296,7 @@ cdef class DM(Object):
         CHKERR( DMAppendOptionsPrefix(self.dm, cval) )
 
     def setFromOptions(self) -> None:
-        """Set parameters in a `DM` from the options database.
+        """Configure the object from the options database.
 
         Collective.
 
