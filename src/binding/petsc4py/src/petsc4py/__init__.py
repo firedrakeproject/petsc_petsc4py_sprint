@@ -25,11 +25,11 @@ def init(args=None, arch=None, comm=None):
 
     Parameters
     ----------
-    args:
+    args
       Command-line arguments, usually the `sys.argv` list
-    arch:
+    arch
       Specific configuration to use
-    comm:
+    comm
       MPI commmunicator
 
     Notes
