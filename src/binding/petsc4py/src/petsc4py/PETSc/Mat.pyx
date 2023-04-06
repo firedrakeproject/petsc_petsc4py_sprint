@@ -1501,11 +1501,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         size
-          Matrix size.
+            Matrix size.
         context
-          An instance of the Python class implementing the required methods.
+            An instance of the Python class implementing the required methods.
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -2373,7 +2373,7 @@ cdef class Mat(Object):
         return (ai, aj)
 
     def getColumnIJ(self, symmetric: bool = False, compressed: bool = False) -> tuple[ArrayInt, ArrayInt]:
-        """Return the CSc representation of the local sparsity pattern.
+        """Return the CSC representation of the local sparsity pattern.
 
         Collective.
 
@@ -3359,7 +3359,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         nsubcomm
-          The number of subcommunicators
+          The number of subcommunicators.
         subcomm
           Communicator split or `None` for the null communicator.
         out
@@ -3763,7 +3763,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         isrow
-          Row index set
+          Row index set.
         iscol
           Column index set. If `None`, ``iscol = isrow``.
         submat
@@ -3798,7 +3798,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         isrows
-          Row index sets
+          Row index sets.
         iscols
           Column index sets. If `None`, ``iscols = isrows``.
         submats
@@ -3986,7 +3986,7 @@ cdef class Mat(Object):
         X
           The matrix to be added.
         structure
-          The structure of the operation
+          The structure of the operation.
 
         See Also
         --------
@@ -4009,7 +4009,7 @@ cdef class Mat(Object):
         X
           The matrix to be added.
         structure
-          The structure of the operation
+          The structure of the operation.
 
         See Also
         --------
@@ -4391,9 +4391,9 @@ cdef class Mat(Object):
         Returns
         -------
         rp: IS
-            The row permutation indices
+            The row permutation indices.
         cp: IS
-            The column permutation indices
+            The column permutation indices.
 
         See Also
         --------
@@ -4439,7 +4439,7 @@ cdef class Mat(Object):
         self,
         IS isrow,
         IS iscol,
-        options: dict[str, Any] | None = None
+        options: dict[str, Any] | None = None,
         ) -> None:
         """Perform an in-place LU factorization.
 
@@ -4478,7 +4478,7 @@ cdef class Mat(Object):
         self,
         IS isrow,
         IS iscol,
-        options: dict[str, Any] | None = None
+        options: dict[str, Any] | None = None,
         ) -> None:
         """Perform an in-place ILU factorization.
 
@@ -4512,7 +4512,7 @@ cdef class Mat(Object):
     def factorCholesky(
         self,
         IS isperm,
-        options: dict[str, Any] | None = None
+        options: dict[str, Any] | None = None,
         ) -> None:
         """Perform an in-place Cholesky factorization.
 
@@ -4521,7 +4521,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         isperm
-            The row and column permutations
+            The row and column permutations.
         options
             An optional dictionary of options for the factorization. These include
             ``fill``, the expected fill as a ratio of the original fill.
@@ -4546,7 +4546,7 @@ cdef class Mat(Object):
     def factorICC(
         self,
         IS isperm,
-        options: dict[str, Any] | None = None
+        options: dict[str, Any] | None = None,
         ) -> None:
         """Perform an in-place an incomplete Cholesky factorization.
 
@@ -4675,7 +4675,7 @@ cdef class Mat(Object):
     def setISPreallocation(
         self,
         nnz: Sequence[int],
-        onnz: Sequence[int]
+        onnz: Sequence[int],
         ) -> Self:
         """Preallocate memory for a `Type.IS` parallel matrix.
 
@@ -4772,7 +4772,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         U
-            The dense low-rank update matrix
+            The dense low-rank update matrix.
         V
             The dense low-rank update matrix. If `None`, ``V = U``.
         s
@@ -4802,7 +4802,7 @@ cdef class Mat(Object):
         icntl
             The index of the MUMPS parameter array.
         ival
-            The value to set
+            The value to set.
 
         See Also
         --------
@@ -4829,7 +4829,7 @@ cdef class Mat(Object):
         return toInt(ival)
 
     def setMumpsCntl(self, icntl: int, val: float):
-        """Set a MUMPS parameter, CNTL[icntl] = val.
+        """Set a MUMPS parameter, ``CNTL[icntl] = val``.
 
         Logically collective.
 
@@ -4838,7 +4838,7 @@ cdef class Mat(Object):
         icntl
             The index of the MUMPS parameter array.
         val
-            The value to set
+            The value to set.
 
         See Also
         --------
@@ -5342,7 +5342,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         dm
-            The `DM`
+            The `DM`.
 
         See Also
         --------
