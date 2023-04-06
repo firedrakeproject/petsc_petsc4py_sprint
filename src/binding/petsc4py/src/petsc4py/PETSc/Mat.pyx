@@ -5068,7 +5068,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         B
-            The right-hand-side matrix of type `Type.DENSE`. Can be of type
+            The right-hand side matrix of type `Type.DENSE`. Can be of type
             `Type.AIJ` if using MUMPS.
         X
             The output solution matrix, must be different than ``B``.

@@ -484,9 +484,9 @@ cdef class TS(Object):
         Parameters
         ----------
         function
-            The right-hand-side function.
+            The right-hand side function.
         f
-            The vector into which the right-hand-side is computed.
+            The vector into which the right-hand side is computed.
         args
             Additional positional arguments for ``function``.
         kargs
@@ -522,7 +522,7 @@ cdef class TS(Object):
         Parameters
         ----------
         jacobian
-            The right-hand-side function.
+            The right-hand side function.
         J
             The matrix into which the jacobian is computed.
         P
@@ -551,7 +551,7 @@ cdef class TS(Object):
             CHKERR( TSSetRHSJacobian(self.ts, Jmat, Pmat, NULL, NULL) )
 
     def computeRHSFunction(self, t: float, Vec x, Vec f) -> None:
-        """Evaluate the right-hand-side function.
+        """Evaluate the right-hand side function.
 
         Parameters
         ----------
@@ -571,7 +571,7 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSFunction(self.ts, time, x.vec, f.vec) )
 
     def computeRHSFunctionLinear(self, t: float, Vec x, Vec f) -> None:
-        """Evaluate the right-hand-side via the user-provided Jacobian.
+        """Evaluate the right-hand side via the user-provided Jacobian.
 
         Parameters
         ----------
@@ -644,7 +644,7 @@ cdef class TS(Object):
 
     def getRHSFunction(self) -> tuple[Vec, TSRHSFunction]:
 #FIXME: Multiline summary!
-        """Return the vector where the right hand side is stored and the
+        """Return the vector where the right-hand side is stored and the
         function used to compute it.
 
         Not collective.
@@ -691,7 +691,7 @@ cdef class TS(Object):
         Parameters
         ----------
         function
-            The right-hand-side function.
+            The right-hand side function.
         f
             The vector to store values or `None` to be created internally.
         args
@@ -947,7 +947,7 @@ cdef class TS(Object):
         Parameters
         ----------
         function
-            The right-hand-side function.
+            The right-hand side function.
         f
             The vector to store values or `None` to be created internally.
         args

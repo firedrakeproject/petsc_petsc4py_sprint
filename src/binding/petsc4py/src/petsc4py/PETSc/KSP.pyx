@@ -729,14 +729,14 @@ cdef class KSP(Object):
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None
     ) -> None:
-        """Set routine to compute the right hand side of the linear system.
+        """Set routine to compute the right-hand side of the linear system.
 
         Logically collective.
 
         Parameters
         ----------
         rhs
-            Function which computes the right hand side.
+            Function which computes the right-hand side.
         args
             Positional arguments for callback function ``rhs``.
         kargs
@@ -745,7 +745,7 @@ cdef class KSP(Object):
         Notes
         -----
         The routine you provide will be called each time you call `solve`
-        to prepare the new right hand side for that solve.
+        to prepare the new right-hand side for that solve.
 
         See Also
         --------
@@ -784,7 +784,7 @@ cdef class KSP(Object):
         be called at future `solve` calls unless either
         `setComputeOperators` or `setOperators` is called
         before that `solve` is called. This allows the same system
-        to be solved several times with different right hand side
+        to be solved several times with different right-hand side
         functions, but is a confusing API since one might expect it to
         be called for each `solve`.
 
@@ -1781,7 +1781,7 @@ cdef class KSP(Object):
         return toBool(flag)
 
     def getRhs(self) -> Vec:
-        """Return the right hand side vector for the linear system.
+        """Return the right-hand side vector for the linear system.
 
         Not collective.
 
@@ -2100,7 +2100,7 @@ cdef class KSP(Object):
             return self.getSolution()
 
     property vec_rhs:
-        """The solver right hand side vector.
+        """The solver right-hand side vector.
 
         See Also
         --------
