@@ -3147,6 +3147,7 @@ cdef class Vec(Object):
         --------
         createGhost, ghostUpdateBegin, ghostUpdateEnd
         petsc.VecGhostGetLocalForm, petsc.VecGhostRestoreLocalForm
+
         """
         return _Vec_LocalForm(self)
 

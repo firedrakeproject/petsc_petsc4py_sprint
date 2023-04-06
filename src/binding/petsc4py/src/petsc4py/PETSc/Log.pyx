@@ -182,18 +182,14 @@ cdef class Log:
 
     @classmethod
     def getCPUTime(cls) -> float:
-        """Return the CPU time.
-
-        """
+        """Return the CPU time."""
         cdef PetscLogDouble cputime=0
         CHKERR( PetscGetCPUTime(&cputime) )
         return cputime
 
     @classmethod
     def EventDecorator(cls, name=None, klass=None):
-        """Decorate a function with a `PETSc` event.
-
-        """
+        """Decorate a function with a `PETSc` event."""
         def decorator(func):
             @functools.wraps(func)
             def wrapped_func(*args, **kwargs):

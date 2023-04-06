@@ -115,6 +115,7 @@ cdef class TS(Object):
     See Also
     --------
     petsc.TS
+
     """
     Type = TSType
     RKType = TSRKType
@@ -150,6 +151,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSView
+
         """
         cdef PetscViewer cviewer = NULL
         if viewer is not None: cviewer = viewer.vwr
@@ -166,6 +168,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSLoad
+
         """
         CHKERR( TSLoad(self.ts, viewer.vwr) )
 
@@ -175,6 +178,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSDestroy
+
         """
         CHKERR( TSDestroy(&self.ts) )
         return self
@@ -193,6 +197,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSCreate
+
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscTS newts = NULL
@@ -208,6 +213,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSClone
+
         """
         cdef TS ts = TS()
         CHKERR( TSClone(self.ts, &ts.ts) )
@@ -228,6 +234,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetType
+
         """
         cdef PetscTSType cval = NULL
         ts_type = str2bytes(ts_type, &cval)
@@ -248,6 +255,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSRKSetType
+
         """
         cdef PetscTSRKType cval = NULL
         ts_type = str2bytes(ts_type, &cval)
@@ -268,6 +276,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSARKIMEXSetType
+
         """
         cdef PetscTSARKIMEXType cval = NULL
         ts_type = str2bytes(ts_type, &cval)
@@ -284,6 +293,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSARKIMEXSetFullyImplicit
+
         """
         cdef PetscBool bval = asBool(flag)
         CHKERR( TSARKIMEXSetFullyImplicit(self.ts, bval) )
@@ -294,6 +304,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetType
+
         """
         cdef PetscTSType cval = NULL
         CHKERR( TSGetType(self.ts, &cval) )
@@ -305,6 +316,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSRKGetType
+
         """
         cdef PetscTSRKType cval = NULL
         CHKERR( TSRKGetType(self.ts, &cval) )
@@ -316,6 +328,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSARKIMEXGetType
+
         """
         cdef PetscTSARKIMEXType cval = NULL
         CHKERR( TSARKIMEXGetType(self.ts, &cval) )
@@ -332,6 +345,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetProblemType
+
         """
         CHKERR( TSSetProblemType(self.ts, ptype) )
 
@@ -341,6 +355,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetProblemType
+
         """
         cdef PetscTSProblemType ptype = TS_NONLINEAR
         CHKERR( TSGetProblemType(self.ts, &ptype) )
@@ -359,6 +374,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetEquationType
+
         """
         CHKERR( TSSetEquationType(self.ts, eqtype) )
 
@@ -368,6 +384,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetEquationType
+
         """
         cdef PetscTSEquationType eqtype = TS_EQ_UNSPECIFIED
         CHKERR( TSGetEquationType(self.ts, &eqtype) )
@@ -388,6 +405,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc_options, petsc.TSSetOptionsPrefix
+
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -399,6 +417,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetOptionsPrefix
+
         """
         cdef const char *cval = NULL
         CHKERR( TSGetOptionsPrefix(self.ts, &cval) )
@@ -419,6 +438,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc_options, petsc.TSAppendOptionsPrefix
+
         """
         cdef const char *cval = NULL
         prefix = str2bytes(prefix, &cval)
@@ -430,6 +450,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc_options, petsc.TSSetFromOptions
+
         """
         CHKERR( TSSetFromOptions(self.ts) )
 
@@ -442,6 +463,7 @@ cdef class TS(Object):
         ----------
         appctx
             The application context.
+
         """
         self.set_attr('__appctx__', appctx)
 
@@ -541,6 +563,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeRHSFunction
+
         """
         cdef PetscReal time = asReal(t)
         CHKERR( TSComputeRHSFunction(self.ts, time, x.vec, f.vec) )
@@ -560,6 +583,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeRHSFunctionLinear
+
         """
         cdef PetscReal time = asReal(t)
         CHKERR( TSComputeRHSFunctionLinear(self.ts, time, x.vec, f.vec, NULL) )
@@ -583,6 +607,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeRHSJacobian
+
         """
         cdef PetscReal time = asReal(t)
         cdef PetscMat jmat = J.mat, pmat = J.mat
@@ -608,6 +633,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeRHSJacobianConstant
+
         """
         cdef PetscReal time = asReal(t)
         cdef PetscMat jmat = J.mat, pmat = J.mat
@@ -623,6 +649,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetRHSFunction
+
         """
         cdef Vec f = Vec()
         CHKERR( TSGetRHSFunction(self.ts, &f.vec, NULL, NULL) )
@@ -638,6 +665,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetRHSJacobian
+
         """
         cdef Mat J = Mat(), P = Mat()
         CHKERR( TSGetRHSJacobian(self.ts, &J.mat, &P.mat, NULL, NULL) )
@@ -671,6 +699,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetIFunction
+
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -713,6 +742,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetIJacobian
+
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -788,6 +818,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeIFunction
+
         """
         cdef PetscReal rval = asReal(t)
         cdef PetscBool bval = imex
@@ -822,6 +853,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeIJacobian
+
         """
         cdef PetscReal rval1 = asReal(t)
         cdef PetscReal rval2 = asReal(a)
@@ -856,6 +888,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeIJacobianP
+
         """
         cdef PetscReal rval1 = asReal(t)
         cdef PetscReal rval2 = asReal(a)
@@ -872,6 +905,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetIFunction
+
         """
         cdef Vec f = Vec()
         CHKERR( TSGetIFunction(self.ts, &f.vec, NULL, NULL) )
@@ -887,6 +921,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetIJacobian
+
         """
         cdef Mat J = Mat(), P = Mat()
         CHKERR( TSGetIJacobian(self.ts, &J.mat, &P.mat, NULL, NULL) )
@@ -919,6 +954,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetI2Function
+
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -958,6 +994,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetI2Jacobian
+
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -993,6 +1030,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeI2Function
+
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSComputeI2Function(self.ts, rval, x.vec, xdot.vec, xdotdot.vec,
@@ -1034,6 +1072,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeI2Jacobian
+
         """
         cdef PetscReal rval1 = asReal(t)
         cdef PetscReal rval2 = asReal(v)
@@ -1051,6 +1090,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetI2Function
+
         """
         cdef Vec f = Vec()
         CHKERR( TSGetI2Function(self.ts, &f.vec, NULL, NULL) )
@@ -1066,6 +1106,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetI2Jacobian
+
         """
         cdef Mat J = Mat(), P = Mat()
         CHKERR( TSGetI2Jacobian(self.ts, &J.mat, &P.mat, NULL, NULL) )
@@ -1088,6 +1129,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetSolution
+
         """
         CHKERR( TSSetSolution(self.ts, u.vec) )
 
@@ -1102,6 +1144,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetSolution
+
         """
         cdef Vec u = Vec()
         CHKERR( TSGetSolution(self.ts, &u.vec) )
@@ -1123,6 +1166,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TS2SetSolution
+
         """
         CHKERR( TS2SetSolution(self.ts, u.vec, v.vec) )
 
@@ -1137,6 +1181,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TS2GetSolution
+
         """
         cdef Vec u = Vec()
         cdef Vec v = Vec()
@@ -1170,6 +1215,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetTimeSpan
+
         """
         cdef PetscInt  nt = 0
         cdef PetscReal *rtspan = NULL
@@ -1184,6 +1230,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetTimeSpan
+
         """
         cdef const PetscReal *rtspan = NULL
         cdef PetscInt   nt = 0
@@ -1198,6 +1245,7 @@ cdef class TS(Object):
         --------
         setTimeSpan
         petsc.TSGetTimeSpanSolutions
+
         """
         cdef PetscInt nt = 0
         cdef PetscVec *sols = NULL
@@ -1218,6 +1266,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetSNES
+
         """
         cdef SNES snes = SNES()
         CHKERR( TSGetSNES(self.ts, &snes.snes) )
@@ -1233,6 +1282,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetKSP
+
         """
         cdef KSP ksp = KSP()
         CHKERR( TSGetKSP(self.ts, &ksp.ksp) )
@@ -1250,6 +1300,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetDM
+
         """
         cdef PetscDM newdm = NULL
         CHKERR( TSGetDM(self.ts, &newdm) )
@@ -1271,6 +1322,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetDM
+
         """
         CHKERR( TSSetDM(self.ts, dm.dm) )
 
@@ -1289,6 +1341,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetTime
+
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSSetTime(self.ts, rval) )
@@ -1303,6 +1356,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetTime
+
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetTime(self.ts, &rval) )
@@ -1316,6 +1370,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetPrevTime
+
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetPrevTime(self.ts, &rval) )
@@ -1330,6 +1385,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetSolveTime
+
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetSolveTime(self.ts, &rval) )
@@ -1348,6 +1404,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetTimeStep
+
         """
         cdef PetscReal rval = asReal(time_step)
         CHKERR( TSSetTimeStep(self.ts, rval) )
@@ -1360,6 +1417,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetTimeStep
+
         """
         cdef PetscReal tstep = 0
         CHKERR( TSGetTimeStep(self.ts, &tstep) )
@@ -1385,6 +1443,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetStepNumber
+
         """
         cdef PetscInt ival = asInt(step_number)
         CHKERR( TSSetStepNumber(self.ts, ival) )
@@ -1397,6 +1456,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetStepNumber
+
         """
         cdef PetscInt ival = 0
         CHKERR( TSGetStepNumber(self.ts, &ival) )
@@ -1419,6 +1479,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetMaxTime
+
         """
         cdef PetscReal rval = asReal(max_time)
         CHKERR( TSSetMaxTime(self.ts, rval) )
@@ -1431,6 +1492,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetMaxTime
+
         """
         cdef PetscReal rval = 0
         CHKERR( TSGetMaxTime(self.ts, &rval) )
@@ -1449,6 +1511,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetMaxSteps
+
         """
         cdef PetscInt  ival = asInt(max_steps)
         CHKERR( TSSetMaxSteps(self.ts, ival) )
@@ -1461,6 +1524,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetMaxSteps
+
         """
         cdef PetscInt ival = 0
         CHKERR( TSGetMaxSteps(self.ts, &ival) )
@@ -1475,6 +1539,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetSNESIterations
+
         """
         cdef PetscInt n = 0
         CHKERR( TSGetSNESIterations(self.ts, &n) )
@@ -1489,6 +1554,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetKSPIterations
+
         """
         cdef PetscInt n = 0
         CHKERR( TSGetKSPIterations(self.ts, &n) )
@@ -1511,6 +1577,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetMaxStepRejections
+
         """
         cdef PetscInt rej = asInt(n)
         CHKERR( TSSetMaxStepRejections(self.ts, rej))
@@ -1529,6 +1596,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetStepRejections
+
         """
         cdef PetscInt n = 0
         CHKERR( TSGetStepRejections(self.ts, &n) )
@@ -1547,6 +1615,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetMaxSNESFailures
+
         """
         cdef PetscInt fails = asInt(n)
         CHKERR( TSSetMaxSNESFailures(self.ts, fails))
@@ -1565,6 +1634,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetSNESFailures
+
         """
         cdef PetscInt n = 0
         CHKERR( TSGetSNESFailures(self.ts, &n) )
@@ -1587,6 +1657,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetErrorIfStepFails
+
         """
         cdef PetscBool bval = flag
         CHKERR( TSSetErrorIfStepFails(self.ts, bval))
@@ -1610,6 +1681,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetTolerances
+
         """
         cdef PetscReal rrtol = PETSC_DEFAULT
         cdef PetscReal ratol = PETSC_DEFAULT
@@ -1644,6 +1716,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetTolerances
+
         """
         cdef PetscReal rrtol = PETSC_DEFAULT
         cdef PetscReal ratol = PETSC_DEFAULT
@@ -1679,6 +1752,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetExactFinalTime
+
         """
         cdef PetscTSExactFinalTimeOption oval = option
         CHKERR( TSSetExactFinalTime(self.ts, oval) )
@@ -1697,6 +1771,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetConvergedReason
+
         """
         cdef PetscTSConvergedReason cval = reason
         CHKERR( TSSetConvergedReason(self.ts, cval) )
@@ -1709,6 +1784,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetConvergedReason
+
         """
         cdef PetscTSConvergedReason reason = TS_CONVERGED_ITERATING
         CHKERR( TSGetConvergedReason(self.ts, &reason) )
@@ -1737,6 +1813,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSMonitorSet
+
         """
         if monitor is None: return
         cdef object monitorlist = self.get_attr('__monitor__')
@@ -1755,6 +1832,7 @@ cdef class TS(Object):
         See Also
         --------
         setMonitor
+
         """
         return self.get_attr('__monitor__')
 
@@ -1766,6 +1844,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSMonitorCancel
+
         """
         self.set_attr('__monitor__', None)
         CHKERR( TSMonitorCancel(self.ts) )
@@ -1787,6 +1866,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSMonitor
+
         """
         cdef PetscInt  ival = asInt(step)
         cdef PetscReal rval = asReal(time)
@@ -1828,6 +1908,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetEventHandler
+
         """
         cdef PetscInt  ndirs = 0
         cdef PetscInt *idirs = NULL
@@ -1872,6 +1953,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetEventTolerances
+
         """
         cdef PetscInt  nevents = 0
         cdef PetscReal tolr = PETSC_DEFAULT
@@ -1893,6 +1975,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetNumEvents
+
         """
         cdef PetscInt nevents = 0
         CHKERR( TSGetNumEvents(self.ts, &nevents) )
@@ -1921,6 +2004,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetPreStep
+
         """
         if prestep is not None:
             if args  is None: args  = ()
@@ -1938,6 +2022,7 @@ cdef class TS(Object):
         See Also
         --------
         setPreStep
+
         """
         return self.get_attr('__prestep__')
 
@@ -1961,6 +2046,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetPostStep
+
         """
         if poststep is not None:
             if args  is None: args  = ()
@@ -1973,8 +2059,7 @@ cdef class TS(Object):
             CHKERR( TSSetPostStep(self.ts, NULL) )
 
     def getPostStep(self) -> tuple[TSPostStepFunction,tuple[Any, ...] | None,dict[str, Any] | None]:
-        """Return the poststep function.
-        """
+        """Return the poststep function."""
         return self.get_attr('__poststep__')
 
     def setUp(self) -> None:
@@ -1985,6 +2070,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetUp
+
         """
         CHKERR( TSSetUp(self.ts) )
 
@@ -1996,6 +2082,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSReset
+
         """
         CHKERR( TSReset(self.ts) )
 
@@ -2009,6 +2096,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSStep
+
         """
         CHKERR( TSStep(self.ts) )
 
@@ -2029,6 +2117,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSRestartStep
+
         """
         CHKERR( TSRestartStep(self.ts) )
 
@@ -2038,6 +2127,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSRollBack
+
         """
         CHKERR( TSRollBack(self.ts) )
 
@@ -2057,6 +2147,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSolve
+
         """
         CHKERR( TSSolve(self.ts, u.vec) )
 
@@ -2075,6 +2166,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSInterpolate
+
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSInterpolate(self.ts, rval, u.vec) )
@@ -2098,6 +2190,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdaptSetStepLimits
+
         """
         cdef PetscTSAdapt tsadapt = NULL
         cdef PetscReal hminr = toReal(hmin)
@@ -2111,6 +2204,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdaptGetStepLimits
+
         """
         cdef PetscTSAdapt tsadapt = NULL
         cdef PetscReal hminr = 0.
@@ -2134,6 +2228,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetSaveTrajectory
+
         """
         CHKERR(TSSetSaveTrajectory(self.ts))
 
@@ -2145,6 +2240,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSRemoveTrajectory
+
         """
         CHKERR(TSRemoveTrajectory(self.ts))
 
@@ -2154,6 +2250,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetCostIntegral
+
         """
         cdef Vec cost = Vec()
         CHKERR( TSGetCostIntegral(self.ts, &cost.vec) )
@@ -2181,6 +2278,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetCostGradients
+
         """
         cdef PetscInt n = 0;
         cdef PetscVec *vecl = NULL
@@ -2212,6 +2310,7 @@ cdef class TS(Object):
         --------
         setCostGradients
         petsc.TSGetCostGradients
+
         """
         cdef PetscInt i = 0, n = 0
         cdef PetscVec *vecl = NULL
@@ -2248,6 +2347,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetRHSJacobianP
+
         """
         cdef PetscMat Amat=NULL
         if A is not None: Amat = A.mat
@@ -2271,6 +2371,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSCreateQuadratureTS
+
         """
         cdef TS qts = TS()
         cdef PetscBool fwd = forward
@@ -2291,6 +2392,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSGetQuadratureTS
+
         """
         cdef TS qts = TS()
         cdef PetscBool fwd = PETSC_FALSE
@@ -2320,6 +2422,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetRHSJacobianP
+
         """
         cdef PetscMat Amat=NULL
         if A is not None: Amat = A.mat
@@ -2347,6 +2450,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSComputeRHSJacobianP
+
         """
         cdef PetscReal rval = asReal(t)
         CHKERR( TSComputeRHSJacobianP(self.ts, rval, x.vec, J.mat) )
@@ -2362,6 +2466,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdjointSetSteps
+
         """
         cdef PetscInt ival = asInt(adjoint_steps)
         CHKERR( TSAdjointSetSteps(self.ts, ival) )
@@ -2374,6 +2479,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdjointSetUp
+
         """
         CHKERR(TSAdjointSetUp(self.ts))
 
@@ -2385,6 +2491,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdjointSolve
+
         """
         CHKERR( TSAdjointSolve(self.ts) )
 
@@ -2396,6 +2503,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdjointStep
+
         """
         CHKERR(TSAdjointStep(self.ts))
 
@@ -2407,6 +2515,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAdjointReset
+
         """
         CHKERR(TSAdjointReset(self.ts))
 
@@ -2537,6 +2646,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSThetaSetEndpoint
+
         """
         cdef PetscBool bval = flag
         CHKERR( TSThetaSetEndpoint(self.ts, bval) )
@@ -2547,6 +2657,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSThetaGetEndpoint
+
         """
         cdef PetscBool flag = PETSC_FALSE
         CHKERR( TSThetaGetEndpoint(self.ts, &flag) )
@@ -2571,6 +2682,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAlphaSetRadius
+
         """
         cdef PetscReal rval = asReal(radius)
         CHKERR( TSAlphaSetRadius(self.ts, rval) )
@@ -2596,6 +2708,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAlphaSetParams
+
         """
         cdef PetscReal rval1 = 0, rval2 = 0, rval3 = 0
         try: CHKERR( TSAlphaGetParams(self.ts, &rval1, &rval2, &rval3) )
@@ -2611,6 +2724,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSAlphaGetParams
+
         """
         cdef PetscReal rval1 = 0, rval2 = 0, rval3 = 0
         CHKERR( TSAlphaGetParams(self.ts, &rval1, &rval2, &rval3) )

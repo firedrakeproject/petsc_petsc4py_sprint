@@ -272,6 +272,7 @@ cdef class MatStencil:
    See Also
    --------
    petsc.MatStencil
+
    """
 
    cdef PetscMatStencil stencil
@@ -5068,7 +5069,7 @@ cdef class Mat(Object):
         CHKERR( MatSolveTransposeAdd(self.mat, b.vec, y.vec, x.vec) )
 
     def matSolve(self, Mat B, Mat X) -> None:
-        """Solve AX=B, given a factored matrix A
+        """Solve AX=B, given a factored matrix A.
 
         Neighborwise collective.
 

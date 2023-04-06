@@ -1144,7 +1144,7 @@ cdef class DMDA(DM):
             return self.getRanges()
 
     property ghost_ranges:
-        """Ranges of local region in each dim. including ghost nodes."""
+        """Ranges of local region, including ghost nodes."""
         def __get__(self) -> tuple[tuple[int, int], ...]:
             return self.getGhostRanges()
 

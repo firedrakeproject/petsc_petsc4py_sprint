@@ -198,7 +198,7 @@ cdef class Scatter(Object):
         return self
 
     def copy(self) -> Scatter:
-        """Return a copy of the scatter"""
+        """Return a copy of the scatter."""
         cdef Scatter scatter = Scatter()
         CHKERR( VecScatterCopy(self.sct, &scatter.sct) )
         return scatter

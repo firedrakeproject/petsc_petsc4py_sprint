@@ -1,9 +1,7 @@
 # --------------------------------------------------------------------
 
 class DMType(object):
-    """`DM` types.
-
-    """
+    """`DM` types."""
     DA        = S_(DMDA_type)
     COMPOSITE = S_(DMCOMPOSITE)
     SLICED    = S_(DMSLICED)
@@ -21,9 +19,7 @@ class DMType(object):
     STAG      = S_(DMSTAG)
 
 class DMBoundaryType(object):
-    """`DM` Boundary types.
-
-    """
+    """`DM` Boundary types."""
     NONE     = DM_BOUNDARY_NONE
     GHOSTED  = DM_BOUNDARY_GHOSTED
     MIRROR   = DM_BOUNDARY_MIRROR
@@ -53,6 +49,7 @@ cdef class DM(Object):
     """An object describing a computational grid or mesh.
 
     DM is documented in `the PETSc manual <petsc:chapter_dmbase>`.
+
     """
 
     Type         = DMType
@@ -1533,7 +1530,7 @@ cdef class DM(Object):
         --------
         petsc.DMGetGlobalSection
 
-       """
+        """
         cdef Section sec = Section()
         CHKERR( DMGetGlobalSection(self.dm, &sec.sec) )
         PetscINCREF(sec.obj)
