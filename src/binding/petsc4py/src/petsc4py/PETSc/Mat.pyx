@@ -1856,7 +1856,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         info
-           If `None`, it uses `InfoType.GLOBAL_SUM`
+           If `None`, it uses `InfoType.GLOBAL_SUM`.
 
         See Also
         --------
