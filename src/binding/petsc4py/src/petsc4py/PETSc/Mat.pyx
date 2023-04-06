@@ -1975,8 +1975,8 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, inplace transposition is performed.
-           Otherwise, the matrix is reused.
+            Optional return matrix. If `None`, inplace transposition is performed.
+            Otherwise, the matrix is reused.
 
         See Also
         --------
