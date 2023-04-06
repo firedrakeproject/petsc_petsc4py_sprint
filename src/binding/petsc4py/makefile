@@ -51,22 +51,11 @@ uninstall:
 
 # ----
 
-website:
-	${RM} -rf petsc-doc-env; virtualenv -p ${PYTHON2} petsc-doc-env && . petsc-doc-env/bin/activate  && ${PYTHON2} -m pip install -r docs/source/requirements.txt && make epydoc-website && deactivate
-
 .PHONY: docs docs-html docs-pdf docs-misc
 docs: docs-html docs-pdf docs-misc
-docs-html: rst2html sphinx-html epydoc-html
-docs-pdf:  sphinx-pdf epydoc-pdf
+docs-html: rst2html sphinx-html
+docs-pdf:  sphinx-pdf
 docs-misc: sphinx-man sphinx-info
-
-#it appears some of the documentation requires a python2 installation to build
-PYTHON2 = python2
-
-checkdocutils:
-	@${PYTHON} -c $$'try:\n  import docutils\nexcept:\n  print("Run `python -m pip install docutils` and then try this command again");exit(1)'
-	@${PYTHON2} -c $$'try:\n  import docutils\nexcept:\n  print("Run `python2 -m pip install docutils` or `pip2 install docutils` or `[sudo] easy_install docutils` and then try the command again");exit(1)'
-	@${PYTHON2} -c $$'try:\n  import epydoc\nexcept:\n  print("Run `python2 -m pip install epydoc` or `pip2 install epydoc` or `[sudo] easy_install epydoc` and then try the command again");exit(1)'
 
 RST2HTML = $(shell command -v rst2html || command -v rst2html.py || false)
 RST2HTMLOPTS  = --input-encoding=utf-8
@@ -83,10 +72,10 @@ SPHINXOPTS  =
 .PHONY: sphinx sphinx-html sphinx-pdf sphinx-man sphinx-info
 sphinx: sphinx-html sphinx-pdf sphinx-man sphinx-info
 sphinx-html:
-	mkdir -p build/doctrees docs/usrman
+	mkdir -p build/doctrees docs/html
 	${SPHINXBUILD} -b html -d build/doctrees ${SPHINXOPTS} \
-	docs/source docs/usrman
-	${RM} docs/usrman/.buildinfo
+	docs/source docs/html
+	${RM} docs/html/.buildinfo
 sphinx-pdf:
 	mkdir -p build/doctrees build/latex
 	${SPHINXBUILD} -b latex -d build/doctrees ${SPHINXOPTS} \
@@ -105,27 +94,22 @@ sphinx-info:
 	${MAKE} -C build/texinfo info > /dev/null
 	mv build/texinfo/*.info docs/
 
-EPYDOCBUILD = ${PYTHON2} ./conf/epydocify.py
-EPYDOCOPTS  =
-.PHONY: epydoc epydoc-html epydoc-pdf
-epydoc: epydoc-html epydoc-pdf
-epydoc-html: srcbuild
-	mkdir -p docs/apiref
-	env CFLAGS=-O0 ${PYTHON2} setup.py -q build --build-lib build/lib.py2
-	env PYTHONPATH=$$PWD/build/lib.py2 ${PYTHON2} -c 'import ${package}.${MODULE}'
-	env PYTHONPATH=$$PWD/build/lib.py2 ${EPYDOCBUILD} ${EPYDOCOPTS} --html -o docs/apiref
-epydoc-pdf:
-
-epydoc-website:
-	env CFLAGS=-O0 ${PYTHON2} setup.py -q build --build-lib build/lib.py2
-	env PYTHONPATH=$$PWD/build/lib.py2 ${PYTHON2} -c 'import ${package}.${MODULE}'
-	env PYTHONPATH=$$PWD/build/lib.py2 ${EPYDOCBUILD} ${EPYDOCOPTS} -q -q -q --html -o ${LOC}/petsc4py
-
 .PHONY: docsclean
 docsclean:
-	-${RM} docs/*.info docs/*.[137]
 	-${RM} docs/*.html docs/*.pdf
-	-${RM} -r docs/usrman docs/apiref
+	-${RM} docs/*.info docs/*.[137]
+	-${RM} -r docs/html
+	-${RM} -r docs/source/demo
+	-${RM} -r docs/source/reference
+	-${RM} docs/source/*.inv
+
+website:
+	${RM} -r petsc-doc-env
+	${PYTHON} -m venv petsc-doc-env
+	. petsc-doc-env/bin/activate && env CFLAGS=-O0 python -m pip install .[doc]
+	. petsc-doc-env/bin/activate && ${MAKE} sphinx-html SPHINXOPTS=-Wj2
+	mkdir -p ${LOC}/petsc4py
+	mv docs/html/* ${LOC}/petsc4py
 
 # ----
 
