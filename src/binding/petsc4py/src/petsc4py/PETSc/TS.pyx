@@ -523,7 +523,7 @@ cdef class TS(Object):
         jacobian
             The right-hand-side function.
         J
-            The matrix into which the jacobian is computed.
+            The matrix into which the Jacobian is computed.
         P
             The matrix into which the preconditioner is computed.
         args
@@ -2385,9 +2385,9 @@ cdef class TS(Object):
         Returns
         -------
         forward : bool
-            True if evaluating the integral forward in time
+            True if evaluating the integral forward in time.
         qts : TS
-            The sub `TS`
+            The sub `TS`.
 
         See Also
         --------
@@ -2411,9 +2411,9 @@ cdef class TS(Object):
         Parameters
         ----------
         rhsjacobianp
-            The function to compute the Jacobian
+            The function to compute the Jacobian.
         A
-            The JacobianP matrix
+            The JacobianP matrix.
         args
             Additional positional arguments for ``rhsjacobianp``.
         kargs
@@ -2445,7 +2445,7 @@ cdef class TS(Object):
         x
             The solution at which to compute the Jacobian.
         J
-            The output Jacobian matrx.
+            The output Jacobian matrix.
 
         See Also
         --------
