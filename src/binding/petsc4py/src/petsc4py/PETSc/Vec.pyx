@@ -1241,7 +1241,7 @@ cdef class Vec(Object):
     def getLocalVector(self, Vec lvec, readonly: bool = False) -> None:
         """Maps the local portion of the vector into a local vector.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -1264,7 +1264,7 @@ cdef class Vec(Object):
     def restoreLocalVector(self, Vec lvec, readonly: bool = False) -> None:
         """Unmap a local access obtained with `getLocalVector`.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------

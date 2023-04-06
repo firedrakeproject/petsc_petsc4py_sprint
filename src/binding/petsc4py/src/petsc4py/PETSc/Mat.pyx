@@ -4861,7 +4861,7 @@ cdef class Mat(Object):
     def getMumpsInfo(self, icntl: int) -> int:
         """Return the MUMPS parameter, ``INFO[icntl]``.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -4881,7 +4881,7 @@ cdef class Mat(Object):
     def getMumpsInfog(self, icntl: int) -> int:
         """Return the MUMPS parameter, ``INFOG[icntl]``.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -4901,7 +4901,7 @@ cdef class Mat(Object):
     def getMumpsRinfo(self, icntl: int) -> float:
         """Return the MUMPS parameter, ``RINFO[icntl]``.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -4921,7 +4921,7 @@ cdef class Mat(Object):
     def getMumpsRinfog(self, icntl: int) -> float:
         """Return the MUMPS parameter, ``RINFOG[icntl]``.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
