@@ -950,7 +950,6 @@ cdef class TS(Object):
         kargs
             Additional keyword arguments for ``function``.
 
-
         See Also
         --------
         petsc.TSSetI2Function

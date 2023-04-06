@@ -251,7 +251,6 @@ cdef class Sys:
         comm
             MPI communicator, defaults to `getDefaultComm`.
 
-
         See Also
         --------
         petsc.PetscSynchronizedPrintf, petsc.PetscSynchronizedFlush
