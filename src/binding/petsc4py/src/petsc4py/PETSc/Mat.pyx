@@ -4793,7 +4793,7 @@ cdef class Mat(Object):
     # MUMPS
 
     def setMumpsIcntl(self, icntl: int, ival: int) -> None:
-        """Set a MUMPS parameter, ICNTL[icntl] = ival.
+        """Set a MUMPS parameter, ``ICNTL[icntl] = ival``.
 
         Logically collective.
 
@@ -4814,7 +4814,7 @@ cdef class Mat(Object):
         CHKERR( MatMumpsSetIcntl(self.mat, _icntl, _ival) );
 
     def getMumpsIcntl(self, icntl: int) -> int:
-        """Return the MUMPS parameter, ICNTL[icntl].
+        """Return the MUMPS parameter, ``ICNTL[icntl]``.
 
         Logically collective.
 
@@ -4850,7 +4850,7 @@ cdef class Mat(Object):
         CHKERR( MatMumpsSetCntl(self.mat, _icntl, _val) );
 
     def getMumpsCntl(self, icntl: int) -> float:
-        """Return the MUMPS parameter, CNTL[icntl].
+        """Return the MUMPS parameter, ``CNTL[icntl]``.
 
         Logically collective.
 
@@ -4865,7 +4865,7 @@ cdef class Mat(Object):
         return toReal(val)
 
     def getMumpsInfo(self, icntl: int) -> int:
-        """Return the MUMPS parameter, INFO[icntl].
+        """Return the MUMPS parameter, ``INFO[icntl]``.
 
         Logically Collective.
 
@@ -4885,7 +4885,7 @@ cdef class Mat(Object):
         return toInt(ival)
 
     def getMumpsInfog(self, icntl: int) -> int:
-        """Return the MUMPS parameter, INFOG[icntl].
+        """Return the MUMPS parameter, ``INFOG[icntl]``.
 
         Logically Collective.
 
@@ -4905,7 +4905,7 @@ cdef class Mat(Object):
         return toInt(ival)
 
     def getMumpsRinfo(self, icntl: int) -> float:
-        """Return the MUMPS parameter, RINFO[icntl].
+        """Return the MUMPS parameter, ``RINFO[icntl]``.
 
         Logically Collective.
 
@@ -4925,7 +4925,7 @@ cdef class Mat(Object):
         return toReal(val)
 
     def getMumpsRinfog(self, icntl: int) -> float:
-        """Return the MUMPS parameter, RINFOG[icntl].
+        """Return the MUMPS parameter, ``RINFOG[icntl]``.
 
         Logically Collective.
 
