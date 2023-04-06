@@ -1943,10 +1943,10 @@ cdef class Mat(Object):
         Parameters
         ----------
         mat_type
-          The type of the new matrix. If `None` uses `Type.SAME`.
+            The type of the new matrix. If `None` uses `Type.SAME`.
         out
-           Optional return matrix. If `None`, inplace conversion is performed.
-           Otherwise, the matrix is reused.
+            Optional return matrix. If `None`, inplace conversion is performed.
+            Otherwise, the matrix is reused.
 
         See Also
         --------
