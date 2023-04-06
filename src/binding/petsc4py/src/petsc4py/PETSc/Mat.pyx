@@ -1900,7 +1900,7 @@ cdef class Mat(Object):
         result
            Optional return matrix. If `None`, it is internally created.
         structure
-           The copy structure. Only relevant if ``result`` is not None.
+           The copy structure. Only relevant if ``result`` is not `None`.
 
         See Also
         --------
