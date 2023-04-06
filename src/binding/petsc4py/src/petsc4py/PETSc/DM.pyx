@@ -93,7 +93,7 @@ cdef class DM(Object):
 
         Notes
         -----
-        When using `Viewer.Type.HDF5` format, one can save  multiple `DMPlex` meshes in a single HDF5 files.
+        When using `Viewer.Type.HDF5` format, one can save multiple `DMPlex` meshes in a single HDF5 files.
         This in turn requires one to name the `DMPlex` object with `Object.setName` before saving it with `DM.view` and before loading it with `DM.load` for identification of the mesh object.
 
         See Also
@@ -164,7 +164,7 @@ cdef class DM(Object):
 
         Notes
         -----
-        `DM` types are availabe in `DM.Type` class.
+        `DM` types are available in `DM.Type` class.
 
         See Also
         --------
@@ -380,7 +380,7 @@ cdef class DM(Object):
         CHKERR( DMSetBasicAdjacency(self.dm, uC, uCl) )
 
     def getBasicAdjacency(self) -> tuple[bool, bool]:
-        """Return the flags for determing variable influence.
+        """Return the flags for determining variable influence.
 
         Not collective.
 
@@ -430,8 +430,8 @@ cdef class DM(Object):
 
         Not collective.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         field
             The field number.
 
@@ -456,7 +456,7 @@ cdef class DM(Object):
     #
 
     def createSubDM(self, fields: Sequence[int]) -> tuple[IS, DM]:
-        """Return `IS` and `DM` encapsuling a subproblem.
+        """Return `IS` and `DM` encapsulating a subproblem.
 
         Not collective.
 
@@ -969,7 +969,7 @@ cdef class DM(Object):
         return cdm
 
     def getCoordinateSection(self) -> Section:
-        """Return coodinate values layout over the mesh.
+        """Return coordinate values layout over the mesh.
 
         Collective.
 
@@ -1064,7 +1064,7 @@ cdef class DM(Object):
         return self
 
     def getBoundingBox(self) -> tuple[tuple[float, float], ...]:
-        """Return the dimension of embedding space for coodinates values.
+        """Return the dimension of embedding space for coordinates values.
 
         Not collective.
 
@@ -1098,7 +1098,7 @@ cdef class DM(Object):
                       for i from 0 <= i < dim])
 
     def localizeCoordinates(self) -> None:
-        """Create local coodinates for cells having periodic faces.
+        """Create local coordinates for cells having periodic faces.
 
         Collective.
 
@@ -1553,7 +1553,7 @@ cdef class DM(Object):
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
     def getSectionSF(self) -> SF:
-        """Return the `Section` enconding the parallel dof overlap.
+        """Return the `Section` encoding the parallel dof overlap.
 
         See Also
         --------
@@ -1722,7 +1722,7 @@ cdef class DM(Object):
         return toInt(value)
 
     def setLabelValue(self, name: str, point: int, value: int) -> None:
-        """Set a point to a `DMLabel` with a give value.
+        """Set a point to a `DMLabel` with a given value.
 
         Not collective.
 
@@ -1891,7 +1891,7 @@ cdef class DM(Object):
         name
             The label name.
         output
-            If `True`, it is save the label to the viewer.
+            If `True`, the label is saved to the viewer.
 
         See Also
         --------
