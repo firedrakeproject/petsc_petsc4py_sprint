@@ -2218,7 +2218,7 @@ cdef class TS(Object):
     def setSaveTrajectory(self) -> None:
         """Enable to save solutions as an internal `TS` trajectory.
 
-        Collective. This routine shuld be called after all `TS` options have
+        Collective. This routine should be called after all `TS` options have
         been set.
 
         Notes
