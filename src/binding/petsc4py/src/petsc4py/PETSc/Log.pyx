@@ -182,18 +182,14 @@ cdef class Log:
 
     @classmethod
     def getCPUTime(cls) -> float:
-        """Return the CPU time.
-
-        """
+        """Return the CPU time."""
         cdef PetscLogDouble cputime=0
         CHKERR( PetscGetCPUTime(&cputime) )
         return cputime
 
     @classmethod
     def EventDecorator(cls, name=None, klass=None):
-        """Decorate a function with a `PETSc` event.
-
-        """
+        """Decorate a function with a `PETSc` event."""
         def decorator(func):
             @functools.wraps(func)
             def wrapped_func(*args, **kwargs):
@@ -312,7 +308,7 @@ cdef class LogStage:
         CHKERR( PetscLogStageSetActive(self.id, PETSC_FALSE) )
 
     def getActive(self) -> bool:
-        """Check if the stage is activate.
+        """Check if the stage is activated.
 
         Not collective.
 
@@ -333,7 +329,7 @@ cdef class LogStage:
         Parameters
         ----------
         flag
-            Log if True, disable looging if False.
+            Log if `True`, disable logging if `False`.
 
         See Also
         --------
@@ -568,7 +564,7 @@ cdef class LogEvent:
         raise NotImplementedError
 
     def setActive(self, flag: bool) -> None:
-        """Indicate whether or not the event should logged.
+        """Indicate whether or not the event should be logged.
 
         Not collective.
 
@@ -603,7 +599,7 @@ cdef class LogEvent:
         Parameters
         ----------
         flag
-            Active (if True) or deactivate (if False) the logging of all events.
+            Activate (if `True`) or deactivate (if `False`) the logging of all events.
 
         See Also
         --------

@@ -20,13 +20,25 @@ cdef ArrayReal
 cdef ArrayComplex
 cdef ArrayScalar
 
+cdef DimsSpec
+cdef AccessModeSpec
+cdef InsertModeSpec
+cdef ScatterModeSpec
+cdef LayoutSizeSpec
+cdef NormTypeSpec
+
 # --- Mat ---
 
-cdef MatSizeType
-cdef MatBlockSizeType
-cdef CSRIndicesType
-cdef CSRType
-cdef NNZType
+cdef MatAssemblySpec
+cdef MatSizeSpec
+cdef MatBlockSizeSpec
+cdef CSRIndicesSpec
+cdef CSRSpec
+cdef NNZSpec
+
+# --- MatNullSpace ---
+
+cdef MatNullFunction
 
 # --- DM ---
 

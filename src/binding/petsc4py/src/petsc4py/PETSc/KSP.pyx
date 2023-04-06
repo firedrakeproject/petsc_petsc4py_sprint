@@ -246,7 +246,7 @@ class KSPNormType(object):
     `UNPRECONDITIONED`
         Uses the l₂ norm of the true b - Ax residual.
     `NATURAL`
-         Supported  by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
+         Supported by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
 
     """
     # native
@@ -665,7 +665,7 @@ cdef class KSP(Object):
         return dm
 
     def setDM(self, DM dm) -> None:
-        """Set the `DM` that may be used by some preconditioners
+        """Set the `DM` that may be used by some preconditioners.
 
         Logically collective.
 
@@ -1156,7 +1156,7 @@ cdef class KSP(Object):
             Residual norm to be added to convergence history.
 
         """
-        # Note that no dosumentation exists for the PETSc function
+        # Note that no documentation exists for the PETSc function
         # `KSPLogResidualHistory`
         # as of 29/03/2023
         cdef PetscReal rval = asReal(rnorm)
@@ -1306,6 +1306,7 @@ cdef class KSP(Object):
         --------
         petsc_options, setPCSide, setNormType, getNormType,
         petsc.KSPGetPCSide
+
         """
         cdef PetscPCSide side = PC_LEFT
         CHKERR( KSPGetPCSide(self.ksp, &side) )
@@ -1722,46 +1723,34 @@ cdef class KSP(Object):
         CHKERR( KSPMatSolveTranspose(self.ksp, B.mat, X.mat) )
 
     def setIterationNumber(self, its: int) -> None:
-        """Use `its` property.
-
-        """
+        """Use `its` property."""
         cdef PetscInt ival = asInt(its)
         CHKERR( KSPSetIterationNumber(self.ksp, ival) )
 
     def getIterationNumber(self) -> int:
-        """Use `its` property.
-
-        """
+        """Use `its` property."""
         cdef PetscInt ival = 0
         CHKERR( KSPGetIterationNumber(self.ksp, &ival) )
         return toInt(ival)
 
     def setResidualNorm(self, rnorm: float) -> None:
-        """Use `norm` property.
-
-        """
+        """Use `norm` property."""
         cdef PetscReal rval = asReal(rnorm)
         CHKERR( KSPSetResidualNorm(self.ksp, rval) )
 
     def getResidualNorm(self) -> float:
-        """Use `norm` property.
-
-        """
+        """Use `norm` property."""
         cdef PetscReal rval = 0
         CHKERR( KSPGetResidualNorm(self.ksp, &rval) )
         return toReal(rval)
 
     def setConvergedReason(self, reason: KSP.ConvergedReason) -> None:
-        """Use `reason` property.
-
-        """
+        """Use `reason` property."""
         cdef PetscKSPConvergedReason val = reason
         CHKERR( KSPSetConvergedReason(self.ksp, val) )
 
     def getConvergedReason(self) -> KSP.ConvergedReason:
-        """Use `reason` property.
-
-        """
+        """Use `reason` property."""
         cdef PetscKSPConvergedReason reason = KSP_CONVERGED_ITERATING
         CHKERR( KSPGetConvergedReason(self.ksp, &reason) )
         return reason
@@ -1774,7 +1763,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            `True` enables this behaviour.
+            `True` enables this behavior.
 
         See Also
         --------
@@ -1988,10 +1977,10 @@ cdef class KSP(Object):
 
     def createPython(
         self,
-        context: Any | None = None,
+        context: Any = None,
         comm: Comm | None = None
     ) -> Self:
-        """Create an solver of Python type.
+        """Create a linear solver of Python type.
 
         Collective.
 
@@ -2029,7 +2018,7 @@ cdef class KSP(Object):
         """
         CHKERR( KSPPythonSetContext(self.ksp, <void*>context) )
 
-    def getPythonContext(self) -> Any | None:
+    def getPythonContext(self) -> Any:
         """Return the instance of the Python class implementing Python methods.
 
         Not collective.
@@ -2052,7 +2041,7 @@ cdef class KSP(Object):
         See Also
         --------
         petsc_python_ksp, setPythonContext, getPythonType,
-        petsc.TaoPythonSetType
+        petsc.KSPPythonSetType
 
         """
         cdef const char *cval = NULL
@@ -2067,7 +2056,7 @@ cdef class KSP(Object):
         See Also
         --------
         petsc_python_ksp, setPythonContext, setPythonType,
-        petsc.TaoPythonGetType
+        petsc.KSPPythonGetType
 
         """
         cdef const char *cval = NULL
@@ -2092,7 +2081,7 @@ cdef class KSP(Object):
     # --- discretization space ---
 
     property dm:
-        """ The solver data manager.
+        """The solver data manager.
 
         See Also
         --------
@@ -2331,23 +2320,17 @@ cdef class KSP(Object):
             self.setConvergedReason(value)
 
     property iterating:
-        """Whether the solver is still iterating.
-
-        """
+        """Whether the solver is still iterating."""
         def __get__(self) -> bool:
             return self.reason == 0
 
     property converged:
-        """Whether the solver has converged.
-
-        """
+        """Whether the solver has converged."""
         def __get__(self) -> bool:
             return self.reason > 0
 
     property diverged:
-        """Whether the solver has diverged.
-
-        """
+        """Whether the solver has diverged."""
         def __get__(self) -> bool:
             return self.reason < 0
 

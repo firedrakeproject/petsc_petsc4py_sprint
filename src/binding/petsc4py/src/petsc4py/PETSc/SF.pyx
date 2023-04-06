@@ -17,6 +17,7 @@ cdef class SF(Object):
 
     SF is used for setting up and managing the communication of certain
     entries of arrays and `Vec` between MPI ranks.
+
     """
 
     Type = SFType
@@ -76,7 +77,6 @@ cdef class SF(Object):
         petsc.PetscSFCreate
 
         """
-
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
         cdef PetscSF newsf = NULL
         CHKERR( PetscSFCreate(ccomm, &newsf) )
@@ -214,7 +214,6 @@ cdef class SF(Object):
         petsc.PetscSFSetGraph
 
         """
-
         cdef PetscInt cnroots = asInt(nroots)
         cdef PetscInt nleaves = 0
         cdef PetscInt nremote = 0
@@ -458,7 +457,6 @@ cdef class SF(Object):
         petsc.PetscSFBcastBegin, bcastEnd
 
         """
-
         cdef MPI_Datatype dtype = mpi4py_Datatype_Get(unit)
         cdef MPI_Op cop = mpi4py_Op_Get(op)
         CHKERR( PetscSFBcastBegin(self.sf, dtype, <const void*>PyArray_DATA(rootdata),

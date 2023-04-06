@@ -198,7 +198,7 @@ cdef class Scatter(Object):
         return self
 
     def copy(self) -> Scatter:
-        """Return a copy of the scatter"""
+        """Return a copy of the scatter."""
         cdef Scatter scatter = Scatter()
         CHKERR( VecScatterCopy(self.sct, &scatter.sct) )
         return scatter
@@ -264,8 +264,8 @@ cdef class Scatter(Object):
         self,
         Vec vec_from,
         Vec vec_to,
-        addv : InsertMode | int | None = None,
-        mode: ScatterMode | int | None = None,
+        addv: InsertModeSpec = None,
+        mode: ScatterModeSpec = None,
     ) -> None:
         """Begin a generalized scatter from one vector into another.
 
@@ -288,8 +288,8 @@ cdef class Scatter(Object):
         self,
         Vec vec_from,
         Vec vec_to,
-        addv : InsertMode | int | None = None,
-        mode: ScatterMode | int | None = None,
+        addv: InsertModeSpec = None,
+        mode: ScatterModeSpec = None,
     ) -> None:
         """Complete a generalized scatter from one vector into another.
 
@@ -312,8 +312,8 @@ cdef class Scatter(Object):
         self,
         Vec vec_from,
         Vec vec_to,
-        addv : InsertMode | int | None = None,
-        mode: ScatterMode | int | None = None,
+        addv: InsertModeSpec = None,
+        mode: ScatterModeSpec = None,
     ) -> None:
         """Perform a generalized scatter from one vector into another.
 
@@ -326,20 +326,9 @@ cdef class Scatter(Object):
         vec_to
             The destination vector.
         addv
-            Insertion mode. Possible values are:
-
-            - `InsertMode.INSERT_VALUES` Replace existing entries with new
-              values (default).
-
-            - `InsertMode.ADD_VALUES` Add new values to existing one.
+            Insertion mode.
         mode
-            Scatter mode. Possible values are:
-
-            - `ScatterMode.FORWARD` If ``vec_from`` and ``vec_to`` are
-              compatible with the vectors used to create the scatter.
-
-            - `ScatterMode.REVERSE` If ``vec_from`` and ``vec_to`` are
-              swapped with respect to the vectors used to create the scatter.
+            Scatter mode.
 
         See Also
         --------

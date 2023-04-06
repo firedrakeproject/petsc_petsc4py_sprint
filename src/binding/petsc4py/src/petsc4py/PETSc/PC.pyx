@@ -142,7 +142,7 @@ class PCDeflationSpaceType(object):
     DB16                     = PC_DEFLATION_SPACE_DB16
     BIORTH22                 = PC_DEFLATION_SPACE_BIORTH22
     MEYER                    = PC_DEFLATION_SPACE_MEYER
-    AGGERGATION              = PC_DEFLATION_SPACE_AGGREGATION
+    AGGREGATION              = PC_DEFLATION_SPACE_AGGREGATION
     USER                     = PC_DEFLATION_SPACE_USER
 
 class PCFailedReason(object):
@@ -366,7 +366,7 @@ cdef class PC(Object):
         CHKERR( PCSetFromOptions(self.pc) )
 
     def setOperators(self, Mat A=None, Mat P=None) -> None:
-        """Sets the matrices associated with the linear system.
+        """Set the matrices associated with the linear system.
 
         Logically collective. Passing `None` for ``A`` or ``P`` removes the
         matrix that is currently used. PETSc does not reset the matrix entries
@@ -787,7 +787,7 @@ cdef class PC(Object):
         CHKERR( PCPythonSetType(self.pc, cval) )
 
     def getPythonType(self) -> str:
-        """Return the fully qualified Python name of the class used by the `PC`.
+        """Return the fully qualified Python name of the class used by the preconditioner.
 
         Not collective.
 

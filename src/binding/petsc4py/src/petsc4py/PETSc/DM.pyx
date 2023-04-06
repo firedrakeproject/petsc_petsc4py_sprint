@@ -1,9 +1,7 @@
 # --------------------------------------------------------------------
 
 class DMType(object):
-    """`DM` types.
-
-    """
+    """`DM` types."""
     DA        = S_(DMDA_type)
     COMPOSITE = S_(DMCOMPOSITE)
     SLICED    = S_(DMSLICED)
@@ -21,9 +19,7 @@ class DMType(object):
     STAG      = S_(DMSTAG)
 
 class DMBoundaryType(object):
-    """`DM` Boundary types.
-
-    """
+    """`DM` Boundary types."""
     NONE     = DM_BOUNDARY_NONE
     GHOSTED  = DM_BOUNDARY_GHOSTED
     MIRROR   = DM_BOUNDARY_MIRROR
@@ -53,6 +49,7 @@ cdef class DM(Object):
     """An object describing a computational grid or mesh.
 
     DM is documented in `the PETSc manual <petsc:chapter_dmbase>`.
+
     """
 
     Type         = DMType
@@ -96,7 +93,7 @@ cdef class DM(Object):
 
         Notes
         -----
-        When using `Viewer.Type.HDF5` format, one can save  multiple `DMPlex` meshes in a single HDF5 files.
+        When using `Viewer.Type.HDF5` format, one can save multiple `DMPlex` meshes in a single HDF5 files.
         This in turn requires one to name the `DMPlex` object with `Object.setName` before saving it with `DM.view` and before loading it with `DM.load` for identification of the mesh object.
 
         See Also
@@ -167,7 +164,7 @@ cdef class DM(Object):
 
         Notes
         -----
-        `DM` types are availabe in `DM.Type` class.
+        `DM` types are available in `DM.Type` class.
 
         See Also
         --------
@@ -257,18 +254,13 @@ cdef class DM(Object):
         CHKERR( DMSetCoordinateDim(self.dm, cdim) )
 
     def setOptionsPrefix(self, prefix: str) -> None:
-        """Set the prefix prepend to all `DM` options.
+        """Set the prefix used for searching for options in the database.
 
         Logically collective.
 
-        Parameters
-        ----------
-        prefix
-            The prefix to prepend by searching through the options database.
-
         See Also
         --------
-        petsc_options, petsc.DMSetOptionsPrefix
+        petsc_options, getOptionsPrefix, petsc.DMSetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -276,13 +268,13 @@ cdef class DM(Object):
         CHKERR( DMSetOptionsPrefix(self.dm, cval) )
 
     def getOptionsPrefix(self) -> str:
-        """Return the prefix prepended to all `DM` options.
+        """Return the prefix used for searching for options in the database.
 
         Not collective.
 
         See Also
         --------
-        petsc_options, petsc.DMGetOptionsPrefix
+        petsc_options, setOptionsPrefix, petsc.DMGetOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -290,18 +282,13 @@ cdef class DM(Object):
         return bytes2str(cval)
 
     def appendOptionsPrefix(self, prefix: str) -> None:
-        """Append an additional string to an already existing prefix.
+        """Append to the prefix used for searching for options in the database.
 
         Logically collective.
 
-        Parameters
-        ----------
-        prefix
-            The string to append to the current prefix.
-
         See Also
         --------
-        petsc_options, petsc.DMAppendOptionsPrefix
+        petsc_options, setOptionsPrefix, petsc.DMAppendOptionsPrefix
 
         """
         cdef const char *cval = NULL
@@ -309,7 +296,7 @@ cdef class DM(Object):
         CHKERR( DMAppendOptionsPrefix(self.dm, cval) )
 
     def setFromOptions(self) -> None:
-        """Set parameters in a `DM` from the options database.
+        """Configure the object from the options database.
 
         Collective.
 
@@ -393,7 +380,7 @@ cdef class DM(Object):
         CHKERR( DMSetBasicAdjacency(self.dm, uC, uCl) )
 
     def getBasicAdjacency(self) -> tuple[bool, bool]:
-        """Return the flags for determing variable influence.
+        """Return the flags for determining variable influence.
 
         Not collective.
 
@@ -443,8 +430,8 @@ cdef class DM(Object):
 
         Not collective.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         field
             The field number.
 
@@ -469,7 +456,7 @@ cdef class DM(Object):
     #
 
     def createSubDM(self, fields: Sequence[int]) -> tuple[IS, DM]:
-        """Return `IS` and `DM` encapsuling a subproblem.
+        """Return `IS` and `DM` encapsulating a subproblem.
 
         Not collective.
 
@@ -967,7 +954,7 @@ cdef class DM(Object):
     #
 
     def getCoordinateDM(self) -> DM:
-        """Return the coordinate layout and scatters betweem global and local coordinates.
+        """Return the coordinate `DM`.
 
         Collective.
 
@@ -982,7 +969,7 @@ cdef class DM(Object):
         return cdm
 
     def getCoordinateSection(self) -> Section:
-        """Return coodinate values layout over the mesh.
+        """Return coordinate values layout over the mesh.
 
         Collective.
 
@@ -1077,7 +1064,7 @@ cdef class DM(Object):
         return self
 
     def getBoundingBox(self) -> tuple[tuple[float, float], ...]:
-        """Return the dimension of embedding space for coodinates values.
+        """Return the dimension of embedding space for coordinates values.
 
         Not collective.
 
@@ -1111,7 +1098,7 @@ cdef class DM(Object):
                       for i from 0 <= i < dim])
 
     def localizeCoordinates(self) -> None:
-        """Create local coodinates for cells having periodic faces.
+        """Create local coordinates for cells having periodic faces.
 
         Collective.
 
@@ -1183,8 +1170,8 @@ cdef class DM(Object):
         CHKERR( DMCreateMassMatrix(self.dm, dmf.dm, &mat.mat) )
         return mat
 
-    def createInterpolation(self, DM dm) -> tuple[Mat,Vec]:
-        """Return the interpolation matrix between this `DM` and the given `DM`.
+    def createInterpolation(self, DM dm) -> tuple[Mat, Vec]:
+        """Return the interpolation matrix to a finer `DM`.
 
         Collective.
 
@@ -1202,10 +1189,10 @@ cdef class DM(Object):
         cdef Vec scale = Vec()
         CHKERR( DMCreateInterpolation(self.dm, dm.dm,
                                    &A.mat, &scale.vec))
-        return(A, scale)
+        return (A, scale)
 
     def createInjection(self, DM dm) -> Mat:
-        """Return the injection matrix between this `DM` and the given `DM`.
+        """Return the injection matrix into a finer `DM`.
 
         Collective.
 
@@ -1369,7 +1356,7 @@ cdef class DM(Object):
         return hierarchy
 
     def getRefineLevel(self) -> int:
-        """Return the number of refinements that have generated this `DM` from some initial `DM`.
+        """Return the refinement level.
 
         Not collective.
 
@@ -1504,7 +1491,7 @@ cdef class DM(Object):
         CHKERR( DMSetSection(self.dm, sec.sec) )
 
     def getSection(self) -> Section:
-        """Return the `Section` encoding the the local data layout for the `DM`.
+        """Return the `Section` encoding the local data layout.
 
         See Also
         --------
@@ -1533,7 +1520,7 @@ cdef class DM(Object):
         --------
         petsc.DMGetGlobalSection
 
-       """
+        """
         cdef Section sec = Section()
         CHKERR( DMGetGlobalSection(self.dm, &sec.sec) )
         PetscINCREF(sec.obj)
@@ -1566,7 +1553,7 @@ cdef class DM(Object):
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
     def getSectionSF(self) -> SF:
-        """Return the `Section` enconding the parallel dof overlap for the `DM`.
+        """Return the `Section` encoding the parallel dof overlap.
 
         See Also
         --------
@@ -1671,7 +1658,7 @@ cdef class DM(Object):
         return toBool(flag)
 
     def createLabel(self, name: str) -> None:
-        """Create a label of the given name if it does not already exit in the `DM`.
+        """Create a label of the given name if it does not already exist.
 
         Not collective.
 
@@ -1735,7 +1722,7 @@ cdef class DM(Object):
         return toInt(value)
 
     def setLabelValue(self, name: str, point: int, value: int) -> None:
-        """Set a point to a `DMLabel` with a give value.
+        """Set a point to a `DMLabel` with a given value.
 
         Not collective.
 
@@ -1904,7 +1891,7 @@ cdef class DM(Object):
         name
             The label name.
         output
-            If `True`, it is save the label to the viewer.
+            If `True`, the label is saved to the viewer.
 
         See Also
         --------
@@ -2091,7 +2078,7 @@ cdef class DM(Object):
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
-        """Add a callback to be executed when restricting a nonlinear problem to a coarse grid.
+        """Add a callback to be executed when restricting to a coarser grid.
 
         Logically collective.
 

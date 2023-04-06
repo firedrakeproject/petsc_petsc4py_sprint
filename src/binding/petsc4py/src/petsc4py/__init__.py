@@ -25,12 +25,12 @@ def init(args=None, arch=None, comm=None):
 
     Parameters
     ----------
-    args:
-      Command-line arguments, usually the `sys.argv` list
-    arch:
-      Specific configuration to use
-    comm:
-      MPI commmunicator
+    args
+        Command-line arguments, usually the `sys.argv` list
+    arch
+        Specific configuration to use
+    comm
+        MPI commmunicator
 
     Notes
     -----
@@ -53,9 +53,9 @@ def get_include():
     -------
     Using Python distutils or NumPy distutils::
 
-      import petsc4py
-      Extension('extension_name', ...
-                include_dirs=[..., petsc4py.get_include()])
+        import petsc4py
+        Extension('extension_name', ...
+                  include_dirs=[..., petsc4py.get_include()])
 
     """
     from os.path import dirname, join

@@ -90,16 +90,6 @@ autodoc_typehints = 'description'
 autodoc_typehints_format = 'short'
 autodoc_mock_imports = []
 autodoc_type_aliases = {}
-autodoc_type_aliases.update({
-    typename: f"~petsc4py.typing.{typename}"
-    for typename in (
-        "Scalar",
-        "ArrayInt",
-        "ArrayReal",
-        "ArrayComplex",
-        "ArrayScalar",
-    )
-})
 
 autosummary_context = {
     'synopsis': {},
@@ -367,6 +357,9 @@ def setup(app):
         apidoc.annotate(mod, ann)
     typing.overload = typing_overload
 
+    from petsc4py import typing as tp
+    for attr in tp.__all__:
+        autodoc_type_aliases[attr] = f'~petsc4py.typing.{attr}'
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

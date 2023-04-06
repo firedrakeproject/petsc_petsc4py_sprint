@@ -6,13 +6,18 @@ from __future__ import annotations
 from typing import (
     Callable,
     Sequence,
+    Literal,
 )
 from numpy.typing import (
     NDArray,
 )
 from .PETSc import (
+    InsertMode,
+    ScatterMode,
+    NormType,
     Vec,
     Mat,
+    NullSpace,
     KSP,
     SNES,
     TS,
@@ -26,11 +31,19 @@ __all__ = [
     "ArrayReal",
     "ArrayComplex",
     "ArrayScalar",
-    "MatSizeType",
-    "MatBlockSizeType",
-    "CSRIndicesType",
-    "CSRType",
-    "NNZType",
+    "DimsSpec",
+    "AccessModeSpec",
+    "InsertModeSpec",
+    "ScatterModeSpec",
+    "LayoutSizeSpec",
+    "NormTypeSpec",
+    "MatAssemblySpec",
+    "MatSizeSpec",
+    "MatBlockSizeSpec",
+    "CSRIndicesSpec",
+    "CSRSpec",
+    "NNZSpec",
+    "MatNullFunction",
     "DMCoarsenHookFunction",
     "DMRestrictHookFunction",
     "KSPRHSFunction",
@@ -89,18 +102,166 @@ ArrayComplex = NDArray[complex]
 ArrayScalar = NDArray[Scalar]
 """Array of `Scalar` numbers."""
 
+DimsSpec = tuple[int, ...]
+"""Dimensions specification.
+
+   N-tuples indicates N-dimensional grid sizes.
+
+"""
+
+AccessModeSpec = Literal['rw', 'r', 'w'] | None
+"""Access mode specification.
+
+   Possible values are:
+     - ``'rw'`` Read-Write mode.
+     - ``'r'`` Read-only mode.
+     - ``'w'`` Write-only mode.
+     - `None` as ``'rw'``.
+
+"""
+
+InsertModeSpec = InsertMode | bool | None
+"""Insertion mode specification.
+
+   Possible values are:
+     - `InsertMode.ADD_VALUES` Add new value to existing one.
+     - `InsertMode.INSERT_VALUES` Replace existing entry with new value.
+     - `None` as `InsertMode.INSERT_VALUES`.
+     - `False` as `InsertMode.INSERT_VALUES`.
+     - `True` as `InsertMode.ADD_VALUES`.
+
+   See Also
+   --------
+   InsertMode
+
+"""
+
+ScatterModeSpec = ScatterMode | bool | str | None
+"""Scatter mode specification.
+
+   Possible values are:
+     - `ScatterMode.FORWARD` Forward mode.
+     - `ScatterMode.REVERSE` Reverse mode.
+     - `None` as `ScatterMode.FORWARD`.
+     - `False` as `ScatterMode.FORWARD`.
+     - `True` as `ScatterMode.REVERSE`.
+     - ``'forward'`` as `ScatterMode.FORWARD`.
+     - ``'reverse'`` as `ScatterMode.REVERSE`.
+
+   See Also
+   --------
+   ScatterMode
+
+"""
+
+LayoutSizeSpec = int | tuple[int, int]
+"""`int` or 2-`tuple` of `int` describing the layout sizes.
+
+   A single `int` indicates global size.
+   A `tuple` of `int` indicates ``(local_size, global_size)``.
+
+   See Also
+   --------
+   Sys.splitOwnership
+
+"""
+
+NormTypeSpec = NormType | None
+"""Norm type specification.
+
+    Possible values include:
+
+    - `NormType.NORM_1` The 1-norm: Σₙ abs(xₙ) for vectors, maxₙ (Σᵢ abs(xₙᵢ)) for matrices.
+    - `NormType.NORM_2` The 2-norm: √(Σₙ xₙ²) for vectors, largest singular values for matrices.
+    - `NormType.NORM_INFINITY` The ∞-norm: maxₙ abs(xₙ) for vectors, maxᵢ (Σₙ abs(xₙᵢ)) for matrices.
+    - `NormType.NORM_FROBENIUS` The Frobenius norm: same as 2-norm for vectors, √(Σₙᵢ xₙᵢ²) for matrices.
+    - `NormType.NORM_1_AND_2` Compute both `NormType.NORM_1` and `NormType.NORM_2`.
+    - `None` as `NormType.NORM_2` for vectors, `NormType.NORM_FROBENIUS` for matrices.
+
+    See Also
+    --------
+    PETSc.NormType, petsc.NormType
+
+"""
+
 # --- Mat ---
 
-MatSizeType = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
-MatBlockSizeType = tuple[int, int] | int
-CSRIndicesType = tuple[Sequence[int], Sequence[int]]
-CSRType = tuple[Sequence[int], Sequence[int], Sequence[int]]
-NNZType = int | Sequence[int] | tuple[Sequence[int], Sequence[int]]
+MatAssemblySpec = Mat.AssemblyType | bool | None
+"""Matrix assembly specification.
+
+   Possible values are:
+     - `Mat.AssemblyType.FINAL`
+     - `Mat.AssemblyType.FLUSH`
+     - `None` as `Mat.AssemblyType.FINAL`
+     - `False` as `Mat.AssemblyType.FINAL`
+     - `True` as `Mat.AssemblyType.FLUSH`
+
+   See Also
+   --------
+   petsc.MatAssemblyType
+
+"""
+
+MatSizeSpec = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
+"""`int` or (nested) `tuple` of `int` describing the matrix sizes.
+
+   If `int` then rows = columns.
+   A single `tuple` of `int` indicates ``(rows, columns)``.
+   A nested `tuple` of `int` indicates ``((local_rows, rows), (local_columns, columns))``.
+
+   See Also
+   --------
+   Sys.splitOwnership
+
+"""
+
+MatBlockSizeSpec = int | tuple[int, int]
+"""The row and column block sizes.
+
+   If a single `int` is provided then rows and columns share the same block size.
+
+"""
+
+CSRIndicesSpec = tuple[Sequence[int], Sequence[int]]
+"""CSR indices format specification.
+
+   A 2-tuple carrying the ``(row_start, col_indices)`` information.
+
+"""
+
+CSRSpec = tuple[Sequence[int], Sequence[int], Sequence[Scalar]]
+"""CSR format specification.
+
+   A 3-tuple carrying the ``(row_start, col_indices, values)`` information.
+
+"""
+
+NNZSpec = int | Sequence[int] | tuple[Sequence[int], Sequence[int]]
+"""Nonzero pattern specification.
+
+   A single `int` corresponds to fixed number of non-zeros per row.
+   A `Sequence` of `int` indicates different non-zeros per row.
+   If a 2-`tuple` is used, the elements of the tuple corresponds
+   to the on-process and off-process parts of the matrix.
+
+   See Also
+   --------
+   petsc.MatSeqAIJSetPreallocation, petsc.MatMPIAIJSetPreallocation
+
+"""
+
+# --- MatNullSpace ---
+
+MatNullFunction = Callable[[NullSpace, Vec], None]
+"""`PETSc.NullSpace` callback."""
 
 # --- DM ---
 
 DMCoarsenHookFunction = Callable[[DM, DM], None]
+"""`PETSc.DM` coarsening hook callback."""
+
 DMRestrictHookFunction = Callable[[DM, Mat, Vec, Mat, DM], None]
+"""`PETSc.DM` restriction hook callback."""
 
 # --- KSP ---
 

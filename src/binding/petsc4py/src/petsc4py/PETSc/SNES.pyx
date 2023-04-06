@@ -1929,7 +1929,7 @@ cdef class SNES(Object):
 
     # --- Python ---
 
-    def createPython(self, context=None, comm=None) -> Self:
+    def createPython(self, context: Any = None, comm: Comm | None = None) -> Self:
         """Create a nonlinear solver of Python type.
 
         Collective.
@@ -1954,7 +1954,7 @@ cdef class SNES(Object):
         CHKERR( SNESPythonSetContext(self.snes, <void*>context) )
         return self
 
-    def setPythonContext(self, context) -> None:
+    def setPythonContext(self, context: Any) -> None:
         """Set the instance of the Python class implementing the required Python methods.
 
         Not collective.

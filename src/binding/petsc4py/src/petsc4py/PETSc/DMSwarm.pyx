@@ -23,9 +23,7 @@ class DMSwarmPICLayoutType(object):
 
 
 cdef class DMSwarm(DM):
-    """
-    A `DM` object used to represent arrays of data (fields) of arbitrary type.
-    """
+    """A `DM` object used to represent arrays of data (fields) of arbitrary type."""
     Type = DMSwarmType
     MigrateType = DMSwarmMigrateType
     CollectType = DMSwarmCollectType
