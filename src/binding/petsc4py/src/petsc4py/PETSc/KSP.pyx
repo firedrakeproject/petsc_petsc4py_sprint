@@ -1156,7 +1156,7 @@ cdef class KSP(Object):
             Residual norm to be added to convergence history.
 
         """
-        # Note that no dosumentation exists for the PETSc function
+        # Note that no documentation exists for the PETSc function
         # `KSPLogResidualHistory`
         # as of 29/03/2023
         cdef PetscReal rval = asReal(rnorm)
@@ -1763,7 +1763,7 @@ cdef class KSP(Object):
         Parameters
         ----------
         flag
-            `True` enables this behaviour.
+            `True` enables this behavior.
 
         See Also
         --------
