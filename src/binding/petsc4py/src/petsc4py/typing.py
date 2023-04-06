@@ -158,7 +158,7 @@ LayoutSizeSpec = int | tuple[int, int]
 """`int` or 2-`tuple` of `int` describing the layout sizes.
 
    A single `int` indicates global size.
-   A `tuple` of `int` indicates ``(localsize, globalsize)``.
+   A `tuple` of `int` indicates ``(local_size, global_size)``.
 
    See Also
    --------
@@ -207,7 +207,7 @@ MatSizeSpec = int | tuple[int, int] | tuple[tuple[int, int], tuple[int, int]]
 
    If `int` then rows = columns.
    A single `tuple` of `int` indicates ``(rows, columns)``.
-   A nested `tuple` of `int` indicates ``((localrows, rows), (localcolumns, columns))``.
+   A nested `tuple` of `int` indicates ``((local_rows, rows), (local_columns, columns))``.
 
    See Also
    --------

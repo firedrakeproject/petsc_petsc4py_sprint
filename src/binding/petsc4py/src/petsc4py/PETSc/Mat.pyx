@@ -2909,8 +2909,8 @@ cdef class Mat(Object):
 
     def setValueStencil(
         self,
-        row: Stencil,
-        col: Stencil,
+        MatStencil row: Stencil,
+        MatStencil col: Stencil,
         value: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:

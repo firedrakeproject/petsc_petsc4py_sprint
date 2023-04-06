@@ -154,7 +154,7 @@ cdef class Vec(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         See Also
         --------
