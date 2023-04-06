@@ -26,7 +26,6 @@ class VecOption(object):
     IGNORE_NEGATIVE_INDICES = VEC_IGNORE_NEGATIVE_INDICES
 
 # --------------------------------------------------------------------
-
 cdef class Vec(Object):
     """A vector object.
 
@@ -2150,7 +2149,7 @@ cdef class Vec(Object):
         CHKERR( VecAbs(self.vec) )
 
     def conjugate(self):
-        """Conjugates the vector.
+        """Conjugate the vector.
 
         Logically collective.
 
