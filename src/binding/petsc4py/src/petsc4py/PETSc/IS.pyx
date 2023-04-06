@@ -877,6 +877,7 @@ cdef class IS(Object):
         CHKERR( ISStrideSetStride(self.iset, csize, cfirst, cstep) )
 
     def getStride(self) -> tuple[int, int, int]:
+#FIXME: Multiline summary!
         """Return size and stride information for an index set with type
         `IS.Type.STRIDE`.
 
@@ -1050,6 +1051,7 @@ cdef class IS(Object):
 
 
 class GLMapMode(object):
+#FIXME: Multiline summary!
     """Enum describing mapping behavior for global-to-local maps when global
     indices are missing.
 
@@ -1075,6 +1077,7 @@ class LGMapType(object):
 # --------------------------------------------------------------------
 
 cdef class LGMap(Object):
+#FIXME: Multiline summary!
     """Mapping from an arbitrary local ordering from 0 to n-1 to a
     global PETSc ordering used by a vector or matrix.
 
