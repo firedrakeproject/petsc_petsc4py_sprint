@@ -99,7 +99,7 @@ cdef class Space(Object):
         CHKERR( PetscSpaceSetFromOptions(self.space) )
 
     def getDimension(self) -> int:
-        """Return the dimension of this space, i.e. the number of basis vectors.
+        """Return the number of basis vectors.
 
         See Also
         --------

@@ -954,7 +954,7 @@ cdef class DM(Object):
     #
 
     def getCoordinateDM(self) -> DM:
-        """Return the coordinate layout and scatters betweem global and local coordinates.
+        """Return the coordinate `DM`.
 
         Collective.
 
@@ -1170,8 +1170,8 @@ cdef class DM(Object):
         CHKERR( DMCreateMassMatrix(self.dm, dmf.dm, &mat.mat) )
         return mat
 
-    def createInterpolation(self, DM dm) -> tuple[Mat,Vec]:
-        """Return the interpolation matrix between this `DM` and the given `DM`.
+    def createInterpolation(self, DM dm) -> tuple[Mat, Vec]:
+        """Return the interpolation matrix to a finer `DM`.
 
         Collective.
 
@@ -1189,10 +1189,10 @@ cdef class DM(Object):
         cdef Vec scale = Vec()
         CHKERR( DMCreateInterpolation(self.dm, dm.dm,
                                    &A.mat, &scale.vec))
-        return(A, scale)
+        return (A, scale)
 
     def createInjection(self, DM dm) -> Mat:
-        """Return the injection matrix between this `DM` and the given `DM`.
+        """Return the injection matrix into a finer `DM`.
 
         Collective.
 
@@ -1356,7 +1356,7 @@ cdef class DM(Object):
         return hierarchy
 
     def getRefineLevel(self) -> int:
-        """Return the number of refinements that have generated this `DM` from some initial `DM`.
+        """Return the refinement level.
 
         Not collective.
 
@@ -1491,7 +1491,7 @@ cdef class DM(Object):
         CHKERR( DMSetSection(self.dm, sec.sec) )
 
     def getSection(self) -> Section:
-        """Return the `Section` encoding the the local data layout for the `DM`.
+        """Return the `Section` encoding the local data layout.
 
         See Also
         --------
@@ -1553,7 +1553,7 @@ cdef class DM(Object):
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
     def getSectionSF(self) -> SF:
-        """Return the `Section` enconding the parallel dof overlap for the `DM`.
+        """Return the `Section` enconding the parallel dof overlap.
 
         See Also
         --------
@@ -1658,7 +1658,7 @@ cdef class DM(Object):
         return toBool(flag)
 
     def createLabel(self, name: str) -> None:
-        """Create a label of the given name if it does not already exit in the `DM`.
+        """Create a label of the given name if it does not already exist.
 
         Not collective.
 
@@ -2078,7 +2078,7 @@ cdef class DM(Object):
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None,
     ) -> None:
-        """Add a callback to be executed when restricting a nonlinear problem to a coarse grid.
+        """Add a callback to be executed when restricting to a coarser grid.
 
         Logically collective.
 
