@@ -51,9 +51,9 @@ cdef class DS(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty DS.
 
-        The type can then be set with `setType`.
-
         Collective.
+
+        The type can then be set with `setType`.
 
         Parameters
         ----------
@@ -134,10 +134,10 @@ cdef class DS(Object):
     def getSpatialDimension(self) -> int:
         """Return the spatial dimension of the DS.
 
+        Not collective.
+
         The spatial dimension of the `DS` is the topological dimension of the
         discretizations.
-
-        Not collective.
 
         See Also
         --------
@@ -151,10 +151,10 @@ cdef class DS(Object):
     def getCoordinateDimension(self) -> int:
         """Return the coordinate dimension of the DS.
 
+        Not collective.
+
         The coordinate dimension of the `DS` is the dimension of the space into
         which the discretiaztions are embedded.
-
-        Not collective.
 
         See Also
         --------

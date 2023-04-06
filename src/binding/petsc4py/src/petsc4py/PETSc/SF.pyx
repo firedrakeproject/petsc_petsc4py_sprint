@@ -157,9 +157,9 @@ cdef class SF(Object):
     def getGraph(self) -> tuple[int, ArrayInt, ArrayInt]:
         """Return star forest graph.
 
-        The number of leaves can be determined from the size of *ilocal*.
-
         Not collective.
+
+        The number of leaves can be determined from the size of *ilocal*.
 
         Returns
         -------
@@ -192,10 +192,10 @@ cdef class SF(Object):
     def setGraph(self, nroots: int, local: Sequence[int], remote: Sequence[int]) -> None:
         """Set star forest graph.
 
+        Collective.
+
         The number of leaves argument can be determined from the size of
         ``local`` and/or ``remote``.
-
-        Collective.
 
         Parameters
         ----------
@@ -264,10 +264,10 @@ cdef class SF(Object):
     def createInverse(self) -> SF:
         """Create the inverse map.
 
+        Collective.
+
         Create the inverse map given a PetscSF in which all vertices have
         degree 1.
-
-        Collective.
 
         See Also
         --------
@@ -299,9 +299,9 @@ cdef class SF(Object):
     def createEmbeddedRootSF(self, selected: Sequence[int]) -> SF:
         """Remove edges from all but the selected roots.
 
-        Does not remap indices.
-
         Collective.
+
+        Does not remap indices.
 
         Parameters
         ----------
@@ -323,9 +323,9 @@ cdef class SF(Object):
     def createEmbeddedLeafSF(self, selected: Sequence[int]) -> SF:
         """Remove edges from all but the selected leaves.
 
-        Does not remap indices.
-
         Collective.
+
+        Does not remap indices.
 
         Parameters
         ----------
@@ -347,9 +347,9 @@ cdef class SF(Object):
     def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int] | None, Section leafSection) -> SF:
         """Create an expanded `SF` of dofs.
 
-        Assumes the input `SF` relates points.
-
         Collective.
+
+        Assumes the input `SF` relates points.
 
         Parameters
         ----------
@@ -380,9 +380,9 @@ cdef class SF(Object):
     def distributeSection(self, Section rootSection, Section leafSection=None) -> tuple[ArrayInt, Section]:
         """Create a new, reorganized `Section`.
 
-        Moves from the root to the leaves of the `SF`.
-
         Collective.
+
+        Moves from the root to the leaves of the `SF`.
 
         Parameters
         ----------
@@ -415,9 +415,9 @@ cdef class SF(Object):
     def compose(self, SF sf) -> SF:
         """Compose a new `SF`.
 
-        Puts the *sf* under this object in a top (roots) down (leaves) view.
-
         Collective.
+
+        Puts the *sf* under this object in a top (roots) down (leaves) view.
 
         Parameters
         ----------
@@ -436,10 +436,10 @@ cdef class SF(Object):
     def bcastBegin(self, unit: Datatype, ndarray rootdata, ndarray leafdata, op: Op) -> None:
         """Begin pointwise broadcast.
 
+        Collective.
+
         Root values are reduced to leaf values. This call has to be concluded
         with a call to `bcastEnd`.
-
-        Collective.
 
         Parameters
         ----------
@@ -491,9 +491,9 @@ cdef class SF(Object):
     def reduceBegin(self, unit: Datatype, ndarray leafdata, ndarray rootdata, op: Op) -> None:
         """Begin reduction of leafdata into rootdata.
 
-        This call has to be completed with call to `reduceEnd`.
-
         Collective.
+
+        This call has to be completed with call to `reduceEnd`.
 
         Parameters
         ----------
@@ -545,10 +545,10 @@ cdef class SF(Object):
     def scatterBegin(self, unit: Datatype, ndarray multirootdata, ndarray leafdata) -> None:
         """Begin pointwise scatter operation.
 
+        Collective.
+
         Operation is from multi-roots to leaves.
         This call has to be completed with `scatterEnd`.
-
-        Collective.
 
         Parameters
         ----------
@@ -594,9 +594,9 @@ cdef class SF(Object):
     def gatherBegin(self, unit: Datatype, ndarray leafdata, ndarray multirootdata) -> None:
         """Begin pointwise gather of all leaves into multi-roots.
 
-        This call has to be completed with `gatherEnd`.
-
         Collective.
+
+        This call has to be completed with `gatherEnd`.
 
         Parameters
         ----------
@@ -644,12 +644,12 @@ cdef class SF(Object):
     def fetchAndOpBegin(self, unit: Datatype, rootdata: ndarray, leafdata: ndarray, leafupdate: ndarray, op: Op) -> None:
         """Begin fetch and update operation.
 
+        Collective.
+
         This operation fetches values from root and updates atomically
         by applying an operation using the leaf value.
 
         This call has to be completed with `fetchAndOpEnd`.
-
-        Collective.
 
         Parameters
         ----------

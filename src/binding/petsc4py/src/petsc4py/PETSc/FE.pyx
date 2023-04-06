@@ -51,9 +51,9 @@ cdef class FE(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty `FE` object.
 
-        The type can then be set with `setType`.
-
         Collective.
+
+        The type can then be set with `setType`.
 
         Parameters
         ----------
@@ -241,10 +241,10 @@ cdef class FE(Object):
     def getNumDof(self) -> ndarray:
         """Return the number of dofs.
 
+        Not collective.
+
         Return the number of dofs (dual basis vectors) associated with mesh
         points on the reference cell of a given dimension.
-
-        Not collective.
 
         See Also
         --------

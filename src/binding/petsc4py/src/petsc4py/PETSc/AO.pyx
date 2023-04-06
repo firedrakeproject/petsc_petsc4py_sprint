@@ -56,12 +56,12 @@ cdef class AO(Object):
     ) -> Self:
         """Return a basic application ordering using two orderings.
 
+        Collective.
+
         The arrays/indices ``app`` and ``petsc`` must contain all the integers
         ``0`` to ``len(app)-1`` with no duplicates; that is there cannot be any
         "holes" in the indices. Use ``createMapping`` if you wish to have
         "holes" in the indices.
-
-        Collective.
 
         Parameters
         ----------
@@ -106,6 +106,8 @@ cdef class AO(Object):
     ) -> Self:
         """Return a memory scalable application ordering using two orderings.
 
+        Collective.
+
         The arrays/indices ``app`` and ``petsc`` must contain all the integers
         ``0`` to ``len(app)-1`` with no duplicates; that is there cannot be any
         "holes" in the indices. Use ``createMapping`` if you wish to have
@@ -113,8 +115,6 @@ cdef class AO(Object):
 
         Comparing with ``createBasic``, this routine trades memory with message
         communication.
-
-        Collective.
 
         Parameters
         ----------
@@ -213,6 +213,8 @@ cdef class AO(Object):
     def app2petsc(self, indices: Sequence[int] | IS) -> Sequence[int] | IS:
         """Map an application-defined ordering to the PETSc ordering.
 
+        Collective.
+
         Any integers in ``indices`` that are negative are left unchanged. This
         allows one to convert, for example, neighbor lists that use negative
         entries to indicate nonexistent neighbors due to boundary conditions,
@@ -221,8 +223,6 @@ cdef class AO(Object):
         Integers that are out of range are mapped to -1.
 
         If ``IS`` is used, it cannot be of type stride or block.
-
-        Collective.
 
         Parameters
         ----------
@@ -247,6 +247,8 @@ cdef class AO(Object):
     def petsc2app(self, indices: Sequence[int] | IS) -> Sequence[int] | IS:
         """Map a PETSc ordering to the application-defined ordering.
 
+        Collective.
+
         Any integers in ``indices`` that are negative are left unchanged. This
         allows one to convert, for example, neighbor lists that use negative
         entries to indicate nonexistent neighbors due to boundary conditions,
@@ -255,8 +257,6 @@ cdef class AO(Object):
         Integers that are out of range are mapped to -1.
 
         If ``IS`` is used, it cannot be of type stride or block.
-
-        Collective.
 
         Parameters
         ----------

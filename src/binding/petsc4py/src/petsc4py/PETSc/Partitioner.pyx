@@ -55,9 +55,9 @@ cdef class Partitioner(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty partitioner object.
 
-        The type can be set with `setType`.
-
         Collective.
+
+        The type can be set with `setType`.
 
         Parameters
         ----------

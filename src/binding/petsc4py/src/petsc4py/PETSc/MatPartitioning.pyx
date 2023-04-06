@@ -142,10 +142,10 @@ cdef class MatPartitioning(Object):
     def apply(self, IS partitioning) -> None:
         """Return a partitioning for the graph represented by a sparse matrix.
 
+        Collective.
+
         For each local node this tells the processor number that that node is
         assigned to.
-
-        Collective.
 
         See Also
         --------

@@ -34,9 +34,9 @@ cdef class Space(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty `Space` object.
 
-        The type can then be set with `setType`.
-
         Collective.
+
+        The type can then be set with `setType`.
 
         Parameters
         ----------
@@ -465,10 +465,10 @@ cdef class Space(Object):
     def setPointPoints(self, Quad quad) -> None:
         """Set the evaluation points for the space to be based on a quad.
 
+        Logically collective.
+
         Sets the evaluation points for the space to coincide with the points
         of a quadrature rule.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -581,9 +581,9 @@ cdef class DualSpace(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty `DualSpace` object.
 
-        The type can then be set with `setType`.
-
         Collective.
+
+        The type can then be set with `setType`.
 
         Parameters
         ----------
@@ -680,9 +680,9 @@ cdef class DualSpace(Object):
     def getDimension(self) -> int:
         """Return the dimension of the dual space.
 
-        The dimension of the dual space, i.e. the number of basis functionals.
-
         Not collective.
+
+        The dimension of the dual space, i.e. the number of basis functionals.
 
         See Also
         --------
@@ -826,10 +826,10 @@ cdef class DualSpace(Object):
     def getInteriorDimension(self) -> int:
         """Return the interior dimension of the dual space.
 
+        Not collective.
+
         The interior dimension of the dual space, i.e. the number of basis
         functionals assigned to the interior of the reference domain.
-
-        Not collective.
 
         See Also
         --------

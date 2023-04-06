@@ -332,10 +332,10 @@ cdef class Vec(Object):
     ) -> Self:
         """Create a vector using a provided array.
 
+        Collective.
+
         This method will create either a `Type.SEQ` or `Type.MPI`
         depending on the size of the communicator.
-
-        Collective.
 
         Parameters
         ----------
@@ -562,6 +562,8 @@ cdef class Vec(Object):
     ) -> Self:
         """Create a vector wrapping a DLPack object, sharing the same memory.
 
+        Collective.
+
         This operation does not modify the storage of the original tensor and
         should be used with contiguous tensors only. If the tensor is stored in
         row-major order (e.g. PyTorch tensors), the resulting vector will look
@@ -571,8 +573,6 @@ cdef class Vec(Object):
         `Type.SEQCUDA`, `Type.MPICUDA`, `Type.SEQHIP` or
         `Type.MPIHIP` depending on the type of ``dltensor`` and the number
         of processes in the communicator.
-
-        Collective.
 
         Parameters
         ----------
@@ -660,10 +660,10 @@ cdef class Vec(Object):
     ) -> Self:
         """Attach tensor information from another vector or DLPack tensor.
 
+        Logically collective.
+
         This tensor information is required when converting a `Vec` to a
         DLPack object.
-
-        Logically collective.
 
         Parameters
         ----------

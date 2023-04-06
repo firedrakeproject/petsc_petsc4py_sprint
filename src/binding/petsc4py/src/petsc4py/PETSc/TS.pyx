@@ -645,8 +645,8 @@ cdef class TS(Object):
     def getRHSFunction(self) -> tuple[Vec, TSRHSFunction]:
         """Return the vector where the right hand side is stored and the
         function used to compute it.
-
         Not collective.
+
 
         See Also
         --------
@@ -723,10 +723,10 @@ cdef class TS(Object):
         kargs : dict[str, Any] | None = None) -> None:
         """Set the function to compute the Jacobian.
 
+        Logically collective.
+
         Set the function to compute the matrix ``dF/dU + a*dF/dU_t`` where
         ``F(t,U,U_t)`` is the function provided with `setIFunction`.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -767,9 +767,9 @@ cdef class TS(Object):
         kargs : dict[str, Any] | None = None) -> None:
         """Set the function that computes the Jacobian of ``F`` with respect to
         the parameters ``P`` where ``F(Udot,U,t) = G(U,P,t)``, as well as the
-        location to store the matrix.
-
         Logically collective.
+
+        location to store the matrix.
 
         Parameters
         ----------

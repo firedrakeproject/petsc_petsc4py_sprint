@@ -112,11 +112,11 @@ cdef class DMLabel(Object):
     def setValue(self, point: int, value: int) -> None:
         """Set the value a label assigns to a point.
 
+        Not collective.
+
         If the value is the same as the label's default value (which is
         initially ``-1``, and can be changed with `setDefaultValue`), this
         function will do nothing.
-
-        Not collective.
 
         Parameters
         ----------
@@ -137,11 +137,11 @@ cdef class DMLabel(Object):
     def getValue(self, point: int) -> int:
         """Return the value a label assigns to a point.
 
+        Not collective.
+
         If no value was assigned, a default value will be returned
         The default value, initially ``-1``, can be changed with
         `setDefaultValue`.
-
-        Not collective.
 
         Parameters
         ----------
@@ -161,10 +161,10 @@ cdef class DMLabel(Object):
     def getDefaultValue(self) -> int:
         """Return the default value returned by `getValue`.
 
+        Not collective.
+
         The default value is returned if a point has not been explicitly given
         a value. When a label is created, it is initialized to ``-1``.
-
-        Not collective.
 
         See Also
         --------
@@ -178,10 +178,10 @@ cdef class DMLabel(Object):
     def setDefaultValue(self, value: int) -> None:
         """Set the default value returned by `getValue`.
 
+        Not collective.
+
         The value is used if a point has not been explicitly given a value.
         When a label is created, the default value is initialized to ``-1``.
-
-        Not collective.
 
         Parameters
         ----------
@@ -422,9 +422,9 @@ cdef class DMLabel(Object):
     def computeIndex(self) -> None:
         """Create an index structure for membership determination.
 
-        Automatically determines the bounds.
-
         Not collective.
+
+        Automatically determines the bounds.
 
         See Also
         --------
@@ -488,9 +488,9 @@ cdef class DMLabel(Object):
     def hasPoint(self, point: int) -> bool:
         """Determine whether the label contains a point.
 
-        The user must call `createIndex` before this function.
-
         Not collective.
+
+        The user must call `createIndex` before this function.
 
         Parameters
         ----------
@@ -510,9 +510,9 @@ cdef class DMLabel(Object):
     def getBounds(self) -> tuple[int, int]:
         """Return the smallest and largest point in the label.
 
-        The returned values are the smallest point and the largest point + 1.
-
         Not collective.
+
+        The returned values are the smallest point and the largest point + 1.
 
         See Also
         --------
@@ -584,9 +584,9 @@ cdef class DMLabel(Object):
     def gather(self, SF sf) -> DMLabel:
         """Gather all label values from leaves into roots.
 
-        This is the inverse operation to `distribute`.
-
         Collective.
+
+        This is the inverse operation to `distribute`.
 
         Parameters
         ----------

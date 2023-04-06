@@ -469,12 +469,12 @@ cdef class Mat(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create the matrix.
 
+        Collective.
+
         Once created, the user should call `setType` or
         `setFromOptions` before using the matrix. Alternatively, specific
         creation routines can be used such as `createAIJ` or
         `createBAIJ` can be used.
-
-        Collective.
 
         Parameters
         ----------
@@ -852,10 +852,10 @@ cdef class Mat(Object):
     def setPreallocationCSR(self, csr: CSRIndicesSpec) -> Self:
         """Preallocate memory for the matrix with a CSR layout.
 
+        Collective.
+
         Correct preallocation can result in a dramatic reduction in matrix
         assembly time.
-
-        Collective.
 
         Parameters
         ----------
@@ -3258,6 +3258,8 @@ cdef class Mat(Object):
         ) -> Vec | tuple[Vec, Vec]:
         """Return vectors that can be used in matrix vector products.
 
+        Collective.
+
         Parameters
         ----------
         side
@@ -3268,8 +3270,6 @@ cdef class Mat(Object):
         -----
         ``right`` vectors are vectors in the column space of the matrix.
         ``left`` vectors are vectors in the row space of the matrix.
-
-        Collective.
 
         See Also
         --------

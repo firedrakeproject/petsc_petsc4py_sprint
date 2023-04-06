@@ -72,10 +72,10 @@ cdef class DMInterpolation:
     def getCoordinates(self) -> Vec:
         """Return the coordinates of each interpolation point.
 
+        Collective.
+
         The local vector entries correspond to interpolation points lying on
         this process, according to the associated DM.
-
-        Collective.
 
         See Also
         --------
@@ -184,9 +184,9 @@ cdef class DMInterpolation:
     def getVector(self) -> Vec:
         """Return a `Vec` which can hold all the interpolated field values.
 
-        This vector should be returned using `restoreVector`.
-
         Collective.
+
+        This vector should be returned using `restoreVector`.
 
         See Also
         --------

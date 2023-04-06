@@ -58,11 +58,11 @@ cdef class DMStag(DM):
     ) -> Self:
         """Create a DMDA object.
 
+        Collective.
+
         Creates an object to manage data living on the elements and vertices /
         the elements, faces, and vertices / the elements, faces, edges, and
         vertices of a parallelized regular 1D / 2D / 3D grid.
-
-        Collective.
 
         Parameters
         ----------
@@ -160,9 +160,9 @@ cdef class DMStag(DM):
     def setStencilWidth(self, swidth: int) -> None:
         """Set elementwise stencil width.
 
-        The width value is not used when `StencilType.NONE` is specified.
-
         Logically collective.
+
+        The width value is not used when `StencilType.NONE` is specified.
 
         Parameters
         ----------
@@ -316,9 +316,9 @@ cdef class DMStag(DM):
     def getEntriesPerElement(self) -> int:
         """Return the number of entries per element in the local representation.
 
-        This is the natural block size for most local operations.
-
         Not collective.
+
+        This is the natural block size for most local operations.
 
         See Also
         --------
@@ -361,14 +361,14 @@ cdef class DMStag(DM):
     def getCorners(self) -> tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...]]:
         """Return starting element index, width and number of partial elements.
 
+        Not collective.
+
         The returned value is calculated excluding ghost points.
 
         The number of extra partial elements is either ``1`` or ``0``. The
         value is ``1`` on right, top, and front non-periodic domain
         ("physical") boundaries, in the x, y, and z dimensions respectively,
         and otherwise ``0``.
-
-        Not collective.
 
         See Also
         --------
@@ -398,9 +398,9 @@ cdef class DMStag(DM):
     def getLocalSizes(self) -> tuple[int, ...]:
         """Return local elementwise sizes in each dimension.
 
-        The returned value is calculated excluding ghost points.
-
         Not collective.
+
+        The returned value is calculated excluding ghost points.
 
         See Also
         --------
@@ -575,11 +575,11 @@ cdef class DMStag(DM):
     ) -> None:
         """Create uniform coordinates, as a product of 1D arrays.
 
+        Collective.
+
         The per-dimension 1-dimensional `DMStag` objects that comprise the
         product always have active 0-cells (vertices, element boundaries) and
         1-cells (element centers).
-
-        Collective.
 
         Parameters
         ----------
@@ -618,6 +618,8 @@ cdef class DMStag(DM):
     ) -> None:
         """Set the coordinates to be a uniform grid..
 
+        Collective.
+
         Local coordinates are populated, linearly extrapolated to ghost cells,
         including those outside the physical domain. This is also done in case
         of periodic boundaries, meaning that the same global point may have
@@ -626,8 +628,6 @@ cdef class DMStag(DM):
         function, i.e., two points are equivalent if their difference is a
         multiple of ``xmax-xmin`` in the x dimension, ``ymax-ymin`` in the y
         dimension, and ``zmax-zmin`` in the z dimension.
-
-        Collective.
 
         Parameters
         ----------
@@ -744,9 +744,9 @@ cdef class DMStag(DM):
     def migrateVec(self, Vec vec, DM dmTo, Vec vecTo) -> None:
         """Transfer a vector between two ``DMStag`` objects.
 
-        Currently only implemented to migrate global vectors to global vectors.
-
         Collective.
+
+        Currently only implemented to migrate global vectors to global vectors.
 
         Parameters
         ----------
@@ -796,11 +796,11 @@ cdef class DMStag(DM):
     ) -> tuple[DMDA, Vec]:
         """Return ``DMDA``, ``Vec`` from a subgrid of a ``DMStag``, its ``Vec``.
 
+        Collective.
+
         If a ``c`` value of ``-k`` is provided, the first ``k`` DOFs for that
         position are extracted, padding with zero values if needed. If a
         non-negative value is provided, a single DOF is extracted.
-
-        Collective.
 
         Parameters
         ----------

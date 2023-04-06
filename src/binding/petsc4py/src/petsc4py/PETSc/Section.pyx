@@ -46,6 +46,8 @@ cdef class Section(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Allocate a section and set the map contents to the default.
 
+        Collective.
+
         Typical calling sequence:
         - `create`
         - `setNumFields`
@@ -62,8 +64,6 @@ cdef class Section(Object):
         local section. If the section indexes a global vector, we call it a
         global section. For parallel vectors, like global vectors, we use
         negative indices to indicate DOFs owned by other processes.
-
-        Collective.
 
         Parameters
         ----------
@@ -84,9 +84,9 @@ cdef class Section(Object):
     def clone(self) -> Section:
         """Return a copy of the section.
 
-        The copy is shallow, if possible.
-
         Collective.
+
+        The copy is shallow, if possible.
 
         See Also
         --------
@@ -100,9 +100,9 @@ cdef class Section(Object):
     def setUp(self) -> None:
         """Calculate offsets.
 
-        Offsets are based on the number of degrees of freedom for each point.
-
         Not collective.
+
+        Offsets are based on the number of degrees of freedom for each point.
 
         See Also
         --------
@@ -126,9 +126,9 @@ cdef class Section(Object):
     def getNumFields(self) -> int:
         """Return the number of fields in a section.
 
-        Returns ``0`` if no fields were defined.
-
         Not collective.
+
+        Returns ``0`` if no fields were defined.
 
         See Also
         --------
@@ -242,10 +242,10 @@ cdef class Section(Object):
     def getChart(self) -> tuple[int, int]:
         """Return the range in which points (indices) lie for this section.
 
+        Not collective.
+
         The range is [pStart, pEnd), i.e., from the first point to one past the
         last point.
-
-        Not collective.
 
         See Also
         --------
@@ -259,10 +259,10 @@ cdef class Section(Object):
     def setChart(self, pStart: int, pEnd: int) -> None:
         """Set the range in which points (indices) lie for this section.
 
+        Not collective.
+
         The range is [pStart, pEnd), i.e., from the first point to one past the
         last point.
-
-        Not collective.
 
         Parameters
         ----------
@@ -315,10 +315,10 @@ cdef class Section(Object):
     def getDof(self, point: int) -> int:
         """Return the number of degrees of freedom for a given point.
 
+        Not collective.
+
         In a global section, this value will be negative for points not owned
         by this process.
-
-        Not collective.
 
         Parameters
         ----------
@@ -592,9 +592,9 @@ cdef class Section(Object):
     def getConstraintIndices(self, point: int) -> ArrayInt:
         """Return the point DOFs numbers which are constrained for a given point.
 
-        The range is in [0, DOFs).
-
         Not collective.
+
+        The range is in [0, DOFs).
 
         Parameters
         ----------
@@ -640,9 +640,9 @@ cdef class Section(Object):
     def getFieldConstraintIndices(self, point: int, field: int) -> ArrayInt:
         """Return the field DOFs numbers, in [0, DOFs), which are constrained.
 
-        The constrained DOFs are sorted in ascending order.
-
         Not collective.
+
+        The constrained DOFs are sorted in ascending order.
 
         Parameters
         ----------
@@ -741,10 +741,10 @@ cdef class Section(Object):
     def getOffset(self, point: int) -> int:
         """Return the offset for the DOFs associated with the given point.
 
+        Not collective.
+
         In a global section, this offset will be negative for points not owned
         by this process.
-
-        Not collective.
 
         Parameters
         ----------
@@ -763,9 +763,9 @@ cdef class Section(Object):
     def setOffset(self, point: int, offset: int) -> None:
         """Set the offset for the DOFs associated with the given point.
 
-        The user usually does not call this function, but uses `setUp`.
-
         Not collective.
+
+        The user usually does not call this function, but uses `setUp`.
 
         Parameters
         ----------
@@ -786,10 +786,10 @@ cdef class Section(Object):
     def getFieldOffset(self, point: int, field: int) -> int:
         """Return the offset for the field DOFs on the given point.
 
+        Not collective.
+
         In a global section, this offset will be negative for points not owned
         by this process.
-
-        Not collective.
 
         Parameters
         ----------
@@ -812,9 +812,9 @@ cdef class Section(Object):
     def setFieldOffset(self, point: int, field: int, offset: int) -> None:
         """Set the offset for the DOFs on the given field at a point.
 
-        The user usually does not call this function, but uses `setUp`.
-
         Not collective.
+
+        The user usually does not call this function, but uses `setUp`.
 
         Parameters
         ----------

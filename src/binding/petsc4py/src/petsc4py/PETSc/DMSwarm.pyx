@@ -32,11 +32,11 @@ cdef class DMSwarm(DM):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty DM object and set its type to `DM.Type.SWARM`.
 
+        Collective.
+
         DMs are the abstract objects in PETSc that mediate between meshes and
         discretizations and the algebraic solvers, time integrators, and
         optimization algorithms.
-
-        Collective.
 
         Parameters
         ----------
@@ -58,10 +58,10 @@ cdef class DMSwarm(DM):
     def createGlobalVectorFromField(self, fieldname: str) -> Vec:
         """Create a global `Vec` object associated with a given field.
 
+        Collective.
+
         The vector must be returned to the `DMSwarm` using a matching call to
         `destroyGlobalVectorFromField`.
-
-        Collective.
 
         Parameters
         ----------
@@ -102,10 +102,10 @@ cdef class DMSwarm(DM):
     def createLocalVectorFromField(self, fieldname: str) -> Vec:
         """Create a local `Vec` object associated with a given field.
 
+        Collective.
+
         The vector must be returned to the `DMSwarm` using a matching call
         to `destroyLocalVectorFromField`.
-
-        Collective.
 
         Parameters
         ----------
@@ -146,9 +146,9 @@ cdef class DMSwarm(DM):
     def initializeFieldRegister(self) -> None:
         """Initiate the registration of fields to a `DMSwarm`.
 
-        After all fields have been registered, you must call `finalizeFieldRegister`.
-
         Collective.
+
+        After all fields have been registered, you must call `finalizeFieldRegister`.
 
         See Also
         --------
@@ -224,12 +224,12 @@ cdef class DMSwarm(DM):
     def getField(self, fieldname: str) -> Sequence[int | float | complex]:
         """Return arrays storing all entries associated with a field.
 
+        Not collective.
+
         The returned array contains underlying values of the field.
 
         The array must be returned to the `DMSwarm` using a matching call to
         `restoreField`.
-
-        Not collective.
 
         Parameters
         ----------
@@ -288,10 +288,10 @@ cdef class DMSwarm(DM):
     def vectorDefineField(self, fieldname: str) -> None:
         """Set the field from which to define a `Vec` object.
 
+        Collective.
+
         The field will be used when `DM.createLocalVec`, or
         `DM.createGlobalVec` is called.
-
-        Collective.
 
         Parameters
         ----------
@@ -618,9 +618,9 @@ cdef class DMSwarm(DM):
     def setPointCoordinatesCellwise(self, coordinates: Sequence[float]) -> None:
         """Insert point coordinates within each cell.
 
-        Point coordinates are defined over the reference cell.
-
         Not collective.
+
+        Point coordinates are defined over the reference cell.
 
         Parameters
         ----------
@@ -693,13 +693,13 @@ cdef class DMSwarm(DM):
     def sortGetAccess(self) -> None:
         """Setup up a `DMSwarm` point sort context.
 
+        Not collective.
+
         The point sort context is used for efficient traversal of points within
         a cell.
 
         You must call `sortRestoreAccess` when you no longer need access to the
         sort context.
-
-        Not collective.
 
         See Also
         --------
@@ -767,9 +767,9 @@ cdef class DMSwarm(DM):
     def sortGetIsValid(self) -> bool:
         """Return whether the sort context is up-to-date.
 
-        Returns the flag associated with a `DMSwarm` point sorting context.
-
         Not collective.
+
+        Returns the flag associated with a `DMSwarm` point sorting context.
 
         See Also
         --------

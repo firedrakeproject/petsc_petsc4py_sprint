@@ -142,14 +142,14 @@ cdef class DMComposite(DM):
     def getGlobalISs(self) -> list[IS]:
         """Return the index sets for each composed object in the composite.
 
+        Collective.
+
         These could be used to extract a subset of vector entries for a
         "multi-physics" preconditioner.
 
         Use `getLocalISs` for index sets in the packed local numbering, and
         `getLGMaps` for to map local sub-DM (including ghost) indices to packed
         global indices.
-
-        Collective.
 
         See Also
         --------
@@ -169,13 +169,13 @@ cdef class DMComposite(DM):
     def getLocalISs(self) -> list[IS]:
         """Return index sets for each component of a composite local vector.
 
+        Not collective.
+
         To get the composite global indices at all local points (including
         ghosts), use `getLGMaps`.
 
         To get index sets for pieces of the composite global vector, use
         `getGlobalISs`.
-
-        Not collective.
 
         See Also
         --------
@@ -195,10 +195,10 @@ cdef class DMComposite(DM):
     def getLGMaps(self) -> list[LGMap]:
         """Return a local-to-global mapping for each DM in the composite.
 
+        Collective.
+
         Note that this includes all the ghost points that individual ghosted
         DMDA may have.
-
-        Collective.
 
         See Also
         --------
@@ -218,9 +218,9 @@ cdef class DMComposite(DM):
     def getAccess(self, Vec gvec, locs: Sequence[int] | None = None) -> Any:
         """Get access to the individual vectors from the global vector.
 
-        Use via `with` context manager (PEP 343).
-
         Not collective.
+
+        Use via `with` context manager (PEP 343).
 
         Parameters
         ----------

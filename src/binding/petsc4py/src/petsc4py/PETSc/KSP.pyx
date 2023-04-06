@@ -807,11 +807,11 @@ cdef class KSP(Object):
     def setOperators(self, Mat A=None, Mat P=None) -> None:
         """Set matrix associated with the linear system.
 
+        Collective.
+
         Set the matrix associated with the linear system and a
         (possibly) different one from which the preconditioner will be
         built.
-
-        Collective.
 
         Parameters
         ----------
@@ -848,10 +848,10 @@ cdef class KSP(Object):
     def getOperators(self) -> tuple[Mat, Mat]:
         """Return the matrix associated with the linear system.
 
+        Collective.
+
         Return the matrix associated with the linear system and a
         (possibly) different one used to construct the preconditioner.
-
-        Collective.
 
         Returns
         -------
@@ -875,10 +875,10 @@ cdef class KSP(Object):
     def setPC(self, PC pc) -> None:
         """Set the preconditioner.
 
+        Collective.
+
         Set the preconditioner to be used to calculate the application
         of the preconditioner on a vector.
-
-        Collective.
 
         Parameters
         ----------
@@ -918,10 +918,10 @@ cdef class KSP(Object):
     ) -> None:
         """Set various tolerances used by the KSP convergence testers.
 
+        Logically collective.
+
         Set the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence testers.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -962,10 +962,10 @@ cdef class KSP(Object):
     def getTolerances(self) -> tuple[float, float, float, int]:
         """Return various tolerances used by the KSP convergence tests.
 
+        Not collective.
+
         Return the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence tests.
-
-        Not collective.
 
         Returns
         -------
@@ -1093,10 +1093,10 @@ cdef class KSP(Object):
     ) -> None:
         """Set the array used to hold the residual history.
 
+        Not collective.
+
         If set, this array will contain the residual norms computed at
         each iteration of the solver.
-
-        Not collective.
 
         Parameters
         ----------
@@ -1170,10 +1170,10 @@ cdef class KSP(Object):
     ) -> None:
         """Set additional function to monitor the residual.
 
+        Logically collective
+
         Set an ADDITIONAL function to be called at every iteration to
         monitor the residual/error etc.
-
-        Logically collective
 
         Parameters
         ----------
@@ -1374,11 +1374,11 @@ cdef class KSP(Object):
     def getComputeEigenvalues(self) -> bool:
         """Return flag indicating whether eigenvalues will be calculated.
 
+        Not collective.
+
         Return the flag indicating that the extreme eigenvalues values
         will be calculated via a Lanczos or Arnoldi process as the
         linear system is solved.
-
-        Not collective.
 
         See Also
         --------
@@ -1392,11 +1392,11 @@ cdef class KSP(Object):
     def setComputeSingularValues(self, flag: bool) -> None:
         """Set flag to calculate singular values.
 
+        Logically collective.
+
         Set a flag so that the extreme singular values will be
         calculated via a Lanczos or Arnoldi process as the linear
         system is solved.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -1436,10 +1436,10 @@ cdef class KSP(Object):
     def setInitialGuessNonzero(self, flag: bool) -> None:
         """Tell the iterative solver that the initial guess is nonzero.
 
+        Logically collective.
+
         Otherwise KSP assumes the initial guess is to be zero (and thus
         zeros it out before solving).
-
-        Logically collective.
 
         Parameters
         ----------
@@ -1472,9 +1472,9 @@ cdef class KSP(Object):
     def setInitialGuessKnoll(self, flag: bool) -> None:
         """Tell solver to use `PC.apply` to compute the initial guess.
 
-        This is the Knoll trick.
-
         Logically collective.
+
+        This is the Knoll trick.
 
         Parameters
         ----------
@@ -1545,10 +1545,10 @@ cdef class KSP(Object):
     def reset(self) -> None:
         """Resets a KSP context.
 
+        Collective.
+
         Resets a KSP context to the kspsetupcalled = 0 state and
         removes any allocated Vecs and Mats.
-
-        Collective.
 
         See Also
         --------
@@ -1560,10 +1560,10 @@ cdef class KSP(Object):
     def setUpOnBlocks(self) -> None:
         """Set up the preconditioner for each block in a block method.
 
+        Collective.
+
         Methods include: block Jacobi, block Gauss-Seidel, and
         overlapping Schwarz methods.
-
-        Collective.
 
         See Also
         --------
