@@ -3154,7 +3154,7 @@ cdef class Vec(Object):
     ) -> None:
         """Begin updating ghosted vector entries.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         See Also
         --------
@@ -3172,7 +3172,7 @@ cdef class Vec(Object):
     ) -> None:
         """Finish updating ghosted vector entries initiated with `ghostUpdateBegin`.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         See Also
         --------
@@ -3190,7 +3190,7 @@ cdef class Vec(Object):
     ) -> None:
         """Update ghosted vector entries.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------

@@ -849,7 +849,7 @@ cdef class DMDA(DM):
     ) -> None:
         """Map values to the "natural" grid ordering.
 
-        Neighbor-wise collective.
+        Neighborwise collective.
 
         You must call `createNaturalVec` before using this routine.
 
@@ -880,7 +880,7 @@ cdef class DMDA(DM):
     ) -> None:
         """Map values the to grid ordering.
 
-        Neighbor-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
