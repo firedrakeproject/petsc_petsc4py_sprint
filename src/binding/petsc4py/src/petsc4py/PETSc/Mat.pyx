@@ -789,7 +789,7 @@ cdef class Mat(Object):
         Collective.
 
         This is similar to `Type.AIJ` matrices but stores some additional
-        information that improves vectorisation for the matrix-vector product.
+        information that improves vectorization for the matrix-vector product.
 
         To preallocate the matrix the user can either pass ``nnz`` or ``csr``
         describing the sparsity. If neither is set then preallocation will not
@@ -1975,7 +1975,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, inplace tranposition is performed.
+           Optional return matrix. If `None`, inplace transposition is performed.
            Otherwise, the matrix is reused.
 
         See Also
@@ -2012,7 +2012,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, inplace tranposition is performed.
+           Optional return matrix. If `None`, inplace transposition is performed.
            Otherwise, the matrix is reused.
 
         See Also
@@ -2122,7 +2122,7 @@ cdef class Mat(Object):
         return mat
 
     def equal(self, Mat mat) -> bool:
-        """Returns the result of matrix comparison.
+        """Return the result of matrix comparison.
 
         Collective.
 
@@ -2136,7 +2136,7 @@ cdef class Mat(Object):
         return toBool(flag)
 
     def isTranspose(self, Mat mat=None, tol: float = 0) -> bool:
-        """Returns the result of matrix comparison with transposition.
+        """Return the result of matrix comparison with transposition.
 
         Collective.
 
@@ -2442,7 +2442,7 @@ cdef class Mat(Object):
         values: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
-        """Set or add a values to the rows ⊗ col entries of the matrix.
+        """Set or add values to the rows ⊗ col entries of the matrix.
 
         Not collective.
 
@@ -2536,7 +2536,7 @@ cdef class Mat(Object):
         values: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
-        """Set or add a values to the rows ⊗ col block entries of the matrix.
+        """Set or add values to the rows ⊗ col block entries of the matrix.
 
         Not collective.
 
@@ -2702,7 +2702,7 @@ cdef class Mat(Object):
         values: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
-        """Set or add a values to the rows ⊗ col entries of the matrix in local ordering.
+        """Set or add values to the rows ⊗ col entries of the matrix in local ordering.
 
         Not collective.
 
@@ -2796,7 +2796,7 @@ cdef class Mat(Object):
         values: Sequence[Scalar],
         addv: InsertModeSpec = None,
         ) -> None:
-        """Set or add a values to the rows ⊗ col block entries of the matrix in local ordering.
+        """Set or add values to the rows ⊗ col block entries of the matrix in local ordering.
 
         Not collective.
 
@@ -3160,7 +3160,7 @@ cdef class Mat(Object):
         CHKERR( MatStoreValues(self.mat) )
 
     def retrieveValues(self) -> None:
-        """Retrieve a copy of the matrix values previosly stored with `storeValues`.
+        """Retrieve a copy of the matrix values previously stored with `storeValues`.
 
         Collective.
 
@@ -4030,7 +4030,7 @@ cdef class Mat(Object):
         Mat result=None,
         fill: float | None = None
     ) -> Mat:
-        """Performs matrix-matrix multiplication C=AB.
+        """Perform matrix-matrix multiplication C=AB.
 
         Neighborwise collective.
 
@@ -4752,7 +4752,7 @@ cdef class Mat(Object):
         return self
 
     def H2OpusCompress(self, tol: float):
-        """Compress a hierachical matrix.
+        """Compress a hierarchical matrix.
 
         Parameters
         ----------
@@ -5176,7 +5176,7 @@ cdef class Mat(Object):
         return mat
 
     def getDenseColumnVec(self, i: int, mode: AccessModeSpec = 'rw') -> Vec:
-        """Return the iᵗʰ column vector of dense the matrix.
+        """Return the iᵗʰ column vector of the dense matrix.
 
         Collective.
 
