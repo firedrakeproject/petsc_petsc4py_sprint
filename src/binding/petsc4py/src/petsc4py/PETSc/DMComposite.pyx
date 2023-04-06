@@ -100,7 +100,7 @@ cdef class DMComposite(DM):
 
         See Also
         --------
-        petsc.DMCompositeScatterArray, gather
+        gather, petsc.DMCompositeScatterArray
 
         """
         cdef PetscInt i, n = 0
@@ -127,7 +127,7 @@ cdef class DMComposite(DM):
 
         See Also
         --------
-        petsc.DMCompositeGatherArray, scatter
+        scatter, petsc.DMCompositeGatherArray
 
         """
         cdef PetscInsertMode cimode = insertmode(imode)

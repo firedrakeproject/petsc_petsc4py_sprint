@@ -73,7 +73,7 @@ cdef class Sys:
 
         See Also
         --------
-        petsc.PetscGetVersion,  petsc.PetscGetVersionNumber
+        petsc.PetscGetVersion, petsc.PetscGetVersionNumber
 
         """
         version, dev, date, author = cls.getVersion(True, True, True)

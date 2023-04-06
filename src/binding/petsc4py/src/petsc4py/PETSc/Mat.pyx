@@ -552,8 +552,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        setBlockSize, setBlockSizes
-        petsc.MatSetSizes, petsc.MatSetBlockSize, petsc.MatSetBlockSizes
+        setBlockSize, setBlockSizes, petsc.MatSetSizes, petsc.MatSetBlockSize
+        petsc.MatSetBlockSizes
 
         """
         cdef PetscInt rbs = 0, cbs = 0, m = 0, n = 0, M = 0, N = 0
@@ -672,9 +672,9 @@ cdef class Mat(Object):
 
         See Also
         --------
-        setSizes, createBAIJ,
-        petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ, petsc.MatCreateAIJ
-        petsc.MatSeqAIJSetPreallocation, petsc.MatSeqAIJSetPreallocationCSR
+        setSizes, createBAIJ, petsc.MATAIJ, petsc.MATSEQAIJ, petsc.MATMPIAIJ
+        petsc.MatCreateAIJ, petsc.MatSeqAIJSetPreallocation
+        petsc.MatSeqAIJSetPreallocationCSR
 
         """
         # create matrix
@@ -718,8 +718,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        setSizes, createAIJ
-        petsc.MATBAIJ, petsc.MATSEQBAIJ, petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
+        setSizes, createAIJ, petsc.MATBAIJ, petsc.MATSEQBAIJ
+        petsc.MATMPIBAIJ, petsc.MatCreateBAIJ
 
         """
         # create matrix
@@ -764,8 +764,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        createAIJ, createBAIJ
-        petsc.MatCreateSBAIJ
+        createAIJ, createBAIJ, petsc.MatCreateSBAIJ
 
         """
         # create matrix
@@ -812,8 +811,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        createAIJ, createBAIJ
-        petsc.MatCreateSeqAIJCRL, petsc.MatCreateMPIAIJCRL
+        createAIJ, createBAIJ, petsc.MatCreateSeqAIJCRL
+        petsc.MatCreateMPIAIJCRL
 
         """
         # create matrix
@@ -840,8 +839,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        setPreallocationCSR, createAIJ
-        petsc.MatSeqAIJSetPreallocation
+        setPreallocationCSR, createAIJ, petsc.MatSeqAIJSetPreallocation
         petsc.MatMPIAIJSetPreallocation
 
         """
@@ -915,9 +913,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        createAIJ
-        petsc.MatCreateSeqAIJWithArrays, petsc.MatCreateMPIAIJWithArrays
-        petsc.MatCreateMPIAIJWithSplitArrays
+        createAIJ, petsc.MatCreateSeqAIJWithArrays
+        petsc.MatCreateMPIAIJWithArrays, petsc.MatCreateMPIAIJWithSplitArrays
 
         """
         # communicator
@@ -1002,8 +999,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        createDenseCUDA
-        petsc.MATDENSE, petsc.MatCreateDense
+        createDenseCUDA, petsc.MATDENSE, petsc.MatCreateDense
 
         """
         # create matrix
@@ -1188,8 +1184,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        createHermitianTranspose
-        petsc.MATNORMAL, petsc.MATNORMALHERMITIAN, petsc.MatCreateNormalHermitian
+        createHermitianTranspose, petsc.MATNORMAL, petsc.MATNORMALHERMITIAN
+        petsc.MatCreateNormalHermitian
 
         """
         cdef PetscMat newmat = NULL
@@ -1562,7 +1558,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, setPythonContext, getPythonType, petsc.MatPythonSetType
+        petsc_python_mat, setPythonContext, getPythonType
+        petsc.MatPythonSetType
 
         """
         cdef const char *cval = NULL
@@ -1576,7 +1573,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        petsc_python_mat, setPythonContext, setPythonType, petsc.MatPythonGetType
+        petsc_python_mat, setPythonContext, setPythonType
+        petsc.MatPythonGetType
 
         """
         cdef const char *cval = NULL
@@ -1771,8 +1769,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        getOwnershipRanges, getOwnershipRangeColumn
-        petsc.MatGetOwnershipRange
+        getOwnershipRanges, getOwnershipRangeColumn, petsc.MatGetOwnershipRange
 
         """
         cdef PetscInt ival1 = 0, ival2 = 0
@@ -1839,8 +1836,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        getOwnershipRanges, getOwnershipRangesColumn
-        petsc.MatGetOwnershipIS
+        getOwnershipRanges, getOwnershipRangesColumn, petsc.MatGetOwnershipIS
 
         """
         cdef IS rows = IS()
@@ -3063,7 +3059,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        zeroRowsColumnsLocal, zeroRows, petsc.MatZeroRowsColumns, petsc.MatZeroRowsColumnsIS
+        zeroRowsColumnsLocal, zeroRows, petsc.MatZeroRowsColumns
+        petsc.MatZeroRowsColumnsIS
 
         """
         cdef PetscInt ni=0, *i=NULL
@@ -3096,7 +3093,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        zeroRowsLocal, zeroRowsColumns, petsc.MatZeroRowsColumnsLocal, petsc.MatZeroRowsColumnsLocalIS
+        zeroRowsLocal, zeroRowsColumns, petsc.MatZeroRowsColumnsLocal
+        petsc.MatZeroRowsColumnsLocalIS
 
         """
         cdef PetscInt ni=0, *i=NULL
@@ -3522,8 +3520,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        setNullSpace, getTransposeNullSpace
-        petsc.MatSetTransposeNullSpace
+        setNullSpace, getTransposeNullSpace, petsc.MatSetTransposeNullSpace
 
         """
         CHKERR( MatSetTransposeNullSpace(self.mat, nsp.nsp) )
@@ -3535,8 +3532,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        getNullSpace, setTransposeNullSpace
-        petsc.MatGetTransposeNullSpace
+        getNullSpace, setTransposeNullSpace, petsc.MatGetTransposeNullSpace
 
         """
         cdef NullSpace nsp = NullSpace()
@@ -3551,8 +3547,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        setNullSpace, getNearNullSpace
-        petsc.MatSetNearNullSpace
+        setNullSpace, getNearNullSpace, petsc.MatSetNearNullSpace
 
         """
         CHKERR( MatSetNearNullSpace(self.mat, nsp.nsp) )
@@ -3564,8 +3559,7 @@ cdef class Mat(Object):
 
         See Also
         --------
-        getNullSpace, setNearNullSpace
-        petsc.MatSetNearNullSpace
+        getNullSpace, setNearNullSpace, petsc.MatSetNearNullSpace
 
         """
         cdef NullSpace nsp = NullSpace()
@@ -5187,9 +5181,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        restoreDenseColumnVec
-        petsc.MatDenseGetColumnVec, petsc.MatDenseGetColumnVecRead,
-        petsc.MatDenseGetColumnVecWrite
+        restoreDenseColumnVec, petsc.MatDenseGetColumnVec
+        petsc.MatDenseGetColumnVecRead, petsc.MatDenseGetColumnVecWrite
 
         """
         if mode is None: mode = 'rw'
@@ -5220,9 +5213,8 @@ cdef class Mat(Object):
 
         See Also
         --------
-        getDenseColumnVec
-        petsc.MatDenseRestoreColumnVec, petsc.MatDenseRestoreColumnVecRead,
-        petsc.MatDenseRestoreColumnVecWrite
+        getDenseColumnVec, petsc.MatDenseRestoreColumnVec
+        petsc.MatDenseRestoreColumnVecRead, petsc.MatDenseRestoreColumnVecWrite
 
         """
         cdef PetscInt _i = asInt(i)

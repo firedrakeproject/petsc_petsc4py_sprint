@@ -151,7 +151,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetNumFields, getNumFields
+        getNumFields, petsc.PetscSectionSetNumFields
 
         """
         cdef PetscInt cnumFields = asInt(numFields)
@@ -169,7 +169,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetFieldName, setFieldName
+        setFieldName, petsc.PetscSectionGetFieldName
 
         """
         cdef PetscInt cfield = asInt(field)
@@ -191,7 +191,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetFieldName, getFieldName
+        getFieldName, petsc.PetscSectionSetFieldName
 
         """
         cdef PetscInt cfield = asInt(field)
@@ -211,7 +211,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetFieldComponents, setFieldComponents
+        setFieldComponents, petsc.PetscSectionGetFieldComponents
 
         """
         cdef PetscInt cfield = asInt(field), cnumComp = 0
@@ -232,7 +232,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetFieldComponents, getFieldComponents
+        getFieldComponents, petsc.PetscSectionSetFieldComponents
 
         """
         cdef PetscInt cfield = asInt(field)
@@ -287,7 +287,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetPermutation, setPermutation
+        setPermutation, petsc.PetscSectionGetPermutation
 
         """
         cdef IS perm = IS()
@@ -307,7 +307,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetPermutation, getPermutation
+        getPermutation, petsc.PetscSectionSetPermutation
 
         """
         CHKERR( PetscSectionSetPermutation(self.sec, perm.iset))
@@ -327,7 +327,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetDof, setDof, addDof
+        setDof, addDof, petsc.PetscSectionGetDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -348,7 +348,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetDof, getDof, addDof
+        getDof, addDof, petsc.PetscSectionSetDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -369,7 +369,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionAddDof, setDof, getDof
+        setDof, getDof, petsc.PetscSectionAddDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -390,7 +390,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetFieldDof, setFieldDof
+        setFieldDof, petsc.PetscSectionGetFieldDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -414,7 +414,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetFieldDof, getFieldDof, addFieldDof
+        getFieldDof, addFieldDof, petsc.PetscSectionSetFieldDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -438,7 +438,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionAddFieldDof, setFieldDof, getFieldDof
+        setFieldDof, getFieldDof, petsc.PetscSectionAddFieldDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -458,7 +458,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetConstraintDof, setConstraintDof
+        setConstraintDof, petsc.PetscSectionGetConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -479,7 +479,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetConstraintDof, getConstraintDof, addConstraintDof
+        getConstraintDof, addConstraintDof, petsc.PetscSectionSetConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -500,7 +500,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionAddConstraintDof, setConstraintDof, getConstraintDof
+        setConstraintDof, getConstraintDof, petsc.PetscSectionAddConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -521,7 +521,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetFieldConstraintDof, setFieldConstraintDof
+        setFieldConstraintDof, petsc.PetscSectionGetFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point), cnumDof = 0
@@ -550,8 +550,8 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetFieldConstraintDof, getFieldConstraintDof,
-        addFieldConstraintDof
+        getFieldConstraintDof, addFieldConstraintDof
+        petsc.PetscSectionSetFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -580,8 +580,8 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionAddFieldConstraintDof, setFieldConstraintDof,
-        getFieldConstraintDof
+        setFieldConstraintDof, getFieldConstraintDof
+        petsc.PetscSectionAddFieldConstraintDof
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -603,7 +603,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetConstraintIndices, setConstraintIndices
+        setConstraintIndices, petsc.PetscSectionGetConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -627,7 +627,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetConstraintIndices, getConstraintIndices
+        getConstraintIndices, petsc.PetscSectionSetConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -653,7 +653,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetFieldConstraintIndices, setFieldConstraintIndices
+        setFieldConstraintIndices, petsc.PetscSectionGetFieldConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -685,7 +685,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetFieldConstraintIndices, getFieldConstraintIndices
+        getFieldConstraintIndices, petsc.PetscSectionSetFieldConstraintIndices
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -717,7 +717,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetStorageSize, getConstrainedStorageSize
+        getConstrainedStorageSize, petsc.PetscSectionGetStorageSize
 
         """
         cdef PetscInt size = 0
@@ -731,7 +731,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetConstrainedStorageSize, getStorageSize
+        getStorageSize, petsc.PetscSectionGetConstrainedStorageSize
 
         """
         cdef PetscInt size = 0
@@ -753,7 +753,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetOffset, setOffset
+        setOffset, petsc.PetscSectionGetOffset
 
         """
         cdef PetscInt cpoint = asInt(point), offset = 0
@@ -776,7 +776,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetOffset, getOffset
+        getOffset, petsc.PetscSectionSetOffset
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -800,7 +800,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionGetFieldOffset, setFieldOffset
+        setFieldOffset, petsc.PetscSectionGetFieldOffset
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -827,7 +827,7 @@ cdef class Section(Object):
 
         See Also
         --------
-        petsc.PetscSectionSetFieldOffset, getFieldOffset
+        getFieldOffset, petsc.PetscSectionSetFieldOffset
 
         """
         cdef PetscInt cpoint = asInt(point)

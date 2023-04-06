@@ -22,7 +22,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationCreate, destroy
+        destroy, petsc.DMInterpolationCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_SELF)
@@ -39,7 +39,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationDestroy, create
+        create, petsc.DMInterpolationDestroy
 
         """
         CHKERR( DMInterpolationDestroy(&self.dminterp))
@@ -94,7 +94,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationGetDim, setDim
+        setDim, petsc.DMInterpolationGetDim
 
         """
         cdef PetscInt cdim = 0
@@ -108,7 +108,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationGetDof, setDof
+        setDof, petsc.DMInterpolationGetDof
 
         """
         cdef PetscInt cdof = 0
@@ -127,7 +127,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationSetDim, getDim
+        getDim, petsc.DMInterpolationSetDim
 
         """
         cdef PetscInt cdim = asInt(dim)
@@ -145,7 +145,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationSetDof, getDof
+        getDof, petsc.DMInterpolationSetDof
 
         """
         cdef PetscInt cdof = asInt(dof)
@@ -190,7 +190,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationGetVector, restoreVector
+        restoreVector, petsc.DMInterpolationGetVector
 
         """
         cdef Vec vec = Vec()
@@ -209,7 +209,7 @@ cdef class DMInterpolation:
 
         See Also
         --------
-        petsc.DMInterpolationRestoreVector, getVector
+        getVector, petsc.DMInterpolationRestoreVector
 
         """
         CHKERR( DMInterpolationRestoreVector(self.dminterp, &vec.vec) )

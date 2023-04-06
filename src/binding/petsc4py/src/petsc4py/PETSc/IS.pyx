@@ -893,8 +893,7 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc.ISGetLocalSize
-        petsc.ISStrideGetInfo
+        petsc.ISGetLocalSize, petsc.ISStrideGetInfo
 
         """
         cdef PetscInt size=0, first=0, step=0

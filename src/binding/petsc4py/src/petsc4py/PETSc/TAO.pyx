@@ -430,7 +430,8 @@ cdef class TAO(Object):
 
         See Also
         --------
-        setObjective, setGradient, setHessian, getObjectiveAndGradient, petsc.TaoSetObjectiveAndGradient
+        setObjective, setGradient, setHessian, getObjectiveAndGradient
+        petsc.TaoSetObjectiveAndGradient
 
         """
         cdef PetscVec gvec = NULL
@@ -543,7 +544,8 @@ cdef class TAO(Object):
 
         See Also
         --------
-        getHessian, setObjective, setObjectiveGradient, setGradient, petsc.TaoSetHessian
+        getHessian, setObjective, setObjectiveGradient, setGradient
+        petsc.TaoSetHessian
 
         """
         cdef PetscMat Hmat = NULL
@@ -825,7 +827,8 @@ cdef class TAO(Object):
 
         See Also
         --------
-        setObjectiveGradient, setGradient, setObjective, petsc.TaoComputeObjectiveAndGradient
+        setObjectiveGradient, setGradient, setObjective
+        petsc.TaoComputeObjectiveAndGradient
 
         """
         cdef PetscReal f = 0
@@ -1659,7 +1662,8 @@ cdef class TAO(Object):
 
         See Also
         --------
-        petsc_python_tao, setPythonContext, getPythonType, petsc.TaoPythonSetType
+        petsc_python_tao, setPythonContext, getPythonType
+        petsc.TaoPythonSetType
 
         """
         cdef const char *cval = NULL
@@ -1673,7 +1677,8 @@ cdef class TAO(Object):
 
         See Also
         --------
-        petsc_python_tao, setPythonContext, setPythonType, petsc.TaoPythonGetType
+        petsc_python_tao, setPythonContext, setPythonType
+        petsc.TaoPythonGetType
 
         """
         cdef const char *cval = NULL

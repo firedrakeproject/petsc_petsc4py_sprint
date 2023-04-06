@@ -495,6 +495,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetRHSFunction
+
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -534,6 +535,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetRHSJacobian
+
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -783,6 +785,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetIJacobianP
+
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -1242,8 +1245,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        setTimeSpan
-        petsc.TSGetTimeSpanSolutions
+        setTimeSpan, petsc.TSGetTimeSpanSolutions
 
         """
         cdef PetscInt nt = 0
@@ -2307,8 +2309,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        setCostGradients
-        petsc.TSGetCostGradients
+        setCostGradients, petsc.TSGetCostGradients
 
         """
         cdef PetscInt i = 0, n = 0
@@ -2617,6 +2618,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSThetaSetTheta
+
         """
         cdef PetscReal rval = asReal(theta)
         CHKERR( TSThetaSetTheta(self.ts, rval) )
@@ -2629,6 +2631,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSThetaGetTheta
+
         """
         cdef PetscReal rval = 0
         CHKERR( TSThetaGetTheta(self.ts, &rval) )

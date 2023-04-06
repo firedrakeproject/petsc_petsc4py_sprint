@@ -75,8 +75,8 @@ cdef class AO(Object):
 
         See Also
         --------
-        petsc.AOCreateBasicIS, petsc.AOCreateBasic, createMemoryScalable,
-        createMapping
+        createMemoryScalable, createMapping, petsc.AOCreateBasicIS
+        petsc.AOCreateBasic
 
         """
         cdef PetscIS isapp = NULL, ispetsc = NULL
@@ -128,8 +128,8 @@ cdef class AO(Object):
 
         See Also
         --------
-        petsc.AOCreateMemoryScalableIS, petsc.AOCreateMemoryScalable,
-        createBasic, createMapping
+        createBasic, createMapping, petsc.AOCreateMemoryScalableIS
+        petsc.AOCreateMemoryScalable
 
         """
         cdef PetscIS isapp = NULL, ispetsc = NULL
@@ -174,7 +174,7 @@ cdef class AO(Object):
 
         See Also
         --------
-        petsc.AOCreateMappingIS, petsc.AOCreateMapping, createBasic
+        createBasic, petsc.AOCreateMappingIS, petsc.AOCreateMapping
 
         """
         cdef PetscIS isapp = NULL, ispetsc = NULL
@@ -231,7 +231,7 @@ cdef class AO(Object):
 
         See Also
         --------
-        petsc.AOApplicationToPetscIS, petsc.AOApplicationToPetsc, petsc2app
+        petsc2app, petsc.AOApplicationToPetscIS, petsc.AOApplicationToPetsc
 
         """
         cdef PetscIS iset = NULL
@@ -265,7 +265,7 @@ cdef class AO(Object):
 
         See Also
         --------
-        petsc.AOPetscToApplicationIS, petsc.AOPetscToApplication, app2petsc
+        app2petsc, petsc.AOPetscToApplicationIS, petsc.AOPetscToApplication
 
         """
         cdef PetscIS iset = NULL

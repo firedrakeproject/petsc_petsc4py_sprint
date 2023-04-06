@@ -691,7 +691,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PETSc.KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone,
+        PETSc.KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone
         petsc.KSPSetDM
 
         """
@@ -794,7 +794,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PETSc.KSP, solve, setOperators, petsc.KSPSetComputeOperators,
+        PETSc.KSP, solve, setOperators, petsc.KSPSetComputeOperators
         petsc.KSPSetReusePreconditioner
 
         """
@@ -836,8 +836,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PETSc.KSP, solve, setComputeOperators,
-        petsc.KSPSetOperators
+        PETSc.KSP, solve, setComputeOperators, petsc.KSPSetOperators
 
         """
         cdef PetscMat amat=NULL
@@ -947,8 +946,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, getTolerances, setConvergenceTest,
-        petsc.KSPSetTolerances, petsc.KSPConvergedDefault,
+        petsc_options, getTolerances, setConvergenceTest
+        petsc.KSPSetTolerances, petsc.KSPConvergedDefault
 
         """
         cdef PetscReal crtol, catol, cdivtol
@@ -1028,8 +1027,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        setTolerances, getConvergenceTest,
-        petsc.KSPSetConvergenceTest, petsc.KSPConvergedDefault
+        setTolerances, getConvergenceTest, petsc.KSPSetConvergenceTest
+        petsc.KSPConvergedDefault
 
         """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
@@ -1060,8 +1059,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        setTolerances, setConvergenceTest,
-        petsc.KSPGetConvergenceTest, petsc.KSPConvergedDefault
+        setTolerances, setConvergenceTest, petsc.KSPGetConvergenceTest
+        petsc.KSPConvergedDefault
 
         """
         return self.get_attr('__converged__')
@@ -1199,8 +1198,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, getMonitor, monitor, monitorCancel,
-        petsc.KSPMonitorSet
+        petsc_options, getMonitor, monitor, monitorCancel, petsc.KSPMonitorSet
 
         """
         if monitor is None: return
@@ -1220,8 +1218,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, setMonitor, monitor,
-        monitorCancel, petsc.KSPGetMonitorContext
+        petsc_options, setMonitor, monitor, monitorCancel
+        petsc.KSPGetMonitorContext
 
         """
         return self.get_attr('__monitor__')
@@ -1233,8 +1231,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, getMonitor, setMonitor, monitor,
-        petsc.KSPMonitorCancel
+        petsc_options, getMonitor, setMonitor, monitor, petsc.KSPMonitorCancel
 
         """
         CHKERR( KSPMonitorCancel(self.ksp) )
@@ -1291,8 +1288,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PC.Side, petsc_options, getPCSide, setNormType,
-        getNormType, petsc.KSPSetPCSide
+        PC.Side, petsc_options, getPCSide, setNormType, getNormType
+        petsc.KSPSetPCSide
 
         """
         CHKERR( KSPSetPCSide(self.ksp, side) )
@@ -1304,8 +1301,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, setPCSide, setNormType, getNormType,
-        petsc.KSPGetPCSide
+        petsc_options, setPCSide, setNormType, getNormType, petsc.KSPGetPCSide
 
         """
         cdef PetscPCSide side = PC_LEFT
@@ -1330,9 +1326,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        NormType, petsc_options, setUp, solve, destroy,
-        setPCSide, getPCSide, NormType,
-        petsc.KSPSetNormType, petsc.KSPConvergedSkip,
+        NormType, petsc_options, setUp, solve, destroy, setPCSide, getPCSide
+        NormType, petsc.KSPSetNormType, petsc.KSPConvergedSkip
         petsc.KSPSetCheckNormIteration
 
         """
@@ -1345,8 +1340,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        NormType, setNormType,
-        petsc.KSPGetNormType, petsc.KSPConvergedSkip
+        NormType, setNormType, petsc.KSPGetNormType, petsc.KSPConvergedSkip
 
         """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
@@ -1649,9 +1643,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        create, setUp, destroy, setTolerances, converged,
-        solveTranspose, its, Mat.setNullSpace,
-        Mat.setTransposeNullSpace, Type, converged,
+        create, setUp, destroy, setTolerances, converged, solveTranspose, its
+        Mat.setNullSpace, Mat.setTransposeNullSpace, Type, converged
         setErrorIfNotConverged petsc_options, petsc.KSPSolve
 
         """
@@ -2040,7 +2033,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_python_ksp, setPythonContext, getPythonType,
+        petsc_python_ksp, setPythonContext, getPythonType
         petsc.KSPPythonSetType
 
         """
@@ -2055,7 +2048,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_python_ksp, setPythonContext, setPythonType,
+        petsc_python_ksp, setPythonContext, setPythonType
         petsc.KSPPythonGetType
 
         """
@@ -2161,7 +2154,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        getInitialGuessKnoll, setInitialGuessKnoll,
+        getInitialGuessKnoll, setInitialGuessKnoll
         petsc.KSPGetInitialGuessKnoll, petsc.KSPSetInitialGuessKnoll
 
         """

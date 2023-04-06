@@ -51,7 +51,7 @@ cdef class DMShell(DM):
 
         See Also
         --------
-        petsc.DMShellSetGlobalVector, setLocalVector
+        setLocalVector, petsc.DMShellSetGlobalVector
 
         """
         CHKERR( DMShellSetGlobalVector(self.dm, gv.vec) )
@@ -68,7 +68,7 @@ cdef class DMShell(DM):
 
         See Also
         --------
-        petsc.DMShellSetLocalVector, setGlobalVector
+        setGlobalVector, petsc.DMShellSetLocalVector
 
         """
         CHKERR( DMShellSetLocalVector(self.dm, lv.vec) )
@@ -94,7 +94,7 @@ cdef class DMShell(DM):
 
         See Also
         --------
-        petsc.DMShellSetCreateGlobalVector, setCreateLocalVector
+        setCreateLocalVector, petsc.DMShellSetCreateGlobalVector
 
         """
         if create_gvec is not None:
@@ -127,7 +127,7 @@ cdef class DMShell(DM):
 
         See Also
         --------
-        petsc.DMShellSetCreateLocalVector, setCreateGlobalVector
+        setCreateGlobalVector, petsc.DMShellSetCreateLocalVector
 
         """
         if create_lvec is not None:
@@ -392,7 +392,7 @@ cdef class DMShell(DM):
 
         See Also
         --------
-        petsc.DMShellSetCoarsen, setRefine
+        setRefine, petsc.DMShellSetCoarsen
 
         """
         if coarsen is not None:
@@ -425,7 +425,7 @@ cdef class DMShell(DM):
 
         See Also
         --------
-        petsc.DMShellSetRefine, setCoarsen
+        setCoarsen, petsc.DMShellSetRefine
 
         """
         if refine is not None:

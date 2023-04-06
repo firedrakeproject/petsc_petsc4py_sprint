@@ -521,7 +521,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc.VecCreateSeqViennaCLWithArrays, petsc.VecCreateMPIViennaCLWithArrays
+        petsc.VecCreateSeqViennaCLWithArrays
+        petsc.VecCreateMPIViennaCLWithArrays
 
         """
         cdef PetscInt na=0
@@ -853,8 +854,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createGhostWithArray
-        petsc.VecCreateGhost, petsc.VecCreateGhostBlock
+        createGhostWithArray, petsc.VecCreateGhost, petsc.VecCreateGhostBlock
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -901,8 +901,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createGhost
-        petsc.VecCreateGhostWithArray, petsc.VecCreateGhostBlockWithArray
+        createGhost, petsc.VecCreateGhostWithArray
+        petsc.VecCreateGhostBlockWithArray
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -1143,8 +1143,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        getSize, getLocalSize
-        petsc.VecGetLocalSize, petsc.VecGetSize
+        getSize, getLocalSize, petsc.VecGetLocalSize, petsc.VecGetSize
 
         """
         cdef PetscInt n = 0, N = 0
@@ -1253,8 +1252,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createLocalVector, restoreLocalVector
-        petsc.VecGetLocalVectorRead, petsc.VecGetLocalVector
+        createLocalVector, restoreLocalVector, petsc.VecGetLocalVectorRead
+        petsc.VecGetLocalVector
 
         """
         if readonly:
@@ -1276,8 +1275,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createLocalVector, getLocalVector
-        petsc.VecRestoreLocalVectorRead, petsc.VecRestoreLocalVector
+        createLocalVector, getLocalVector, petsc.VecRestoreLocalVectorRead
+        petsc.VecRestoreLocalVector
 
         """
         if readonly:
@@ -1462,8 +1461,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        restoreCUDAHandle, petsc.VecCUDAGetArray
-        petsc.VecCUDAGetArrayRead, petsc.VecCUDAGetArrayWrite
+        restoreCUDAHandle, petsc.VecCUDAGetArray, petsc.VecCUDAGetArrayRead
+        petsc.VecCUDAGetArrayWrite
 
         """
         cdef PetscScalar *hdl = NULL
@@ -1536,8 +1535,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        restoreHIPHandle, petsc.VecHIPGetArray
-        petsc.VecHIPGetArrayRead, petsc.VecHIPGetArrayWrite
+        restoreHIPHandle, petsc.VecHIPGetArray, petsc.VecHIPGetArrayRead
+        petsc.VecHIPGetArrayWrite
 
         """
         cdef PetscScalar *hdl = NULL
@@ -1571,8 +1570,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        getHIPHandle, petsc.VecHIPRestoreArray
-        petsc.VecHIPRestoreArrayRead, petsc.VecHIPRestoreArrayWrite
+        getHIPHandle, petsc.VecHIPRestoreArray, petsc.VecHIPRestoreArrayRead
+        petsc.VecHIPRestoreArrayWrite
 
         """
         cdef PetscScalar *hdl = <PetscScalar*>(<Py_uintptr_t>handle)
@@ -2739,8 +2738,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        setValues, setValuesLocal, getLGMap
-        petsc.VecSetLocalToGlobalMapping
+        setValues, setValuesLocal, getLGMap, petsc.VecSetLocalToGlobalMapping
 
         """
         CHKERR( VecSetLocalToGlobalMapping(self.vec, lgmap.lgm) )
@@ -2867,8 +2865,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        setValuesBlocked, setValuesLocal
-        petsc.VecSetValuesBlockedLocal
+        setValuesBlocked, setValuesLocal, petsc.VecSetValuesBlockedLocal
 
         """
         vecsetvalues(self.vec, indices, values, addv, 1, 1)
@@ -3161,8 +3158,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        ghostUpdateEnd, ghostUpdate, createGhost
-        petsc.VecGhostUpdateBegin
+        ghostUpdateEnd, ghostUpdate, createGhost, petsc.VecGhostUpdateBegin
 
         """
         cdef PetscInsertMode  caddv = insertmode(addv)
@@ -3180,8 +3176,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        ghostUpdateBegin, ghostUpdate, createGhost
-        petsc.VecGhostUpdateEnd
+        ghostUpdateBegin, ghostUpdate, createGhost, petsc.VecGhostUpdateEnd
 
         """
         cdef PetscInsertMode  caddv = insertmode(addv)
