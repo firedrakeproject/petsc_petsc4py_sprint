@@ -417,7 +417,7 @@ cdef class SF(Object):
 
         Collective.
 
-        Puts the *sf* under this object in a top (roots) down (leaves) view.
+        Puts the ``sf`` under this object in a top (roots) down (leaves) view.
 
         Parameters
         ----------
