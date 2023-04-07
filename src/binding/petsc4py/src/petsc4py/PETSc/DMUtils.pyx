@@ -18,7 +18,7 @@ cdef class DMInterpolation:
         Parameters
         ----------
         comm
-            MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `COMM_SELF`.
 
         See Also
         --------
