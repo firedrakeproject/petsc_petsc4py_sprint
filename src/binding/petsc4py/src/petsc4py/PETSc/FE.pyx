@@ -58,7 +58,7 @@ cdef class FE(Object):
         Parameters
         ----------
         comm
-            The communicator for the `FE` object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -71,7 +71,6 @@ cdef class FE(Object):
         PetscCLEAR(self.obj); self.fe = newfe
         return self
 
-    # TODO:
     def createDefault(
         self,
         dim: int,
@@ -99,7 +98,7 @@ cdef class FE(Object):
         prefix
             The options prefix, or `None`.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -146,7 +145,7 @@ cdef class FE(Object):
             The quadrature order or `DETERMINE` to use `Space` polynomial
             degree.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -239,11 +238,11 @@ cdef class FE(Object):
         CHKERR( PetscFESetNumComponents(self.fe, comp) )
 
     def getNumDof(self) -> ndarray:
-        """Return the number of dofs.
+        """Return the number of DOFs.
 
         Not collective.
 
-        Return the number of dofs (dual basis vectors) associated with mesh
+        Return the number of DOFs (dual basis vectors) associated with mesh
         points on the reference cell of a given dimension.
 
         See Also

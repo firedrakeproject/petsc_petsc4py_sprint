@@ -33,7 +33,7 @@ cdef class Quad(Object):
         Parameters
         ----------
         comm
-            The communicator for the `Quad` object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

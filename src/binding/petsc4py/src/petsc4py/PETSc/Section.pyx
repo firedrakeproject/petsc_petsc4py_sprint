@@ -68,7 +68,7 @@ cdef class Section(Object):
         Parameters
         ----------
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

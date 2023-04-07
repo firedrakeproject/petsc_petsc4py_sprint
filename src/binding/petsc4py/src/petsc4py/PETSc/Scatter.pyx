@@ -1,21 +1,21 @@
 # --------------------------------------------------------------------
 
 class ScatterType(object):
-   """Scatter type.
+    """Scatter type.
 
-   See Also
-   --------
-   petsc.VecScatterType
+    See Also
+    --------
+    petsc.VecScatterType
 
-   """
-   BASIC      = S_(PETSCSFBASIC)
-   NEIGHBOR   = S_(PETSCSFNEIGHBOR)
-   ALLGATHERV = S_(PETSCSFALLGATHERV)
-   ALLGATHER  = S_(PETSCSFALLGATHER)
-   GATHERV    = S_(PETSCSFGATHERV)
-   GATHER     = S_(PETSCSFGATHER)
-   ALLTOALL   = S_(PETSCSFALLTOALL)
-   WINDOW     = S_(PETSCSFWINDOW)
+    """
+    BASIC      = S_(PETSCSFBASIC)
+    NEIGHBOR   = S_(PETSCSFNEIGHBOR)
+    ALLGATHERV = S_(PETSCSFALLGATHERV)
+    ALLGATHER  = S_(PETSCSFALLGATHER)
+    GATHERV    = S_(PETSCSFGATHERV)
+    GATHER     = S_(PETSCSFGATHER)
+    ALLTOALL   = S_(PETSCSFALLTOALL)
+    WINDOW     = S_(PETSCSFWINDOW)
 
 # --------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ cdef class Scatter(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         See Also
         --------
@@ -101,13 +101,13 @@ cdef class Scatter(Object):
         Parameters
         ----------
         vec_from
-          Representative vector from which to scatter the data.
+            Representative vector from which to scatter the data.
         is_from
-          Indices of ``vec_from`` to scatter. If `None`, use all indices.
+            Indices of ``vec_from`` to scatter. If `None`, use all indices.
         vec_to
-          Representative vector to which scatter the data.
+            Representative vector to which scatter the data.
         is_to
-          Indices of ``vec_to`` where to receive. If `None`, use all indices.
+            Indices of ``vec_to`` where to receive. If `None`, use all indices.
 
         Examples
         --------
@@ -212,7 +212,7 @@ cdef class Scatter(Object):
         Parameters
         ----------
         vec
-          The vector to scatter from.
+            The vector to scatter from.
 
         Notes
         -----
@@ -240,7 +240,7 @@ cdef class Scatter(Object):
         Parameters
         ----------
         vec
-          The vector to scatter from.
+            The vector to scatter from.
 
         Notes
         -----

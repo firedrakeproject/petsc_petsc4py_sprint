@@ -85,7 +85,7 @@ cdef class DMStag(DM):
             Local x, y, z element counts, of length equal to ``proc_sizes``,
             summing to ``sizes``.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
         setUp
             Whether to call the setup routine after creating the object.
 
@@ -220,7 +220,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
     def setDof(self, dofs: tuple[int, ...]) -> None:
-        """Set dof/stratum.
+        """Set DOFs/stratum.
 
         Logically collective.
 

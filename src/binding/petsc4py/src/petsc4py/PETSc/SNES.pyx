@@ -115,7 +115,7 @@ cdef class SNES(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         See Also
         --------
@@ -147,7 +147,7 @@ cdef class SNES(Object):
         Parameters
         ----------
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -168,7 +168,7 @@ cdef class SNES(Object):
         Parameters
         ----------
         snes_type
-          The type of the solver.
+            The type of the solver.
 
         See Also
         --------
@@ -415,9 +415,9 @@ cdef class SNES(Object):
         Parameters
         ----------
         levels
-          The number of levels
+            The number of levels
         comms
-          An optional sequence of communicators of length `levels`, or `None` for the default communicator `Sys.getDefaultComm`.
+            An optional sequence of communicators of length `levels`, or `None` for the default communicator `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -618,11 +618,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         precheck
-          The callback.
+            The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -652,11 +652,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         initialguess
-          The callback.
+            The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -693,13 +693,13 @@ cdef class SNES(Object):
         Parameters
         ----------
         function
-          The callback.
+            The callback.
         f
-          An optional vector to store the result.
+            An optional vector to store the result.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -756,11 +756,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         update
-          The callback.
+            The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -798,15 +798,15 @@ cdef class SNES(Object):
         Parameters
         ----------
         jacobian
-          The Jacobian callback.
+            The Jacobian callback.
         J
-          The matrix to store the Jacobian.
+            The matrix to store the Jacobian.
         P
-          The matrix to construct the preconditioner.
+            The matrix to construct the preconditioner.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -834,11 +834,11 @@ cdef class SNES(Object):
         Returns
         -------
         J : Mat
-          The matrix to store the Jacobian.
+            The matrix to store the Jacobian.
         P : Mat
-          The matrix to construct the preconditioner.
-        callback: SNESJacobianFunction
-          callback, positional and keyword arguments.
+            The matrix to construct the preconditioner.
+        callback : SNESJacobianFunction
+            callback, positional and keyword arguments.
 
         See Also
         --------
@@ -863,11 +863,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         objective
-          The Jacobian callback.
+            The Jacobian callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -905,9 +905,9 @@ cdef class SNES(Object):
         Parameters
         ----------
         x
-          The input state vector.
+            The input state vector.
         f
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -924,11 +924,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         x
-          The input state vector.
+            The input state vector.
         J
-          The output Jacobian matrix.
+            The output Jacobian matrix.
         P
-          The output Jacobian matrix used to construct the preconditioner.
+            The output Jacobian matrix used to construct the preconditioner.
 
         See Also
         --------
@@ -947,7 +947,7 @@ cdef class SNES(Object):
         Parameters
         ----------
         x
-          The input state vector.
+            The input state vector.
 
         See Also
         --------
@@ -968,11 +968,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         ngs
-          The nonlinear Gauss-Seidel callback.
+            The nonlinear Gauss-Seidel callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -1007,9 +1007,9 @@ cdef class SNES(Object):
         Parameters
         ----------
         x
-          The input/output state vector.
+            The input/output state vector.
         b
-          The input right-hand side vector.
+            The input right-hand side vector.
 
         See Also
         --------
@@ -1030,13 +1030,13 @@ cdef class SNES(Object):
         Parameters
         ----------
         rtol
-          The relative norm of the residual. Defaults to `DEFAULT`.
+            The relative norm of the residual. Defaults to `DEFAULT`.
         atol
-          The absolute norm of the residual. Defaults to `DEFAULT`.
+            The absolute norm of the residual. Defaults to `DEFAULT`.
         stol
-          The absolute norm of the step. Defaults to `DEFAULT`.
+            The absolute norm of the step. Defaults to `DEFAULT`.
         max_it
-          The maximum allowed number of iterations. Defaults to `DEFAULT`
+            The maximum allowed number of iterations. Defaults to `DEFAULT`
 
         See Also
         --------
@@ -1061,13 +1061,13 @@ cdef class SNES(Object):
         Returns
         -------
         rtol : float
-          The relative norm of the residual.
+            The relative norm of the residual.
         atol : float
-          The absolute norm of the residual.
+            The absolute norm of the residual.
         stol : float
-          The absolute norm of the step.
+            The absolute norm of the step.
         max_it : int
-          The maximum allowed number of iterations.
+            The maximum allowed number of iterations.
 
         See Also
         --------
@@ -1116,11 +1116,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         converged
-          The convergence testing callback.
+            The convergence testing callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -1161,13 +1161,13 @@ cdef class SNES(Object):
         Parameters
         ----------
         its
-          Iteration number.
+            Iteration number.
         xnorm
-          Solution norm.
+            Solution norm.
         ynorm
-          Update norm.
+            Update norm.
         fnorm
-          Function norm.
+            Function norm.
 
         See Also
         --------
@@ -1254,11 +1254,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         monitor
-          The callback.
+            The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -1311,9 +1311,9 @@ cdef class SNES(Object):
         Parameters
         ----------
         its
-          Current number of iterations.
+            Current number of iterations.
         rnorm
-          Current value of the residual norm.
+            Current value of the residual norm.
 
         See Also
         --------
@@ -1494,9 +1494,9 @@ cdef class SNES(Object):
         Parameters
         ----------
         b
-          the affine right-hand side or `None` to use zero.
+            The affine right-hand side or `None` to use zero.
         x
-          the starting vector or `None` to use the vector stored internally.
+            The starting vector or `None` to use the vector stored internally.
 
         See Also
         --------
@@ -1738,11 +1738,11 @@ cdef class SNES(Object):
         Parameters
         ----------
         flag
-          Whether or not to use the Eisenstat-Walker trick.
+            Whether or not to use the Eisenstat-Walker trick.
         *targs
-          Positional arguments for `setParamsEW`.
+            Positional arguments for `setParamsEW`.
         **kargs
-          Keyword arguments for `setParamsEW`.
+            Keyword arguments for `setParamsEW`.
 
         See Also
         --------
@@ -1780,19 +1780,19 @@ cdef class SNES(Object):
         Parameters
         ----------
         version
-          The version of the algorithm. Defaults to `DEFAULT`.
+            The version of the algorithm. Defaults to `DEFAULT`.
         rtol_0
-          The initial relative residual norm. Defaults to `DEFAULT`.
+            The initial relative residual norm. Defaults to `DEFAULT`.
         rtol_max
-          The maximum relative residual norm. Defaults to `DEFAULT`.
+            The maximum relative residual norm. Defaults to `DEFAULT`.
         gamma
-          Parameter. Defaults to `DEFAULT`.
+            Parameter. Defaults to `DEFAULT`.
         alpha
-          Parameter. Defaults to `DEFAULT`.
+            Parameter. Defaults to `DEFAULT`.
         alpha2
-          Parameter. Defaults to `DEFAULT`.
+            Parameter. Defaults to `DEFAULT`.
         threshold
-          Parameter. Defaults to `DEFAULT`.
+            Parameter. Defaults to `DEFAULT`.
 
         See Also
         --------
@@ -1937,9 +1937,9 @@ cdef class SNES(Object):
         Parameters
         ----------
         context
-          An instance of the Python class implementing the required methods.
+            An instance of the Python class implementing the required methods.
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

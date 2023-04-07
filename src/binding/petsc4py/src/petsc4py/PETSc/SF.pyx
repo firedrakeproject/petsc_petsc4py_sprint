@@ -16,7 +16,7 @@ cdef class SF(Object):
     """Star Forest object for communication.
 
     SF is used for setting up and managing the communication of certain
-    entries of arrays and `Vec` between MPI ranks.
+    entries of arrays and `Vec` between MPI processes.
 
     """
 
@@ -70,7 +70,7 @@ cdef class SF(Object):
         Parameters
         ----------
         comm
-            The communicator on which the star forest will operate.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -159,7 +159,7 @@ cdef class SF(Object):
 
         Not collective.
 
-        The number of leaves can be determined from the size of *ilocal*.
+        The number of leaves can be determined from the size of ``ilocal``.
 
         Returns
         -------
@@ -345,7 +345,7 @@ cdef class SF(Object):
         return sf
 
     def createSectionSF(self, Section rootSection, remoteOffsets: Sequence[int] | None, Section leafSection) -> SF:
-        """Create an expanded `SF` of dofs.
+        """Create an expanded `SF` of DOFs.
 
         Collective.
 

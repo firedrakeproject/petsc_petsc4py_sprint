@@ -45,7 +45,7 @@ cdef class Random(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         See Also
         --------
@@ -78,7 +78,7 @@ cdef class Random(Object):
         Parameters
         ----------
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -97,7 +97,7 @@ cdef class Random(Object):
         Parameters
         ----------
         rnd_type
-          The type of the generator.
+            The type of the generator.
 
         See Also
         --------
@@ -184,7 +184,7 @@ cdef class Random(Object):
         Parameters
         ----------
         seed
-          The value for the seed. If `None`, it only seeds the generator.
+            The value for the seed. If `None`, it only seeds the generator.
 
         See Also
         --------

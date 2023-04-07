@@ -71,7 +71,7 @@ cdef class Device:
   def configure(self):
     CHKERR(PetscDeviceConfigure(self.device))
 
-  def view(self, Viewer viewer = None):
+  def view(self, Viewer viewer=None) -> None:
     cdef PetscViewer vwr = NULL
 
     if viewer is not None:

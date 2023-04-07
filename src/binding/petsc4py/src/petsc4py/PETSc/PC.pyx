@@ -255,7 +255,7 @@ cdef class PC(Object):
         Parameters
         ----------
         comm
-            The communicator or None for `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -729,8 +729,7 @@ cdef class PC(Object):
         context
             An instance of the Python class implementing the required methods.
         comm
-            The communicator associated with the object. Defaults to
-            `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

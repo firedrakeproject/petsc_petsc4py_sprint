@@ -18,7 +18,7 @@ cdef class DMInterpolation:
         Parameters
         ----------
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `COMM_SELF`.
 
         See Also
         --------

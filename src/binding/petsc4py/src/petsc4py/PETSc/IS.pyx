@@ -222,7 +222,7 @@ cdef class IS(Object):
         step
             The difference between adjacent indices.
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -877,9 +877,7 @@ cdef class IS(Object):
         CHKERR( ISStrideSetStride(self.iset, csize, cfirst, cstep) )
 
     def getStride(self) -> tuple[int, int, int]:
-#FIXME: Multiline summary!
-        """Return size and stride information for an index set with type
-        `IS.Type.STRIDE`.
+        """Return size and stride information.
 
         Not collective.
 
@@ -1051,9 +1049,7 @@ cdef class IS(Object):
 
 
 class GLMapMode(object):
-#FIXME: Multiline summary!
-    """Enum describing mapping behavior for global-to-local maps when global
-    indices are missing.
+    """Enum describing mapping behavior for global-to-local maps when global indices are missing.
 
     MASK
         Give missing global indices a local index of -1.
@@ -1077,9 +1073,7 @@ class LGMapType(object):
 # --------------------------------------------------------------------
 
 cdef class LGMap(Object):
-#FIXME: Multiline summary!
-    """Mapping from an arbitrary local ordering from 0 to n-1 to a
-    global PETSc ordering used by a vector or matrix.
+    """Mapping from an arbitrary local ordering from ``0`` to ``n-1`` to a global PETSc ordering used by a vector or matrix.
 
     See Also
     --------
@@ -1349,14 +1343,14 @@ cdef class LGMap(Object):
         return oindices
 
     def getInfo(self) -> dict[int, ArrayInt]:
-        """Determine the indices shared with neighbouring processes.
+        """Determine the indices shared with neighboring processes.
 
         Collective.
 
         Returns
         -------
         dict
-            Mapping from neighbouring processor number to an array of shared
+            Mapping from neighboring processor number to an array of shared
             indices (in local numbering).
 
         See Also
@@ -1378,14 +1372,14 @@ cdef class LGMap(Object):
         return neighs
 
     def getBlockInfo(self) -> dict[int, ArrayInt]:
-        """Determine the block indices shared with neighbouring processes.
+        """Determine the block indices shared with neighboring processes.
 
         Collective.
 
         Returns
         -------
         dict
-            Mapping from neighbouring processor number to an array of shared
+            Mapping from neighboring processor number to an array of shared
             block indices (in local numbering).
 
         See Also
@@ -1643,7 +1637,7 @@ cdef class LGMap(Object):
             return self.getBlockIndices()
 
     property info:
-        """Mapping describing indices shared with neighbouring processes.
+        """Mapping describing indices shared with neighboring processes.
 
         Collective.
 
@@ -1656,7 +1650,7 @@ cdef class LGMap(Object):
             return self.getInfo()
 
     property block_info:
-        """Mapping describing block indices shared with neighbouring processes.
+        """Mapping describing block indices shared with neighboring processes.
 
         Collective.
 

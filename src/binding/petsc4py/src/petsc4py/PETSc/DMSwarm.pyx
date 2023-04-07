@@ -41,7 +41,7 @@ cdef class DMSwarm(DM):
         Parameters
         ----------
         comm
-            The MPI communicator for the DM object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -526,12 +526,12 @@ cdef class DMSwarm(DM):
         ----------
         min
             Minimum coordinate values in the x, y, z directions (array of
-            length **dim**).
+            length ``dim``).
         max
             Maximum coordinate values in the x, y, z directions (array of
-            length **dim**).
+            length ``dim``).
         npoints
-            Number of points in each spatial direction (array of length **dim**).
+            Number of points in each spatial direction (array of length ``dim``).
         mode
             Indicates whether to append points to the swarm (`InsertMode.ADD`),
             or override existing points (`InsertMode.INSERT`).

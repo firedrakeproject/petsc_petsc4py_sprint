@@ -41,7 +41,7 @@ cdef class Space(Object):
         Parameters
         ----------
         comm
-            The MPI communicator for the `Space` object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -588,7 +588,7 @@ cdef class DualSpace(Object):
         Parameters
         ----------
         comm
-            The MPI communicator for the `DualSpace` object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

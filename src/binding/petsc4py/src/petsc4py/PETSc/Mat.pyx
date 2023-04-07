@@ -267,62 +267,62 @@ class MatSORType(object):
 
 @cython.internal
 cdef class MatStencil:
-   """Associate structured grid coordinates with matrix indices.
+    """Associate structured grid coordinates with matrix indices.
 
-   See Also
-   --------
-   petsc.MatStencil
+    See Also
+    --------
+    petsc.MatStencil
 
-   """
+    """
 
-   cdef PetscMatStencil stencil
+    cdef PetscMatStencil stencil
 
-   property i:
-       "First logical grid coordinate."
-       def __get__(self) -> int:
-           return toInt(self.stencil.i)
-       def __set__(self, value: int) -> None:
-           self.stencil.i = asInt(value)
+    property i:
+        "First logical grid coordinate."
+        def __get__(self) -> int:
+            return toInt(self.stencil.i)
+        def __set__(self, value: int) -> None:
+            self.stencil.i = asInt(value)
 
-   property j:
-       "Second logical grid coordinate."
-       def __get__(self) -> int:
-           return toInt(self.stencil.j)
-       def __set__(self, value: int) -> None:
-           self.stencil.j = asInt(value)
+    property j:
+        "Second logical grid coordinate."
+        def __get__(self) -> int:
+            return toInt(self.stencil.j)
+        def __set__(self, value: int) -> None:
+            self.stencil.j = asInt(value)
 
-   property k:
-       "Third logical grid coordinate."
-       def __get__(self) -> int:
-           return toInt(self.stencil.k)
-       def __set__(self, value: int) -> None:
-           self.stencil.k = asInt(value)
+    property k:
+        "Third logical grid coordinate."
+        def __get__(self) -> int:
+            return toInt(self.stencil.k)
+        def __set__(self, value: int) -> None:
+            self.stencil.k = asInt(value)
 
-   property c:
-       "Field component."
-       def __get__(self) -> int:
-           return toInt(self.stencil.c)
-       def __set__(self, value: int) -> None:
-           self.stencil.c = asInt(value)
+    property c:
+        "Field component."
+        def __get__(self) -> int:
+            return toInt(self.stencil.c)
+        def __set__(self, value: int) -> None:
+            self.stencil.c = asInt(value)
 
-   property index:
-       "Logical grid coordinates ``(i, j, k)``."
-       def __get__(self) -> tuple[int, int, int]:
-           cdef PetscMatStencil *s = &self.stencil
-           return toInt(s.i), toInt(s.j), toInt(s.k)
-       def __set__(self, value: Sequence[int]) -> None:
-           cdef PetscMatStencil *s = &self.stencil
-           s.i = s.j = s.k = 0
-           asDims(value, &s.i, &s.j, &s.k)
+    property index:
+        "Logical grid coordinates ``(i, j, k)``."
+        def __get__(self) -> tuple[int, int, int]:
+            cdef PetscMatStencil *s = &self.stencil
+            return toInt(s.i), toInt(s.j), toInt(s.k)
+        def __set__(self, value: Sequence[int]) -> None:
+            cdef PetscMatStencil *s = &self.stencil
+            s.i = s.j = s.k = 0
+            asDims(value, &s.i, &s.j, &s.k)
 
-   property field:
-       "Field component."
-       def __get__(self) -> int:
-           cdef PetscMatStencil *s = &self.stencil
-           return toInt(s.c)
-       def __set__(self, value: int) -> None:
-           cdef PetscMatStencil *s = &self.stencil
-           s.c = asInt(value)
+    property field:
+        "Field component."
+        def __get__(self) -> int:
+            cdef PetscMatStencil *s = &self.stencil
+            return toInt(s.c)
+        def __set__(self, value: int) -> None:
+            cdef PetscMatStencil *s = &self.stencil
+            s.c = asInt(value)
 
 # --------------------------------------------------------------------
 
@@ -436,7 +436,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         Notes
         -----
@@ -1501,7 +1501,7 @@ cdef class Mat(Object):
         context
             An instance of the Python class implementing the required methods.
         comm
-            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -1852,7 +1852,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         info
-           If `None`, it uses `InfoType.GLOBAL_SUM`.
+            If `None`, it uses `InfoType.GLOBAL_SUM`.
 
         See Also
         --------
@@ -1872,7 +1872,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         copy
-           If `True`, it also copies the values.
+            If `True`, it also copies the values.
 
         See Also
         --------
@@ -1894,9 +1894,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         result
-           Optional return matrix. If `None`, it is internally created.
+            Optional return matrix. If `None`, it is internally created.
         structure
-           The copy structure. Only relevant if ``result`` is not `None`.
+            The copy structure. Only relevant if ``result`` is not `None`.
 
         See Also
         --------
@@ -2008,8 +2008,8 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, inplace transposition is performed.
-           Otherwise, the matrix is reused.
+            Optional return matrix. If `None`, inplace transposition is performed.
+            Otherwise, the matrix is reused.
 
         See Also
         --------
@@ -2035,8 +2035,8 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, the operation is performed in-place.
-           Otherwise, the operation is performed on ``out``.
+            Optional return matrix. If `None`, the operation is performed in-place.
+            Otherwise, the operation is performed on ``out``.
 
         See Also
         --------
@@ -2058,8 +2058,8 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, the operation is performed in-place.
-           Otherwise, the operation is performed on ``out``.
+            Optional return matrix. If `None`, the operation is performed in-place.
+            Otherwise, the operation is performed on ``out``.
 
         See Also
         --------
@@ -2081,8 +2081,8 @@ cdef class Mat(Object):
         Parameters
         ----------
         out
-           Optional return matrix. If `None`, the operation is performed in-place.
-           Otherwise, the operation is performed on ``out``.
+            Optional return matrix. If `None`, the operation is performed in-place.
+            Otherwise, the operation is performed on ``out``.
 
         See Also
         --------
@@ -2104,9 +2104,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         row
-           Row permutation.
+            Row permutation.
         col
-           Column permutation.
+            Column permutation.
 
         See Also
         --------
@@ -2139,9 +2139,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         mat
-          Matrix to compare against. Uses ``self`` if `None`.
+            Matrix to compare against. Uses ``self`` if `None`.
         tol
-          Tolerance for comparison.
+            Tolerance for comparison.
 
         See Also
         --------
@@ -2162,7 +2162,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         tol
-          Tolerance for comparison.
+            Tolerance for comparison.
 
         See Also
         --------
@@ -2197,7 +2197,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         tol
-          Tolerance for comparison.
+            Tolerance for comparison.
 
         See Also
         --------
@@ -2266,11 +2266,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Row indices.
+            Row indices.
         cols
-          Column indices.
+            Column indices.
         values
-          Optional array where to store the values.
+            Optional array where to store the values.
 
         See Also
         --------
@@ -2345,9 +2345,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         symmetric
-          If `True`, return the symmetrized graph.
+            If `True`, return the symmetrized graph.
         compressed
-          If `True`, return the compressed graph.
+            If `True`, return the compressed graph.
 
         See Also
         --------
@@ -2376,9 +2376,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         symmetric
-          If `True`, return the symmetrized graph.
+            If `True`, return the symmetrized graph.
         compressed
-          If `True`, return the compressed graph.
+            If `True`, return the compressed graph.
 
         See Also
         --------
@@ -2412,13 +2412,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         row
-          Row index.
+            Row index.
         col
-          Column index.
+            Column index.
         value
-          The scalar value.
+            The scalar value.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2445,13 +2445,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Row indices.
+            Row indices.
         cols
-          Column indices.
+            Column indices.
         values
-          The scalar values. A sequence of length at least ``len(rows) * len(cols)``.
+            The scalar values. A sequence of length at least ``len(rows) * len(cols)``.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2479,15 +2479,15 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Row pointers.
+            Row pointers.
         J
-          Column indices.
+            Column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
         rowmap
-          Optional iterable indicating which row to insert.
+            Optional iterable indicating which row to insert.
 
         See Also
         --------
@@ -2510,13 +2510,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Row pointers.
+            Row pointers.
         J
-          Column indices.
+            Column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2539,14 +2539,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Block row indices.
+            Block row indices.
         cols
-          Block column indices.
+            Block column indices.
         values
-          The scalar values. A sequence of length at least ``len(rows) * len(cols) * bs * bs``,
-          where ``bs`` is the block size of the matrix.
+            The scalar values. A sequence of length at least ``len(rows) * len(cols) * bs * bs``,
+            where ``bs`` is the block size of the matrix.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2574,15 +2574,15 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Block row pointers.
+            Block row pointers.
         J
-          Block column indices.
+            Block column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
         rowmap
-          Optional iterable indicating which block row to insert.
+            Optional iterable indicating which block row to insert.
 
         See Also
         --------
@@ -2605,13 +2605,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Block row pointers.
+            Block row pointers.
         J
-          Block column indices.
+            Block column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2628,9 +2628,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         rmap
-          Row mapping.
+            Row mapping.
         cmap
-          Column mapping. If `None`, ``cmap = rmap``.
+            Column mapping. If `None`, ``cmap = rmap``.
 
         See Also
         --------
@@ -2671,13 +2671,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         row
-          Local row index.
+            Local row index.
         col
-          Local column index.
+            Local column index.
         value
-          The scalar value.
+            The scalar value.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2705,13 +2705,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Local row indices.
+            Local row indices.
         cols
-          Local column indices.
+            Local column indices.
         values
-          The scalar values. A sequence of length at least ``len(rows) * len(cols)``.
+            The scalar values. A sequence of length at least ``len(rows) * len(cols)``.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2739,15 +2739,15 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Row pointers.
+            Row pointers.
         J
-          Local column indices.
+            Local column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
         rowmap
-          Optional iterable indicating which row to insert.
+            Optional iterable indicating which row to insert.
 
         See Also
         --------
@@ -2770,13 +2770,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Row pointers.
+            Row pointers.
         J
-          Local column indices.
+            Local column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2799,14 +2799,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Local block row indices.
+            Local block row indices.
         cols
-          Local block column indices.
+            Local block column indices.
         values
-          The scalar values. A sequence of length at least ``len(rows) * len(cols) * bs * bs``,
-          where ``bs`` is the block size of the matrix.
+            The scalar values. A sequence of length at least ``len(rows) * len(cols) * bs * bs``,
+            where ``bs`` is the block size of the matrix.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2834,15 +2834,15 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Block row pointers.
+            Block row pointers.
         J
-          Local block column indices.
+            Local block column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
         rowmap
-          Optional iterable indicating which block row to insert.
+            Optional iterable indicating which block row to insert.
 
         See Also
         --------
@@ -2865,13 +2865,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         I
-          Block row pointers.
+            Block row pointers.
         J
-          Local block column indices.
+            Local block column indices.
         V
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2918,13 +2918,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         row
-          Row stencil.
+            Row stencil.
         col
-          Column stencil.
+            Column stencil.
         value
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2953,13 +2953,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         row
-          Row stencil.
+            Row stencil.
         col
-          Column stencil.
+            Column stencil.
         value
-          The scalar values.
+            The scalar values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -2982,14 +2982,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Row indices to be zeroed.
+            Row indices to be zeroed.
         diag
-          Scalar value to be inserted into the diagonal.
+            Scalar value to be inserted into the diagonal.
         x
-          Optional solution vector to be modified for zeroed rows.
+            Optional solution vector to be modified for zeroed rows.
         b
-          Optional right-hand side vector to be modified.
-          It will be adjusted with provided solution entries.
+            Optional right-hand side vector to be modified.
+            It will be adjusted with provided solution entries.
 
         See Also
         --------
@@ -3015,14 +3015,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Local row indices to be zeroed.
+            Local row indices to be zeroed.
         diag
-          Scalar value to be inserted into the diagonal.
+            Scalar value to be inserted into the diagonal.
         x
-          Optional solution vector to be modified for zeroed rows.
+            Optional solution vector to be modified for zeroed rows.
         b
-          Optional right-hand side vector to be modified.
-          It will be adjusted with provided solution entries.
+            Optional right-hand side vector to be modified.
+            It will be adjusted with provided solution entries.
 
         See Also
         --------
@@ -3048,14 +3048,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Row/column indices to be zeroed.
+            Row/column indices to be zeroed.
         diag
-          Scalar value to be inserted into the diagonal.
+            Scalar value to be inserted into the diagonal.
         x
-          Optional solution vector to be modified for zeroed rows.
+            Optional solution vector to be modified for zeroed rows.
         b
-          Optional right-hand side vector to be modified.
-          It will be adjusted with provided solution entries.
+            Optional right-hand side vector to be modified.
+            It will be adjusted with provided solution entries.
 
         See Also
         --------
@@ -3082,14 +3082,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Local row/column indices to be zeroed.
+            Local row/column indices to be zeroed.
         diag
-          Scalar value to be inserted into the diagonal.
+            Scalar value to be inserted into the diagonal.
         x
-          Optional solution vector to be modified for zeroed rows.
+            Optional solution vector to be modified for zeroed rows.
         b
-          Optional right-hand side vector to be modified.
-          It will be adjusted with provided solution entries.
+            Optional right-hand side vector to be modified.
+            It will be adjusted with provided solution entries.
 
         See Also
         --------
@@ -3116,14 +3116,14 @@ cdef class Mat(Object):
         Parameters
         ----------
         rows
-          Iterable of stencil rows and columns.
+            Iterable of stencil rows and columns.
         diag
-          Scalar value to be inserted into the diagonal.
+            Scalar value to be inserted into the diagonal.
         x
-          Optional solution vector to be modified for zeroed rows.
+            Optional solution vector to be modified for zeroed rows.
         b
-          Optional right-hand side vector to be modified.
-          It will be adjusted with provided solution entries.
+            Optional right-hand side vector to be modified.
+            It will be adjusted with provided solution entries.
 
         See Also
         --------
@@ -3177,7 +3177,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         assembly
-          The assembly type.
+            The assembly type.
 
         See Also
         --------
@@ -3195,7 +3195,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         assembly
-          The assembly type.
+            The assembly type.
 
         See Also
         --------
@@ -3213,7 +3213,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         assembly
-          The assembly type.
+            The assembly type.
 
         See Also
         --------
@@ -3263,8 +3263,8 @@ cdef class Mat(Object):
         Parameters
         ----------
         side
-          If `None` returns a 2-tuple of vectors ``(right, left)``.
-          Otherwise it just return a left or right vector.
+            If `None` returns a 2-tuple of vectors ``(right, left)``.
+            Otherwise it just return a left or right vector.
 
         Notes
         -----
@@ -3334,9 +3334,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         column
-          Column index.
+            Column index.
         result
-          Optional vector to store the result.
+            Optional vector to store the result.
 
         See Also
         --------
@@ -3357,13 +3357,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         nsubcomm
-          The number of subcommunicators.
+            The number of subcommunicators.
         subcomm
-          Communicator split or `None` for the null communicator.
+            Communicator split or `None` for the null communicator.
         out
-          Optional resultant matrix.
-          When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
-          When not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+            Optional resultant matrix.
+            When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
+            When not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
 
         See Also
         --------
@@ -3387,7 +3387,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         result
-          Optional vector to store the result.
+            Optional vector to store the result.
 
         See Also
         --------
@@ -3409,7 +3409,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         result
-          Optional vector to store the result.
+            Optional vector to store the result.
 
         See Also
         --------
@@ -3431,9 +3431,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         diag
-          Vector storing diagonal values.
+            Vector storing diagonal values.
         addv
-          Insertion mode.
+            Insertion mode.
 
         See Also
         --------
@@ -3451,9 +3451,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         L
-          Optional left scaling vector.
+            Optional left scaling vector.
         R
-          Optional right scaling vector.
+            Optional right scaling vector.
 
         See Also
         --------
@@ -3577,9 +3577,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         x
-          The input vector.
+            The input vector.
         y
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -3596,11 +3596,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         x
-          The input vector for the matrix-vector product.
+            The input vector for the matrix-vector product.
         v
-          The input vector to be added to.
+            The input vector to be added to.
         y
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -3617,9 +3617,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         x
-          The input vector.
+            The input vector.
         y
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -3636,11 +3636,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         x
-          The input vector for the transposed matrix-vector product.
+            The input vector for the transposed matrix-vector product.
         v
-          The input vector to be added to.
+            The input vector to be added to.
         y
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -3657,9 +3657,9 @@ cdef class Mat(Object):
         Parameters
         ----------
         x
-          The input vector for the Hermitian matrix-vector product.
+            The input vector for the Hermitian matrix-vector product.
         y
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -3676,11 +3676,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         x
-          The input vector for the Hermitian matrix-vector product.
+            The input vector for the Hermitian matrix-vector product.
         v
-          The input vector to be added to.
+            The input vector to be added to.
         y
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -3757,13 +3757,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         isrow
-          Row index set.
+            Row index set.
         iscol
-          Column index set. If `None`, ``iscol = isrow``.
+            Column index set. If `None`, ``iscol = isrow``.
         submat
-          Optional resultant matrix.
-          When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
-          When not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
+            Optional resultant matrix.
+            When `None`, a new matrix is created, and ``MAT_INITIAL_MATRIX`` is used.
+            When not `None`, the matrix is reused with ``MAT_REUSE_MATRIX``.
 
         See Also
         --------
@@ -3792,13 +3792,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         isrows
-          Row index sets.
+            Row index sets.
         iscols
-          Column index sets. If `None`, ``iscols = isrows``.
+            Column index sets. If `None`, ``iscols = isrows``.
         submats
-          Optional resultant matrices.
-          When `None`, new matrices are created, and ``MAT_INITIAL_MATRIX`` is used.
-          When not `None`, the matrices are reused with ``MAT_REUSE_MATRIX``.
+            Optional resultant matrices.
+            When `None`, new matrices are created, and ``MAT_INITIAL_MATRIX`` is used.
+            When not `None`, the matrices are reused with ``MAT_REUSE_MATRIX``.
 
         See Also
         --------
@@ -3846,13 +3846,13 @@ cdef class Mat(Object):
         Parameters
         ----------
         isrow
-          Row index set.
+            Row index set.
         iscol
-          Column index set.
+            Column index set.
         submat
-          Optional resultant matrix.
-          When `None`, a new matrix is created.
-          When not `None`, the matrix is first destroyed and then recreated.
+            Optional resultant matrix.
+            When `None`, a new matrix is created.
+            When not `None`, the matrix is first destroyed and then recreated.
 
         See Also
         --------
@@ -3872,11 +3872,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         isrow
-          Row index set.
+            Row index set.
         iscol
-          Column index set.
+            Column index set.
         submat
-          The submatrix.
+            The submatrix.
 
         See Also
         --------
@@ -3957,7 +3957,7 @@ cdef class Mat(Object):
         Parameters
         ----------
         random
-          The random number generator object or `None` for the default.
+            The random number generator object or `None` for the default.
 
         See Also
         --------
@@ -3976,11 +3976,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         alpha
-          The scalar.
+            The scalar.
         X
-          The matrix to be added.
+            The matrix to be added.
         structure
-          The structure of the operation.
+            The structure of the operation.
 
         See Also
         --------
@@ -3999,11 +3999,11 @@ cdef class Mat(Object):
         Parameters
         ----------
         alpha
-          The scalar.
+            The scalar.
         X
-          The matrix to be added.
+            The matrix to be added.
         structure
-          The structure of the operation.
+            The structure of the operation.
 
         See Also
         --------
@@ -4041,7 +4041,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4089,7 +4089,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4137,7 +4137,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4185,7 +4185,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4237,7 +4237,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4288,7 +4288,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix D.
 
         See also
@@ -4324,7 +4324,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant matrix C, the Kronecker product of A and B.
 
         See also
@@ -4384,9 +4384,9 @@ cdef class Mat(Object):
 
         Returns
         -------
-        rp: IS
+        rp : IS
             The row permutation indices.
-        cp: IS
+        cp : IS
             The column permutation indices.
 
         See Also
@@ -4574,11 +4574,11 @@ cdef class Mat(Object):
 
         Returns
         -------
-        n: int
+        n : int
             The number of negative eigenvalues.
-        z: int
+        z : int
             The number of zero eigenvalues.
-        p: int
+        p : int
             The number of positive eigenvalues.
 
         See Also
@@ -4705,13 +4705,13 @@ cdef class Mat(Object):
 
         Returns
         -------
-        A: Mat
+        A : Mat
             The ``A`` matrix.
-        U: Mat
+        U : Mat
             The first dense rectangular matrix.
-        c: Vec
+        c : Vec
             The sequential vector containing the diagonal of ``C``.
-        V: Mat
+        V : Mat
             The second dense rectangular matrix.
 
         See Also
@@ -5513,7 +5513,7 @@ cdef class NullSpace(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         See Also
         --------
@@ -5605,11 +5605,11 @@ cdef class NullSpace(Object):
         Parameters
         ----------
         function
-          The callback.
+            The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------

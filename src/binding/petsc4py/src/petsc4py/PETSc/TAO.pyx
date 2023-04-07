@@ -99,7 +99,7 @@ cdef class TAO(Object):
         Parameters
         ----------
         viewer
-          A `Viewer` instance or `None` for the default viewer.
+            A `Viewer` instance or `None` for the default viewer.
 
         See Also
         --------
@@ -131,7 +131,7 @@ cdef class TAO(Object):
         Parameters
         ----------
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -152,7 +152,7 @@ cdef class TAO(Object):
         Parameters
         ----------
         tao_type
-          The type of the solver.
+            The type of the solver.
 
         See Also
         --------
@@ -288,11 +288,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         objective
-          The objective function callback.
+            The objective function callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -313,13 +313,13 @@ cdef class TAO(Object):
         Parameters
         ----------
         residual
-          The residual callback.
+            The residual callback.
         R
-          The vector to store the residual.
+            The vector to store the residual.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -342,15 +342,15 @@ cdef class TAO(Object):
         Parameters
         ----------
         jacobian
-          The Jacobian callback.
+            The Jacobian callback.
         J
-          The matrix to store the Jacobian.
+            The matrix to store the Jacobian.
         P
-          The matrix to construct the preconditioner.
+            The matrix to construct the preconditioner.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -375,13 +375,13 @@ cdef class TAO(Object):
         Parameters
         ----------
         gradient
-          The gradient callback.
+            The gradient callback.
         g
-          The vector to store the gradient.
+            The vector to store the gradient.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -420,13 +420,13 @@ cdef class TAO(Object):
         Parameters
         ----------
         objgrad
-          The objective function and gradient callback.
+            The objective function and gradient callback.
         g
-          The vector to store the gradient.
+            The vector to store the gradient.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -466,11 +466,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         varbounds
-          Either a tuple of `Vec` or a `TAOVariableBoundsFunction` callback.
+            Either a tuple of `Vec` or a `TAOVariableBoundsFunction` callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -502,13 +502,13 @@ cdef class TAO(Object):
         Parameters
         ----------
         constraints
-          The callback.
+            The callback.
         C
-          The vector to hold the constraints.
+            The vector to hold the constraints.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -532,15 +532,15 @@ cdef class TAO(Object):
         Parameters
         ----------
         hessian
-          The Hessian callback.
+            The Hessian callback.
         H
-          The matrix to store the Hessian.
+            The matrix to store the Hessian.
         P
-          The matrix to construct the preconditioner.
+            The matrix to construct the preconditioner.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -585,15 +585,15 @@ cdef class TAO(Object):
         Parameters
         ----------
         jacobian
-          The Jacobian callback.
+            The Jacobian callback.
         J
-          The matrix to store the Jacobian.
+            The matrix to store the Jacobian.
         P
-          The matrix to construct the preconditioner.
+            The matrix to construct the preconditioner.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -721,11 +721,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         update
-          The update callback or `None` to reset it.
+            The update callback or `None` to reset it.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -764,7 +764,7 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
 
         See Also
         --------
@@ -783,9 +783,9 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
         f
-          The output vector.
+            The output vector.
 
         See Also
         --------
@@ -802,9 +802,9 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
         g
-          The output gradient vector.
+            The output gradient vector.
 
         See Also
         --------
@@ -821,9 +821,9 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
         g
-          The output gradient vector.
+            The output gradient vector.
 
         See Also
         --------
@@ -879,9 +879,9 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
         c
-          The output constraints vector.
+            The output constraints vector.
 
         See Also
         --------
@@ -898,11 +898,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
         H
-          The output Hessian matrix.
+            The output Hessian matrix.
         P
-          The output Hessian matrix used to construct the preconditioner.
+            The output Hessian matrix used to construct the preconditioner.
 
         See Also
         --------
@@ -921,11 +921,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          The parameter vector.
+            The parameter vector.
         J
-          The output Jacobian matrix.
+            The output Jacobian matrix.
         P
-          The output Jacobian matrix used to construct the preconditioner.
+            The output Jacobian matrix used to construct the preconditioner.
 
         See Also
         --------
@@ -948,11 +948,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         gatol
-          The absolute norm of the gradient. Defaults to `DEFAULT`.
+            The absolute norm of the gradient. Defaults to `DEFAULT`.
         grtol
-          The relative norm of the gradient with respect to the initial norm of the objective. Defaults to `DEFAULT`.
+            The relative norm of the gradient with respect to the initial norm of the objective. Defaults to `DEFAULT`.
         gttol
-          The relative norm of the gradient with respect to the initial norm of the gradient. Defaults to `DEFAULT`.
+            The relative norm of the gradient with respect to the initial norm of the gradient. Defaults to `DEFAULT`.
 
         See Also
         --------
@@ -972,12 +972,12 @@ cdef class TAO(Object):
 
         Returns
         -------
-        gatol: float
-          The absolute norm of the gradient.
-        grtol: float
-          The relative norm of the gradient with respect to the initial norm of the objective.
-        gttol: float
-          The relative norm of the gradient with respect to the initial norm of the gradient.
+        gatol : float
+            The absolute norm of the gradient.
+        grtol : float
+            The relative norm of the gradient with respect to the initial norm of the objective.
+        gttol : float
+            The relative norm of the gradient with respect to the initial norm of the gradient.
 
         See Also
         --------
@@ -1050,9 +1050,9 @@ cdef class TAO(Object):
         Parameters
         ----------
         catol
-          The absolute norm of the constraints. Defaults to `DEFAULT`.
+            The absolute norm of the constraints. Defaults to `DEFAULT`.
         crtol
-          The relative norm of the constraints. Defaults to `DEFAULT`.
+            The relative norm of the constraints. Defaults to `DEFAULT`.
 
         See Also
         --------
@@ -1071,10 +1071,10 @@ cdef class TAO(Object):
 
         Returns
         -------
-        catol: float
-          The absolute norm of the constraints.
-        crtol: float
-          The relative norm of the constraints.
+        catol : float
+            The absolute norm of the constraints.
+        crtol : float
+            The relative norm of the constraints.
 
         See Also
         --------
@@ -1093,11 +1093,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         converged
-          The callback. If `None`, reset to the default convergence test.
+            The callback. If `None`, reset to the default convergence test.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -1160,11 +1160,11 @@ cdef class TAO(Object):
         Parameters
         ----------
         monitor
-          The callback.
+            The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -1218,15 +1218,15 @@ cdef class TAO(Object):
         Parameters
         ----------
         its
-          Current number of iterations or `None` to use the value stored internally by the solver.
+            Current number of iterations or `None` to use the value stored internally by the solver.
         f
-          Current value of the objective function or `None` to use the value stored internally by the solver.
+            Current value of the objective function or `None` to use the value stored internally by the solver.
         res
-          Current value of the residual norm or `None` to use the value stored internally by the solver.
+            Current value of the residual norm or `None` to use the value stored internally by the solver.
         cnorm
-          Current value of the constrains norm or `None` to use the value stored internally by the solver.
+            Current value of the constrains norm or `None` to use the value stored internally by the solver.
         step
-          Current value of the step or `None` to use the value stored internally by the solver.
+            Current value of the step or `None` to use the value stored internally by the solver.
 
         See Also
         --------
@@ -1261,7 +1261,7 @@ cdef class TAO(Object):
         Parameters
         ----------
         x
-          the starting vector or `None` to use the vector stored internally.
+            The starting vector or `None` to use the vector stored internally.
 
         See Also
         --------
@@ -1435,12 +1435,12 @@ cdef class TAO(Object):
 
         Returns
         -------
-        f: float
-          Current value of the objective function.
-        res: float
-          Current value of the residual norm.
-        cnorm: float
-          Current value of the constrains norm.
+        f : float
+            Current value of the objective function.
+        res : float
+            Current value of the residual norm.
+        cnorm : float
+            Current value of the constrains norm.
 
         See Also
         --------
@@ -1460,18 +1460,18 @@ cdef class TAO(Object):
 
         Returns
         -------
-        its: int
-          Current number of iterations.
-        f: float
-          Current value of the objective function.
-        res: float
-          Current value of the residual norm.
-        cnorm: float
-          Current value of the constrains norm.
-        step: float
-          Current value of the step.
-        reason: ConvergedReason
-          Current value of converged reason.
+        its : int
+            Current number of iterations.
+        f : float
+            Current value of the objective function.
+        res : float
+            Current value of the residual norm.
+        cnorm : float
+            Current value of the constrains norm.
+        step : float
+            Current value of the step.
+        reason : ConvergedReason
+            Current value of converged reason.
 
         See Also
         --------
@@ -1611,9 +1611,9 @@ cdef class TAO(Object):
         Parameters
         ----------
         context
-          An instance of the Python class implementing the required methods.
+            An instance of the Python class implementing the required methods.
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

@@ -16,7 +16,7 @@ class KSPType(object):
         `petsc.KSPCG`
     `GROPPCG`
         A pipelined conjugate gradient method (Gropp).
-         `petsc.KSPGROPPCG`
+        `petsc.KSPGROPPCG`
     `PIPECG`
         A pipelined conjugate gradient method.
         `petsc.KSPPIPECG`
@@ -246,7 +246,7 @@ class KSPNormType(object):
     `UNPRECONDITIONED`
         Uses the l₂ norm of the true b - Ax residual.
     `NATURAL`
-         Supported by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
+        Supported by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
 
     """
     # native
@@ -855,9 +855,9 @@ cdef class KSP(Object):
 
         Returns
         -------
-        A: Mat
+        A : Mat
             Matrix that defines the linear system.
-        P: Mat
+        P : Mat
             Matrix to be used in constructing the preconditioner,
             usually the same as ``A``.
 
@@ -969,13 +969,13 @@ cdef class KSP(Object):
 
         Returns
         -------
-        rtol: float
+        rtol : float
             The relative convergence tolerance
-        atol: float
+        atol : float
             The absolute convergence tolerance
-        dtol: float
+        dtol : float
             The divergence tolerance
-        maxits: int
+        maxits : int
             Maximum number of iterations
 
         See Also
@@ -1547,7 +1547,7 @@ cdef class KSP(Object):
 
         Collective.
 
-        Resets a KSP context to the kspsetupcalled = 0 state and
+        Resets a KSP context to the ``kspsetupcalled = 0`` state and
         removes any allocated Vecs and Mats.
 
         See Also
@@ -1827,9 +1827,9 @@ cdef class KSP(Object):
 
         Returns
         -------
-        R: list of Vec
+        R : list of Vec
             List of correctly allocated right hand vectors.
-        L: list of Vec
+        L : list of Vec
             List of correctly allocated left hand vectors.
 
         """
@@ -1868,7 +1868,7 @@ cdef class KSP(Object):
 
         Returns
         -------
-        x: Vec
+        x : Vec
             Correctly allocated solution vector.
 
         """
@@ -1889,7 +1889,7 @@ cdef class KSP(Object):
 
         Returns
         -------
-        x: Vec
+        x : Vec
             Correctly allocated residual vector.
 
         """
@@ -1905,7 +1905,7 @@ cdef class KSP(Object):
 
         Returns
         -------
-        eigen: ArrayComplex
+        eigen : ArrayComplex
             An array of eigenvalues.
 
         See Also
@@ -1931,9 +1931,9 @@ cdef class KSP(Object):
 
         Returns
         -------
-        smax: float
+        smax : float
             The maximum singular value.
-        smin: float
+        smin : float
             The minimum singular value.
 
         See Also
@@ -1983,8 +1983,7 @@ cdef class KSP(Object):
             An instance of the Python class implementing the required
             methods.
         comm
-            The communicator associated with the object. Defaults to
-            `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
