@@ -71,7 +71,6 @@ cdef class FE(Object):
         PetscCLEAR(self.obj); self.fe = newfe
         return self
 
-    # TODO:
     def createDefault(
         self,
         dim: int,

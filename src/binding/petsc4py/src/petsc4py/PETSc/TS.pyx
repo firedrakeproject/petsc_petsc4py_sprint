@@ -643,9 +643,7 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSJacobianConstant(self.ts, time, x.vec, jmat, pmat, NULL) )
 
     def getRHSFunction(self) -> tuple[Vec, TSRHSFunction]:
-#FIXME: Multiline summary!
-        """Return the vector where the right-hand side is stored and the
-        function used to compute it.
+        """Return the vector where the rhs is stored and the function used to compute it.
 
         Not collective.
 
@@ -766,11 +764,12 @@ cdef class TS(Object):
         Mat J=None,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
-#FIXME: Multiline summary!
-        """Set the function that computes the Jacobian of ``F`` with respect to
-        the parameters ``P`` where ``F(Udot,U,t) = G(U,P,t)``, as well as the
+        """Set the function that computes the Jacobian.
+
         Logically collective.
 
+        Set the function that computes the Jacobian. of ``F`` with respect to
+        the parameters ``P`` where ``F(Udot,U,t) = G(U,P,t)``, as well as the
         location to store the matrix.
 
         Parameters
