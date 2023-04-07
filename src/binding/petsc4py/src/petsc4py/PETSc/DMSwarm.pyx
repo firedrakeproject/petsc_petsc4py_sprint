@@ -41,7 +41,7 @@ cdef class DMSwarm(DM):
         Parameters
         ----------
         comm
-            The MPI communicator for the DM object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

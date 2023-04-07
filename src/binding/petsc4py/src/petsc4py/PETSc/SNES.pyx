@@ -147,7 +147,7 @@ cdef class SNES(Object):
         Parameters
         ----------
         comm
-            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -1939,7 +1939,7 @@ cdef class SNES(Object):
         context
             An instance of the Python class implementing the required methods.
         comm
-            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

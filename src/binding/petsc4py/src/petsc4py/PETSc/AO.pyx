@@ -71,7 +71,7 @@ cdef class AO(Object):
             Another ordering (may be `None` to indicate the natural ordering,
             that is 0, 1, 2, 3, ...).
         comm
-            The MPI communicator that is to share the application ordering.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -124,7 +124,7 @@ cdef class AO(Object):
             Another ordering (may be `None` to indicate the natural ordering,
             that is 0, 1, 2, 3, ...).
         comm
-            The MPI communicator that is to share the application ordering.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -170,7 +170,7 @@ cdef class AO(Object):
         petsc
             Another ordering. May be `None` to indicate the identity ordering.
         comm
-            The MPI communicator that is to share the application ordering.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

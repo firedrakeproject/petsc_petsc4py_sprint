@@ -70,7 +70,7 @@ cdef class SF(Object):
         Parameters
         ----------
         comm
-            The communicator on which the star forest will operate.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

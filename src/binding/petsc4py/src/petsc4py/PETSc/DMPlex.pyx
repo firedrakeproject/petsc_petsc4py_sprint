@@ -29,7 +29,7 @@ cdef class DMPlex(DM):
         Parameters
         ----------
         comm
-            The communicator for the `DMPlex` object, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -58,7 +58,7 @@ cdef class DMPlex(DM):
         interpolate
             Flag indicating that intermediate mesh entities (faces, edges) should be created automatically.
         comm
-            The communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -117,7 +117,7 @@ cdef class DMPlex(DM):
         interpolate
             Flag to create intermediate mesh pieces (edges, faces).
         comm
-            The communicator for the `DMPlex` object, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -163,7 +163,7 @@ cdef class DMPlex(DM):
         interpolate
             Flag to create intermediate mesh pieces (edges, faces).
         comm
-            The communicator for the `DMPlex` object, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -203,7 +203,7 @@ cdef class DMPlex(DM):
         interpolate
             Flag to create intermediate mesh pieces (edges, faces).
         comm
-            The communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         Notes
         -----
@@ -239,7 +239,7 @@ cdef class DMPlex(DM):
         interpolate
             Create faces and edges in the mesh.
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -267,7 +267,7 @@ cdef class DMPlex(DM):
         interpolate
             Create faces and edges in the mesh.
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -296,7 +296,7 @@ cdef class DMPlex(DM):
         interpolate
             Create faces and edges in the mesh.
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -325,7 +325,7 @@ cdef class DMPlex(DM):
         interpolate
             Create faces and edges in the mesh,
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -352,7 +352,7 @@ cdef class DMPlex(DM):
         interpolate
             Create faces and edges in the mesh.
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         Notes
         -----

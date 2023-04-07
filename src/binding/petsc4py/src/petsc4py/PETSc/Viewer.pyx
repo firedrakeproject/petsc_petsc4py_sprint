@@ -180,8 +180,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -211,8 +210,7 @@ cdef class Viewer(Object):
         mode
             The mode type.
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -250,8 +248,7 @@ cdef class Viewer(Object):
         mode
             The mode type.
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -284,8 +281,7 @@ cdef class Viewer(Object):
         mode
             The mode type.
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -322,8 +318,7 @@ cdef class Viewer(Object):
         mode
             The mode type.
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -359,8 +354,7 @@ cdef class Viewer(Object):
         mode
             The mode type.
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -402,8 +396,7 @@ cdef class Viewer(Object):
         size
             Window size or `None` for default.
         comm
-            The communicator associated with the object.
-            Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -552,7 +545,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-            The communicator. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -570,7 +563,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-            The communicator. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -590,7 +583,7 @@ cdef class Viewer(Object):
         name
             The filename.
         comm
-            The communicator. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -609,7 +602,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-            The communicator. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -627,7 +620,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-            The communicator. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)

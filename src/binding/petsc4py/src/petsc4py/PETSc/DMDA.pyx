@@ -74,7 +74,7 @@ cdef class DMDA(DM):
             Local x, y, z element counts, of length equal to ``proc_sizes``,
             summing to ``sizes``.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

@@ -11,7 +11,7 @@ cdef class DMComposite(DM):
         Parameters
         ----------
         comm
-            The communicator of processors that will share the DM.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

@@ -192,7 +192,7 @@ cdef class TS(Object):
         Parameters
         ----------
         comm
-            The communicator or `None` for `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -768,7 +768,7 @@ cdef class TS(Object):
 
         Logically collective.
 
-        Set the function that computes the Jacobian. of ``F`` with respect to
+        Set the function that computes the Jacobian of ``F`` with respect to
         the parameters ``P`` where ``F(Udot,U,t) = G(U,P,t)``, as well as the
         location to store the matrix.
 
@@ -2532,7 +2532,7 @@ cdef class TS(Object):
         context
             An instance of the Python class implementing the required methods.
         comm
-            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

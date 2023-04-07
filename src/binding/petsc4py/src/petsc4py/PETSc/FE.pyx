@@ -58,7 +58,7 @@ cdef class FE(Object):
         Parameters
         ----------
         comm
-            The communicator for the `FE` object.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -98,7 +98,7 @@ cdef class FE(Object):
         prefix
             The options prefix, or `None`.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -145,7 +145,7 @@ cdef class FE(Object):
             The quadrature order or `DETERMINE` to use `Space` polynomial
             degree.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

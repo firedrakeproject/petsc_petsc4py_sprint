@@ -78,7 +78,7 @@ cdef class Random(Object):
         Parameters
         ----------
         comm
-            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

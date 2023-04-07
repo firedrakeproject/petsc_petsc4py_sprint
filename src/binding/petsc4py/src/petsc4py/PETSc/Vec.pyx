@@ -187,7 +187,7 @@ cdef class Vec(Object):
         Parameters
         ----------
         comm
-            Communicator for the vector, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -266,7 +266,7 @@ cdef class Vec(Object):
         bsize
             Vector block size. If `None`, ``bsize = 1``.
         comm
-            MPI communicator, defaults to `COMM_SELF`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

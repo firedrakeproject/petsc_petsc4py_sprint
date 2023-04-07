@@ -222,7 +222,7 @@ cdef class IS(Object):
         step
             The difference between adjacent indices.
         comm
-            The MPI communicator, defaults to `Sys.getDefaultComm`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

@@ -85,7 +85,7 @@ cdef class DMStag(DM):
             Local x, y, z element counts, of length equal to ``proc_sizes``,
             summing to ``sizes``.
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
         setUp
             Whether to call the setup routine after creating the object.
 

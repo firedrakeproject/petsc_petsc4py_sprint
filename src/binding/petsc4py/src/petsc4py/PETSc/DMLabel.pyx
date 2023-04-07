@@ -47,7 +47,7 @@ cdef class DMLabel(Object):
         name
             The label name.
         comm
-            The MPI communicator, usually `COMM_SELF`.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------

@@ -9,7 +9,7 @@ cdef class DMShell(DM):
         Parameters
         ----------
         comm
-            The MPI communicator.
+            MPI communicator, defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
