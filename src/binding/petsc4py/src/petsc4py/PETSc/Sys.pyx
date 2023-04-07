@@ -69,7 +69,7 @@ cdef class Sys:
         Returns
         -------
         info: dict
-           Dictionary with version information.
+            Dictionary with version information.
 
         See Also
         --------

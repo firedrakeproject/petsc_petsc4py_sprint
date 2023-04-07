@@ -139,9 +139,9 @@ cdef class Viewer(Object):
         Parameters
         ----------
         obj
-          A `Viewer` instance or `None` for the default viewer.
-          If none of the above applies, it assumes ``obj`` is an instance of `Object`
-          and it calls the generic view for ``obj``.
+            A `Viewer` instance or `None` for the default viewer.
+            If none of the above applies, it assumes ``obj`` is an instance of `Object`
+            and it calls the generic view for ``obj``.
 
         Notes
         -----
@@ -180,8 +180,8 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -207,12 +207,12 @@ cdef class Viewer(Object):
         Parameters
         ----------
         name
-          The filename associated with the viewer.
+            The filename associated with the viewer.
         mode
-          The mode type.
+            The mode type.
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -246,12 +246,12 @@ cdef class Viewer(Object):
         Parameters
         ----------
         name
-          The filename associated with the viewer.
+            The filename associated with the viewer.
         mode
-          The mode type.
+            The mode type.
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -280,12 +280,12 @@ cdef class Viewer(Object):
         Parameters
         ----------
         name
-          The filename associated with the viewer.
+            The filename associated with the viewer.
         mode
-          The mode type.
+            The mode type.
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -318,12 +318,12 @@ cdef class Viewer(Object):
         Parameters
         ----------
         name
-          The filename associated with the viewer.
+            The filename associated with the viewer.
         mode
-          The mode type.
+            The mode type.
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -355,12 +355,12 @@ cdef class Viewer(Object):
         Parameters
         ----------
         name
-          The filename associated with the viewer.
+            The filename associated with the viewer.
         mode
-          The mode type.
+            The mode type.
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -394,16 +394,16 @@ cdef class Viewer(Object):
         Parameters
         ----------
         display
-          The X display to use or `None` for the local machine.
+            The X display to use or `None` for the local machine.
         title
-          The window title or `None` for no title.
+            The window title or `None` for no title.
         position
-          Screen coordinates of the upper left corner, or `None` for default.
+            Screen coordinates of the upper left corner, or `None` for default.
         size
-          Window size or `None` for default.
+            Window size or `None` for default.
         comm
-          The communicator associated with the object.
-          Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object.
+            Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
@@ -438,7 +438,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         vwr_type
-          The type of the viewer.
+            The type of the viewer.
 
         See Also
         --------
@@ -509,7 +509,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-          The subcommunicator. If `None`, uses `COMM_SELF`.
+            The subcommunicator. If `None`, uses `COMM_SELF`.
 
         Notes
         -----
@@ -533,7 +533,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         sub
-          The subviewer obtained from `getSubViewer`.
+            The subviewer obtained from `getSubViewer`.
 
         See Also
         --------
@@ -552,7 +552,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-          The communicator. Defaults to `Sys.getDefaultComm`.
+            The communicator. Defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -570,7 +570,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-          The communicator. Defaults to `Sys.getDefaultComm`.
+            The communicator. Defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -588,9 +588,9 @@ cdef class Viewer(Object):
         Parameters
         ----------
         name
-          The filename.
+            The filename.
         comm
-          The communicator. Defaults to `Sys.getDefaultComm`.
+            The communicator. Defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -609,7 +609,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-          The communicator. Defaults to `Sys.getDefaultComm`.
+            The communicator. Defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -627,7 +627,7 @@ cdef class Viewer(Object):
         Parameters
         ----------
         comm
-          The communicator. Defaults to `Sys.getDefaultComm`.
+            The communicator. Defaults to `Sys.getDefaultComm`.
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -866,13 +866,13 @@ cdef class Viewer(Object):
         Parameters
         ----------
         display
-          The X display to use or `None` for the local machine.
+            The X display to use or `None` for the local machine.
         title
-          The window title or `None` for no title.
+            The window title or `None` for no title.
         position
-          Screen coordinates of the upper left corner, or `None` for default.
+            Screen coordinates of the upper left corner, or `None` for default.
         size
-          Window size or `None` for default.
+            Window size or `None` for default.
 
         """
         # FIXME missing manual page

@@ -1178,7 +1178,7 @@ cdef class DM(Object):
         Parameters
         ----------
         dm
-           The second, finer `DM`.
+            The second, finer `DM`.
 
         See Also
         --------
@@ -1942,9 +1942,9 @@ cdef class DM(Object):
         operator
             Callback function to compute the operators.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -2020,9 +2020,9 @@ cdef class DM(Object):
         function
             The callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -2052,9 +2052,9 @@ cdef class DM(Object):
         jacobian
             The Jacobian callback.
         args
-          Positional arguments for the callback.
+            Positional arguments for the callback.
         kargs
-          Keyword arguments for the callback.
+            Keyword arguments for the callback.
 
         See Also
         --------
@@ -2088,9 +2088,9 @@ cdef class DM(Object):
         restricthook
             The restrict hook function.
         args
-          Positional arguments for the hooks.
+            Positional arguments for the hooks.
         kargs
-          Keyword arguments for the hooks.
+            Keyword arguments for the hooks.
 
         See Also
         --------

@@ -756,10 +756,10 @@ cdef class DMDA(DM):
             The maximum in the ``x`` dimension.
         ymin
             The minimum in the ``y`` dimension (value ignored for 1 dimensional
-             problems).
+            problems).
         ymax
             The maximum in the ``y`` dimension (value ignored for 1 dimensional
-             problems).
+            problems).
         zmin
             The minimum in the ``z`` dimension (value ignored for 1 or 2
             dimensional problems).

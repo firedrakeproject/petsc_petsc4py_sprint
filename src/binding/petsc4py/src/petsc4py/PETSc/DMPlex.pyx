@@ -1507,7 +1507,7 @@ cdef class DMPlex(DM):
         Returns
         -------
         sf : SF or None
-             The `SF` used for point distribution, or `None` if not distributed.
+            The `SF` used for point distribution, or `None` if not distributed.
 
         See Also
         --------

@@ -16,7 +16,7 @@ class KSPType(object):
         `petsc.KSPCG`
     `GROPPCG`
         A pipelined conjugate gradient method (Gropp).
-         `petsc.KSPGROPPCG`
+        `petsc.KSPGROPPCG`
     `PIPECG`
         A pipelined conjugate gradient method.
         `petsc.KSPPIPECG`
@@ -246,7 +246,7 @@ class KSPNormType(object):
     `UNPRECONDITIONED`
         Uses the l₂ norm of the true b - Ax residual.
     `NATURAL`
-         Supported by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
+        Supported by `Type.CG`, `Type.CR`, `Type.CGNE`, `Type.CGS`.
 
     """
     # native

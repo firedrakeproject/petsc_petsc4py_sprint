@@ -2531,9 +2531,9 @@ cdef class TS(Object):
         Parameters
         ----------
         context
-          An instance of the Python class implementing the required methods.
+            An instance of the Python class implementing the required methods.
         comm
-          The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
+            The communicator associated with the object. Defaults to `Sys.getDefaultComm`.
 
         See Also
         --------
