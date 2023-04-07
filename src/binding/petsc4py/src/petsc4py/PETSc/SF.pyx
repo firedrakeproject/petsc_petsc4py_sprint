@@ -159,7 +159,7 @@ cdef class SF(Object):
 
         Not collective.
 
-        The number of leaves can be determined from the size of *ilocal*.
+        The number of leaves can be determined from the size of ``ilocal``.
 
         Returns
         -------
