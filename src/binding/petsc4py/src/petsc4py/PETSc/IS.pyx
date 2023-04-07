@@ -1343,14 +1343,14 @@ cdef class LGMap(Object):
         return oindices
 
     def getInfo(self) -> dict[int, ArrayInt]:
-        """Determine the indices shared with neighbouring processes.
+        """Determine the indices shared with neighboring processes.
 
         Collective.
 
         Returns
         -------
         dict
-            Mapping from neighbouring processor number to an array of shared
+            Mapping from neighboring processor number to an array of shared
             indices (in local numbering).
 
         See Also
@@ -1372,14 +1372,14 @@ cdef class LGMap(Object):
         return neighs
 
     def getBlockInfo(self) -> dict[int, ArrayInt]:
-        """Determine the block indices shared with neighbouring processes.
+        """Determine the block indices shared with neighboring processes.
 
         Collective.
 
         Returns
         -------
         dict
-            Mapping from neighbouring processor number to an array of shared
+            Mapping from neighboring processor number to an array of shared
             block indices (in local numbering).
 
         See Also
@@ -1637,7 +1637,7 @@ cdef class LGMap(Object):
             return self.getBlockIndices()
 
     property info:
-        """Mapping describing indices shared with neighbouring processes.
+        """Mapping describing indices shared with neighboring processes.
 
         Collective.
 
@@ -1650,7 +1650,7 @@ cdef class LGMap(Object):
             return self.getInfo()
 
     property block_info:
-        """Mapping describing block indices shared with neighbouring processes.
+        """Mapping describing block indices shared with neighboring processes.
 
         Collective.
 
