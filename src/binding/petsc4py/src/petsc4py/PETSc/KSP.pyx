@@ -691,7 +691,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PETSc.KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone,
+        PETSc.KSP, DM, DM.setKSPComputeOperators, setOperators, DM.clone
         petsc.KSPSetDM
 
         """
@@ -729,14 +729,14 @@ cdef class KSP(Object):
         args: tuple[Any, ...] | None = None,
         kargs: dict[str, Any] | None = None
     ) -> None:
-        """Set routine to compute the right hand side of the linear system.
+        """Set routine to compute the right-hand side of the linear system.
 
         Logically collective.
 
         Parameters
         ----------
         rhs
-            Function which computes the right hand side.
+            Function which computes the right-hand side.
         args
             Positional arguments for callback function ``rhs``.
         kargs
@@ -745,7 +745,7 @@ cdef class KSP(Object):
         Notes
         -----
         The routine you provide will be called each time you call `solve`
-        to prepare the new right hand side for that solve.
+        to prepare the new right-hand side for that solve.
 
         See Also
         --------
@@ -784,7 +784,7 @@ cdef class KSP(Object):
         be called at future `solve` calls unless either
         `setComputeOperators` or `setOperators` is called
         before that `solve` is called. This allows the same system
-        to be solved several times with different right hand side
+        to be solved several times with different right-hand side
         functions, but is a confusing API since one might expect it to
         be called for each `solve`.
 
@@ -794,7 +794,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PETSc.KSP, solve, setOperators, petsc.KSPSetComputeOperators,
+        PETSc.KSP, solve, setOperators, petsc.KSPSetComputeOperators
         petsc.KSPSetReusePreconditioner
 
         """
@@ -807,11 +807,11 @@ cdef class KSP(Object):
     def setOperators(self, Mat A=None, Mat P=None) -> None:
         """Set matrix associated with the linear system.
 
+        Collective.
+
         Set the matrix associated with the linear system and a
         (possibly) different one from which the preconditioner will be
         built.
-
-        Collective.
 
         Parameters
         ----------
@@ -836,8 +836,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PETSc.KSP, solve, setComputeOperators,
-        petsc.KSPSetOperators
+        PETSc.KSP, solve, setComputeOperators, petsc.KSPSetOperators
 
         """
         cdef PetscMat amat=NULL
@@ -849,10 +848,10 @@ cdef class KSP(Object):
     def getOperators(self) -> tuple[Mat, Mat]:
         """Return the matrix associated with the linear system.
 
+        Collective.
+
         Return the matrix associated with the linear system and a
         (possibly) different one used to construct the preconditioner.
-
-        Collective.
 
         Returns
         -------
@@ -876,10 +875,10 @@ cdef class KSP(Object):
     def setPC(self, PC pc) -> None:
         """Set the preconditioner.
 
+        Collective.
+
         Set the preconditioner to be used to calculate the application
         of the preconditioner on a vector.
-
-        Collective.
 
         Parameters
         ----------
@@ -919,10 +918,10 @@ cdef class KSP(Object):
     ) -> None:
         """Set various tolerances used by the KSP convergence testers.
 
+        Logically collective.
+
         Set the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence testers.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -947,8 +946,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, getTolerances, setConvergenceTest,
-        petsc.KSPSetTolerances, petsc.KSPConvergedDefault,
+        petsc_options, getTolerances, setConvergenceTest
+        petsc.KSPSetTolerances, petsc.KSPConvergedDefault
 
         """
         cdef PetscReal crtol, catol, cdivtol
@@ -963,10 +962,10 @@ cdef class KSP(Object):
     def getTolerances(self) -> tuple[float, float, float, int]:
         """Return various tolerances used by the KSP convergence tests.
 
+        Not collective.
+
         Return the relative, absolute, divergence, and maximum iteration
         tolerances used by the default KSP convergence tests.
-
-        Not collective.
 
         Returns
         -------
@@ -1028,8 +1027,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        setTolerances, getConvergenceTest,
-        petsc.KSPSetConvergenceTest, petsc.KSPConvergedDefault
+        setTolerances, getConvergenceTest, petsc.KSPSetConvergenceTest
+        petsc.KSPConvergedDefault
 
         """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
@@ -1060,8 +1059,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        setTolerances, setConvergenceTest,
-        petsc.KSPGetConvergenceTest, petsc.KSPConvergedDefault
+        setTolerances, setConvergenceTest, petsc.KSPGetConvergenceTest
+        petsc.KSPConvergedDefault
 
         """
         return self.get_attr('__converged__')
@@ -1094,10 +1093,10 @@ cdef class KSP(Object):
     ) -> None:
         """Set the array used to hold the residual history.
 
+        Not collective.
+
         If set, this array will contain the residual norms computed at
         each iteration of the solver.
-
-        Not collective.
 
         Parameters
         ----------
@@ -1171,10 +1170,10 @@ cdef class KSP(Object):
     ) -> None:
         """Set additional function to monitor the residual.
 
+        Logically collective
+
         Set an ADDITIONAL function to be called at every iteration to
         monitor the residual/error etc.
-
-        Logically collective
 
         Parameters
         ----------
@@ -1199,8 +1198,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, getMonitor, monitor, monitorCancel,
-        petsc.KSPMonitorSet
+        petsc_options, getMonitor, monitor, monitorCancel, petsc.KSPMonitorSet
 
         """
         if monitor is None: return
@@ -1220,8 +1218,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, setMonitor, monitor,
-        monitorCancel, petsc.KSPGetMonitorContext
+        petsc_options, setMonitor, monitor, monitorCancel
+        petsc.KSPGetMonitorContext
 
         """
         return self.get_attr('__monitor__')
@@ -1233,8 +1231,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, getMonitor, setMonitor, monitor,
-        petsc.KSPMonitorCancel
+        petsc_options, getMonitor, setMonitor, monitor, petsc.KSPMonitorCancel
 
         """
         CHKERR( KSPMonitorCancel(self.ksp) )
@@ -1291,8 +1288,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        PC.Side, petsc_options, getPCSide, setNormType,
-        getNormType, petsc.KSPSetPCSide
+        PC.Side, petsc_options, getPCSide, setNormType, getNormType
+        petsc.KSPSetPCSide
 
         """
         CHKERR( KSPSetPCSide(self.ksp, side) )
@@ -1304,8 +1301,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_options, setPCSide, setNormType, getNormType,
-        petsc.KSPGetPCSide
+        petsc_options, setPCSide, setNormType, getNormType, petsc.KSPGetPCSide
 
         """
         cdef PetscPCSide side = PC_LEFT
@@ -1330,9 +1326,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        NormType, petsc_options, setUp, solve, destroy,
-        setPCSide, getPCSide, NormType,
-        petsc.KSPSetNormType, petsc.KSPConvergedSkip,
+        NormType, petsc_options, setUp, solve, destroy, setPCSide, getPCSide
+        NormType, petsc.KSPSetNormType, petsc.KSPConvergedSkip
         petsc.KSPSetCheckNormIteration
 
         """
@@ -1345,8 +1340,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        NormType, setNormType,
-        petsc.KSPGetNormType, petsc.KSPConvergedSkip
+        NormType, setNormType, petsc.KSPGetNormType, petsc.KSPConvergedSkip
 
         """
         cdef PetscKSPNormType normtype = KSP_NORM_NONE
@@ -1380,11 +1374,11 @@ cdef class KSP(Object):
     def getComputeEigenvalues(self) -> bool:
         """Return flag indicating whether eigenvalues will be calculated.
 
+        Not collective.
+
         Return the flag indicating that the extreme eigenvalues values
         will be calculated via a Lanczos or Arnoldi process as the
         linear system is solved.
-
-        Not collective.
 
         See Also
         --------
@@ -1398,11 +1392,11 @@ cdef class KSP(Object):
     def setComputeSingularValues(self, flag: bool) -> None:
         """Set flag to calculate singular values.
 
+        Logically collective.
+
         Set a flag so that the extreme singular values will be
         calculated via a Lanczos or Arnoldi process as the linear
         system is solved.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -1442,10 +1436,10 @@ cdef class KSP(Object):
     def setInitialGuessNonzero(self, flag: bool) -> None:
         """Tell the iterative solver that the initial guess is nonzero.
 
+        Logically collective.
+
         Otherwise KSP assumes the initial guess is to be zero (and thus
         zeros it out before solving).
-
-        Logically collective.
 
         Parameters
         ----------
@@ -1478,9 +1472,9 @@ cdef class KSP(Object):
     def setInitialGuessKnoll(self, flag: bool) -> None:
         """Tell solver to use `PC.apply` to compute the initial guess.
 
-        This is the Knoll trick.
-
         Logically collective.
+
+        This is the Knoll trick.
 
         Parameters
         ----------
@@ -1551,10 +1545,10 @@ cdef class KSP(Object):
     def reset(self) -> None:
         """Resets a KSP context.
 
+        Collective.
+
         Resets a KSP context to the kspsetupcalled = 0 state and
         removes any allocated Vecs and Mats.
-
-        Collective.
 
         See Also
         --------
@@ -1566,10 +1560,10 @@ cdef class KSP(Object):
     def setUpOnBlocks(self) -> None:
         """Set up the preconditioner for each block in a block method.
 
+        Collective.
+
         Methods include: block Jacobi, block Gauss-Seidel, and
         overlapping Schwarz methods.
-
-        Collective.
 
         See Also
         --------
@@ -1649,9 +1643,8 @@ cdef class KSP(Object):
 
         See Also
         --------
-        create, setUp, destroy, setTolerances, converged,
-        solveTranspose, its, Mat.setNullSpace,
-        Mat.setTransposeNullSpace, Type, converged,
+        create, setUp, destroy, setTolerances, converged, solveTranspose, its
+        Mat.setNullSpace, Mat.setTransposeNullSpace, Type, converged
         setErrorIfNotConverged petsc_options, petsc.KSPSolve
 
         """
@@ -1788,7 +1781,7 @@ cdef class KSP(Object):
         return toBool(flag)
 
     def getRhs(self) -> Vec:
-        """Return the right hand side vector for the linear system.
+        """Return the right-hand side vector for the linear system.
 
         Not collective.
 
@@ -2040,7 +2033,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_python_ksp, setPythonContext, getPythonType,
+        petsc_python_ksp, setPythonContext, getPythonType
         petsc.KSPPythonSetType
 
         """
@@ -2055,7 +2048,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        petsc_python_ksp, setPythonContext, setPythonType,
+        petsc_python_ksp, setPythonContext, setPythonType
         petsc.KSPPythonGetType
 
         """
@@ -2107,7 +2100,7 @@ cdef class KSP(Object):
             return self.getSolution()
 
     property vec_rhs:
-        """The solver right hand side vector.
+        """The solver right-hand side vector.
 
         See Also
         --------
@@ -2161,7 +2154,7 @@ cdef class KSP(Object):
 
         See Also
         --------
-        getInitialGuessKnoll, setInitialGuessKnoll,
+        getInitialGuessKnoll, setInitialGuessKnoll
         petsc.KSPGetInitialGuessKnoll, petsc.KSPSetInitialGuessKnoll
 
         """

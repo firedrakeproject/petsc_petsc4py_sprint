@@ -1286,7 +1286,6 @@ cdef class DM(Object):
         comm
             MPI communicator, defaults to `Sys.getDefaultComm`.
 
-
         See Also
         --------
         petsc.DMCoarsen

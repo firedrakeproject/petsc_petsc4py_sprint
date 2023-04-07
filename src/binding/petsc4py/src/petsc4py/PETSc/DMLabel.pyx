@@ -112,11 +112,11 @@ cdef class DMLabel(Object):
     def setValue(self, point: int, value: int) -> None:
         """Set the value a label assigns to a point.
 
+        Not collective.
+
         If the value is the same as the label's default value (which is
         initially ``-1``, and can be changed with `setDefaultValue`), this
         function will do nothing.
-
-        Not collective.
 
         Parameters
         ----------
@@ -127,7 +127,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelSetValue, getValue, setDefaultValue
+        getValue, setDefaultValue, petsc.DMLabelSetValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -137,11 +137,11 @@ cdef class DMLabel(Object):
     def getValue(self, point: int) -> int:
         """Return the value a label assigns to a point.
 
+        Not collective.
+
         If no value was assigned, a default value will be returned
         The default value, initially ``-1``, can be changed with
         `setDefaultValue`.
-
-        Not collective.
 
         Parameters
         ----------
@@ -150,7 +150,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGetValue, setValue, setDefaultValue
+        setValue, setDefaultValue, petsc.DMLabelGetValue
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -161,14 +161,14 @@ cdef class DMLabel(Object):
     def getDefaultValue(self) -> int:
         """Return the default value returned by `getValue`.
 
+        Not collective.
+
         The default value is returned if a point has not been explicitly given
         a value. When a label is created, it is initialized to ``-1``.
 
-        Not collective.
-
         See Also
         --------
-        petsc.DMLabelGetDefaultValue, setDefaultValue
+        setDefaultValue, petsc.DMLabelGetDefaultValue
 
         """
         cdef PetscInt cvalue = 0
@@ -178,10 +178,10 @@ cdef class DMLabel(Object):
     def setDefaultValue(self, value: int) -> None:
         """Set the default value returned by `getValue`.
 
+        Not collective.
+
         The value is used if a point has not been explicitly given a value.
         When a label is created, the default value is initialized to ``-1``.
-
-        Not collective.
 
         Parameters
         ----------
@@ -190,7 +190,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelSetDefaultValue, getDefaultValue
+        getDefaultValue, petsc.DMLabelSetDefaultValue
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -227,7 +227,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelAddStratum, addStrata, addStrataIS
+        addStrata, addStrataIS, petsc.DMLabelAddStratum
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -245,7 +245,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelAddStrata, addStrataIS, addStratum
+        addStrataIS, addStratum, petsc.DMLabelAddStrata
 
         """
         cdef PetscInt *istrata = NULL
@@ -265,7 +265,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelAddStrataIS, addStrata, addStratum
+        addStrata, addStratum, petsc.DMLabelAddStrataIS
 
         """
         CHKERR( DMLabelAddStrataIS(self.dmlabel, iset.iset) )
@@ -373,7 +373,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGetStratumIS, setStratumIS
+        setStratumIS, petsc.DMLabelGetStratumIS
 
         """
         cdef PetscInt cstratum = asInt(stratum)
@@ -395,7 +395,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelSetStratumIS, getStratumIS
+        getStratumIS, petsc.DMLabelSetStratumIS
 
         """
         cdef PetscInt cstratum = asInt(stratum)
@@ -422,9 +422,9 @@ cdef class DMLabel(Object):
     def computeIndex(self) -> None:
         """Create an index structure for membership determination.
 
-        Automatically determines the bounds.
-
         Not collective.
+
+        Automatically determines the bounds.
 
         See Also
         --------
@@ -447,7 +447,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelCreateIndex, destroyIndex
+        destroyIndex, petsc.DMLabelCreateIndex
 
         """
         cdef PetscInt cpstart = asInt(pStart), cpend = asInt(pEnd)
@@ -460,7 +460,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelDestroyIndex, createIndex
+        createIndex, petsc.DMLabelDestroyIndex
 
         """
         CHKERR( DMLabelDestroyIndex(self.dmlabel) )
@@ -477,7 +477,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelHasValue, hasPoint
+        hasPoint, petsc.DMLabelHasValue
 
         """
         cdef PetscInt cvalue = asInt(value)
@@ -488,9 +488,9 @@ cdef class DMLabel(Object):
     def hasPoint(self, point: int) -> bool:
         """Determine whether the label contains a point.
 
-        The user must call `createIndex` before this function.
-
         Not collective.
+
+        The user must call `createIndex` before this function.
 
         Parameters
         ----------
@@ -499,7 +499,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelHasPoint, hasValue
+        hasValue, petsc.DMLabelHasPoint
 
         """
         cdef PetscInt cpoint = asInt(point)
@@ -510,9 +510,9 @@ cdef class DMLabel(Object):
     def getBounds(self) -> tuple[int, int]:
         """Return the smallest and largest point in the label.
 
-        The returned values are the smallest point and the largest point + 1.
-
         Not collective.
+
+        The returned values are the smallest point and the largest point + 1.
 
         See Also
         --------
@@ -574,7 +574,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelDistribute, gather
+        gather, petsc.DMLabelDistribute
 
         """
         cdef DMLabel new = DMLabel()
@@ -584,9 +584,9 @@ cdef class DMLabel(Object):
     def gather(self, SF sf) -> DMLabel:
         """Gather all label values from leaves into roots.
 
-        This is the inverse operation to `distribute`.
-
         Collective.
+
+        This is the inverse operation to `distribute`.
 
         Parameters
         ----------
@@ -595,7 +595,7 @@ cdef class DMLabel(Object):
 
         See Also
         --------
-        petsc.DMLabelGather, distribute
+        distribute, petsc.DMLabelGather
 
         """
         cdef DMLabel new = DMLabel()

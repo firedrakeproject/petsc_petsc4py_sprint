@@ -108,7 +108,7 @@ cdef class Quad(Object):
 
         See Also
         --------
-        petsc.PetscQuadratureGetNumComponents, setNumComponents
+        setNumComponents, petsc.PetscQuadratureGetNumComponents
 
         """
         cdef PetscInt cnc = 0
@@ -127,7 +127,7 @@ cdef class Quad(Object):
 
         See Also
         --------
-        petsc.PetscQuadratureSetNumComponents, getNumComponents
+        getNumComponents, petsc.PetscQuadratureSetNumComponents
 
         """
         cdef PetscInt cnc = asInt(nc)
@@ -140,7 +140,7 @@ cdef class Quad(Object):
 
         See Also
         --------
-        petsc.PetscQuadratureGetOrder, setOrder
+        setOrder, petsc.PetscQuadratureGetOrder
 
         """
         cdef PetscInt corder = 0
@@ -160,7 +160,7 @@ cdef class Quad(Object):
 
         See Also
         --------
-        petsc.PetscQuadratureSetOrder, getOrder
+        getOrder, petsc.PetscQuadratureSetOrder
 
         """
         cdef PetscInt corder = asInt(order)

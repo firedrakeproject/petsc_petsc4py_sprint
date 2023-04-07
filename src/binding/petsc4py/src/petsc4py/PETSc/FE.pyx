@@ -51,9 +51,9 @@ cdef class FE(Object):
     def create(self, comm: Comm | None = None) -> Self:
         """Create an empty `FE` object.
 
-        The type can then be set with `setType`.
-
         Collective.
+
+        The type can then be set with `setType`.
 
         Parameters
         ----------
@@ -62,7 +62,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFECreate, setType
+        setType, petsc.PetscFECreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -171,7 +171,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEGetQuadrature, setQuadrature
+        setQuadrature, petsc.PetscFEGetQuadrature
 
         """
         cdef Quad quad = Quad()
@@ -213,7 +213,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEGetNumComponents, setNumComponents
+        setNumComponents, petsc.PetscFEGetNumComponents
 
         """
         cdef PetscInt comp = 0
@@ -232,7 +232,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetNumComponents, getNumComponents
+        getNumComponents, petsc.PetscFESetNumComponents
 
         """
         cdef PetscInt ccomp = asInt(comp)
@@ -241,10 +241,10 @@ cdef class FE(Object):
     def getNumDof(self) -> ndarray:
         """Return the number of dofs.
 
+        Not collective.
+
         Return the number of dofs (dual basis vectors) associated with mesh
         points on the reference cell of a given dimension.
-
-        Not collective.
 
         See Also
         --------
@@ -275,7 +275,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEGetTileSizes, setTileSizes
+        setTileSizes, petsc.PetscFEGetTileSizes
 
         """
         cdef PetscInt blockSize = 0, numBlocks = 0
@@ -307,7 +307,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetTileSizes, getTileSizes
+        getTileSizes, petsc.PetscFESetTileSizes
 
         """
         cdef PetscInt cblockSize = asInt(blockSize), cnumBlocks = asInt(numBlocks)
@@ -321,7 +321,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEGetFaceQuadrature, setFaceQuadrature
+        setFaceQuadrature, petsc.PetscFEGetFaceQuadrature
 
         """
         cdef Quad quad = Quad()
@@ -340,7 +340,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetQuadrature, getQuadrature
+        getQuadrature, petsc.PetscFESetQuadrature
 
         """
         CHKERR( PetscFESetQuadrature(self.fe, quad.quad) )
@@ -358,7 +358,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetFaceQuadrature, getFaceQuadrature
+        getFaceQuadrature, petsc.PetscFESetFaceQuadrature
 
         """
         CHKERR( PetscFESetFaceQuadrature(self.fe, quad.quad) )
@@ -391,7 +391,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEGetBasisSpace, setBasisSpace
+        setBasisSpace, petsc.PetscFEGetBasisSpace
 
         """
         cdef Space sp = Space()
@@ -410,7 +410,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetBasisSpace, getBasisSpace
+        getBasisSpace, petsc.PetscFESetBasisSpace
 
         """
         CHKERR( PetscFESetBasisSpace(self.fe, sp.space ) )
@@ -422,7 +422,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetFromOptions, petsc_options
+        petsc_options, petsc.PetscFESetFromOptions
 
         """
         CHKERR( PetscFESetFromOptions(self.fe) )
@@ -446,7 +446,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEGetDualSpace, setDualSpace, DualSpace
+        setDualSpace, DualSpace, petsc.PetscFEGetDualSpace
 
         """
         cdef DualSpace dspace = DualSpace()
@@ -465,7 +465,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFESetDualSpace, getDualSpace, DualSpace
+        getDualSpace, DualSpace, petsc.PetscFESetDualSpace
 
         """
         CHKERR( PetscFESetDualSpace(self.fe, dspace.dualspace) )
@@ -484,7 +484,7 @@ cdef class FE(Object):
 
         See Also
         --------
-        petsc.PetscFEViewFromOptions, petsc_options
+        petsc_options, petsc.PetscFEViewFromOptions
 
         """
         cdef const char *cname = NULL

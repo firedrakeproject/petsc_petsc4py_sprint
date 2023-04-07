@@ -38,6 +38,8 @@ cdef class DMDA(DM):
     ) -> Self:
         """Create a ``DMDA`` object.
 
+        Collective.
+
         This routine performs the following steps of the C API:
         - ``petsc.DMDACreate``
         - ``petsc.DMSetDimension``
@@ -49,8 +51,6 @@ cdef class DMDA(DM):
         - ``petsc.DMDASetStencilType``
         - ``petsc.DMDASetStencilWidth``
         - ``petsc.DMSetUp`` (optionally)
-
-        Collective.
 
         Parameters
         ----------
@@ -149,11 +149,11 @@ cdef class DMDA(DM):
     ) -> DMDA:
         """Duplicate a DMDA.
 
+        Collective.
+
         This routine retrieves the information from the DMDA and recreates it.
         Parameters ``dof``, ``boundary_type``, ``stencil_type``,
         ``stencil_width`` will be overwritten, if provided.
-
-        Collective.
 
         Parameters
         ----------
@@ -553,9 +553,9 @@ cdef class DMDA(DM):
     def getRanges(self) -> tuple[tuple[int, int], ...]:
         """Return the ranges of the owned local region in each dimension.
 
-        Excluding ghost nodes.
-
         Not collective.
+
+        Excluding ghost nodes.
 
         See Also
         --------
@@ -595,9 +595,9 @@ cdef class DMDA(DM):
     def getOwnershipRanges(self) -> tuple[ArrayInt, ...]:
         """Return the ranges of indices in each dimension owned by each process.
 
-        These numbers are not multiplied by the number of DOFs per node.
-
         Not collective.
+
+        These numbers are not multiplied by the number of DOFs per node.
 
         See Also
         --------
@@ -620,6 +620,8 @@ cdef class DMDA(DM):
     def getCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
         """Return the lower left corner and the size of the owned local region in each dimension.
 
+        Not collective.
+
         Returns the global (x,y,z) indices of the lower left corner (first
         tuple) and size of the local region (second tuple).
 
@@ -629,8 +631,6 @@ cdef class DMDA(DM):
         freedom per node. Thus the returned values can be thought of as
         coordinates on a logical grid, where each grid point has (potentially)
         several degrees of freedom.
-
-        Not collective.
 
         See Also
         --------
@@ -649,10 +649,10 @@ cdef class DMDA(DM):
     def getGhostCorners(self) -> tuple[tuple[int, ...], tuple[int, ...]]:
         """Return the lower left corner and the size of the local region in each dimension, including ghost points.
 
+        Not collective.
+
         Returns the global (x,y,z) indices of the lower left corner (first
         tuple) and size of the local region (second tuple).
-
-        Not collective.
 
         See Also
         --------
@@ -721,9 +721,9 @@ cdef class DMDA(DM):
     def getVecArray(self, Vec vec) -> Any:
         """Get access to the vector.
 
-        Use via `with` context manager (PEP 343).
-
         Not collective.
+
+        Use via `with` context manager (PEP 343).
 
         Parameters
         ----------
@@ -827,10 +827,10 @@ cdef class DMDA(DM):
     def createNaturalVec(self) -> Vec:
         """Create a vector that will hold values in the natural numbering.
 
+        Collective.
+
         The number of local entries in the vector on each process is the same
         as in a vector created with `DM.createGlobalVec`.
-
-        Collective.
 
         See Also
         --------
@@ -849,9 +849,9 @@ cdef class DMDA(DM):
     ) -> None:
         """Map values to the "natural" grid ordering.
 
-        You must call `createNaturalVec` before using this routine.
+        Neighborwise collective.
 
-        Neighbor-wise collective.
+        You must call `createNaturalVec` before using this routine.
 
         Parameters
         ----------
@@ -880,7 +880,7 @@ cdef class DMDA(DM):
     ) -> None:
         """Map values the to grid ordering.
 
-        Neighbor-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------
@@ -906,13 +906,13 @@ cdef class DMDA(DM):
     def getAO(self) -> AO:
         """Return the application ordering context for a distributed array.
 
+        Collective.
+
         The returned `AO` maps to the natural grid ordering that would be
         used for the `DMDA` if only 1 processor were employed (ordering most
         rapidly in the x-dimension, then y, then z). Multiple degrees of
         freedom are numbered for each node (rather than 1 component for the
         whole grid, then the next component, etc.).
-
-        Collective.
 
         See Also
         --------
@@ -997,10 +997,10 @@ cdef class DMDA(DM):
     def setInterpolationType(self, interp_type: InterpolationType) -> None:
         """Set the type of interpolation.
 
+        Logically collective.
+
         You should call this on the coarser of the two DMDAs you pass to
         `DM.createInterpolation`.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -1062,12 +1062,12 @@ cdef class DMDA(DM):
     def getElements(self, elem_type: ElementType | None = None) -> ArrayInt:
         """Return an array containing the indices of all the local elements.
 
+        Not collective.
+
         The elements are in local coordinates.
 
         Each process uniquely owns a subset of the elements. That is, no
         element is owned by two or more processes.
-
-        Not collective.
 
         Parameters
         ----------

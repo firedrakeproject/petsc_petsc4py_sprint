@@ -306,9 +306,9 @@ cdef class IS(Object):
     def allGather(self) -> IS:
         """Concatenate index sets stored across processors.
 
-        The returned index set will be the same on every processor.
-
         Collective.
+
+        The returned index set will be the same on every processor.
 
         See Also
         --------
@@ -335,10 +335,10 @@ cdef class IS(Object):
     def buildTwoSided(self, IS toindx=None) -> IS:
         """Create an index set describing a global mapping.
 
+        Collective.
+
         This function generates an index set that contains new numbers from
         remote or local on the index set.
-
-        Collective.
 
         Parameters
         ----------
@@ -365,9 +365,9 @@ cdef class IS(Object):
     def invertPermutation(self, nlocal: int | None = None) -> IS:
         """Invert the index set.
 
-        For this to be correct the index set must be a permutation.
-
         Collective.
+
+        For this to be correct the index set must be a permutation.
 
         Parameters
         ----------
@@ -590,10 +590,10 @@ cdef class IS(Object):
     def expand(self, IS iset) -> IS:
         """Compute the union of two (possibly unsorted) index sets.
 
+        Collective on ``self``.
+
         To compute the union, `expand` concatenates the two index sets
         and removes any duplicates.
-
-        Collective on ``self``.
 
         Parameters
         ----------
@@ -674,10 +674,10 @@ cdef class IS(Object):
     def complement(self, nmin: int, nmax: int) -> IS:
         """Create a complement index set.
 
+        Collective.
+
         The complement set of indices is all indices that are not
         in the provided set (and within the provided bounds).
-
-        Collective.
 
         Parameters
         ----------
@@ -710,10 +710,10 @@ cdef class IS(Object):
     def embed(self, IS iset, drop: bool) -> IS:
         """Embed ``self`` into ``iset``.
 
+        Not collective.
+
         The embedding is performed by finding the locations in ``iset`` that
         have the same indices as ``self``.
-
-        Not collective.
 
         Parameters
         ----------
@@ -772,9 +772,9 @@ cdef class IS(Object):
     def setIndices(self, indices: Sequence[int]) -> None:
         """Set the indices of an index set.
 
-        The index set is assumed to be of type `IS.Type.GENERAL`.
-
         Logically collective.
+
+        The index set is assumed to be of type `IS.Type.GENERAL`.
 
         See Also
         --------
@@ -877,6 +877,7 @@ cdef class IS(Object):
         CHKERR( ISStrideSetStride(self.iset, csize, cfirst, cstep) )
 
     def getStride(self) -> tuple[int, int, int]:
+#FIXME: Multiline summary!
         """Return size and stride information for an index set with type
         `IS.Type.STRIDE`.
 
@@ -893,8 +894,7 @@ cdef class IS(Object):
 
         See Also
         --------
-        petsc.ISGetLocalSize
-        petsc.ISStrideGetInfo
+        petsc.ISGetLocalSize, petsc.ISStrideGetInfo
 
         """
         cdef PetscInt size=0, first=0, step=0
@@ -1051,6 +1051,7 @@ cdef class IS(Object):
 
 
 class GLMapMode(object):
+#FIXME: Multiline summary!
     """Enum describing mapping behavior for global-to-local maps when global
     indices are missing.
 
@@ -1076,6 +1077,7 @@ class LGMapType(object):
 # --------------------------------------------------------------------
 
 cdef class LGMap(Object):
+#FIXME: Multiline summary!
     """Mapping from an arbitrary local ordering from 0 to n-1 to a
     global PETSc ordering used by a vector or matrix.
 

@@ -73,7 +73,7 @@ cdef class Sys:
 
         See Also
         --------
-        petsc.PetscGetVersion,  petsc.PetscGetVersionNumber
+        petsc.PetscGetVersion, petsc.PetscGetVersionNumber
 
         """
         version, dev, date, author = cls.getVersion(True, True, True)
@@ -250,7 +250,6 @@ cdef class Sys:
         ----------
         comm
             MPI communicator, defaults to `getDefaultComm`.
-
 
         See Also
         --------

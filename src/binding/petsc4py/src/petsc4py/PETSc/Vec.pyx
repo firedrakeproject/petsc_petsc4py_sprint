@@ -332,10 +332,10 @@ cdef class Vec(Object):
     ) -> Self:
         """Create a vector using a provided array.
 
+        Collective.
+
         This method will create either a `Type.SEQ` or `Type.MPI`
         depending on the size of the communicator.
-
-        Collective.
 
         Parameters
         ----------
@@ -521,7 +521,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        petsc.VecCreateSeqViennaCLWithArrays, petsc.VecCreateMPIViennaCLWithArrays
+        petsc.VecCreateSeqViennaCLWithArrays
+        petsc.VecCreateMPIViennaCLWithArrays
 
         """
         cdef PetscInt na=0
@@ -561,6 +562,8 @@ cdef class Vec(Object):
     ) -> Self:
         """Create a vector wrapping a DLPack object, sharing the same memory.
 
+        Collective.
+
         This operation does not modify the storage of the original tensor and
         should be used with contiguous tensors only. If the tensor is stored in
         row-major order (e.g. PyTorch tensors), the resulting vector will look
@@ -570,8 +573,6 @@ cdef class Vec(Object):
         `Type.SEQCUDA`, `Type.MPICUDA`, `Type.SEQHIP` or
         `Type.MPIHIP` depending on the type of ``dltensor`` and the number
         of processes in the communicator.
-
-        Collective.
 
         Parameters
         ----------
@@ -659,10 +660,10 @@ cdef class Vec(Object):
     ) -> Self:
         """Attach tensor information from another vector or DLPack tensor.
 
+        Logically collective.
+
         This tensor information is required when converting a `Vec` to a
         DLPack object.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -853,8 +854,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createGhostWithArray
-        petsc.VecCreateGhost, petsc.VecCreateGhostBlock
+        createGhostWithArray, petsc.VecCreateGhost, petsc.VecCreateGhostBlock
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -901,8 +901,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createGhost
-        petsc.VecCreateGhostWithArray, petsc.VecCreateGhostBlockWithArray
+        createGhost, petsc.VecCreateGhostWithArray
+        petsc.VecCreateGhostBlockWithArray
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -1143,8 +1143,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        getSize, getLocalSize
-        petsc.VecGetLocalSize, petsc.VecGetSize
+        getSize, getLocalSize, petsc.VecGetLocalSize, petsc.VecGetSize
 
         """
         cdef PetscInt n = 0, N = 0
@@ -1242,7 +1241,7 @@ cdef class Vec(Object):
     def getLocalVector(self, Vec lvec, readonly: bool = False) -> None:
         """Maps the local portion of the vector into a local vector.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -1253,8 +1252,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createLocalVector, restoreLocalVector
-        petsc.VecGetLocalVectorRead, petsc.VecGetLocalVector
+        createLocalVector, restoreLocalVector, petsc.VecGetLocalVectorRead
+        petsc.VecGetLocalVector
 
         """
         if readonly:
@@ -1265,7 +1264,7 @@ cdef class Vec(Object):
     def restoreLocalVector(self, Vec lvec, readonly: bool = False) -> None:
         """Unmap a local access obtained with `getLocalVector`.
 
-        Logically Collective.
+        Logically collective.
 
         Parameters
         ----------
@@ -1276,8 +1275,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        createLocalVector, getLocalVector
-        petsc.VecRestoreLocalVectorRead, petsc.VecRestoreLocalVector
+        createLocalVector, getLocalVector, petsc.VecRestoreLocalVectorRead
+        petsc.VecRestoreLocalVector
 
         """
         if readonly:
@@ -1462,8 +1461,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        restoreCUDAHandle, petsc.VecCUDAGetArray
-        petsc.VecCUDAGetArrayRead, petsc.VecCUDAGetArrayWrite
+        restoreCUDAHandle, petsc.VecCUDAGetArray, petsc.VecCUDAGetArrayRead
+        petsc.VecCUDAGetArrayWrite
 
         """
         cdef PetscScalar *hdl = NULL
@@ -1536,8 +1535,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        restoreHIPHandle, petsc.VecHIPGetArray
-        petsc.VecHIPGetArrayRead, petsc.VecHIPGetArrayWrite
+        restoreHIPHandle, petsc.VecHIPGetArray, petsc.VecHIPGetArrayRead
+        petsc.VecHIPGetArrayWrite
 
         """
         cdef PetscScalar *hdl = NULL
@@ -1571,8 +1570,8 @@ cdef class Vec(Object):
 
         See Also
         --------
-        getHIPHandle, petsc.VecHIPRestoreArray
-        petsc.VecHIPRestoreArrayRead, petsc.VecHIPRestoreArrayWrite
+        getHIPHandle, petsc.VecHIPRestoreArray, petsc.VecHIPRestoreArrayRead
+        petsc.VecHIPRestoreArrayWrite
 
         """
         cdef PetscScalar *hdl = <PetscScalar*>(<Py_uintptr_t>handle)
@@ -2739,8 +2738,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        setValues, setValuesLocal, getLGMap
-        petsc.VecSetLocalToGlobalMapping
+        setValues, setValuesLocal, getLGMap, petsc.VecSetLocalToGlobalMapping
 
         """
         CHKERR( VecSetLocalToGlobalMapping(self.vec, lgmap.lgm) )
@@ -2867,8 +2865,7 @@ cdef class Vec(Object):
 
         See Also
         --------
-        setValuesBlocked, setValuesLocal
-        petsc.VecSetValuesBlockedLocal
+        setValuesBlocked, setValuesLocal, petsc.VecSetValuesBlockedLocal
 
         """
         vecsetvalues(self.vec, indices, values, addv, 1, 1)
@@ -3157,12 +3154,11 @@ cdef class Vec(Object):
     ) -> None:
         """Begin updating ghosted vector entries.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         See Also
         --------
-        ghostUpdateEnd, ghostUpdate, createGhost
-        petsc.VecGhostUpdateBegin
+        ghostUpdateEnd, ghostUpdate, createGhost, petsc.VecGhostUpdateBegin
 
         """
         cdef PetscInsertMode  caddv = insertmode(addv)
@@ -3176,12 +3172,11 @@ cdef class Vec(Object):
     ) -> None:
         """Finish updating ghosted vector entries initiated with `ghostUpdateBegin`.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         See Also
         --------
-        ghostUpdateBegin, ghostUpdate, createGhost
-        petsc.VecGhostUpdateEnd
+        ghostUpdateBegin, ghostUpdate, createGhost, petsc.VecGhostUpdateEnd
 
         """
         cdef PetscInsertMode  caddv = insertmode(addv)
@@ -3195,7 +3190,7 @@ cdef class Vec(Object):
     ) -> None:
         """Update ghosted vector entries.
 
-        Neighbour-wise collective.
+        Neighborwise collective.
 
         Parameters
         ----------

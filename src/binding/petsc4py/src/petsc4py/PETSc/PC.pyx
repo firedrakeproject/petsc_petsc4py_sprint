@@ -1310,7 +1310,7 @@ cdef class PC(Object):
 
         See Also
         --------
-        petsc.PCFactorSetMatOrderingType,
+        petsc.PCFactorSetMatOrderingType
         petsc.PCFactorReorderForNonzeroDiagonal, petsc.PCFactorSetReuseOrdering
 
         """
@@ -1943,7 +1943,7 @@ cdef class PC(Object):
         CHKERR( PCMGSetCycleTypeOnLevel(self.pc, clevel, ctype) )
 
     def setMGRhs(self, level: int, Vec rhs) -> None:
-        """Set the vector where the right-hand-side is stored.
+        """Set the vector where the right-hand side is stored.
 
         Logically collective. If not provided, one will be set internally. Will
         be cleaned up in `destroy`.
@@ -1951,9 +1951,9 @@ cdef class PC(Object):
         Parameters
         ----------
         level
-            The level on which to set the right-hand-side.
+            The level on which to set the right-hand side.
         rhs
-            The vector where the right-hand-side is stored.
+            The vector where the right-hand side is stored.
 
         See Also
         --------
@@ -2380,12 +2380,12 @@ cdef class PC(Object):
         CHKERR( PCHPDDMSetAuxiliaryMat(self.pc, uis.iset, uaux.mat, NULL, <void*>NULL) )
 
     def setHPDDMRHSMat(self, Mat B) -> None:
-        """Set the right-hand-side matrix of the preconditioner.
+        """Set the right-hand side matrix of the preconditioner.
 
         Parameters
         ----------
         B
-            The right-hand-side sequential matrix.
+            The right-hand side sequential matrix.
 
         See Also
         --------

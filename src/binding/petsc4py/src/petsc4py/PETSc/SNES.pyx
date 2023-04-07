@@ -341,7 +341,7 @@ cdef class SNES(Object):
 
         See Also
         --------
-        setFASRScale, getFASRestriction, setFASInterpolation, setFASInjection,
+        setFASRScale, getFASRestriction, setFASInterpolation, setFASInjection
         petsc.SNESFASSetRestriction, petsc.SNESFAS
 
         """
@@ -1988,7 +1988,8 @@ cdef class SNES(Object):
 
         See Also
         --------
-        petsc_python_snes, setPythonContext, getPythonType, petsc.SNESPythonSetType
+        petsc_python_snes, setPythonContext, getPythonType
+        petsc.SNESPythonSetType
 
         """
         cdef const char *cval = NULL
@@ -2002,7 +2003,8 @@ cdef class SNES(Object):
 
         See Also
         --------
-        petsc_python_snes, setPythonContext, setPythonType, petsc.SNESPythonGetType
+        petsc_python_snes, setPythonContext, setPythonType
+        petsc.SNESPythonGetType
 
         """
         cdef const char *cval = NULL

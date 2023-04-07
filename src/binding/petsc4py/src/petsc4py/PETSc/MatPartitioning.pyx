@@ -51,7 +51,7 @@ cdef class MatPartitioning(Object):
 
         See Also
         --------
-        petsc.MatPartitioningDestroy, create
+        create, petsc.MatPartitioningDestroy
 
         """
         CHKERR( MatPartitioningDestroy(&self.part) )
@@ -69,7 +69,7 @@ cdef class MatPartitioning(Object):
 
         See Also
         --------
-        petsc.MatPartitioningCreate, destroy
+        destroy, petsc.MatPartitioningCreate
 
         """
         cdef MPI_Comm ccomm = def_Comm(comm, PETSC_COMM_DEFAULT)
@@ -88,7 +88,7 @@ cdef class MatPartitioning(Object):
 
         See Also
         --------
-        petsc.MatPartitioningSetType, getType
+        getType, petsc.MatPartitioningSetType
 
         """
         cdef PetscMatPartitioningType cval = NULL
@@ -102,7 +102,7 @@ cdef class MatPartitioning(Object):
 
         See Also
         --------
-        petsc.MatPartitioningGetType, setType
+        setType, petsc.MatPartitioningGetType
 
         """
         cdef PetscMatPartitioningType cval = NULL
@@ -116,7 +116,7 @@ cdef class MatPartitioning(Object):
 
         See Also
         --------
-        petsc.MatPartitioningSetFromOptions, petsc_options
+        petsc_options, petsc.MatPartitioningSetFromOptions
 
         """
         CHKERR( MatPartitioningSetFromOptions(self.part) )
@@ -142,10 +142,10 @@ cdef class MatPartitioning(Object):
     def apply(self, IS partitioning) -> None:
         """Return a partitioning for the graph represented by a sparse matrix.
 
+        Collective.
+
         For each local node this tells the processor number that that node is
         assigned to.
-
-        Collective.
 
         See Also
         --------

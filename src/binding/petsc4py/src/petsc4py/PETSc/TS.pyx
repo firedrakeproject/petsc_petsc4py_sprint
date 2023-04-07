@@ -484,9 +484,9 @@ cdef class TS(Object):
         Parameters
         ----------
         function
-            The right-hand-side function.
+            The right-hand side function.
         f
-            The vector into which the right-hand-side is computed.
+            The vector into which the right-hand side is computed.
         args
             Additional positional arguments for ``function``.
         kargs
@@ -495,6 +495,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetRHSFunction
+
         """
         cdef PetscVec fvec=NULL
         if f is not None: fvec = f.vec
@@ -521,7 +522,7 @@ cdef class TS(Object):
         Parameters
         ----------
         jacobian
-            The right-hand-side function.
+            The right-hand side function.
         J
             The matrix into which the jacobian is computed.
         P
@@ -534,6 +535,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetRHSJacobian
+
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -549,7 +551,7 @@ cdef class TS(Object):
             CHKERR( TSSetRHSJacobian(self.ts, Jmat, Pmat, NULL, NULL) )
 
     def computeRHSFunction(self, t: float, Vec x, Vec f) -> None:
-        """Evaluate the right-hand-side function.
+        """Evaluate the right-hand side function.
 
         Parameters
         ----------
@@ -569,7 +571,7 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSFunction(self.ts, time, x.vec, f.vec) )
 
     def computeRHSFunctionLinear(self, t: float, Vec x, Vec f) -> None:
-        """Evaluate the right-hand-side via the user-provided Jacobian.
+        """Evaluate the right-hand side via the user-provided Jacobian.
 
         Parameters
         ----------
@@ -641,7 +643,8 @@ cdef class TS(Object):
         CHKERR( TSComputeRHSJacobianConstant(self.ts, time, x.vec, jmat, pmat, NULL) )
 
     def getRHSFunction(self) -> tuple[Vec, TSRHSFunction]:
-        """Return the vector where the right hand side is stored and the
+#FIXME: Multiline summary!
+        """Return the vector where the right-hand side is stored and the
         function used to compute it.
 
         Not collective.
@@ -688,7 +691,7 @@ cdef class TS(Object):
         Parameters
         ----------
         function
-            The right-hand-side function.
+            The right-hand side function.
         f
             The vector to store values or `None` to be created internally.
         args
@@ -721,10 +724,10 @@ cdef class TS(Object):
         kargs : dict[str, Any] | None = None) -> None:
         """Set the function to compute the Jacobian.
 
+        Logically collective.
+
         Set the function to compute the matrix ``dF/dU + a*dF/dU_t`` where
         ``F(t,U,U_t)`` is the function provided with `setIFunction`.
-
-        Logically collective.
 
         Parameters
         ----------
@@ -763,11 +766,12 @@ cdef class TS(Object):
         Mat J=None,
         args : tuple[Any, ...] | None = None,
         kargs : dict[str, Any] | None = None) -> None:
+#FIXME: Multiline summary!
         """Set the function that computes the Jacobian of ``F`` with respect to
         the parameters ``P`` where ``F(Udot,U,t) = G(U,P,t)``, as well as the
-        location to store the matrix.
-
         Logically collective.
+
+        location to store the matrix.
 
         Parameters
         ----------
@@ -783,6 +787,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSSetIJacobianP
+
         """
         cdef PetscMat Jmat=NULL
         if J is not None: Jmat = J.mat
@@ -942,14 +947,13 @@ cdef class TS(Object):
         Parameters
         ----------
         function
-            The right-hand-side function.
+            The right-hand side function.
         f
             The vector to store values or `None` to be created internally.
         args
             Additional positional arguments for ``function``.
         kargs
             Additional keyword arguments for ``function``.
-
 
         See Also
         --------
@@ -1243,8 +1247,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        setTimeSpan
-        petsc.TSGetTimeSpanSolutions
+        setTimeSpan, petsc.TSGetTimeSpanSolutions
 
         """
         cdef PetscInt nt = 0
@@ -2308,8 +2311,7 @@ cdef class TS(Object):
 
         See Also
         --------
-        setCostGradients
-        petsc.TSGetCostGradients
+        setCostGradients, petsc.TSGetCostGradients
 
         """
         cdef PetscInt i = 0, n = 0
@@ -2618,6 +2620,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSThetaSetTheta
+
         """
         cdef PetscReal rval = asReal(theta)
         CHKERR( TSThetaSetTheta(self.ts, rval) )
@@ -2630,6 +2633,7 @@ cdef class TS(Object):
         See Also
         --------
         petsc.TSThetaGetTheta
+
         """
         cdef PetscReal rval = 0
         CHKERR( TSThetaGetTheta(self.ts, &rval) )
