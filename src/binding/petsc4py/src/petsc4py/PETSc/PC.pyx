@@ -255,7 +255,7 @@ cdef class PC(Object):
         Parameters
         ----------
         comm
-            The communicator or None for `Sys.getDefaultComm`.
+            The communicator or `None` for `Sys.getDefaultComm`.
 
         See Also
         --------

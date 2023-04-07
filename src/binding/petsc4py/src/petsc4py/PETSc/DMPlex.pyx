@@ -1774,7 +1774,7 @@ cdef class DMPlex(DM):
     def createSection(self, numComp: Sequence[int], numDof: Sequence[int],
                       bcField: Sequence[int] | None = None, bcComps: Sequence[IS] | None = None, bcPoints: Sequence[IS] | None = None,
                       IS perm=None) -> Section:
-        """Create a `Section` based upon the dof layout specification provided.
+        """Create a `Section` based upon the DOF layout specification provided.
 
         Not collective.
 
@@ -1783,7 +1783,7 @@ cdef class DMPlex(DM):
         numComp
             An array of size ``numFields`` that holds the number of components for each field.
         numDof
-            An array of size ``numFields*(dim+1)`` which holds the number of dofs for each field on a mesh piece of dimension ``dim``.
+            An array of size ``numFields*(dim+1)`` which holds the number of DOFs for each field on a mesh piece of dimension ``dim``.
         bcField
             An array of size ``numBC`` giving the field number for each boundary condition, where ``numBC`` is the number of boundary conditions.
         bcComps

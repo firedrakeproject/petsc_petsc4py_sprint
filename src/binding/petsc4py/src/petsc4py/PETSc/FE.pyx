@@ -239,11 +239,11 @@ cdef class FE(Object):
         CHKERR( PetscFESetNumComponents(self.fe, comp) )
 
     def getNumDof(self) -> ndarray:
-        """Return the number of dofs.
+        """Return the number of DOFs.
 
         Not collective.
 
-        Return the number of dofs (dual basis vectors) associated with mesh
+        Return the number of DOFs (dual basis vectors) associated with mesh
         points on the reference cell of a given dimension.
 
         See Also

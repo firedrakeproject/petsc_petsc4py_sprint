@@ -220,7 +220,7 @@ cdef class DMStag(DM):
         CHKERR( DMStagSetBoundaryTypes(self.dm, btx, bty, btz) )
 
     def setDof(self, dofs: tuple[int, ...]) -> None:
-        """Set dof/stratum.
+        """Set DOFs/stratum.
 
         Logically collective.
 

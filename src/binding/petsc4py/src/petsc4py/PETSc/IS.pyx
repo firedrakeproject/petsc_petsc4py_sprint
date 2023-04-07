@@ -1078,8 +1078,7 @@ class LGMapType(object):
 
 cdef class LGMap(Object):
 #FIXME: Multiline summary!
-    """Mapping from an arbitrary local ordering from 0 to n-1 to a
-    global PETSc ordering used by a vector or matrix.
+    """Mapping from an arbitrary local ordering from ``0`` to ``n-1`` to a global PETSc ordering used by a vector or matrix.
 
     See Also
     --------

@@ -1531,7 +1531,7 @@ cdef class DM(Object):
     getDefaultGlobalSection = getGlobalSection
 
     def createSectionSF(self, Section localsec, Section globalsec) -> None:
-        """Create the `SF` encoding the parallel dof overlap for the `DM`.
+        """Create the `SF` encoding the parallel DOF overlap for the `DM`.
 
         Parameters
         ----------
@@ -1552,7 +1552,7 @@ cdef class DM(Object):
         CHKERR( DMCreateSectionSF(self.dm, localsec.sec, globalsec.sec) )
 
     def getSectionSF(self) -> SF:
-        """Return the `Section` encoding the parallel dof overlap.
+        """Return the `Section` encoding the parallel DOF overlap.
 
         See Also
         --------
@@ -1565,7 +1565,7 @@ cdef class DM(Object):
         return sf
 
     def setSectionSF(self, SF sf) -> None:
-        """Set the `Section` encoding the parallel dof overlap for the `DM`.
+        """Set the `Section` encoding the parallel DOF overlap for the `DM`.
 
         See Also
         --------
@@ -1579,7 +1579,7 @@ cdef class DM(Object):
     setDefaultSF = setSectionSF
 
     def getPointSF(self) -> SF:
-        """Return the `SF` encoding the parallel dof overlap for the `DM`.
+        """Return the `SF` encoding the parallel DOF overlap for the `DM`.
 
         See Also
         --------
@@ -1592,7 +1592,7 @@ cdef class DM(Object):
         return sf
 
     def setPointSF(self, SF sf) -> None:
-        """Set the `SF` encoding the parallel dof overlap for the `DM`.
+        """Set the `SF` encoding the parallel DOF overlap for the `DM`.
 
         See Also
         --------
