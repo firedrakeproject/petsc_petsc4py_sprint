@@ -168,7 +168,7 @@ cdef class DMPlex(DM):
         See Also
         --------
         DM, DMPlex, DM.setFromOptions, DMPlex.createBoxMesh
-        DMPlex.createFromFile, DM.setType`, DM.create
+        DMPlex.createFromFile, DM.setType, DM.create
         petsc.DMPlexCreateBoxSurfaceMesh
 
         """
