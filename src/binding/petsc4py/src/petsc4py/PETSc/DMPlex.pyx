@@ -405,9 +405,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        pStart: int
+        pStart : int
             The first mesh point.
-        pEnd: int
+        pEnd : int
             The upper bound for mesh points.
 
         See Also
@@ -831,9 +831,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        maxConeSize: int
+        maxConeSize : int
             The maximum number of in-edges.
-        maxSupportSize: int
+        maxSupportSize : int
             The maximum number of out-edges.
 
         See Also
@@ -948,9 +948,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        pStart: int
+        pStart : int
             The first stratum point.
-        pEnd: int
+        pEnd : int
             The upper bound for stratum points.
 
         See Also
@@ -975,9 +975,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        pStart: int
+        pStart : int
             The first stratum point.
-        pEnd: int
+        pEnd : int
             The upper bound for stratum points.
 
         See Also
@@ -1082,9 +1082,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        points: ArrayInt
+        points : ArrayInt
             The points.
-        orientations: ArrayInt
+        orientations : ArrayInt
             The orientations.
 
         See Also
@@ -1471,7 +1471,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        success: bool
+        success : bool
             Whether the graph partitioning was successful or not. Unsuccessful simply means no change to the partitioning.
 
         Notes
@@ -1534,7 +1534,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        sf: SF
+        sf : SF
             The `SF` used for point distribution.
 
         Notes
@@ -1592,7 +1592,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        dist: bool
+        dist : bool
             Flag indicating whether the `DMPlex` should be distributed by default.
 
         See Also
@@ -1649,7 +1649,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        name: str
+        name : str
             The name of the specific parallel distribution.
 
         See Also
@@ -1713,9 +1713,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        newSection: Section
+        newSection : Section
             The `SF` describing the new data layout.
-        newVec: Vec
+        newVec : Vec
             The new data in a local vector.
 
         See Also
@@ -1758,7 +1758,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        fpointIS: IS
+        fpointIS : IS
             The `IS` of all the fine points which exist in the original coarse mesh.
 
         See Also
@@ -1854,9 +1854,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        start: int
+        start : int
             Start of point data.
-        end: int
+        end : int
             End of point data.
 
         See Also
@@ -1884,9 +1884,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        start: int
+        start : int
             Start of point data.
-        end: int
+        end : int
             End of point data.
 
         See Also
@@ -1913,9 +1913,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        start: int
+        start : int
             Start of point data; returns ``-(globalStart+1)`` if point is not owned.
-        end: int
+        end : int
             End of point data; returns ``-(globalEnd+1)`` if point is not owned.
 
         See Also
@@ -1943,9 +1943,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        start: int
+        start : int
             Start of point data; returns ``-(globalStart+1)`` if point is not owned.
-        end: int
+        end : int
             End of point data; returns ``-(globalEnd+1)`` if point is not owned.
 
         See Also
@@ -2004,7 +2004,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        refinementUniform: bool
+        refinementUniform : bool
             The flag for uniform refinement.
 
         See Also
@@ -2062,7 +2062,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        perm: IS
+        perm : IS
             The point permutation as an `IS`, ``perm[old point number] = new point number``.
 
         See Also
@@ -2090,7 +2090,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        pdm: DMPlex
+        pdm : DMPlex
             The permuted `DMPlex`.
 
         See Also
@@ -2149,11 +2149,11 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        volume: float
+        volume : float
             The cell volume.
-        centroid: ArrayReal
+        centroid : ArrayReal
             The cell centroid.
-        normal: ArrayReal
+        normal : ArrayReal
             The cell normal, if appropriate.
 
         See Also
@@ -2181,7 +2181,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        numGhostCells: int
+        numGhostCells : int
             The number of ghost cells added to the `DMPlex`.
 
         See Also
@@ -2442,7 +2442,7 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        verbosity: int
+        verbosity : int
             The verbosity, where -1 is silent and 10 is maximum.
 
         See Also
@@ -2790,9 +2790,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        determinant: Vec
+        determinant : Vec
             The determinant field.
-        dmDet: DM
+        dmDet : DM
             The corresponding DM
 
         See Also
@@ -2825,9 +2825,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        ometric: Vec
+        ometric : Vec
             The output metric.
-        determinant: Vec
+        determinant : Vec
             The output determinant.
 
         Notes
@@ -2868,9 +2868,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        ometric: Vec
+        ometric : Vec
             The output normalized metric.
-        determinant: Vec
+        determinant : Vec
             The output determinant.
 
         Notes
@@ -3109,7 +3109,8 @@ cdef class DMPlex(DM):
         viewer
             The `Viewer` to save data with.
         sectiondm
-            The `DM` that contains the local section on which ``vec`` is defined; may be the same as this `DMPlex` object.
+            The `DM` that contains the local section on which ``vec`` is
+            defined; may be the same as this `DMPlex` object.
         vec
             The local vector to be saved.
 
@@ -3136,8 +3137,9 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        sfxc: SF
-            The `SF` that pushes points in ``[0, N)`` to the associated points in the loaded `DMPlex`, where ``N`` is the global number of points.
+        sfxc : SF
+            The `SF` that pushes points in ``[0, N)`` to the associated points
+            in the loaded `DMPlex`, where ``N`` is the global number of points.
 
         See Also
         --------
@@ -3205,10 +3207,14 @@ cdef class DMPlex(DM):
 
         Returns
         -------
-        gsf: SF
-            The `SF` that migrates any on-disk `Vec` data associated with ``sectionA`` into a global `Vec` associated with the ``sectiondm``'s global section (`None` if not needed).
-        lsf: SF
-            The `SF` that migrates any on-disk `Vec` data associated with ``sectionA`` into a local `Vec` associated with the ``sectiondm``'s local section (`None` if not needed).
+        gsf : SF
+            The `SF` that migrates any on-disk `Vec` data associated with
+            ``sectionA`` into a global `Vec` associated with the
+            ``sectiondm``'s global section (`None` if not needed).
+        lsf : SF
+            The `SF` that migrates any on-disk `Vec` data associated with
+            ``sectionA`` into a local `Vec` associated with the ``sectiondm``'s
+            local section (`None` if not needed).
 
         See Also
         --------

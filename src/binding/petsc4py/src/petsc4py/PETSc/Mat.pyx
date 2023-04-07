@@ -4041,7 +4041,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4089,7 +4089,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4137,7 +4137,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4185,7 +4185,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4237,7 +4237,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix C.
 
         Notes
@@ -4288,7 +4288,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant product matrix D.
 
         See also
@@ -4324,7 +4324,7 @@ cdef class Mat(Object):
 
         Returns
         -------
-        result: Mat
+        result : Mat
             The resultant matrix C, the Kronecker product of A and B.
 
         See also
@@ -4384,9 +4384,9 @@ cdef class Mat(Object):
 
         Returns
         -------
-        rp: IS
+        rp : IS
             The row permutation indices.
-        cp: IS
+        cp : IS
             The column permutation indices.
 
         See Also
@@ -4574,11 +4574,11 @@ cdef class Mat(Object):
 
         Returns
         -------
-        n: int
+        n : int
             The number of negative eigenvalues.
-        z: int
+        z : int
             The number of zero eigenvalues.
-        p: int
+        p : int
             The number of positive eigenvalues.
 
         See Also
@@ -4705,13 +4705,13 @@ cdef class Mat(Object):
 
         Returns
         -------
-        A: Mat
+        A : Mat
             The ``A`` matrix.
-        U: Mat
+        U : Mat
             The first dense rectangular matrix.
-        c: Vec
+        c : Vec
             The sequential vector containing the diagonal of ``C``.
-        V: Mat
+        V : Mat
             The second dense rectangular matrix.
 
         See Also

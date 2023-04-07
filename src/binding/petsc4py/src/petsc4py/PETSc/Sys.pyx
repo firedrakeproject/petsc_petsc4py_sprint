@@ -26,11 +26,11 @@ cdef class Sys:
 
         Returns
         -------
-        major: int
+        major : int
             Major version number.
-        minor: int
+        minor : int
             Minor version number.
-        micro: int
+        micro : int
             Micro (or patch) version number.
 
         See Also
@@ -68,7 +68,7 @@ cdef class Sys:
 
         Returns
         -------
-        info: dict
+        info : dict
             Dictionary with version information.
 
         See Also
@@ -284,9 +284,9 @@ cdef class Sys:
 
         Returns
         -------
-        n: int
+        n : int
             The local size.
-        N: int
+        N : int
             The global size.
 
         Notes

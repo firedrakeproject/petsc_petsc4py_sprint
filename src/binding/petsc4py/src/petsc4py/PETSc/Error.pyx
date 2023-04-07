@@ -5,7 +5,7 @@ class Error(RuntimeError):
 
     Attributes
     ----------
-    ierr: int
+    ierr : int
         PETSc error code.
 
     """
