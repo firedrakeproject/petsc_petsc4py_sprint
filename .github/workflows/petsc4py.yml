@@ -1,0 +1,60 @@
+name: petsc4py
+
+on:
+  push:
+    branches:
+      - main
+      - release
+  pull_request:
+    branches:
+      - main
+      - release
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: self-hosted
+    container:
+      image: firedrakeproject/firedrake-env:latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3
+
+      - name: Setup environment
+        run: |
+          # set PETSC_DIR and PETSC_ARCH
+          echo "PETSC_DIR=$PWD" >> $GITHUB_ENV
+          echo "PETSC_ARCH=arch-default" >> $GITHUB_ENV
+
+      - name: Build PETSc
+        run: |
+          # configure and make PETSc
+          ./configure --with-mpi=0 --with-fc=0
+          make
+          make check
+
+      - name: Build petsc4py
+        run: python -m pip -v install src/binding/petsc4py[doc]
+        env:
+          CFLAGS: "-O0"
+
+      - name: Build petsc4py docs
+        run: |
+          # run sphinx-build via make
+          cd src/binding/petsc4py/docs/source
+          make html O="-W -j12"
+          rm -rf _build/doctrees
+          mv _build/html _build/petsc4py-docs
+
+      - name: Upload petsc4py docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: petsc4py-docs
+          path: |
+            src/binding/petsc4py/docs/source/_build/
